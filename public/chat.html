@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat - DOT Grant Search</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>DOT Grant Search</h1>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/search.html">Search Grants</a></li>
+          <li><a href="/eligibility.html">Check Eligibility</a></li>
+          <li><a href="/deadlines.html">Deadlines</a></li>
+          <li><a href="/chat.html">Chat</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2>Ask About DOT Grants</h2>
+      <p class="mb-2">Ask in plain English — e.g. "transit grants over $1M for cities" or a follow-up like "what about for tribal governments instead?"</p>
+
+      <div id="chatMessages" class="chat-messages"></div>
+
+      <form id="chatForm" class="chat-form">
+        <div class="form-group mb-2">
+          <input type="text" id="chatInput" name="chatInput" placeholder="Ask about grants, eligibility, or deadlines..." autocomplete="off" required>
+        </div>
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/chat.js"></script>
+</body>
+</html>

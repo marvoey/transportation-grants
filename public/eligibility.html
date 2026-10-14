@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check Eligibility - DOT Grant Search</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>DOT Grant Search</h1>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/search.html">Search Grants</a></li>
+          <li><a href="/eligibility.html">Check Eligibility</a></li>
+          <li><a href="/deadlines.html">Deadlines</a></li>
+          <li><a href="/chat.html">Chat</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2>Check Grant Eligibility</h2>
+
+      <form id="eligibilityForm">
+        <div class="form-group">
+          <label for="applicantType">Your Organization Type *</label>
+          <select id="applicantType" name="applicantType" required>
+            <option value="">Select Type</option>
+            <option value="state">State Government</option>
+            <option value="city">City/Municipality</option>
+            <option value="county">County Government</option>
+            <option value="tribal">Tribal Government</option>
+            <option value="mpo">Metropolitan Planning Organization</option>
+            <option value="transit_agency">Transit Agency</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="programNumber">Specific Program (Optional)</label>
+          <input type="text" id="programNumber" name="programNumber" placeholder="e.g., 20.205">
+          <small>Leave blank to check all DOT programs</small>
+        </div>
+
+        <button type="submit">Check Eligibility</button>
+      </form>
+    </div>
+
+    <div id="results"></div>
+  </div>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/eligibility.js"></script>
+</body>
+</html>
