@@ -11,7 +11,10 @@ let anthropicClientInstance: Anthropic | null = null;
 export function getAnthropicClient(): Anthropic {
   if (!anthropicClientInstance) {
     const config = getConfig();
-    anthropicClientInstance = new Anthropic({ apiKey: config.anthropic.apiKey });
+    anthropicClientInstance = new Anthropic({
+      apiKey: config.anthropic.apiKey,
+      ...(config.anthropic.baseUrl ? { baseURL: config.anthropic.baseUrl } : {}),
+    });
   }
   return anthropicClientInstance;
 }

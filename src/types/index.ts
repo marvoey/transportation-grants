@@ -317,6 +317,7 @@ export interface Config {
   };
   anthropic: {
     apiKey?: string;
+    baseUrl?: string;
     model: string;
     maxTokens: number;
   };

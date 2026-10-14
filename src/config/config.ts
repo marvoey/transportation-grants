@@ -48,6 +48,7 @@ export function loadConfig(): Config {
     // keeps working without it — the chat route checks this lazily.
     anthropic: {
       apiKey: process.env.ANTHROPIC_API_KEY,
+      baseUrl: process.env.ANTHROPIC_BASE_URL, // undefined => SDK default (api.anthropic.com)
       model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5',
       maxTokens: parseInt(process.env.ANTHROPIC_MAX_TOKENS || '1024', 10),
     },

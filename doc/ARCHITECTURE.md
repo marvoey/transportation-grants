@@ -269,6 +269,7 @@ Browser (chat.html)
 - `ANTHROPIC_API_KEY` - Required only for the chat feature (`/chat.html`); every other page and the MCP server work without it
 - `ANTHROPIC_MODEL` - Model used for chat (default: `claude-sonnet-5`)
 - `ANTHROPIC_MAX_TOKENS` - Max tokens per chat response (default: 1024)
+- `ANTHROPIC_BASE_URL` - Override the Anthropic API host (default: `api.anthropic.com`); for corporate gateway/proxy setups that issue short-lived virtual keys
 - `CHAT_RATE_LIMIT_REQUESTS` / `CHAT_RATE_LIMIT_WINDOW_MS` - Rate limit on `/api/chat` (default: 10 requests/60s per IP)
 
 ### Checking Your Configuration
