@@ -75,9 +75,10 @@ of the MCP `tools/call` request:
 |---|---|---|---|
 | Front door | HTML form | Claude interpreting your sentence | Anthropic Messages API interpreting your sentence |
 | Wire protocol | HTTP `fetch()` | stdio / JSON-RPC | HTTP `fetch()` to `/api/chat`, then server-side Anthropic API call |
-| Entry point | Express route ([src/web/routes/grants.ts](../src/web/routes/grants.ts#L13)) | `CallToolRequestSchema` handler ([src/server.ts](../src/server.ts#L36)) | `executeTool()` call inside the chat route's tool loop ([src/web/routes/chat.ts](../src/web/routes/chat.ts)) |
+| Entry point | Express route ([src/web/routes/grants.ts](../src/web/routes/grants.ts#L13)) | `CallToolRequestSchema` handler ([src/server.ts](../src/server.ts#L36)) | `executeTool()` call inside the retrieval agent's scoped tool loop ([src/web/chat/retrieval-agent.ts](../src/web/chat/retrieval-agent.ts)) |
 
 Everything from `searchDOTGrants()` downward is byte-for-byte the same code
 path in all three cases — all three now funnel through
 [src/mcp/tool-executor.ts](../src/mcp/tool-executor.ts)'s `executeTool()`.
-See [ARCHITECTURE.md](./ARCHITECTURE.md#4-chat-interface-srcwebroutes-chatts-srcclientsanthropic-clientts-srcmcptool-schemasts-srcmcptool-executorts) for how the chat loop works.
+See [CHAT_ROUTE.md](./CHAT_ROUTE.md) for how the chat pipeline's
+classify → retrieve → draft stages work.

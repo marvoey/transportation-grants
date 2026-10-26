@@ -5,7 +5,7 @@
 WebMCP is a three-interface system providing DOT grant search tools via:
 1. **MCP Server** - For AI assistants like Claude Code/Desktop (stdio protocol)
 2. **Web Interface** - Structured HTML forms for direct browser access
-3. **Chat Interface** - A natural-language chat box on the website itself (`/chat.html`), backed server-side by the Anthropic Messages API using the exact same tools as the MCP server — so website visitors without an MCP client get the same conversational experience Claude Code users get.
+3. **Chat Interface** - A natural-language chat box on the website itself (`/chat.html`), backed server-side by a 3-stage multi-agent pipeline (classify → retrieve → draft) that calls the Anthropic Messages API and uses the exact same tools as the MCP server — so website visitors without an MCP client get the same conversational experience Claude Code users get.
 
 ## System Architecture
 
@@ -21,14 +21,20 @@ WebMCP is a three-interface system providing DOT grant search tools via:
    ┌───────────────┐      ┌─────────────────┐     ┌──────────────────────┐
    │  MCP Server   │      │  Express Web    │     │  Chat Route           │
    │  (stdio)      │      │  Server (HTTP)  │     │  src/web/routes/chat  │
-   │  src/index.ts │      │  src/web-index  │     │  (calls Anthropic SDK)│
-   └───────┬───────┘      └────────┬────────┘     └───────────┬───────────┘
-           │                       │                          │
-           │              ┌────────┴──────────┐               │
-           │              v                   │               v
-           │   ┌─────────────────────┐        │   (same tool schema +
-           │   │ src/mcp/tool-schemas │        │    dispatch, invoked by
-           │   │ src/mcp/tool-executor│◄───────┼────Claude's tool_use)
+   │  src/index.ts │      │  src/web-index  │     │  (orchestrates 3      │
+   └───────┬───────┘      └────────┬────────┘     │   agents, see below) │
+           │                       │               └───────────┬───────────┘
+           │                       │                           │
+           │                       │                    ┌──────┴───────┐
+           │                       │                    v              v
+           │                       │          classify-agent   retrieval-agent
+           │                       │          (no tools)       (scoped tools,
+           │                       │                             see below)
+           │              ┌────────┴──────────┐                       │
+           │              v                   │                       │
+           │   ┌─────────────────────┐        │   (same tool schema + │
+           │   │ src/mcp/tool-schemas │        │    dispatch, invoked  │
+           │   │ src/mcp/tool-executor│◄───────┼────by retrieval-agent)┘
            │   └──────────┬───────────┘        │
            └──────────────┤                    │
                            v                    │
@@ -108,21 +114,22 @@ npm run start:web
 - `eligibility.ts` - Qualification checking
 - `deadlines.ts` - Deadline tracking and sorting
 
-### 4. Chat Interface (`src/web/routes/chat.ts`, `src/clients/anthropic-client.ts`, `src/mcp/tool-schemas.ts`, `src/mcp/tool-executor.ts`)
+### 4. Chat Interface (`src/web/routes/chat.ts`, `src/web/chat/*.ts`, `src/clients/anthropic-client.ts`, `src/mcp/tool-schemas.ts`, `src/mcp/tool-executor.ts`)
 
 **Purpose**: Lets website visitors ask grant questions in plain English without an MCP client, via `POST /api/chat`
 
-**How it works**:
-- `src/mcp/tool-schemas.ts` exports the 4 tool schemas (name/description/input schema) shared with the MCP server
-- `src/mcp/tool-executor.ts` exports `executeTool(name, args)` — validates args with the same Zod schemas as the web/MCP routes and dispatches to the matching function in `src/tools/*.ts`
-- `chat.ts` runs a bounded agentic loop (max 5 iterations) against the Anthropic Messages API: send the conversation + tool schemas, execute any `tool_use` blocks via `executeTool()`, feed results back, repeat until Claude replies with text
+**How it works** — a 3-stage multi-agent pipeline, orchestrated by `chat.ts`:
+- **Classify** (`src/web/chat/classifier-agent.ts`): one Claude call, forced to pick one of `search | eligibility | deadlines | details | general` via a dedicated `classify_intent` tool
+- **Retrieve** (`src/web/chat/retrieval-agent.ts`): a bounded agentic loop (max 5 iterations) against the Anthropic Messages API, scoped to only the tools relevant to the classified intent (`INTENT_TOOLS` map in `src/web/chat/types.ts`) — send the conversation + scoped tool schemas, execute any `tool_use` blocks via `executeTool()`, feed results back, repeat until Claude replies with a factual summary instead of a final answer
+- **Draft** (`src/web/chat/drafting-agent.ts`): one Claude call with no tool access, composes the final reply from the facts the retrieval stage gathered
+- `src/mcp/tool-schemas.ts` exports the 4 tool schemas (name/description/input schema) shared with the MCP server; `src/mcp/tool-executor.ts` exports `executeTool(name, args)` — validates args with the same Zod schemas as the web/MCP routes and dispatches to the matching function in `src/tools/*.ts`
 - The Anthropic API key never reaches the browser — all calls happen server-side
 
 **Guardrails**:
 - `ANTHROPIC_API_KEY` is optional at startup (unlike `SAM_API_KEY`) — if unset, every other page keeps working and only `/api/chat` returns a 503
 - A dedicated rate limiter (`CHAT_RATE_LIMIT_REQUESTS`/`CHAT_RATE_LIMIT_WINDOW_MS`, default 10 req/min per IP) protects against runaway Anthropic spend, separate from the SAM.gov rate limit
 
-**See also**: [MCP_REQUEST_FLOW.md](./MCP_REQUEST_FLOW.md) for a step-by-step trace, and [plan_1.md](./plan_1.md) for the original design.
+**See also**: [CHAT_ROUTE.md](./CHAT_ROUTE.md) for the full pipeline writeup, [MULTI_AGENT_CHAT_PLAN.md](./MULTI_AGENT_CHAT_PLAN.md) for why it's split into three stages, [MCP_REQUEST_FLOW.md](./MCP_REQUEST_FLOW.md) for a step-by-step trace, and [plan_1.md](./plan_1.md) for the original single-loop design.
 
 ### 5. API Clients (`src/clients/*.ts`)
 
@@ -243,13 +250,19 @@ Browser (chat.html)
   → public/js/chat.js
   → fetch POST /api/chat with full message history
   → Express route (src/web/routes/chat.ts)
-  → Anthropic Messages API decides to call search_dot_grants
-  → executeTool() (src/mcp/tool-executor.ts)
-  → searchDOTGrants() (src/tools/search-grants.ts)
-  → Same logic as web interface and MCP server
-  → Tool result fed back to Anthropic API
-  → Claude synthesizes a natural-language reply
-  → Return { reply } JSON to browser
+  → classifyIntent() (src/web/chat/classifier-agent.ts)
+     → one Claude call, forced tool choice → e.g. "search"
+  → runRetrieval(intent) (src/web/chat/retrieval-agent.ts)
+     → Claude call with only the tools "search" allows
+     → Claude decides to call search_dot_grants
+     → executeTool() (src/mcp/tool-executor.ts)
+     → searchDOTGrants() (src/tools/search-grants.ts)
+     → Same logic as web interface and MCP server
+     → Tool result fed back to Anthropic API, repeat until Claude
+       replies with a factual summary (not a final answer)
+  → draftReply() (src/web/chat/drafting-agent.ts)
+     → one Claude call, no tools, writes the final reply from those facts
+  → Return { reply, toolCalls } JSON to browser
 ```
 
 ## Configuration
