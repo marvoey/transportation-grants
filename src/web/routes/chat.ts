@@ -58,6 +58,7 @@ router.post(
     }));
 
     let reply = '';
+    const toolCalls: Array<{ name: string; input: unknown }> = [];
 
     for (let i = 0; i < MAX_TOOL_ITERATIONS; i++) {
       const response = await anthropic.messages.create({
@@ -83,6 +84,7 @@ router.post(
         if (block.type !== 'tool_use') continue;
 
         logger.info(`Chat tool call: ${block.name}`, block.input);
+        toolCalls.push({ name: block.name, input: block.input });
 
         let resultContent: string;
         try {
@@ -106,7 +108,7 @@ router.post(
       reply = "I wasn't able to finish answering that — please try rephrasing your question.";
     }
 
-    res.json(successResponse({ reply }));
+    res.json(successResponse({ reply, toolCalls }));
   })
 );
 

@@ -250,6 +250,30 @@ button:disabled {
   font-size: 0.9em;
 }
 
+.chat-tool-calls {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(0, 61, 122, 0.15);
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.chat-tool-call {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+.chat-tool-call + .chat-tool-call {
+  margin-top: 0.25rem;
+}
+
+.chat-tool-call code {
+  background: rgba(0, 61, 122, 0.08);
+  color: #003d7a;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+
 .chat-message.assistant a {
   color: #003d7a;
   text-decoration: underline;

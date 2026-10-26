@@ -21,7 +21,8 @@ document.getElementById('chatForm').addEventListener('submit', async (e) => {
     removePendingMessage();
 
     const reply = response.data.reply;
-    appendMessage('assistant', reply);
+    const toolCalls = response.data.toolCalls || [];
+    appendMessage('assistant', reply, false, toolCalls);
     chatHistory.push({ role: 'assistant', content: reply });
   } catch (error) {
     removePendingMessage();
@@ -32,7 +33,7 @@ document.getElementById('chatForm').addEventListener('submit', async (e) => {
   }
 });
 
-function appendMessage(role, text, pending = false) {
+function appendMessage(role, text, pending = false, toolCalls = []) {
   const container = document.getElementById('chatMessages');
   const div = document.createElement('div');
 
@@ -56,6 +57,19 @@ function appendMessage(role, text, pending = false) {
     // plain text — don't reinterpret the user's literal input as markdown.
     div.innerHTML = escapeHtml(text).replace(/\n/g, '<br>');
   }
+
+  if (role === 'assistant' && toolCalls.length > 0) {
+    const toolCallsDiv = document.createElement('div');
+    toolCallsDiv.className = 'chat-tool-calls';
+    toolCallsDiv.innerHTML = toolCalls
+      .map((tc) => {
+        const inputStr = escapeHtml(JSON.stringify(tc.input));
+        return `<div class="chat-tool-call">🔧 ${escapeHtml(tc.name)}(<code>${inputStr}</code>)</div>`;
+      })
+      .join('');
+    div.appendChild(toolCallsDiv);
+  }
+
   container.appendChild(div);
   container.scrollTop = container.scrollHeight;
 }
