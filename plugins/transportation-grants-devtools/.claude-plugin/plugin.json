@@ -1,0 +1,5 @@
+{
+  "name": "transportation-grants-devtools",
+  "description": "Dev workflow skills for the transportation-grants project: testing the multi-agent chat pipeline and syncing architecture docs with the implementation.",
+  "author": { "name": "Tae Oey" }
+}
