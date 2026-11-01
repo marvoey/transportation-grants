@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { getAnthropicClient } from '../../clients/anthropic-client.js';
 import { getConfig, logger } from '../../config/config.js';
 import { TOOL_SCHEMAS } from '../../mcp/tool-schemas.js';
-import { executeTool } from '../../mcp/tool-executor.js';
+import { callMcpTool } from '../../mcp/client.js';
 import { formatErrorResponse } from '../../utils/error-handler.js';
 import { Intent, INTENT_TOOLS } from './types.js';
 
@@ -75,7 +75,7 @@ export async function runRetrieval(intent: Intent, messages: any[]): Promise<Ret
 
       let resultContent: string;
       try {
-        const result = await executeTool(block.name, block.input);
+        const result = await callMcpTool(block.name, block.input);
         resultContent = JSON.stringify(result);
       } catch (error) {
         resultContent = JSON.stringify(formatErrorResponse(error));
