@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "transportation-grants-devtools": {
+      "source": {
+        "source": "directory",
+        "path": "$CLAUDE_PROJECT_DIR/plugins/transportation-grants-devtools"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "transportation-grants-devtools@transportation-grants-devtools": true
+  }
+}

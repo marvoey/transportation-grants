@@ -1,0 +1,11 @@
+{
+  "name": "transportation-grants-devtools",
+  "description": "Dev workflow skills for the transportation-grants project.",
+  "owner": { "name": "Tae Oey" },
+  "plugins": [
+    {
+      "name": "transportation-grants-devtools",
+      "source": "."
+    }
+  ]
+}
