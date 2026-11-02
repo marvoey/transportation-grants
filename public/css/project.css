@@ -1,0 +1,189 @@
+/* Project discovery workspace. Every rule is scoped under body.pw or a .pw-* class
+   so nothing here can change the other pages. */
+
+body.pw {
+  --pw-focus: #0b57d0;
+  --pw-border: #cfd4da;
+  --pw-muted: #4b5563;
+}
+
+/* Author display rules below must not override the hidden attribute. */
+.pw [hidden] { display: none !important; }
+
+.pw :focus-visible {
+  outline: 3px solid var(--pw-focus);
+  outline-offset: 2px;
+}
+
+.pw-main { padding-top: 0; }
+
+.pw-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.pw-toolbar-group { flex: 1 1 18rem; max-width: 32rem; }
+.pw-toolbar-group label { margin-bottom: 0.25rem; }
+
+.pw-notice {
+  background: #eef3fb;
+  border-left: 4px solid #003d7a;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #1f2937;
+}
+
+.pw-banner {
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  background: #fdecea;
+  color: #5f1d1d;
+  border: 1px solid #e8a8a8;
+}
+.pw-banner[data-kind="info"] { background: #eef3fb; color: #1f2937; border-color: #b6c8e6; }
+.pw-banner[data-kind="warn"] { background: #fff4d6; color: #5b4300; border-color: #e6cd84; }
+.pw-banner .pw-banner-actions { margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.pw-empty { text-align: center; }
+.pw-empty p { margin: 0.5rem 0 1rem; }
+
+.pw-titlebar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.pw-titlebar h2 { margin: 0; font-size: 1.4rem; overflow-wrap: anywhere; }
+.pw-save-status { color: var(--pw-muted); font-size: 0.9rem; }
+.pw-save-status[data-state="error"] { color: #8a1c1c; font-weight: 600; }
+
+.pw .pw-secondary { background: #fff; color: #003d7a; border: 1px solid #003d7a; }
+.pw .pw-secondary:hover { background: #eef3fb; }
+.pw .pw-danger { background: #fff; color: #8a1c1c; border: 1px solid #8a1c1c; }
+.pw .pw-danger:hover { background: #fdecea; }
+.pw button:disabled { background: #e5e7eb; color: #6b7280; border-color: #d1d5db; }
+
+/* Tabs: only used on small screens */
+.pw-tabs { display: none; gap: 0.25rem; margin-bottom: 0.75rem; }
+.pw-tabs [role="tab"] {
+  flex: 1;
+  background: #fff;
+  color: #003d7a;
+  border: 1px solid #003d7a;
+  border-radius: 4px 4px 0 0;
+}
+.pw-tabs [role="tab"][aria-selected="true"] { background: #003d7a; color: #fff; }
+.pw-pending-badge {
+  display: inline-block;
+  min-width: 1.4em;
+  padding: 0 0.4em;
+  border-radius: 999px;
+  background: #b45309;
+  color: #fff;
+  font-size: 0.8rem;
+}
+
+.pw-panes { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 1.25rem; align-items: start; }
+.pw-pane { margin-bottom: 0; min-width: 0; }
+.pw-pane h3 { margin-bottom: 0.75rem; }
+
+@media (max-width: 899px) {
+  .pw-tabs { display: flex; }
+  .pw-panes { grid-template-columns: minmax(0, 1fr); }
+  .pw-panes[data-tab="guide"] #profilePane,
+  .pw-panes[data-tab="profile"] #guidePane { display: none; }
+}
+
+/* Guide */
+.pw-step { font-weight: 600; margin-bottom: 0.75rem; }
+.pw-conversation {
+  max-height: 22rem;
+  overflow-y: auto;
+  border: 1px solid var(--pw-border);
+  border-radius: 4px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  background: #fafafa;
+}
+.pw-conversation:empty::before { content: 'No messages yet. Describe your project below to begin.'; color: var(--pw-muted); }
+.pw-msg { margin-bottom: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 6px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.pw-msg[data-role="user"] { background: #e3edf9; margin-left: 1.5rem; }
+.pw-msg[data-role="assistant"] { background: #fff; border: 1px solid var(--pw-border); margin-right: 1.5rem; }
+.pw-msg[data-state="failed"] { border: 1px dashed #8a1c1c; }
+.pw-msg-meta { display: block; font-size: 0.8rem; color: var(--pw-muted); margin-bottom: 0.15rem; }
+.pw-questions { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.75rem; }
+.pw-questions button { text-align: left; width: 100%; background: #fff; color: #003d7a; border: 1px solid #9db4d6; }
+.pw-inline-note { background: #fff4d6; border: 1px solid #e6cd84; border-radius: 4px; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; }
+.pw-reply textarea { width: 100%; padding: 0.6rem; border: 1px solid #aaa; border-radius: 4px; font: inherit; resize: vertical; }
+.pw-reply-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+
+/* Profile */
+.pw-completeness { margin-bottom: 1rem; padding: 0.75rem; border: 1px solid var(--pw-border); border-radius: 4px; background: #fafafa; }
+.pw-completeness progress { width: 100%; height: 0.75rem; }
+.pw-completeness ul { margin: 0.5rem 0 0 1.25rem; }
+.pw-completeness .pw-warnings { color: var(--pw-muted); font-size: 0.9rem; }
+.pw-section-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.pw-section-nav a { color: #003d7a; text-decoration: underline; font-size: 0.9rem; }
+.pw-section { border: 0; padding: 0; margin: 0 0 1.5rem; min-width: 0; }
+.pw-section > legend { font-size: 1.1rem; font-weight: 700; padding: 0; margin-bottom: 0.5rem; }
+.pw-field { margin-bottom: 1rem; }
+.pw-field label { margin-bottom: 0.25rem; }
+.pw-field input[type="text"], .pw-field select, .pw-field textarea, .pw-field input[type="date"] {
+  width: 100%; padding: 0.55rem; border: 1px solid #aaa; border-radius: 4px; font: inherit;
+}
+.pw-field [aria-invalid="true"] { border-color: #8a1c1c; background: #fff8f8; }
+.pw-field-error { color: #8a1c1c; font-size: 0.875rem; margin-top: 0.25rem; }
+.pw-hint { color: var(--pw-muted); font-size: 0.85rem; }
+.pw-unknown { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 400; font-size: 0.85rem; margin: 0.25rem 0 0; }
+.pw-unknown input { width: auto; }
+.pw-checks { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; }
+.pw-checks label { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 400; margin: 0; }
+.pw-items { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.5rem; }
+.pw-item { border: 1px solid var(--pw-border); border-radius: 4px; padding: 0.6rem; background: #fcfcfc; }
+.pw-item-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 0.5rem; }
+.pw-item-actions { margin-top: 0.4rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.pw .pw-small { padding: 0.35rem 0.75rem; font-size: 0.9rem; }
+
+/* Suggestions (review before apply) */
+.pw-suggestions:empty { display: none; }
+.pw-batch { border: 2px solid #b45309; border-radius: 6px; padding: 0.75rem; margin-bottom: 1rem; background: #fffaf0; }
+.pw-batch h4 { margin-bottom: 0.5rem; }
+.pw-change { border-top: 1px solid #e6d3b3; padding: 0.5rem 0; }
+.pw-change:first-of-type { border-top: 0; }
+.pw-change label { display: flex; gap: 0.5rem; align-items: flex-start; font-weight: 600; }
+.pw-change label input { margin-top: 0.3rem; }
+.pw-change dl { margin: 0.25rem 0 0 1.6rem; font-size: 0.9rem; }
+.pw-change dt { font-weight: 600; display: inline; }
+.pw-change dd { display: inline; margin: 0; overflow-wrap: anywhere; }
+.pw-change .pw-overwrite { color: #7c2d12; font-weight: 600; }
+.pw-change[data-disposition="conflict"] { opacity: 0.8; }
+.pw-batch-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+
+.pw-footer {
+  position: sticky;
+  bottom: 0;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border: 1px solid var(--pw-border);
+  border-radius: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.pw-footer-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+dialog { border: 1px solid #888; border-radius: 6px; padding: 1.25rem; max-width: min(34rem, 92vw); width: 100%; }
+dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
+dialog h2 { font-size: 1.2rem; margin-bottom: 0.75rem; }
+dialog input[type="text"] { width: 100%; padding: 0.6rem; border: 1px solid #aaa; border-radius: 4px; }
+dialog ul { margin: 0.5rem 0 0.5rem 1.25rem; }
+.pw-dialog-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem; }

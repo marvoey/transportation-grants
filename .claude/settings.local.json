@@ -5,5 +5,8 @@
       "WebFetch(domain:catalog.data.gov)",
       "WebFetch(domain:www.grants.gov)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "webmcp"
+  ]
 }

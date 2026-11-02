@@ -24,7 +24,9 @@ POST /api/chat
 1. **Request validation** ([chat.ts](../src/web/routes/chat.ts)) — validates
    the incoming body against `ChatRequestSchema` and checks that an
    Anthropic API key is configured, erroring out early if either fails.
-   Unchanged from before.
+   The body may also carry an optional `projectId` (a UUID); see
+   [Project context](#project-context-optional) below. Without it, nothing
+   about the pipeline changes.
 
 2. **Classify** — [classifier-agent.ts](../src/web/chat/classifier-agent.ts)
    makes one Claude call with a forced `tool_choice` on a local
@@ -60,9 +62,45 @@ POST /api/chat
 
 5. **Response** ([chat.ts](../src/web/routes/chat.ts)) — if drafting
    somehow returns no text, falls back to a generic "couldn't finish"
-   message. Otherwise returns `{ reply, toolCalls }` as JSON — the same
-   response shape as before this change, so
-   [public/js/chat.js](../public/js/chat.js) needed no updates.
+   message. Otherwise returns `{ reply, toolCalls }` as JSON. When a
+   project was used the response also carries
+   `context: { projectId, revision }`.
+
+## Project context (optional)
+
+`POST /api/chat` accepts `{ messages, projectId? }`. When `projectId` is set
+(and `PROJECT_DISCOVERY_ENABLED=true`), the route:
+
+1. requires a same-origin JSON request (`Origin` header + `Content-Type:
+   application/json`, else `403 ORIGIN_REJECTED`), because the request now
+   carries a session cookie;
+2. resolves ownership **only** from the session cookie and loads the saved
+   profile (`ProjectService.getProject`). Missing, deleted, foreign, no
+   session and feature-off are one indistinguishable
+   `404 PROJECT_NOT_FOUND`; the model is never called in that case;
+3. builds a bounded, delimited, markup-escaped context with
+   [project-context.ts](../src/projects/project-context.ts) (default cap
+   2,000 characters, `PROJECT_CONTEXT_MAX_CHARS`): a text block (facts,
+   unknowns and unconfirmed assumptions listed separately) plus a small
+   structured subset (`applicantType`, `state`, `modes`).
+
+Where it enters the pipeline:
+
+| Stage | Receives | Notes |
+| --- | --- | --- |
+| Classify | nothing | Routing uses the conversation only, so profile text cannot influence which tools are enabled |
+| Retrieve | structured subset, in the system prompt | Default values for tool arguments only. `INTENT_TOOLS` is unchanged: the profile never adds, removes or authorizes a tool. If the applicant type is unknown the model is told not to guess |
+| Draft | text block, appended to the system prompt after the facts | Labeled applicant-provided and untrusted; one extra rule says to use it only to tailor and prioritize, never as a source of grant names, amounts, deadlines or eligibility, and to ask for the applicant type if it is missing |
+
+Chat only reads the profile; it never changes it. The page
+([chat.js](../public/js/chat.js)) shows the project name, readiness and missing
+context with a link back to the workspace, resets the conversation when the
+selected project changes, and shows "Project updated — this conversation now
+uses revision N" when a later response reports a different revision (the
+server loads the latest profile on every request, so there is no polling).
+A project that cannot be loaded blocks sending until the user explicitly
+chooses "Continue without a project". See
+[PROJECT_DISCOVERY.md](./PROJECT_DISCOVERY.md).
 
 ## Notable design points
 
@@ -82,4 +120,8 @@ POST /api/chat
   formatted error content rather than crashing the request.
 - Classification and drafting are both single, non-looping calls, so the
   worst case per request is still bounded (1 classify call + up to 5
-  retrieval iterations + 1 draft call).
+  retrieval iterations + 1 draft call). Project context adds no calls.
+- [chat.characterization.test.ts](../src/web/routes/chat.characterization.test.ts)
+  pins the no-project behavior (envelope, stage order, per-intent tool
+  scoping, how facts reach the drafter); it is kept unchanged alongside the
+  project-aware tests in `chat.project.test.ts`.

@@ -77,6 +77,16 @@ export function errorHandler(
     return;
   }
 
+  // Malformed or oversized JSON bodies rejected by express.json()
+  if (err.type === 'entity.parse.failed') {
+    res.status(400).json(errorResponse('Request body is not valid JSON.', 'VALIDATION_ERROR', false));
+    return;
+  }
+  if (err.type === 'entity.too.large') {
+    res.status(413).json(errorResponse('Request body is too large.', 'VALIDATION_ERROR', false));
+    return;
+  }
+
   // Handle generic errors
   res.status(500).json(
     errorResponse(
@@ -98,7 +108,28 @@ function getStatusCode(errorCode: string): number {
     case 'MISSING_CONFIG':
       return 503; // Service unavailable
     case 'NOT_FOUND':
+    case 'PROJECT_NOT_FOUND':
       return 404;
+    case 'SESSION_REQUIRED':
+      return 401;
+    case 'ORIGIN_REJECTED':
+      return 403;
+    case 'REVISION_CONFLICT':
+    case 'IDEMPOTENCY_CONFLICT':
+    case 'DISCOVERY_BUSY':
+    case 'SUGGESTION_STALE':
+      return 409;
+    case 'INVALID_TRANSITION':
+    case 'INVALID_PROFILE':
+    case 'PROJECT_ARCHIVED':
+    case 'LIMIT_EXCEEDED':
+      return 422;
+    case 'AGENT_INVALID_OUTPUT':
+      return 502;
+    case 'AI_UNAVAILABLE':
+      return 503;
+    case 'AGENT_TIMEOUT':
+      return 504;
     case 'MISSING_PARAMETER':
     case 'VALIDATION_ERROR':
       return 400;

@@ -113,6 +113,22 @@ services:
 docker-compose up -d
 ```
 
+## Project discovery workspace (optional)
+
+The project workspace (`PROJECT_DISCOVERY_ENABLED=true`) stores projects in one JSON file
+(`PROJECT_DB_PATH`, default `.data/projects.json`). This changes what is safe above:
+
+- **Run exactly one web instance.** The Option 2 PM2 example with `instances: 2` and the
+  "Horizontal Scaling" section must not be used with this feature on: each instance would keep
+  its own copy of the file and overwrite the other's writes.
+- **The data is ephemeral.** It lives only as long as the file. For Docker, mount a volume for
+  the directory (for example `- ./data-projects:/app/.data`); on Heroku, Cloud Run or any
+  platform with an ephemeral filesystem, projects disappear on every restart or deploy.
+- Back up by copying the file; roll back by setting `PROJECT_DISCOVERY_ENABLED=false`
+  (the file is left alone).
+
+All settings, limits and rollout steps: [PROJECT_DISCOVERY.md](./PROJECT_DISCOVERY.md).
+
 ## Configuration
 
 ### Environment Variables
@@ -149,6 +165,12 @@ ANTHROPIC_MODEL=claude-sonnet-5
 ANTHROPIC_MAX_TOKENS=1024
 CHAT_RATE_LIMIT_REQUESTS=10      # per IP, protects against runaway API spend
 CHAT_RATE_LIMIT_WINDOW_MS=60000
+
+# Project discovery workspace (optional, off by default; single instance only —
+# see "Project discovery workspace" above and PROJECT_DISCOVERY.md)
+PROJECT_DISCOVERY_ENABLED=false
+PROJECT_DB_PATH=/var/lib/webmcp/projects.json
+PROJECT_ALLOWED_ORIGINS=https://yourdomain.com
 ```
 
 **Development Settings**:

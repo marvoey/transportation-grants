@@ -90,6 +90,8 @@ npm start
 - `GET /api/eligibility/check` - Eligibility API
 - `GET /api/deadlines` - Deadlines API
 - `POST /api/chat` - Chat API (rate-limited separately, see component 4)
+- `GET /api/features` - Which optional features are enabled (used to show the Projects nav link)
+- `GET /project.html`, `/api/projects/*` - Project discovery workspace (only when `PROJECT_DISCOVERY_ENABLED=true`, see component 4b)
 - `GET /api/health` - Health check
 
 **Usage**:
@@ -124,12 +126,24 @@ npm run start:web
 - **Draft** (`src/web/chat/drafting-agent.ts`): one Claude call with no tool access, composes the final reply from the facts the retrieval stage gathered
 - `src/mcp/tool-schemas.ts` exports the 4 tool schemas (name/description/input schema) shared with the MCP server; `src/mcp/tool-executor.ts` exports `executeTool(name, args)` — validates args with the same Zod schemas as the web/MCP routes and dispatches to the matching function in `src/tools/*.ts`
 - The Anthropic API key never reaches the browser — all calls happen server-side
+- An optional `projectId` adds a bounded, read-only project profile to the retrieve and draft stages (never the classifier, and it cannot change which tools run) — see [CHAT_ROUTE.md](./CHAT_ROUTE.md#project-context-optional)
 
 **Guardrails**:
 - `ANTHROPIC_API_KEY` is optional at startup (unlike `SAM_API_KEY`) — if unset, every other page keeps working and only `/api/chat` returns a 503
 - A dedicated rate limiter (`CHAT_RATE_LIMIT_REQUESTS`/`CHAT_RATE_LIMIT_WINDOW_MS`, default 10 req/min per IP) protects against runaway Anthropic spend, separate from the SAM.gov rate limit
 
 **See also**: [CHAT_ROUTE.md](./CHAT_ROUTE.md) for the full pipeline writeup, [MULTI_AGENT_CHAT_PLAN.md](./MULTI_AGENT_CHAT_PLAN.md) for why it's split into three stages, [MCP_REQUEST_FLOW.md](./MCP_REQUEST_FLOW.md) for a step-by-step trace, and [plan_1.md](./plan_1.md) for the original single-loop design.
+
+### 4b. Project Discovery Workspace (`src/projects/*`, `src/web/discovery/*`, `src/web/routes/projects.ts`, `public/project.html`)
+
+**Purpose**: An AI discovery guide helps an applicant turn a rough idea into a structured, editable, saved project profile; grant chat then uses that profile. Off by default (`PROJECT_DISCOVERY_ENABLED`).
+
+- **Identity**: server-issued anonymous session (HttpOnly cookie → server-side owner id). Every operation derives ownership from it.
+- **Store**: `ProjectStore` interface with a `JsonFileProjectStore` (one JSON file, atomic writes, single instance, ephemeral by design).
+- **Service**: `ProjectService` — revisions (`expectedRevision`), deterministic readiness, idempotency, discovery turns, reviewable suggestions.
+- **Agent**: `src/web/discovery/discovery-agent.ts` — one forced `respond` tool call, output validated against the field-path allowlist; it can only *propose* changes.
+
+Full details, configuration and limits: [PROJECT_DISCOVERY.md](./PROJECT_DISCOVERY.md).
 
 ### 5. API Clients (`src/clients/*.ts`)
 
@@ -198,7 +212,8 @@ DATA_SOURCE=local
 - `eligibility.html` - Eligibility checker
 - `deadlines.html` - Timeline visualization
 - `details.html` - Detailed grant view
-- `chat.html` - Natural-language chat box (talks to `POST /api/chat`)
+- `chat.html` - Natural-language chat box (talks to `POST /api/chat`; optional project context)
+- `project.html` - Project discovery workspace (only served when enabled)
 
 **JavaScript**:
 - `api.js` - Centralized API client
@@ -207,10 +222,13 @@ DATA_SOURCE=local
 - `eligibility.js` - Eligibility page logic
 - `deadlines.js` - Timeline rendering
 - `details.js` - Details page rendering
-- `chat.js` - Chat page logic (maintains client-side message history)
+- `chat.js` - Chat page logic (maintains client-side message history; project context banner and selector)
+- `project.js` - Project workspace (profile editor, discovery guide, suggestion review)
+- `nav.js` - Adds the Projects nav link when the feature is enabled
 
 **CSS**:
 - `style.css` - Complete styling, responsive design
+- `project.css` - Workspace styling, scoped to `body.pw` / `.pw-*`
 
 ## Data Flow
 
@@ -248,21 +266,23 @@ Claude Code
 Browser (chat.html)
   → form submit
   → public/js/chat.js
-  → fetch POST /api/chat with full message history
+  → fetch POST /api/chat with full message history (+ optional projectId)
   → Express route (src/web/routes/chat.ts)
-  → classifyIntent() (src/web/chat/classifier-agent.ts)
+     → if projectId: same-origin check, session → owner, load saved profile,
+       build bounded context (src/projects/project-context.ts)
+  → classifyIntent() (src/web/chat/classifier-agent.ts)  [never sees the profile]
      → one Claude call, forced tool choice → e.g. "search"
-  → runRetrieval(intent) (src/web/chat/retrieval-agent.ts)
-     → Claude call with only the tools "search" allows
+  → runRetrieval(intent, messages, project?.structured) (src/web/chat/retrieval-agent.ts)
+     → Claude call with only the tools "search" allows (profile: defaults only)
      → Claude decides to call search_dot_grants
      → executeTool() (src/mcp/tool-executor.ts)
      → searchDOTGrants() (src/tools/search-grants.ts)
      → Same logic as web interface and MCP server
      → Tool result fed back to Anthropic API, repeat until Claude
        replies with a factual summary (not a final answer)
-  → draftReply() (src/web/chat/drafting-agent.ts)
+  → draftReply(messages, facts, project?.text) (src/web/chat/drafting-agent.ts)
      → one Claude call, no tools, writes the final reply from those facts
-  → Return { reply, toolCalls } JSON to browser
+  → Return { reply, toolCalls[, context] } JSON to browser
 ```
 
 ## Configuration
@@ -284,6 +304,7 @@ Browser (chat.html)
 - `ANTHROPIC_MAX_TOKENS` - Max tokens per chat response (default: 1024)
 - `ANTHROPIC_BASE_URL` - Override the Anthropic API host (default: `api.anthropic.com`); for corporate gateway/proxy setups that issue short-lived virtual keys
 - `CHAT_RATE_LIMIT_REQUESTS` / `CHAT_RATE_LIMIT_WINDOW_MS` - Rate limit on `/api/chat` (default: 10 requests/60s per IP)
+- `PROJECT_DISCOVERY_ENABLED` - Turns on the project workspace (default: off). Related settings: see [PROJECT_DISCOVERY.md](./PROJECT_DISCOVERY.md)
 
 ### Checking Your Configuration
 

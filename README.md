@@ -253,6 +253,17 @@ For issues with:
 - **SAM.gov APIs**: Visit [SAM.gov API support](https://open.gsa.gov/api/get-opportunities-public-api/)
 - **Grant programs**: Contact the DOT agency office listed in grant details
 
+## Project Discovery Workspace (optional, off by default)
+
+An AI guide helps an applicant turn a rough transportation idea into a saved, editable
+project profile at `/project.html`, which grant chat (`/chat.html?projectId=…`) can then use as
+context. Enable it with `PROJECT_DISCOVERY_ENABLED=true`.
+
+Projects are stored in a **single JSON file** (`PROJECT_DB_PATH`, default `.data/projects.json`).
+That storage is ephemeral and single-instance by design: projects are lost if the file is lost
+(redeploy, ephemeral disk) and the feature must not run on more than one instance. See
+[doc/PROJECT_DISCOVERY.md](doc/PROJECT_DISCOVERY.md) for configuration, limits, backup and rollback.
+
 ## Documentation
 
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture and how WebMCP works

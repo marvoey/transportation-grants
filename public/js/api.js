@@ -14,7 +14,12 @@ async function apiFetch(url, options = {}) {
     const data = await response.json();
 
     if (!data.success) {
-      throw new Error(data.error || 'API request failed');
+      const err = new Error(data.error || 'API request failed');
+      // Keep the machine-readable code so callers (e.g. the project workspace) can react to it.
+      err.code = data.code;
+      err.retryable = data.retryable;
+      err.status = response.status;
+      throw err;
     }
 
     return data;
@@ -91,12 +96,95 @@ async function getHealth() {
 /**
  * Ask the natural-language chat assistant a question.
  * `messages` is the full conversation history: an array of
- * { role: 'user' | 'assistant', content: string }.
+ * { role: 'user' | 'assistant', content: string }. `projectId` optionally
+ * selects a saved project whose profile is used as read-only context.
  */
-async function askChat(messages) {
+async function askChat(messages, projectId) {
+  // projectId is optional; it is added to the body only when set (never to the URL).
+  const body = projectId ? { messages, projectId } : { messages };
   return await apiFetch(`${API_BASE}/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify(body),
   });
+}
+
+// ---------------------------------------------------------------------------
+// Project discovery workspace (see /project.html). All requests are same-origin
+// and carry the anonymous session cookie automatically.
+
+function projectJson(method, url, body) {
+  return apiFetch(url, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+}
+
+/** Client-generated idempotency key for a write. */
+function newRequestId() {
+  return crypto.randomUUID();
+}
+
+async function listProjects(params = {}) {
+  const query = new URLSearchParams();
+  if (params.status) query.append('status', params.status);
+  if (params.limit) query.append('limit', params.limit);
+  if (params.cursor) query.append('cursor', params.cursor);
+  return await apiFetch(`${API_BASE}/projects?${query}`);
+}
+
+async function getProject(id) {
+  return await apiFetch(`${API_BASE}/projects/${encodeURIComponent(id)}`);
+}
+
+async function createProject(name, requestId = newRequestId()) {
+  return await projectJson('POST', `${API_BASE}/projects`, { name, requestId });
+}
+
+async function patchProject(id, body) {
+  return await projectJson('PATCH', `${API_BASE}/projects/${encodeURIComponent(id)}`, body);
+}
+
+async function setProjectStatus(id, body) {
+  return await projectJson('POST', `${API_BASE}/projects/${encodeURIComponent(id)}/status`, body);
+}
+
+async function deleteProject(id, expectedRevision, requestId = newRequestId()) {
+  const query = new URLSearchParams({ expectedRevision, requestId });
+  return await projectJson('DELETE', `${API_BASE}/projects/${encodeURIComponent(id)}?${query}`);
+}
+
+// Discovery guide (conversation and reviewable suggestions)
+
+async function listDiscoveryMessages(id, cursor) {
+  const query = new URLSearchParams({ limit: 100 });
+  if (cursor) query.append('cursor', cursor);
+  return await apiFetch(`${API_BASE}/projects/${encodeURIComponent(id)}/discovery/messages?${query}`);
+}
+
+async function listDiscoverySuggestions(id, state) {
+  const query = new URLSearchParams();
+  if (state) query.append('state', state);
+  return await apiFetch(`${API_BASE}/projects/${encodeURIComponent(id)}/discovery/suggestions?${query}`);
+}
+
+async function sendDiscoveryTurn(id, body) {
+  return await projectJson('POST', `${API_BASE}/projects/${encodeURIComponent(id)}/discovery`, body);
+}
+
+async function applyDiscoverySuggestion(id, suggestionId, body) {
+  return await projectJson(
+    'POST',
+    `${API_BASE}/projects/${encodeURIComponent(id)}/discovery/suggestions/${encodeURIComponent(suggestionId)}/apply`,
+    body
+  );
+}
+
+async function dismissDiscoverySuggestion(id, suggestionId, body) {
+  return await projectJson(
+    'POST',
+    `${API_BASE}/projects/${encodeURIComponent(id)}/discovery/suggestions/${encodeURIComponent(suggestionId)}/dismiss`,
+    body
+  );
 }

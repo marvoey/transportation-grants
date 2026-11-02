@@ -68,6 +68,8 @@ export const ChatRequestSchema = z.object({
       content: z.string(),
     })
   ).min(1),
+  /** Optional saved project to use as read-only context. Ownership is resolved server-side. */
+  projectId: z.string().uuid().optional(),
 });
 
 export type ChatRequestParams = z.infer<typeof ChatRequestSchema>;

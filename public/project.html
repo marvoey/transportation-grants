@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Workspace - DOT Grant Search</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/project.css">
+</head>
+<body class="pw">
+  <header>
+    <div class="container">
+      <h1>DOT Grant Search</h1>
+      <nav aria-label="Main">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/search.html">Search Grants</a></li>
+          <li><a href="/eligibility.html">Check Eligibility</a></li>
+          <li><a href="/deadlines.html">Deadlines</a></li>
+          <li><a href="/chat.html">Chat</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container pw-main">
+    <div class="pw-toolbar">
+      <div class="pw-toolbar-group">
+        <label for="projectSelect">Project</label>
+        <select id="projectSelect" aria-describedby="saveStatus"></select>
+      </div>
+      <button type="button" id="newProjectBtn">New project</button>
+    </div>
+
+    <p class="pw-notice" id="storageNotice">
+      Your project conversation and profile are stored on this server and are sent to the AI provider to generate
+      suggestions. This workspace's storage is temporary: projects can disappear if the server is redeployed or your
+      browser's cookies are cleared. Deleting a project removes it permanently.
+    </p>
+
+    <div id="banner" class="pw-banner" role="alert" hidden></div>
+
+    <section id="emptyState" class="card pw-empty" hidden>
+      <h2>Start a project</h2>
+      <p>Describe a transportation idea and build a structured project profile you can bring into grant search.</p>
+      <button type="button" id="emptyNewBtn">Create your first project</button>
+    </section>
+
+    <div id="workspace" hidden>
+      <div class="pw-titlebar">
+        <h2 id="projectTitle" tabindex="-1"></h2>
+        <span id="statusBadge" class="badge badge-secondary"></span>
+        <span id="saveStatus" class="pw-save-status" role="status" aria-live="polite"></span>
+      </div>
+
+      <div class="pw-tabs" role="tablist" aria-label="Workspace views">
+        <button type="button" role="tab" id="tabGuide" aria-controls="guidePane" aria-selected="true">Guide</button>
+        <button type="button" role="tab" id="tabProfile" aria-controls="profilePane" aria-selected="false" tabindex="-1">
+          Profile <span id="pendingBadge" class="pw-pending-badge" hidden></span>
+        </button>
+      </div>
+
+      <div class="pw-panes" id="panes" data-tab="guide">
+        <section id="guidePane" class="card pw-pane" role="tabpanel" aria-labelledby="tabGuide">
+          <h3>Discovery guide</h3>
+          <p id="guideStep" class="pw-step"></p>
+          <div id="conversation" class="pw-conversation" role="log" aria-live="polite" aria-label="Discovery conversation"></div>
+          <div id="guideNotice" class="pw-inline-note" hidden></div>
+          <ul id="questions" class="pw-questions" aria-label="Suggested questions"></ul>
+          <form id="replyForm" class="pw-reply" autocomplete="off">
+            <label for="replyInput">Your reply</label>
+            <textarea id="replyInput" rows="3" maxlength="4000" placeholder="Describe your project, or answer the question above. You can say “I don't know”."></textarea>
+            <div class="pw-reply-actions">
+              <button type="submit" id="replySend">Send</button>
+              <button type="button" id="replyRetry" class="pw-secondary" hidden>Retry last message</button>
+            </div>
+          </form>
+        </section>
+
+        <section id="profilePane" class="card pw-pane" role="tabpanel" aria-labelledby="tabProfile">
+          <h3>Project profile</h3>
+          <div id="completeness" class="pw-completeness"></div>
+          <div id="suggestions" class="pw-suggestions" aria-live="polite"></div>
+          <nav id="sectionNav" class="pw-section-nav" aria-label="Profile sections"></nav>
+          <form id="profileForm" novalidate></form>
+        </section>
+      </div>
+
+      <div class="pw-footer">
+        <span id="footerStatus" class="pw-save-status" aria-hidden="true"></span>
+        <div class="pw-footer-actions">
+          <button type="button" id="saveBtn">Save changes</button>
+          <button type="button" id="discardBtn" class="pw-secondary">Discard changes</button>
+          <button type="button" id="reviewBtn" class="pw-secondary">Review readiness</button>
+          <button type="button" id="exploreBtn">Explore grants</button>
+          <button type="button" id="archiveBtn" class="pw-secondary">Archive</button>
+          <button type="button" id="deleteBtn" class="pw-danger">Delete project</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <dialog id="newDialog" aria-labelledby="newDialogTitle">
+    <form id="newForm" method="dialog">
+      <h2 id="newDialogTitle">New project</h2>
+      <label for="newName">Project name</label>
+      <input type="text" id="newName" maxlength="120" required autocomplete="off" placeholder="e.g. Main Street safety improvements">
+      <p id="newError" class="pw-field-error" role="alert" hidden></p>
+      <div class="pw-dialog-actions">
+        <button type="button" id="newCancel" class="pw-secondary">Cancel</button>
+        <button type="submit" id="newCreate">Create project</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="confirmDialog" aria-labelledby="confirmTitle" aria-describedby="confirmBody">
+    <form method="dialog">
+      <h2 id="confirmTitle"></h2>
+      <div id="confirmBody"></div>
+      <div class="pw-dialog-actions">
+        <button type="button" id="confirmCancel" class="pw-secondary">Cancel</button>
+        <button type="button" id="confirmOk"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/project.js"></script>
+  <script src="/js/nav.js"></script>
+</body>
+</html>

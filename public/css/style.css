@@ -351,3 +351,46 @@ button:disabled {
 .mb-2 {
   margin-bottom: 1rem;
 }
+
+/* Chat project context (only shown when the project workspace is enabled) */
+.chat-project-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.chat-project-bar[hidden],
+.chat-project-banner[hidden] {
+  display: none;
+}
+
+.chat-project-bar label {
+  margin: 0;
+}
+
+.chat-project-bar select {
+  width: auto;
+  min-width: 14rem;
+  max-width: 100%;
+}
+
+.chat-project-banner {
+  background: #eef3fb;
+  border-left: 4px solid #003d7a;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.chat-project-banner p + p {
+  margin-top: 0.4rem;
+}
+
+.chat-project-banner button,
+#chatContextError button {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.9rem;
+}
