@@ -5,7 +5,7 @@
 
 **Primary instruction to Claude Code:** **Do not start writing application code when you first read this document.** Start with **Milestone 1: Repository audit and implementation plan**. Inspect the actual repository, verify assumptions, create `docs/NOFO_MVP_PLAN.md`, and stop for review. Implement later milestones one at a time only when instructed.
 
-**Competition objective:** Demonstrate NOFO-grounded, applicant-specific analysis of an existing transportation project against an already-selected federal funding opportunity. Funding search, broad triage, and grant discovery are explicitly outside this MVP.
+**Competition objective:** Demonstrate NOFO-grounded, applicant-specific analysis of an existing transportation project against an already-selected federal funding opportunity. Milestone 2 accepts a **generic Simpler.Grants.gov opportunity UUID**, obtained from a search result or direct input, and retrieves available official documents without grant-specific code. Broad grant matching, triage, and discovery UX remain outside this MVP.
 
 ---
 
@@ -21,7 +21,7 @@ The MVP is a **NOFO-driven applicant feasibility advisor**, not a general-purpos
 
 > We have this transportation project and are considering this funding opportunity. What does the NOFO mean for us, what important information is missing, and what do we need to investigate before deciding whether to apply?
 
-The final live scenario uses a hypothetical Virginia DOT capital improvement project evaluated against actual FY2026 BUILD documents. That fiscal-year opportunity is a **historical demonstration case**, not a claim of currently open funding.
+The final live scenario uses a hypothetical Virginia DOT capital improvement project evaluated against actual FY2026 BUILD documents. **BUILD is a primary test fixture, never a hardcoded opportunity dependency.** The same acquisition pipeline must also work for a second real opportunity. FY2026 BUILD is a **historical demonstration case**, not a claim of currently open funding.
 
 ---
 
@@ -41,7 +41,7 @@ The repository's `package.json` has been verified as using **TypeScript, Node.js
 
 Do **not** introduce React, Next.js, LangChain, LangGraph, or a Python-based application framework unless the repository audit reveals a concrete and compelling reason. Avoid adding a database or Python backend initially. Preprocessed NOFO documents and extracted requirements can be persisted as local files and JSON for the competition prototype.
 
-One practical addition will be a PDF parsing library, plus limited HTML parsing and eventually XLSX support. Choose compatible dependencies only after inspecting existing code.
+Milestone 2 also needs a Simpler.Grants.gov API client and generic opportunity-document acquisition pipeline. One practical parsing addition will be a PDF library, plus limited HTML parsing and eventually XLSX support. Choose compatible dependencies only after inspecting existing code. Never commit API credentials.
 
 **Authoritative source for dependencies:** [`package.json`](https://github.com/marvoey/transportation-grants/blob/main/package.json). The actual checked-out repository takes precedence over this guide if it has changed.
 
@@ -91,9 +91,9 @@ opportunity for an existing transportation project.
 - Do not rewrite unrelated application functionality.
 
 ## MVP scope
-1. Work with one selected funding opportunity.
-2. Support a curated package of official NOFO documents.
-3. Ingest PDF and HTML content.
+1. Work with a selected funding opportunity identified by a Simpler.Grants.gov UUID; no grant-specific hardcoding.
+2. Retrieve opportunity details and available official attachments; allow manually curated supplemental sources.
+3. Ingest PDF and HTML content, and register unsupported formats without implying coverage.
 4. Extract structured, source-linked requirements.
 5. Compare requirements against user-provided project facts.
 6. Identify conflicts and missing information.
@@ -101,7 +101,7 @@ opportunity for an existing transportation project.
 8. Provide a preliminary evidence-backed assessment.
 
 ## Not in scope
-- Automated grant discovery
+- Broad grant matching or a new discovery interface (a minimal ID/search-result adapter is allowed)
 - Automated application drafting
 - Comprehensive GIS analysis
 - Benefit-cost calculations
@@ -129,7 +129,7 @@ This should prevent architectural drift during later sessions.
 
 The MVP must demonstrate a **complete but narrowly scoped** workflow:
 
-1. The applicant selects a **preloaded FY2026 BUILD funding opportunity** with a curated set of authoritative documents.
+1. The applicant selects an **already identified opportunity** using a Simpler.Grants.gov UUID (from search results or direct input). The system ingests its available official documents and allows curated supplemental sources. **FY2026 BUILD is the primary demonstration fixture, not a hardcoded dependency.**
 2. The applicant describes an existing transportation project.
 3. The system identifies **applicable** NOFO requirements and the evidence for them.
 4. The system asks targeted, consequential questions (such as intended federal request, matching funds, or benefit-cost analysis availability).
@@ -152,14 +152,14 @@ Preserve the distinction between authority levels and fiscal-year versions. A su
 
 ### Document formats
 
-- **MVP ingestion:** Digital PDF and HTML. Preserve document IDs, source URLs, section headings, page numbers where available, and original text.
-- **Limited/optional:** XLSX worksheet names and instructions only if essential to the chosen scenario.
+- **MVP ingestion:** Discover/download available attachments through the opportunity detail API; parse digital PDF and HTML. Preserve document IDs, original URLs, checksums, headings, pages (where available), and original text.
+- **Limited/optional:** Download and register XLSX/DOCX and other attachment types; parse workbook names/instructions only if essential to a chosen scenario.
 - **Explicitly out of scope:** Comprehensive spreadsheets/formula validation, GIS/shapefile processing, arbitrary web crawling, scanned-document OCR pipelines, application-form submission and full document-management workflows.
 - It is sufficient to identify that the application **requires** an Excel BCA or spatial file; the system does not need to calculate the BCA or process the spatial file.
 
 ### Core technical responsibilities
 
-**Opportunity Document Service:** Curated manifest; local document storage; page/section-aware normalized content; source identity and authority metadata.
+**Opportunity Document Service:** Simpler.Grants.gov API client; UUID-based resolver; generic attachment acquisition; curated supplemental references; local manifest/cache; page/section-aware normalized content; source identity, retrieval status and authority metadata. The service must report partial coverage rather than silently declaring a package complete.
 
 **Requirements Intelligence Service:** LLM-based extraction in bounded sections; Zod-validated requirements; applicability conditions; supporting evidence and citation validation; cached extraction output with review status.
 
@@ -216,7 +216,7 @@ Build in this order and **stop at the end of each milestone for review and a com
 | Milestone | Scope | Deliverable | Phase gate |
 |---|---|---|---|
 | 1. Audit and plan | Inspect architecture, routes, chat, AI, MCP, storage and tests | `docs/NOFO_MVP_PLAN.md`; **no application code changes** | Review and approve proposed changes |
-| 2. Document ingestion | Load selected FY2026 BUILD PDFs and HTML with source references | Opportunity manifest and normalized extracted source content | Extract text and source location accurately |
+| 2. Generic opportunity ingestion | Accept Simpler.Grants.gov UUID; fetch metadata, download available attachments, process PDF/HTML; record other formats and gaps | Reusable opportunity manifest, local cache and normalized source content | Run BUILD and a second opportunity without grant-specific code |
 | 3. Requirements extraction | AI extracts and classifies source-grounded requirements | Validated requirements JSON and evaluation fixtures | Critical requirements and citations verified against sources |
 | 4. Applicant assessment | Compare project facts with requirements and ask questions | Tested assessment service | Correctly identifies supported/conflict/unknown in scenarios |
 | 5. Chat integration | Add selected opportunity and assessment workflow to existing chat | Working end-to-end demonstration | Successful browser flow, build and tests |
@@ -257,25 +257,87 @@ Inspect the plan before approving code changes. Challenge proposals for:
 - Autonomous multi-agent orchestration for a sequential workflow.
 - New functionality unrelated to applicant-specific NOFO assessment.
 
-## Milestone 2 — Document Ingestion
+## Milestone 2 — Generic Opportunity Acquisition and Document Ingestion
+
+**This replaces the original BUILD-specific ingestion step.** The same code must accept a Simpler.Grants.gov opportunity UUID returned by a search result or supplied directly; it must not contain program-specific branches. The BUILD opportunity is used only as a test case.
 
 ```text
-Implement the document ingestion milestone from docs/NOFO_MVP_PLAN.md.
+Read NOFO_MVP_CLAUDE_CODE_IMPLEMENTATION_GUIDE.md, CLAUDE.md (if present), and docs/NOFO_MVP_PLAN.md before starting.
 
-Use FY2026 BUILD as the first opportunity. Support a curated manifest containing the official NOFO and selected supporting PDF and HTML documents.
+Implement Milestone 2 as a GENERIC Opportunity Document Acquisition and Ingestion Service based on Simpler.Grants.gov. Update docs/NOFO_MVP_PLAN.md to reflect this agreed change before implementation; do not replace the rest of the plan or add unrelated features.
 
-Implement format-specific parsing that preserves source document IDs, source URLs, section headings, page numbers where applicable, and original text.
+OBJECTIVE
+Given a Simpler.Grants.gov opportunity UUID from a search result or direct input, retrieve opportunity details and available attachments, process supported document types, and save a traceable, reusable opportunity package. No opportunity-specific code. FY2026 BUILD is a PRIMARY TEST, not a hardcoded input.
 
-Save normalized extracted content locally so documents don't need to be downloaded or parsed on every request.
+1. Verify API contract first
+- Consult current official API documentation: https://simpler.grants.gov/developers
+- Base URL: https://api.simpler.grants.gov
+- Verify the exact request/response schemas and authentication for search (POST /v1/opportunities/search) and detail (GET /v1/opportunities/{opportunity_id}), including attachment metadata and the supported download mechanism. Do not guess attachment fields, public URLs, or pagination behavior.
+- Keep API keys server-side in environment variables; do not commit credentials.
 
-Do not implement arbitrary web crawling, GIS interpretation, or spreadsheet calculations.
+2. Reusable API client and opportunity resolver
+- Reuse existing TypeScript HTTP utilities where sensible.
+- Implement getOpportunity(opportunityId: string) using a validated UUID.
+- Normalize title, official opportunity number, source UUID, agency, status/dates, description, funding metadata and document references when available.
+- Add timeouts, bounded retries/backoff, useful error responses and rate-limit handling.
+- Preserve the official opportunity number separately from the API UUID.
 
-Write tests using local fixtures. Do not invent content if a source is unavailable.
+3. Input contract and minimal selection
+- Implement ingestOpportunity(opportunityId: string) as the stable entry point.
+- Accept an ID originating from existing search results or direct UUID input. Provide a minimal test CLI or API route; a search-result adapter is optional if existing search can supply the ID cleanly.
+- Do not build a new grant-search UI, grant matching, triage, or a general discovery feature.
 
-Run the TypeScript build and relevant tests. Report changed files, parsing limitations, and any sources requiring manual review.
+4. Generic document acquisition
+- Inspect the detail response for attachments and download those available by the documented mechanism.
+- Validate file type, bytes, maximum download size, and safe filename/path. Avoid path traversal; do not log sensitive headers.
+- Treat individual download failures as per-document statuses instead of failing or claiming that the entire package was processed.
+- Do not assume every opportunity contains attachments or that the API hosts all supplemental materials.
+
+5. Format adapters
+- Process digital PDF with page-aware text extraction; process HTML preserving headings, links, and original source URLs.
+- Download/register XLSX, DOCX, ZIP, GIS and other files, but record unsupported or unparsed content honestly.
+- Implement an extensible adapter contract without introducing a generic document platform.
+- No OCR, GIS analysis, spreadsheet calculation or application writing.
+
+6. Traceable, cached package
+- Save to a structure like data/opportunities/{opportunityId}/ containing opportunity metadata, a document manifest, original files (when downloaded), extracted content, retrieval timestamps, original URLs, SHA-256 checksums, format, source authority classification and processing statuses/errors.
+- Separate Simpler.Grants.gov attachments from manually curated official agency supplemental sources. Support adding supplemental URLs/files through configuration; do not autonomously crawl sites.
+- Cache previously acquired documents; do not redownload/reparse unchanged items unnecessarily. State when coverage is partial or unknown.
+
+7. Tests and integration verification
+- Unit-test invalid UUID, unknown opportunity, zero attachments, malformed API response, download failure, unsupported format, unsafe filename, and cached repeat ingestion using local fixtures.
+- Live-test FY2026 BUILD and ONE OTHER REAL opportunity ID with different attachments, proving both use exactly the same pipeline.
+- If credentials or API availability block live testing, document the blocker. Do not claim it passed.
+- Verify document identifiers and source references resolve to actual ingested content.
+
+8. Deliverables and stop rule
+- Generic Simpler.Grants.gov client, UUID resolver, ingestOpportunity entry point, format adapters, persisted manifest/content and automated tests.
+- Update docs/NOFO_MVP_PLAN.md with actual routes, added/changed files, response shape, API/download behavior, supported formats, acquisition results for both opportunities, and limitations.
+- Run npm run build and relevant npm tests. Report exact results.
+- DO NOT implement Milestone 3 requirements extraction, project assessment, advisory logic, a new chat UI, or a database.
+- STOP after Milestone 2 for review.
 ```
 
-**Milestone 2 checkpoint:** Can the system extract a specific requirement from a BUILD source and show exactly where it came from? If not, do not proceed.
+**Milestone 2 checkpoint:** Supply two *different* real Simpler.Grants.gov UUIDs. Can the same pipeline fetch each opportunity, acquire its available attachments, preserve original locations/provenance, parse supported files, and accurately report missing or unsupported documents? If not, do not proceed. **Requirement extraction itself belongs to Milestone 3**; Milestone 2 only needs trustworthy source content and locations.
+
+### Opportunity identifier and package contracts (conceptual)
+
+```typescript
+interface OpportunitySource {
+  getOpportunity(id: string): Promise<Opportunity>;
+  getAttachments(id: string): Promise<Attachment[]>;
+}
+
+interface DocumentProcessor {
+  supports(mimeType: string, filename: string): boolean;
+  process(file: Buffer): Promise<NormalizedDocument>;
+}
+
+// Public workflow entrypoint; adapt actual return types to the repository.
+async function ingestOpportunity(opportunityId: string): Promise<OpportunityPackage>;
+```
+
+Do not equate an official funding opportunity *number* with the Simpler.Grants.gov UUID. Search results should pass the returned UUID into the ingestion boundary. The acquisition pipeline must remain independent of program identity and document type, with adapters handling the latter.
 
 ## Milestone 3 — NOFO Requirements Intelligence
 
@@ -292,7 +354,7 @@ Validate citation references against the ingested source content. Reject invente
 
 Cache extracted requirements as JSON. Support a review status for ambiguous findings.
 
-Create unit tests and a small evaluation fixture representing 15–25 manually verified requirements from the actual BUILD documents.
+Create unit tests and a small evaluation fixture representing 15–25 manually verified requirements from the actual BUILD documents. The extraction service must consume the generic Milestone 2 package and must not rely on BUILD-specific paths or IDs.
 
 Do not implement project assessment or modify the user interface in this milestone.
 ```
@@ -324,7 +386,7 @@ Do not create a separate project-profile interface or issue definitive eligibili
 ```text
 Integrate the completed NOFO assessment services into the existing chat.html experience.
 
-Allow the user to select the preloaded FY2026 BUILD opportunity, describe an existing transportation project, answer targeted follow-up questions, and view a preliminary assessment.
+Allow the user to select an already ingested opportunity by UUID (FY2026 BUILD for the main demo), describe an existing transportation project, answer targeted follow-up questions, and view a preliminary assessment.
 
 Present eligibility findings, financial and readiness gaps, supporting source references, and suggested next actions.
 
@@ -359,7 +421,7 @@ Do not tell Claude Code to silently resolve ambiguous federal requirements. It s
 
 Use **one** consistent acceptance scenario:
 
-A Virginia DOT project manager describes a **hypothetical $25 million roadway modernization project**. The app has pre-ingested the official FY2026 BUILD NOFO and selected supporting documents.
+A Virginia DOT project manager describes a **hypothetical $25 million roadway modernization project**. The app has ingested the official FY2026 BUILD NOFO and selected supporting documents through the generic Simpler.Grants.gov UUID-based pipeline (plus any explicitly curated supplemental official sources).
 
 The applicant explains that the project includes intersection redesign, pedestrian improvements, and signals; the project is at preliminary design; and federal discretionary funding is being considered.
 
@@ -379,7 +441,7 @@ If the user answers **$18 million requested, $7 million in state funds committed
 - Attach a verifiable NOFO or official guidance citation to each consequential requirement-based conclusion.
 - Clearly label the output **preliminary**, not a binding eligibility determination.
 
-This is the **entire demo**. Do not spend MVP time on grant discovery, application generation, project portfolio management, or comprehensive file-format support.
+This is the **entire applicant-facing demo**. Separately, demonstrate generic acquisition using a second opportunity UUID. Do not spend MVP time on broad grant matching, application generation, project portfolio management, or comprehensive file-format support.
 
 The source documents must be genuine. The requirement extraction must be accurate for the validated scope. The findings should change correctly when the applicant supplies new facts.
 
@@ -400,6 +462,9 @@ At minimum, ensure the implementation supports these cases:
 | Evidence location or document ID cannot be verified | Flags for review and does not invent a citation |
 | Supporting document apparently contradicts controlling NOFO | Flags conflict for human review; does not silently choose one |
 | Unsupported format or inaccessible document | Reports missing coverage; does not pretend content was processed |
+| Second valid opportunity UUID | Uses the same generic acquisition pipeline without special-case program logic |
+| Opportunity has no API attachments | Preserves metadata and states document coverage is incomplete/unknown |
+| API response invalid or rate-limited | Handles failure gracefully and records exact status without inventing data |
 
 Focus on **requirements coverage, factual accuracy, citation accuracy, reviewer corrections, and end-to-end reliability**, not only successful API calls.
 
@@ -445,14 +510,14 @@ The broader AFS value proposition is a reusable approach for interpreting comple
 The MVP succeeds when a user can:
 
 1. Open the existing chat application.
-2. Select an already-loaded real FY2026 BUILD opportunity.
+2. Select an opportunity already ingested by its Simpler.Grants.gov UUID (FY2026 BUILD for the main demonstration).
 3. Describe an existing state DOT transportation project.
 4. Receive questions derived from relevant NOFO requirements.
 5. Answer questions and see the assessment update.
 6. Inspect preliminary findings, gaps, and suggested next steps.
 7. Open or verify the authoritative evidence behind material conclusions.
 
-**The key deliverable is not a list of grants or a generic NOFO summary. It is a project-specific, evidence-backed preliminary application feasibility assessment.**
+**The key deliverable is not a list of grants or a generic NOFO summary. It is a project-specific, evidence-backed preliminary application feasibility assessment, built on a generic opportunity-ID-driven document pipeline.**
 
 ---
 
@@ -463,7 +528,7 @@ After adding this file to your repository and the root `CLAUDE.md` instructions 
 ```text
 Read NOFO_MVP_CLAUDE_CODE_IMPLEMENTATION_GUIDE.md and the repository's CLAUDE.md, if present.
 
-Our agreed Big Build MVP is a NOFO-driven application feasibility advisor, not a grant search tool. The user has already selected an opportunity and has an existing transportation project.
+Our agreed Big Build MVP is a NOFO-driven application feasibility advisor, not a grant search tool. The user has already selected an opportunity and has an existing transportation project. Milestone 2 must ingest any selected opportunity by Simpler.Grants.gov UUID; BUILD is a test, not hardcoded behavior.
 
 Begin with Milestone 1 ONLY. Inspect the repository thoroughly and create docs/NOFO_MVP_PLAN.md as specified in the guide. Verify the proposed architecture against the current code. Preserve existing functionality and do not modify application code yet.
 
@@ -479,6 +544,8 @@ At the end, summarize reuse opportunities, proposed changes, risks, open questio
 - [Existing GitHub repository](https://github.com/marvoey/transportation-grants)
 - [Repository package.json](https://github.com/marvoey/transportation-grants/blob/main/package.json)
 - [Claude Code in VS Code](https://code.claude.com/docs/en/vs-code)
+- [Simpler.Grants.gov developer documentation](https://simpler.grants.gov/developers)
+- [Simpler.Grants.gov API base URL](https://api.simpler.grants.gov)
 - [FY2026 BUILD NOFO landing page](https://www.transportation.gov/BUILDgrants/NOFO)
 
 **Documentation note:** The proposed paths and type contracts in this guide are design suggestions. Claude Code must inspect the actual repository before deciding where new modules belong. Do not treat a suggested file path as evidence that a module already exists.
