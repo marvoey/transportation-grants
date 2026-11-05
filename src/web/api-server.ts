@@ -12,6 +12,7 @@ import grantsRouter from './routes/grants.js';
 import eligibilityRouter from './routes/eligibility.js';
 import deadlinesRouter from './routes/deadlines.js';
 import chatRouter from './routes/chat.js';
+import { createNofoRouter } from './routes/nofo.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -62,6 +63,9 @@ export function createApp(): Application {
     },
   });
   app.use('/api/chat', chatRateLimiter, chatRouter);
+
+  // NOFO applicant assessment: reads locally ingested packages; has its own rate limits.
+  app.use('/api/nofo', createNofoRouter());
 
   // Health check endpoint
   app.get('/api/health', async (req: Request, res: Response) => {

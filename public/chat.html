@@ -23,23 +23,66 @@
   </header>
 
   <div class="container">
-    <div class="card">
-      <h2>Ask About DOT Grants</h2>
-      <p class="mb-2">Ask in plain English — e.g. "transit grants over $1M for cities" or a follow-up like "what about for tribal governments instead?"</p>
+    <div class="mode-switch" role="tablist" aria-label="Chat mode">
+      <button type="button" role="tab" id="modeSearchTab" class="active" aria-selected="true" aria-controls="searchPanel">Search grants</button>
+      <button type="button" role="tab" id="modeNofoTab" aria-selected="false" aria-controls="nofoPanel">Assess a project</button>
+    </div>
 
-      <div id="chatMessages" class="chat-messages"></div>
+    <div id="searchPanel" role="tabpanel" aria-labelledby="modeSearchTab">
+      <div class="card">
+        <h2>Ask About DOT Grants</h2>
+        <p class="mb-2">Ask in plain English — e.g. "transit grants over $1M for cities" or a follow-up like "what about for tribal governments instead?"</p>
 
-      <form id="chatForm" class="chat-form">
-        <div class="form-group mb-2">
-          <input type="text" id="chatInput" name="chatInput" placeholder="Ask about grants, eligibility, or deadlines..." autocomplete="off" required>
+        <div id="chatMessages" class="chat-messages"></div>
+
+        <form id="chatForm" class="chat-form">
+          <div class="form-group mb-2">
+            <input type="text" id="chatInput" name="chatInput" placeholder="Ask about grants, eligibility, or deadlines..." autocomplete="off" required>
+          </div>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="nofoPanel" role="tabpanel" aria-labelledby="modeNofoTab" hidden>
+      <div class="card">
+        <h2>Assess a Project Against a Funding Notice</h2>
+        <p class="mb-2">Choose a funding opportunity that has already been loaded, describe your transportation project in your own words, and get a preliminary read of what the notice means for you, what is still unknown, and what to investigate before applying.</p>
+        <div class="nofo-banner" role="note">
+          <strong>Preliminary only.</strong> This is not an eligibility determination and does not predict an award; confirm with the program office. Your messages are sent to the Anthropic API to read the facts you state. Nothing is saved on the server; the conversation stays in this browser tab.
         </div>
-        <button type="submit">Send</button>
-      </form>
+        <div class="form-group">
+          <label for="nofoOpportunity">Funding opportunity</label>
+          <select id="nofoOpportunity">
+            <option value="">Loading&hellip;</option>
+          </select>
+          <div id="nofoOpportunityInfo" class="nofo-info"></div>
+          <p id="nofoLoadError" class="error" role="alert" hidden></p>
+          <p id="nofoEmpty" class="nofo-warning" hidden>No funding opportunity is ready for assessment on this server yet. An operator needs to load one first (see docs/NOFO_DEMO.md).</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Describe your project</h3>
+        <div id="nofoMessages" class="chat-messages" role="log" aria-live="polite" aria-label="Conversation"></div>
+        <form id="nofoForm" class="nofo-form" hidden>
+          <label for="nofoInput" class="nofo-sr">Describe your project or answer the questions</label>
+          <textarea id="nofoInput" rows="3" maxlength="4000" placeholder="For example: We are a state DOT planning an intersection redesign in an urban area&hellip;" required></textarea>
+          <div class="nofo-form-actions">
+            <button type="submit" id="nofoSend">Send</button>
+            <button type="button" id="nofoReset" class="nofo-secondary">Start over</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="nofoResults" aria-live="polite" aria-busy="false"></div>
     </div>
   </div>
 
   <script src="/js/common.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/chat.js"></script>
+  <script src="/js/nofo-util.js"></script>
+  <script src="/js/nofo.js"></script>
 </body>
 </html>

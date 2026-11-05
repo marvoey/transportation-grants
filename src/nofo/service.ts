@@ -18,7 +18,11 @@ import { parseOpportunityId } from './schemas.js';
 import { PackageStore } from './store.js';
 
 export class AssessmentError extends Error {
-  constructor(message: string) {
+  constructor(
+    message: string,
+    /** Maps to an HTTP status in the web layer: VALIDATION_ERROR -> 400, NOT_FOUND -> 404. */
+    public readonly code: 'VALIDATION_ERROR' | 'NOT_FOUND' = 'VALIDATION_ERROR'
+  ) {
     super(message);
     this.name = 'AssessmentError';
   }
@@ -70,7 +74,7 @@ export async function assessTurn(input: unknown, deps: AssessTurnDeps = {}): Pro
 
   const requirements = await store.readRequirements(opportunityId);
   if (!requirements) {
-    throw new AssessmentError(`No extracted requirements for ${opportunityId}. Run: npm run nofo:extract -- ${opportunityId}`);
+    throw new AssessmentError(`No extracted requirements for ${opportunityId}. Run: npm run nofo:extract -- ${opportunityId}`, 'NOT_FOUND');
   }
   const opportunity = await store.readOpportunity(opportunityId).catch(() => null);
 
@@ -85,7 +89,8 @@ export async function assessTurn(input: unknown, deps: AssessTurnDeps = {}): Pro
   }
 
   let extracted: ExtractFactsResult = { facts: {}, rejected: [], warnings: [] };
-  if (llm) extracted = await extractFacts({ messages, llm });
+  // `readMessage: false` re-assesses with the facts as given (for example after the user removes a fact), without re-reading the message.
+  if (llm && parsed.data.readMessage !== false) extracted = await extractFacts({ messages, llm });
   warnings.push(...extracted.warnings);
   const facts = mergeFacts(prior, extracted.facts);
 

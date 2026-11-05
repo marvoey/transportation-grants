@@ -76,6 +76,8 @@ export const AssessInputSchema = z
     opportunityId: z.string().max(100),
     messages: z.array(ChatMessageSchema).min(1).max(40),
     facts: z.unknown().optional(),
+    /** false = re-assess the given facts without reading facts from the latest message again. */
+    readMessage: z.boolean().optional(),
   })
   .strict();
 

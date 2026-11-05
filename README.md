@@ -76,6 +76,10 @@ Or for development with auto-reload:
 npm run dev
 ```
 
+### NOFO applicant assessment (chat page, "Assess a project")
+
+Pick an already-ingested funding opportunity, describe a transportation project, and get a preliminary, source-cited read of what the notice means for you. Operator setup (`npm run nofo:ingest`, `npm run nofo:extract`), the demo script and known limitations are in [docs/NOFO_DEMO.md](docs/NOFO_DEMO.md); the design is in [docs/NOFO_MVP_PLAN.md](docs/NOFO_MVP_PLAN.md).
+
 ### MCP Tools
 
 The server exposes four MCP tools:

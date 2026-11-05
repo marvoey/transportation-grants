@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | **Rev 5** — Milestone 4 (applicant assessment and follow-up questions) implemented, unit-tested and run live on the BUILD requirements; **awaiting your review. Milestone 5 not started.** Milestones 1–3 are committed; M4 is not. Every result is **provisional**: no requirement has been human-verified, and the reference set behind M3's accuracy is still the assistant's draft. |
+| **Status** | **Rev 6** — Milestone 5 (chat integration and browser demo) implemented, tested and exercised in a real browser against the live BUILD requirements; **awaiting your review. Not committed.** Milestones 1–4 are committed. Every result is **provisional**: no requirement has been human-verified, and the reference set behind M3's accuracy is still the assistant's draft. |
 | **Written** | Rev 1 (Milestone 1 plan): 2026-11-04 · Rev 2: 2026-11-04 |
 | **Branch** | `nofo`. Rev 1 audited `397cced`. Rev 2 reviewed at `583c2e3` (updated guide, `CLAUDE.md` and Rev 1 of this plan committed). |
 | **Demo deadline** | 2026-11-13 (Fri) |
@@ -19,6 +19,7 @@
 | 3.2 | **Word (.docx) adapter added** at your request (beyond the guide's "register, parse only if essential"). Uses `mammoth` 1.13.0, which you installed, to convert to HTML and then reuses the HTML section extraction. Wildlife Crossings now reaches coverage `api_listed_processed`. 179 tests pass, none skipped. See "Rev 3.2" in the M2 implementation record. |
 | 4 | **Milestone 3 implemented.** Source-grounded requirements extraction with code-verified citations, a reference-set evaluation, and an optional multi-pass mode. Deviation from Rev 1: sampling parameters (temperature) cannot be sent to current models, so reproducibility comes from caching and the evaluation, not from temperature 0. See "M3 implementation record" in §5. |
 | 5 | **Milestone 4 implemented.** Project facts read from the conversation and verified against the applicant's own words; deterministic checks for numbers; narrow model interpretation for free-text conditions; ranked follow-up questions; a code-written advisory. Simplification versus Rev 1: the advisory is written by code, not a model (no extra model call, nothing invented). See "M4 implementation record" in §5. |
+| 6 | **Milestone 5 implemented.** An "Assess a project" mode on `chat.html` (select an ingested opportunity, describe a project, follow-up questions, findings, a source drawer, fact removal) backed by `/api/nofo/*` routes that only read the local packages. The existing chat is untouched. A real-browser run found and fixed one bug (deep-link preselection). See "M5 implementation record" in §5. |
 
 **Sections revised in Rev 2:** §1, §2.1–§2.4, §3.1–§3.4, §3.8–§3.10, new §3.11 (verified API contract), §4, §5 (M2 rewritten, M3/M5 adjusted, calendar), §6, §7, §8, §9, §10.
 
@@ -785,6 +786,31 @@ How the numbers moved while I built and tuned it (each row is a real run; the re
   - `tsc` and `test:run` green; limitations documented.
   - **Backup:** a screen recording of a passing run and a rehearsal on the actual demo machine and network.
 
+
+#### M5 implementation record (Rev 6)
+
+**What was built.** The chat page has two modes. **Search grants** is the original panel, moved into a wrapper and otherwise unchanged. **Assess a project** is new: choose an ingested opportunity, describe the project, answer follow-up questions, read the preliminary assessment, open the source behind a finding, remove a fact. `?mode=nofo&opportunity=<uuid>` deep-links into it.
+
+**API (`src/web/routes/nofo.ts`, mounted at `/api/nofo`).** Read-only over the local packages; nothing fetches from Simpler, parses a document or extracts requirements.
+
+| Route | Purpose |
+|---|---|
+| `GET /opportunities` | Ingested packages with coverage, document count and a requirements summary; `ready` means requirements exist. |
+| `GET /opportunities/:id/documents/:docId/pages/:page` and `.../sections/:section` | The stored text of one page or section, with the title, authority, file name, official URL (http/https only) and whether the original is available. |
+| `GET /opportunities/:id/documents/:docId/original` | The stored PDF only, resolved through the manifest, served as `application/pdf` with `nosniff`, a restrictive CSP, `same-origin` resource policy and a server-generated file name; bytes that are not actually a PDF are never served. |
+| `POST /assess` | One `assessTurn`. Its own rate limit (default 10/min, the chat env vars); reads have a separate, higher limit. 503 when no model key is configured. |
+
+Strict validation (UUID, document-ID pattern, numeric page, section pattern), generic error messages (no paths, stack traces or CLI commands), and no logging of message text or facts (tested). `src/nofo/sources.ts` holds the read helpers; `AssessmentError` gained a `code` so the route can return 400 or 404, and `assessTurn` gained an optional `readMessage: false` (re-assess the given facts without reading the message again), used when a fact is removed or the opportunity is switched.
+
+**Frontend (additive only; `common.js`, `chat.js` and `api.js` untouched).** `public/js/nofo-util.js` (pure helpers, unit-tested), `public/js/nofo.js` (DOM code; every string from the server or user is set with `textContent`), additive CSS, and `chat.html` markup. Facts are shown as chips with the user's own quote and a Remove button. Findings are cards with status badges (a missing deliverable is a *preparation gap*, never a *conflict*), a **Provisional** tag, the quoted passage and a source drawer (focus trap, Esc, focus returns). The drawer highlights the quote in the stored page by matching letters and digits the way the server verifies quotes, and says so if it cannot find it. Unknown requirements are collapsed and labelled "unknown is not a pass or a fail". The conversation window sent is the last 12 messages, and the assistant turn kept in it includes the questions asked, so a short answer keeps its context. After a fact is removed, earlier messages are no longer sent, so the removed statement is not read again.
+
+**Verification.**
+- **Automated:** 31 route tests (listing, page/section text, original-PDF headers and refusals, path traversal, validation, rate limiting, 503/404 messages, no logging of message text), 13 tests for the browser helpers (loaded into a VM the way a page loads them). Suite: **457 tests pass** (413 before), `npm run build` clean.
+- **Real browser:** a Chrome DevTools Protocol script (not committed; no new dependency) drove headless Chromium against the built server and the live BUILD requirements with real model calls: default mode unchanged, deep link, opportunity info, Enter-to-send, both turns of the demo scenario, facts with quotes, federal share 72%, BCA as a preparation gap, source drawer with highlighted quote, the original PDF served as a PDF, Esc and focus return, fact removal, switching to Wildlife Crossings with the same facts, no horizontal overflow at 390 px, back to search mode. 30 checks; all passed except the console-error check, whose only entry was a pre-existing missing `/favicon.ico` (404). Turns took about 24 seconds each.
+- **Bug found by the browser run, fixed:** the deep link did not preselect the opportunity because the address bar was rewritten before the link was read. The link is now read once at start-up.
+
+**Not done / limitations** (also in `docs/NOFO_DEMO.md`): not exercised in Safari or Firefox, with a screen reader, or on a real phone; the "send a search question" regression was checked structurally (the original form and panel are present and enabled) but not by sending a live search message; the screen recording and rehearsal on the demo machine are yours to do; the FAQ and contradiction scenarios still need supplemental documents; nothing can be marked `verified` from the screen; the conversation is lost on reload.
+
 ---
 
 ## 6. Testing strategy
@@ -948,3 +974,13 @@ For the mission-impact benchmark in guide §10: record actual time-to-requiremen
 - [ ] **Open:** the FAQ-clarifies-the-notice and supporting-document-contradicts-the-notice scenarios (need supplemental documents and cross-document comparison).
 - [ ] **Open:** a human verifies the M3 reference set and reviews flagged requirements; a way to mark requirements `verified`.
 - [ ] **Your review of Milestone 4**, and approval before any Milestone 5 work. Nothing from M5 has been started.
+
+**Rev 6 (Milestone 5)**
+
+- [x] Assessment services integrated into `chat.html`: select an ingested opportunity by UUID, describe a project, answer follow-up questions, see findings, gaps, source references and next steps; existing chat preserved; no framework, no separate app.
+- [x] Route tests and helper tests; **457 tests pass**; `npm run build` clean.
+- [x] Full workflow exercised in a real browser against the live BUILD requirements (see the M5 implementation record).
+- [x] Limitations documented in `docs/NOFO_DEMO.md` and the M5 record.
+- [ ] **Open:** a live search message sent in the browser (regression), other browsers, accessibility with a screen reader, the screen recording and a rehearsal on the demo machine.
+- [ ] **Open (carried over):** human verification of the M3 reference set and flagged requirements; a way to mark requirements `verified`; the FAQ and contradiction scenarios.
+- [ ] **Your review of Milestone 5.** Nothing beyond M5 has been started.

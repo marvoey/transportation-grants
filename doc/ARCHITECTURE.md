@@ -198,7 +198,7 @@ DATA_SOURCE=local
 - `eligibility.html` - Eligibility checker
 - `deadlines.html` - Timeline visualization
 - `details.html` - Detailed grant view
-- `chat.html` - Natural-language chat box (talks to `POST /api/chat`)
+- `chat.html` - Natural-language chat box (talks to `POST /api/chat`), plus an "Assess a project" mode for NOFO applicant assessment (talks to `/api/nofo/*`; see `docs/NOFO_DEMO.md`)
 
 **JavaScript**:
 - `api.js` - Centralized API client
@@ -208,6 +208,7 @@ DATA_SOURCE=local
 - `deadlines.js` - Timeline rendering
 - `details.js` - Details page rendering
 - `chat.js` - Chat page logic (maintains client-side message history)
+- `nofo.js`, `nofo-util.js` - "Assess a project" panel (conversation, facts, findings, source drawer; helpers are unit-tested)
 
 **CSS**:
 - `style.css` - Complete styling, responsive design

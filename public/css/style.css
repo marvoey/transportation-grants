@@ -351,3 +351,374 @@ button:disabled {
 .mb-2 {
   margin-bottom: 1rem;
 }
+
+/* ==========================================================================
+   Assess a project (NOFO) panel on the chat page. Additive; reuses the
+   existing tokens: navy #003d7a, .card, .badge-*, .chat-message, .error.
+   ========================================================================== */
+
+[hidden] {
+  display: none !important;
+}
+
+.mode-switch {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.mode-switch button {
+  background: white;
+  color: #003d7a;
+  border: 1px solid #003d7a;
+}
+
+.mode-switch button:hover {
+  background: #e6eef7;
+}
+
+.mode-switch button.active {
+  background: #003d7a;
+  color: white;
+}
+
+.nofo-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.nofo-banner {
+  background: #fff3cd;
+  color: #5c4a05;
+  border-left: 4px solid #d4a017;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.25rem;
+}
+
+.nofo-info {
+  margin-top: 0.5rem;
+}
+
+.nofo-meta {
+  color: #555;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.nofo-warning {
+  background: #fff8e1;
+  color: #6b4e00;
+  border-left: 4px solid #d4a017;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.nofo-label {
+  color: #003d7a;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.nofo-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font: inherit;
+  resize: vertical;
+}
+
+.nofo-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+button.nofo-secondary {
+  background: white;
+  color: #003d7a;
+  border: 1px solid #003d7a;
+}
+
+button.nofo-secondary:hover {
+  background: #e6eef7;
+}
+
+.nofo-reply-label {
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.nofo-reply-list {
+  margin: 0.25rem 0 0 1.25rem;
+}
+
+#nofoResults .card h3 {
+  margin-bottom: 0.75rem;
+}
+
+.nofo-summary h3 {
+  color: #002952;
+  font-size: 1.15rem;
+}
+
+.nofo-arith {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #f0f4f9;
+  border-radius: 4px;
+}
+
+.nofo-chips,
+.nofo-findings,
+.nofo-simple-list {
+  list-style: none;
+}
+
+.nofo-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+
+.nofo-chip {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border: 1px solid #d5dde8;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  background: #fafcff;
+}
+
+.nofo-chip-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.nofo-chip-label {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.nofo-chip-quote {
+  font-size: 0.8rem;
+  color: #555;
+  font-style: italic;
+}
+
+button.nofo-link-button {
+  background: none;
+  color: #003d7a;
+  padding: 0.15rem 0.25rem;
+  font-size: 0.875rem;
+  text-decoration: underline;
+}
+
+button.nofo-link-button:hover {
+  background: #e6eef7;
+}
+
+button.nofo-link-button:disabled {
+  background: none;
+  color: #999;
+}
+
+.nofo-finding {
+  border: 1px solid #d5dde8;
+  border-left-width: 5px;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.nofo-finding-conflict {
+  border-left-color: #c0392b;
+}
+
+.nofo-finding-gap,
+.nofo-finding-specialist {
+  border-left-color: #d4a017;
+}
+
+.nofo-finding-supported {
+  border-left-color: #2e7d32;
+}
+
+.nofo-finding-unknown {
+  border-left-color: #8a8f94;
+}
+
+.nofo-finding-head {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.25rem;
+}
+
+.nofo-finding h4 {
+  color: #002952;
+  margin-bottom: 0.25rem;
+}
+
+.nofo-source {
+  margin-top: 0.5rem;
+}
+
+.nofo-quote {
+  border-left: 3px solid #b8c6d9;
+  padding: 0.25rem 0.75rem;
+  color: #444;
+  font-size: 0.9rem;
+  background: #f7f9fc;
+  overflow-wrap: anywhere;
+}
+
+.nofo-source-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.nofo-req-id {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #777;
+}
+
+.nofo-related,
+.nofo-collapsible {
+  margin-top: 0.5rem;
+}
+
+.nofo-related summary,
+.nofo-collapsible summary {
+  cursor: pointer;
+  color: #003d7a;
+}
+
+.nofo-related ul,
+.nofo-collapsible ul {
+  margin: 0.5rem 0 0.5rem 1.25rem;
+}
+
+.nofo-simple-list li {
+  margin-bottom: 0.5rem;
+  list-style: disc;
+  overflow-wrap: anywhere;
+}
+
+.nofo-questions {
+  margin-left: 1.25rem;
+}
+
+.nofo-questions li {
+  margin-bottom: 0.75rem;
+}
+
+.nofo-disclaimer {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0.5rem 0 1.5rem;
+}
+
+/* Source drawer */
+.nofo-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 1000;
+}
+
+.nofo-drawer {
+  background: white;
+  width: min(720px, 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.25);
+}
+
+.nofo-drawer-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.nofo-drawer-head h3 {
+  color: #003d7a;
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.nofo-drawer-body {
+  padding: 1rem 1.25rem 2rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.nofo-source-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #fafafa;
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+}
+
+.nofo-source-text mark {
+  background: #ffe58a;
+  color: inherit;
+  padding: 0.05rem 0.1rem;
+}
+
+.nofo-drawer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.nofo-drawer-links a {
+  color: #003d7a;
+}
+
+.nofo-no-scroll {
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .nofo-chips {
+    grid-template-columns: 1fr;
+  }
+
+  .nofo-drawer {
+    width: 100%;
+  }
+
+  .mode-switch button {
+    flex: 1;
+  }
+}
