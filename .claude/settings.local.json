@@ -3,7 +3,8 @@
     "allow": [
       "WebFetch(domain:www.transportation.gov)",
       "WebFetch(domain:catalog.data.gov)",
-      "WebFetch(domain:www.grants.gov)"
+      "WebFetch(domain:www.grants.gov)",
+      "Skill(claude-api)"
     ]
   }
 }
