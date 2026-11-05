@@ -64,5 +64,57 @@ export const SimplerDetailResponseSchema = z
   })
   .passthrough();
 
+/**
+ * Search results (POST /v1/opportunities/search). Items carry no attachments, and
+ * `fiscal_year` is null in practice. Parsed per item so one odd record never discards
+ * the whole page; the envelope itself is checked loosely.
+ */
+export const SimplerSearchSummarySchema = SimplerSummarySchema.extend({
+  summary_description: z.string().nullish(),
+  funding_categories: z.array(z.string()).nullish(),
+  funding_instruments: z.array(z.string()).nullish(),
+}).passthrough();
+
+export const SimplerSearchItemSchema = z
+  .object({
+    opportunity_id: z.string().regex(UUID_PATTERN),
+    opportunity_number: z.string().nullish(),
+    opportunity_title: z.string().nullish(),
+    opportunity_status: z.string(),
+    category: z.string().nullish(),
+    agency_code: z.string().nullish(),
+    agency_name: z.string().nullish(),
+    top_level_agency_code: z.string().nullish(),
+    top_level_agency_name: z.string().nullish(),
+    purpose_statement: z.string().nullish(),
+    opportunity_assistance_listings: z
+      .array(
+        z
+          .object({
+            assistance_listing_number: z.string().nullish(),
+            program_title: z.string().nullish(),
+          })
+          .passthrough()
+      )
+      .nullish(),
+    summary: SimplerSearchSummarySchema.nullish(),
+  })
+  .passthrough();
+
+export const SimplerSearchResponseSchema = z
+  .object({
+    data: z.array(z.unknown()),
+    pagination_info: z
+      .object({
+        total_records: z.number().int().nonnegative().nullish(),
+        page_size: z.number().int().nullish(),
+      })
+      .passthrough()
+      .nullish(),
+    facet_counts: z.record(z.string(), z.unknown()).nullish(),
+  })
+  .passthrough();
+
 export type SimplerOpportunity = z.infer<typeof SimplerOpportunitySchema>;
+export type SimplerSearchItem = z.infer<typeof SimplerSearchItemSchema>;
 export type SimplerAttachment = z.infer<typeof SimplerAttachmentSchema>;

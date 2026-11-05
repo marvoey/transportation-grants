@@ -636,9 +636,10 @@
   function syncUrl() {
     try {
       var params = new URLSearchParams(window.location.search);
-      var nofoActive = !els.panel.hidden;
-      if (nofoActive) params.set('mode', 'nofo'); else params.delete('mode');
-      if (nofoActive && state.opportunityId) params.set('opportunity', state.opportunityId); else params.delete('opportunity');
+      // "find" is the default mode, so it needs no parameter.
+      var mode = state.mode || 'find';
+      if (mode !== 'find') params.set('mode', mode); else params.delete('mode');
+      if (mode === 'nofo' && state.opportunityId) params.set('opportunity', state.opportunityId); else params.delete('opportunity');
       var query = params.toString();
       window.history.replaceState(null, '', window.location.pathname + (query ? '?' + query : ''));
     } catch (e) {
@@ -646,22 +647,48 @@
     }
   }
 
+  /** Three modes share the page: "find" (default), "nofo" (assess) and "search" (the original chat). */
   function setMode(mode) {
-    var nofo = mode === 'nofo';
-    els.panel.hidden = !nofo;
-    els.searchPanel.hidden = nofo;
-    els.tabNofo.setAttribute('aria-selected', nofo ? 'true' : 'false');
-    els.tabSearch.setAttribute('aria-selected', nofo ? 'false' : 'true');
-    els.tabNofo.classList.toggle('active', nofo);
-    els.tabSearch.classList.toggle('active', !nofo);
+    mode = mode === 'nofo' || mode === 'search' ? mode : 'find';
+    state.mode = mode;
+    var panels = { find: els.findPanel, nofo: els.panel, search: els.searchPanel };
+    var tabs = { find: els.tabFind, nofo: els.tabNofo, search: els.tabSearch };
+    Object.keys(panels).forEach(function (key) {
+      var active = key === mode;
+      if (panels[key]) panels[key].hidden = !active;
+      if (tabs[key]) {
+        tabs[key].setAttribute('aria-selected', active ? 'true' : 'false');
+        tabs[key].classList.toggle('active', active);
+      }
+    });
     syncUrl();
-    if (nofo && !state.loaded) {
+    if (mode === 'nofo' && !state.loaded) {
       state.loaded = true;
       loadOpportunities();
     }
   }
 
+  /** Called by the Find grants panel: open the Assess tab on an opportunity (without a page reload). */
+  function openAssess(id) {
+    if (!U.isUuid(id)) return;
+    state.requestedOpportunity = String(id).toLowerCase();
+    els.loadError.hidden = true;
+    els.empty.hidden = true;
+    if (state.opportunityId !== state.requestedOpportunity) {
+      // A different notice than before: do not show an old assessment under it.
+      state.opportunityId = null;
+      state.result = null;
+      clear(els.results);
+    }
+    state.loaded = true;
+    setMode('nofo');
+    loadOpportunities();
+    if (els.input && !els.form.hidden) els.input.focus();
+  }
+
   function init() {
+    els.tabFind = document.getElementById('modeFindTab');
+    els.findPanel = document.getElementById('findPanel');
     els.tabSearch = document.getElementById('modeSearchTab');
     els.tabNofo = document.getElementById('modeNofoTab');
     els.searchPanel = document.getElementById('searchPanel');
@@ -678,6 +705,7 @@
     els.results = document.getElementById('nofoResults');
     if (!els.panel || !els.tabNofo || !U) return;
 
+    if (els.tabFind) els.tabFind.addEventListener('click', function () { setMode('find'); });
     els.tabSearch.addEventListener('click', function () { setMode('search'); });
     els.tabNofo.addEventListener('click', function () { setMode('nofo'); });
     els.select.addEventListener('change', function () { selectOpportunity(els.select.value); });
@@ -693,6 +721,7 @@
     // Read the link once: switching modes rewrites the address bar.
     var params = U.readParams(window.location.search);
     state.requestedOpportunity = params.opportunity;
+    window.NofoApp = { openAssess: openAssess };
     setMode(params.mode);
   }
 

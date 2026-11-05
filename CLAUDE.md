@@ -12,6 +12,9 @@ NOFO mean for us, what information is missing, and what should we investigate be
 
 - Opportunities are identified by a **Simpler.Grants.gov opportunity UUID** (direct input, or an
   ID from a search result). The UUID is not the official opportunity number: keep them separate.
+- Milestone 6 adds a front door: the user describes the project and the app builds Simpler search
+  filters and shows a short list (4-5) of opportunities to consider. It stops asking questions
+  after a bounded number of turns and always ends with a list.
 - **No grant-specific code.** FY2026 BUILD is the primary test fixture and the demo case, and
   Wildlife Crossings is the second integration test. Neither is a hardcoded dependency.
 - Demo: hypothetical Virginia DOT project vs. the real FY2026 BUILD documents (a historical
@@ -28,8 +31,9 @@ NOFO mean for us, what information is missing, and what should we investigate be
 - Do **not** add a frontend framework, LangChain/LangGraph, a Python backend, or a database
   without explicit justification and approval.
 - The Simpler.Grants.gov client uses native `fetch`, not axios (manual redirects, no key sent
-  to other hosts). PDF/HTML parsing happens only in the offline ingestion path, never in the
-  web server.
+  to other hosts). PDF/HTML parsing happens only in the ingestion path, never inside the web
+  server process. The web "prepare" route (Milestone 6) runs the ingest and extract CLIs as
+  child processes with a fixed argv and no shell.
 - New dependencies: check the repo first, choose maintained packages, pin exact versions, and
   tell the user before adding them. Never override the user's npm credentials or registry
   settings to get an install through; ask instead.
@@ -44,15 +48,19 @@ NOFO mean for us, what information is missing, and what should we investigate be
 5. Compare requirements against project facts the user gives in conversation.
 6. Identify conflicts and missing information; ask targeted follow-up questions.
 7. Provide a preliminary, evidence-backed assessment with verifiable citations.
+8. (Milestone 6) From a project description, search Simpler.Grants.gov and present a short,
+   explained list of opportunities to consider, then let the user prepare one for assessment.
 
 ## Out of scope
-- Broad grant matching, triage, or a new discovery UI (a minimal UUID/search-result adapter is
-  allowed)
+- Grant triage or ranking by competitiveness; a general-purpose discovery platform. The Milestone 6
+  shortlist is a preliminary starting point, not a recommendation or an eligibility determination.
 - Application drafting, GIS analysis, benefit-cost calculations (only identify that a BCA is required)
 - Definitive eligibility determinations or award predictions
 - Complex autonomous multi-agent orchestration; production deployment architecture
 - OCR, arbitrary web crawling, spreadsheet/formula validation, a separate project-profile page
-- A web route that triggers ingestion (ingestion is an operator CLI because it needs the API key)
+- Ingestion refresh (`--refresh`) or arbitrary-URL ingestion from the web. The Milestone 6 prepare
+  route accepts only a UUID that appeared in a recent discover result, runs one job at a time, and
+  is capped per day.
 
 ## Milestones (one at a time, in order)
 1. Repository audit and plan (done)
@@ -60,6 +68,12 @@ NOFO mean for us, what information is missing, and what should we investigate be
 3. Requirements extraction (`npm run nofo:extract -- <uuid>`, `npm run nofo:eval -- <uuid>`; BUILD FAQs/checklists/amendments may be added as supplemental sources)
 4. Applicant assessment and follow-up questions (`assessTurn` in `src/nofo/service.ts`; `npm run nofo:assess -- <uuid> --say "..."`)
 5. Chat integration and browser demo
+6. Project-description-first "Find grants" flow (`npm run nofo:find -- "<description>"`,
+   `POST /api/nofo/discover`, `POST /api/nofo/prepare`). Filter rules: hard-filter only on
+   reliable fields (DOT agency, status, project-term query); applicant type, award size, cost
+   sharing and funding category are scored in code, not filtered, because upstream metadata is
+   often null or `other` (BUILD lists applicant type `other`). Ranking and the "why it may fit"
+   text are written by code, not a model.
 
 Rules:
 - **Work on one milestone only, and only when the user asks for it.** Never start the next one.

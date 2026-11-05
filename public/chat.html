@@ -24,11 +24,51 @@
 
   <div class="container">
     <div class="mode-switch" role="tablist" aria-label="Chat mode">
-      <button type="button" role="tab" id="modeSearchTab" class="active" aria-selected="true" aria-controls="searchPanel">Search grants</button>
+      <button type="button" role="tab" id="modeFindTab" class="active" aria-selected="true" aria-controls="findPanel">Find grants</button>
       <button type="button" role="tab" id="modeNofoTab" aria-selected="false" aria-controls="nofoPanel">Assess a project</button>
+      <button type="button" role="tab" id="modeSearchTab" aria-selected="false" aria-controls="searchPanel">Ask about grants</button>
     </div>
 
-    <div id="searchPanel" role="tabpanel" aria-labelledby="modeSearchTab">
+    <div id="findPanel" role="tabpanel" aria-labelledby="modeFindTab">
+      <div class="card">
+        <h2>Find Grants for Your Project</h2>
+        <p class="mb-2">Describe your transportation project in your own words. We will look through current U.S. Department of Transportation funding opportunities and show a short list worth a closer look, with the reasons and the things to watch out for.</p>
+        <div class="nofo-banner" role="note">
+          <strong>Preliminary only.</strong> This list is a starting point, not an eligibility determination, a recommendation, or a prediction of success. Your description is sent to the Anthropic API to read the facts you state, and a few search words from it are sent to Simpler.Grants.gov. Nothing is saved on the server; the conversation stays in this browser tab.
+        </div>
+        <form id="findForm" class="nofo-form">
+          <label for="findInput" class="nofo-sr">Describe your project</label>
+          <textarea id="findInput" rows="5" maxlength="4000" required></textarea>
+          <div class="form-group find-options">
+            <label><input type="checkbox" id="findHistorical"> Include closed and archived opportunities (past rounds, not open for applications)</label>
+            <label><input type="checkbox" id="findInspect"> Show the raw Simpler.Grants.gov requests and responses (for inspection)</label>
+          </div>
+          <div class="nofo-form-actions">
+            <button type="submit" id="findSend">Find grants</button>
+            <button type="button" id="findNow" class="nofo-secondary" hidden>Show grants now</button>
+            <button type="button" id="findReset" class="nofo-secondary">Start over</button>
+          </div>
+          <p id="findLimit" class="nofo-warning" hidden>That is the limit for one search. Use Start over to try a different description.</p>
+          <p id="findError" class="error" role="alert" hidden></p>
+        </form>
+      </div>
+
+      <div id="findThread" class="chat-messages find-thread" role="log" aria-live="polite" aria-label="Conversation"></div>
+
+      <div id="findProgress" class="card find-progress" hidden>
+        <div class="find-progress-head">
+          <span class="find-spinner" aria-hidden="true"></span>
+          <strong id="findProgressTitle" role="status" aria-live="polite">Starting…</strong>
+          <span id="findProgressTime" class="nofo-meta" aria-hidden="true"></span>
+        </div>
+        <div class="find-bar" aria-hidden="true"><span></span></div>
+        <ol id="findSteps" class="find-steps" aria-hidden="true"></ol>
+      </div>
+
+      <div id="findResults" aria-live="polite" aria-busy="false"></div>
+    </div>
+
+    <div id="searchPanel" role="tabpanel" aria-labelledby="modeSearchTab" hidden>
       <div class="card">
         <h2>Ask About DOT Grants</h2>
         <p class="mb-2">Ask in plain English — e.g. "transit grants over $1M for cities" or a follow-up like "what about for tribal governments instead?"</p>
@@ -82,6 +122,8 @@
   <script src="/js/common.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/chat.js"></script>
+  <script src="/js/discover-util.js"></script>
+  <script src="/js/discover.js"></script>
   <script src="/js/nofo-util.js"></script>
   <script src="/js/nofo.js"></script>
 </body>

@@ -2,6 +2,7 @@ import type { Attachment, Opportunity } from '../schemas.js';
 import { parseOpportunityId } from '../schemas.js';
 import { SimplerApiError, SimplerGrantsClient } from './client.js';
 import { SimplerDetailResponseSchema, type SimplerOpportunity } from './schemas.js';
+import { parseSearchResponse, type SearchRequestBody, type SearchResult } from './search.js';
 
 export interface OpportunityDetail {
   opportunity: Opportunity;
@@ -25,11 +26,21 @@ export interface OpportunitySource {
   readonly downloadAuth?: { host: string; apiKey: string };
 }
 
-export class SimplerOpportunitySource implements OpportunitySource {
+/** Search is a separate, read-only capability so existing OpportunitySource fakes stay valid. */
+export interface OpportunitySearchSource {
+  searchOpportunities(body: SearchRequestBody): Promise<SearchResult>;
+}
+
+export class SimplerOpportunitySource implements OpportunitySource, OpportunitySearchSource {
   constructor(
     private readonly client: SimplerGrantsClient,
     private readonly now: () => Date = () => new Date()
   ) {}
+
+  async searchOpportunities(body: SearchRequestBody): Promise<SearchResult> {
+    const { json } = await this.client.postJson('/v1/opportunities/search', body);
+    return parseSearchResponse(json);
+  }
 
   get apiBaseUrl(): string {
     return this.client.baseUrl.toString();

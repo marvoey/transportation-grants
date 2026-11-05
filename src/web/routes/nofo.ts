@@ -1,11 +1,21 @@
 import { Router, Request, Response } from 'express';
+import { z } from 'zod';
 import rateLimit from 'express-rate-limit';
-import { getConfig } from '../../config/config.js';
+import { getConfig, logger } from '../../config/config.js';
 import { GrantServerError } from '../../types/index.js';
 import { assessTurn, AssessmentError } from '../../nofo/service.js';
 import { FactsError } from '../../nofo/assessment/facts.js';
 import { createInterpretCache, type InterpretCache } from '../../nofo/assessment/interpret.js';
+import { createDiscoveryLlm, createSearchSource, isSearchConfigured } from '../../nofo/discovery/default-source.js';
+import { SearchCache } from '../../nofo/discovery/search.js';
+import { DiscoverInputSchema, type ProgressEvent } from '../../nofo/discovery/schemas.js';
+import { DiscoveryError, discoverTurn } from '../../nofo/discovery/service.js';
 import type { LlmFn } from '../../nofo/llm.js';
+import { SimplerApiError } from '../../nofo/simpler/client.js';
+import { PrepareError, PrepareManager } from '../../nofo/prepare/manager.js';
+import { RecentOpportunities } from '../../nofo/prepare/recent.js';
+import { createCliRunner } from '../../nofo/prepare/runner.js';
+import type { OpportunitySearchSource } from '../../nofo/simpler/source.js';
 import { DOCUMENT_ID_PATTERN, parseOpportunityId } from '../../nofo/schemas.js';
 import { PackageCorruptError, PackageStore } from '../../nofo/store.js';
 import { SourceNotFoundError, getOriginalPdf, getSourceLocation, listOpportunities } from '../../nofo/sources.js';
@@ -26,9 +36,27 @@ export interface NofoRouterDeps {
   interpretCache?: InterpretCache;
   /** Whether the server can reach a model. Default: an Anthropic key is configured. Tests override it. */
   isModelConfigured?: () => boolean;
+  /**
+   * Grant discovery: the Simpler.Grants.gov search. Injected in tests. Default: built from the server's
+   * SIMPLER_GRANTS_API_KEY on first use (the key never leaves the server).
+   */
+  searchSource?: OpportunitySearchSource;
+  /** Whether grant search can run. Default: a Simpler key is configured. Tests override it. */
+  isSearchConfigured?: () => boolean;
+  /**
+   * Preparing an opportunity (ingest + extract) for assessment. Injected in tests. Default: a manager that runs the
+   * ingest and extract CLIs as child processes.
+   */
+  prepare?: PrepareManager;
+  /** Opportunities shown in recent searches (the only ones the prepare route accepts). Injected in tests. */
+  recent?: RecentOpportunities;
+  /** Whether the server has the keys that preparing needs (Simpler and Anthropic). Tests override it. */
+  isPrepareConfigured?: () => boolean;
   /** Requests per window; tests lower these. */
-  limits?: { assessPerWindow?: number; readPerWindow?: number; windowMs?: number };
+  limits?: { assessPerWindow?: number; discoverPerWindow?: number; preparePerWindow?: number; readPerWindow?: number; windowMs?: number };
 }
+
+const PrepareInputSchema = z.object({ opportunityId: z.string().max(100) }).strict();
 
 const PAGE_PATTERN = /^\d{1,5}$/;
 const SECTION_PATTERN = /^s\d{1,5}(\.\d{1,3})?$/;
@@ -56,6 +84,22 @@ function translate(error: unknown): unknown {
       ? new GrantServerError('NOT_FOUND', 'This opportunity has no extracted requirements yet, so it cannot be assessed.', false)
       : new GrantServerError('VALIDATION_ERROR', error.message, false);
   }
+  if (error instanceof DiscoveryError) {
+    return error.code === 'VALIDATION_ERROR'
+      ? new GrantServerError('VALIDATION_ERROR', error.message, false)
+      : new GrantServerError('API_ERROR', 'The grant search service could not be reached. Please try again in a moment.', true);
+  }
+  if (error instanceof SimplerApiError) {
+    // Messages from this client never contain the key or response content, but the browser only needs the gist.
+    return error.kind === 'config'
+      ? new GrantServerError('MISSING_CONFIG', 'Grant search needs SIMPLER_GRANTS_API_KEY to be set on the server.', false)
+      : new GrantServerError('API_ERROR', 'The grant search service could not be reached. Please try again in a moment.', true);
+  }
+  if (error instanceof PrepareError) {
+    return error.code === 'NOT_FOUND'
+      ? new GrantServerError('NOT_FOUND', error.message, false)
+      : new GrantServerError('RATE_LIMIT_EXCEEDED', error.message, error.code === 'BUSY');
+  }
   if (error instanceof FactsError) return new GrantServerError('VALIDATION_ERROR', error.message, false);
   if (error instanceof PackageCorruptError) return new GrantServerError('API_ERROR', 'The stored data for this opportunity could not be read.', false);
   return error;
@@ -69,7 +113,30 @@ export function createNofoRouter(deps: NofoRouterDeps = {}): Router {
   const interpretCache = deps.interpretCache ?? createInterpretCache();
   const store = (): PackageStore => deps.store ?? PackageStore.fromConfig();
 
+  const discoverLimit = deps.limits?.discoverPerWindow ?? assessLimit;
+  const searchCache = new SearchCache();
+  let defaultSource: OpportunitySearchSource | undefined;
+  const searchSource = (): OpportunitySearchSource => deps.searchSource ?? (defaultSource ??= createSearchSource());
+
+  const prepareLimit = deps.limits?.preparePerWindow ?? 6;
+  const recent = deps.recent ?? new RecentOpportunities();
+  const prepare =
+    deps.prepare ??
+    new PrepareManager({
+      store,
+      recent,
+      dailyLimit: parseInt(process.env.PREPARE_DAILY_LIMIT || '5', 10),
+      run: createCliRunner({
+        ingestTimeoutMs: parseInt(process.env.PREPARE_INGEST_TIMEOUT_MS || '300000', 10),
+        extractTimeoutMs: parseInt(process.env.PREPARE_EXTRACT_TIMEOUT_MS || '1200000', 10),
+      }),
+    });
+
   const readLimiter = limiter(readLimit, windowMs, 'Too many requests. Please try again later.');
+  // Preparing downloads documents and spends model calls, so it is limited tightly.
+  const prepareLimiter = limiter(prepareLimit, windowMs, 'Too many requests to prepare opportunities. Please try again later.');
+  // Discovery spends a model call and up to four Simpler.Grants.gov searches per request, so it is limited like chat.
+  const discoverLimiter = limiter(discoverLimit, windowMs, 'Too many searches. Please try again later.');
   // Assessment spends model calls, so it is limited like chat.
   const assessLimiter = limiter(assessLimit, windowMs, 'Too many assessment requests. Please try again later.');
 
@@ -124,6 +191,97 @@ export function createNofoRouter(deps: NofoRouterDeps = {}): Router {
         'Cache-Control': 'private, max-age=300',
       });
       res.send(bytes);
+    })
+  );
+
+  router.post(
+    '/discover',
+    discoverLimiter,
+    asyncHandler(async (req: Request, res: Response) => {
+      const searchReady = deps.searchSource ? true : (deps.isSearchConfigured ?? isSearchConfigured)();
+      if (!searchReady) {
+        throw new GrantServerError('MISSING_CONFIG', 'Grant search needs SIMPLER_GRANTS_API_KEY to be set on the server.', false);
+      }
+      // No model key is not an error here: the profile falls back to a keyword reader and the result says so.
+      const modelConfigured = deps.isModelConfigured ?? (() => Boolean(getConfig().anthropic.apiKey));
+      const llm = deps.llm ?? (modelConfigured() ? createDiscoveryLlm() : null);
+
+      const run = async (onProgress?: (event: ProgressEvent) => void) => {
+        const result = await discoverTurn(req.body, { source: searchSource(), llm, cache: searchCache, onProgress }).catch((e) => { throw translate(e); });
+        // Which listed opportunities can be opened in the Assess tab right now (extracted requirements exist here).
+        const ready = new Set(
+          (await listOpportunities(store()).catch(() => [])).filter((o) => o.requirements.ready).map((o) => o.opportunityId)
+        );
+        for (const item of result.shortlist) item.readyToAssess = ready.has(item.opportunityId);
+        // Only what was just shown can later be prepared.
+        recent.remember(result.shortlist.map((item) => item.opportunityId));
+        return result;
+      };
+
+      res.set('Cache-Control', NO_STORE);
+      if (req.query.stream !== '1') {
+        const result = await run();
+        res.json(successResponse(result, result.shortlist.length));
+        return;
+      }
+
+      // Streaming: one JSON object per line. Bad input is rejected here, before any stream starts, so it keeps its
+      // normal 400. After that, failures are reported as a final {"type":"error"} line, because the status is already sent.
+      if (!DiscoverInputSchema.safeParse(req.body).success) {
+        throw new GrantServerError('VALIDATION_ERROR', 'The request is not valid.', false);
+      }
+      res.status(200);
+      res.set({ 'Content-Type': 'application/x-ndjson; charset=utf-8', 'X-Accel-Buffering': 'no', 'X-Content-Type-Options': 'nosniff' });
+      res.flushHeaders();
+      const send = (line: Record<string, unknown>): void => {
+        if (!res.writableEnded && !res.destroyed) res.write(JSON.stringify(line) + '\n');
+      };
+      try {
+        const result = await run((event) => send({ type: 'progress', ...event }));
+        send({ type: 'result', data: result });
+      } catch (e) {
+        const failure = translate(e);
+        logger.error(`Discover stream failed: ${failure instanceof Error ? failure.name : 'error'}`);
+        send(
+          failure instanceof GrantServerError
+            ? { type: 'error', error: failure.message, code: failure.code, retryable: failure.retryable }
+            : { type: 'error', error: 'Something went wrong while searching. Please try again.', code: 'INTERNAL_ERROR', retryable: true }
+        );
+      } finally {
+        res.end();
+      }
+    })
+  );
+
+  router.post(
+    '/prepare',
+    prepareLimiter,
+    asyncHandler(async (req: Request, res: Response) => {
+      const input = PrepareInputSchema.safeParse(req.body);
+      if (!input.success) throw new GrantServerError('VALIDATION_ERROR', 'The request is not valid.', false);
+      const id = parseOpportunityId(input.data.opportunityId);
+
+      // Something already prepared needs no keys and no work.
+      const current = await prepare.status(id).catch((e) => { throw translate(e); });
+      if (current.status !== 'ready') {
+        const configured = deps.isPrepareConfigured ?? (() => isSearchConfigured() && Boolean(getConfig().anthropic.apiKey));
+        if (!configured()) {
+          throw new GrantServerError('MISSING_CONFIG', 'Preparing an opportunity needs both SIMPLER_GRANTS_API_KEY and ANTHROPIC_API_KEY on the server.', false);
+        }
+      }
+      const state = await prepare.start(id).catch((e) => { throw translate(e); });
+      res.set('Cache-Control', NO_STORE);
+      res.json(successResponse(state));
+    })
+  );
+
+  router.get(
+    '/prepare/:id',
+    readLimiter,
+    asyncHandler(async (req: Request, res: Response) => {
+      const state = await prepare.status(req.params.id).catch((e) => { throw translate(e); });
+      res.set('Cache-Control', NO_STORE);
+      res.json(successResponse(state));
     })
   );
 

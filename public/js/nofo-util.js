@@ -148,8 +148,10 @@
   function readParams(search) {
     var params = new URLSearchParams(search || '');
     var opportunity = params.get('opportunity');
+    var mode = params.get('mode');
     return {
-      mode: params.get('mode') === 'nofo' ? 'nofo' : 'search',
+      // "find" (project description first) is the default; anything unrecognized falls back to it.
+      mode: mode === 'nofo' || mode === 'search' ? mode : 'find',
       opportunity: opportunity && UUID.test(opportunity) ? opportunity.toLowerCase() : null
     };
   }

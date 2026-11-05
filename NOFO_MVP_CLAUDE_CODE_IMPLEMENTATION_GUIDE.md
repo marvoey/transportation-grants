@@ -5,7 +5,7 @@
 
 **Primary instruction to Claude Code:** **Do not start writing application code when you first read this document.** Start with **Milestone 1: Repository audit and implementation plan**. Inspect the actual repository, verify assumptions, create `docs/NOFO_MVP_PLAN.md`, and stop for review. Implement later milestones one at a time only when instructed.
 
-**Competition objective:** Demonstrate NOFO-grounded, applicant-specific analysis of an existing transportation project against an already-selected federal funding opportunity. Milestone 2 accepts a **generic Simpler.Grants.gov opportunity UUID**, obtained from a search result or direct input, and retrieves available official documents without grant-specific code. Broad grant matching, triage, and discovery UX remain outside this MVP.
+**Competition objective:** Demonstrate NOFO-grounded, applicant-specific analysis of an existing transportation project against an already-selected federal funding opportunity. Milestone 2 accepts a **generic Simpler.Grants.gov opportunity UUID**, obtained from a search result or direct input, and retrieves available official documents without grant-specific code. Broad grant matching and triage remain outside this MVP; Milestone 6 adds a limited, project-description-first shortlist (see Milestone 6).
 
 ---
 
@@ -101,7 +101,7 @@ opportunity for an existing transportation project.
 8. Provide a preliminary evidence-backed assessment.
 
 ## Not in scope
-- Broad grant matching or a new discovery interface (a minimal ID/search-result adapter is allowed)
+- Grant triage or competitiveness ranking, or a general-purpose discovery platform. (Amended for Milestone 6: a project-description-first shortlist of 4-5 opportunities, built from Simpler.Grants.gov search, is in scope as a preliminary starting point. See Milestone 6 below.)
 - Automated application drafting
 - Comprehensive GIS analysis
 - Benefit-cost calculations
@@ -396,6 +396,22 @@ Test the complete workflow in the browser, run automated tests and the TypeScrip
 ```
 
 **Milestone 5 checkpoint:** Verify the actual browser flow, not only API responses. Confirm that each material finding links to a real source, and failures/ambiguities are shown honestly.
+
+---
+
+## Milestone 6 — Project-Description-First "Find Grants" Flow
+
+```text
+Add a "Find grants" tab to chat.html, first and default. The user describes an existing transportation project. Code and one structured LLM step turn that into Simpler.Grants.gov search filters and return a short list (4-5) of opportunities to consider, each with code-written "why it may fit" and "watch out" notes.
+
+Stop asking questions: ask at most one question, and only when no project type can be identified. Otherwise search immediately and offer at most two optional refinements. By the third user message, or when the user asks to see grants now, always return a list.
+
+Filter rules: hard-filter only on fields that are reliable in the data (DOT top-level agency, opportunity status, project-term query). Score applicant type, award size, cost sharing and funding category in code; never filter on them, because upstream metadata is often null or "other" (BUILD lists applicant type "other"). Widen through a search ladder when fewer than 4 candidates are found.
+
+Let the user prepare a listed opportunity for assessment from the browser: a prepare route runs the existing ingest and extract CLIs as child processes. Accept only a UUID that appeared in a recent discover result, run one job at a time, and cap jobs per day. The UI then opens the existing Assess tab on that opportunity.
+```
+
+**Milestone 6 checkpoint:** Show real filters and results for a bridge project and a wildlife crossing project (live check, reported as blocked if the key is unavailable) before building the UI. The shortlist is preliminary: no eligibility claims, no competitiveness claims.
 
 ---
 

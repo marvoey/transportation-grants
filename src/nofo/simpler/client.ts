@@ -102,6 +102,18 @@ export class SimplerGrantsClient {
 
   /** GET `path` (relative to the API base) and return the parsed JSON plus a sha256 of the body. */
   async getJson(path: string): Promise<{ json: unknown; sha256: string }> {
+    return this.request('GET', path);
+  }
+
+  /**
+   * POST a JSON body to `path` (relative to the API base). Used for the read-only search endpoint,
+   * so it shares GET's retry policy. Same guards: API host only, no redirects, bounded body.
+   */
+  async postJson(path: string, body: unknown): Promise<{ json: unknown; sha256: string }> {
+    return this.request('POST', path, body);
+  }
+
+  private async request(method: 'GET' | 'POST', path: string, body?: unknown): Promise<{ json: unknown; sha256: string }> {
     const url = new URL(path, this.baseUrl);
     if (url.host !== this.baseUrl.host || url.protocol !== 'https:') {
       // Defense in depth: callers only build paths from validated IDs.
@@ -112,8 +124,12 @@ export class SimplerGrantsClient {
       let response: Response;
       try {
         response = await this.fetchImpl(url, {
-          method: 'GET',
-          headers: { 'X-API-Key': this.apiKey, Accept: 'application/json' },
+          method,
+          headers:
+            body === undefined
+              ? { 'X-API-Key': this.apiKey, Accept: 'application/json' }
+              : { 'X-API-Key': this.apiKey, Accept: 'application/json', 'Content-Type': 'application/json' },
+          ...(body === undefined ? {} : { body: JSON.stringify(body) }),
           redirect: 'manual',
           signal: AbortSignal.timeout(this.timeoutMs),
         });

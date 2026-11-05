@@ -1,0 +1,744 @@
+{
+  "_note": "Trimmed real Simpler.Grants.gov search response (selected closed/archived DOT listings; text fields cut to 400 chars, contact fields removed). Test fixture.",
+  "retrievedAt": "2026-11-05",
+  "pagination_info": {
+    "total_records": 12,
+    "page_size": 12
+  },
+  "data": [
+    {
+      "agency": "DOT-FHWA",
+      "agency_code": "DOT-FHWA",
+      "agency_name": "DOT Federal Highway Administration ",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 364011,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "20.262",
+          "program_title": "Prioritization Process Pilot Program"
+        }
+      ],
+      "opportunity_id": "b80c83da-d156-4ea9-b8d0-71c60f15fdb1",
+      "opportunity_number": "FHWA-PPPP-26-001",
+      "opportunity_status": "closed",
+      "opportunity_title": "Prioritization Process Pilot Program (PPPP) Competitive Grant Program",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=128832",
+        "additional_info_url_description": "Prioritization Process Pilot Program (PPPP) Competitive Grant Program",
+        "agency_contact_description": "Grants.gov Contact Center\nPhone Number: 1-800-518-4726\n\nHours of operation are 24 hours a day, 7 days a week. The contact center is closed on federal holidays.\nsupport@grants.gov",
+        "agency_email_address_description": "Grants.gov Customer Support",
+        "applicant_eligibility_description": "Metropolitan planning organizations (MPO) that serve a census delineated urban area with a population of over 200,000.",
+        "applicant_types": [
+          "state_governments",
+          "other"
+        ],
+        "archive_date": "2026-11-29",
+        "award_ceiling": 2000000,
+        "award_floor": 1,
+        "close_date": "2026-10-30",
+        "close_date_description": "Application Due Date: 10/30/2026 at 11:59 PM ET.\n\nFHWA anticipates announcing selections under this NOFO in the March 2027.",
+        "created_at": "2026-09-30T20:20:55+00:00",
+        "estimated_total_program_funding": 26000000,
+        "expected_number_of_awards": 100,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "infrastructure_investment_and_jobs_act",
+          "transportation"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant"
+        ],
+        "is_cost_sharing": false,
+        "is_forecast": false,
+        "post_date": "2026-09-30",
+        "summary_description": "This NOFO will award up to $26 million total in Fiscal Years (FYs) 2025 and 2026 funding and remaining FY 2024 funding via cost reimbursable grants. \n\nThe actual amount available to be awarded under this notice will be subject to the availability of funds.\n\nUnder Section 11204(c)(3) of the Infrastructure Investment and Jobs Act (IIJA) (Public Law 117-58), the maximum amount of a grant under the PP [trimmed]",
+        "updated_at": "2026-09-30T20:20:55+00:00",
+        "version_number": 1
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOT",
+      "top_level_agency_name": "Department of Transportation"
+    },
+    {
+      "agency": "DOT-FAA-AIP",
+      "agency_code": "DOT-FAA-AIP",
+      "agency_name": "Airport Improvement Program Discretionary Grants",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 363941,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "20.117",
+          "program_title": "Airport Infrastructure Grants"
+        }
+      ],
+      "opportunity_id": "b8a038bf-3e44-4a09-a42d-6cc3606f1adb",
+      "opportunity_number": "DOT-FAA-26-0117-002",
+      "opportunity_status": "closed",
+      "opportunity_title": "FY 2027 Notice of Funding Opportunity: Infrastructure Investment and Jobs Act (IIJA) FAA Contract Tower (FCT) Competitive Grant Program",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "https://www.faa.gov/iija/airport-infrastructure/fct",
+        "additional_info_url_description": "FY 2027 Notice of Funding Opportunity: Infrastructure Investment and Jobs Act (IIJA) FAA Contract Tower (FCT) Competitive Grant Program",
+        "agency_contact_description": "Direct all inquiries about applications to the appropriate Regional Office (RO), Airports District Office (ADO) or State Agency for Airports covered under the FAA State Block Grant Program (SBGP) or contact the FAA IIJA Team at 9-ARP-IIJAAirports@faa.gov.",
+        "agency_email_address_description": "The FAA website sited lists contacts for FAA Office of Airports Regional Offices and Airports District",
+        "applicant_eligibility_description": "See the link to the FY 2027 NOFO for eligibility information. Eligible applicants are those airport sponsors approved in the FAA’s Contract Tower Program or Contract Tower Cost Share Program as defined in 49 U.S.C. § 47124, and normally eligible for Airport Improvement Program (AIP) competitive grants as defined in 49 U.S.C. § 47115.   This includes a public agency, private entity, state agency, I [trimmed]",
+        "applicant_types": [
+          "special_district_governments",
+          "county_governments",
+          "other",
+          "state_governments",
+          "city_or_township_governments"
+        ],
+        "archive_date": "2026-11-18",
+        "award_ceiling": 55000000,
+        "award_floor": 25000,
+        "close_date": "2026-10-19",
+        "close_date_description": "",
+        "created_at": "2026-09-24T15:35:32+00:00",
+        "estimated_total_program_funding": null,
+        "expected_number_of_awards": null,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "transportation"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant"
+        ],
+        "is_cost_sharing": false,
+        "is_forecast": false,
+        "post_date": "2026-09-24",
+        "summary_description": "<p><span style=\"color: black;\">The Department of Transportation (DOT), Federal Aviation Administration (FAA) announces the opportunity to apply for up to $100 million in FY 2027 Airport Infrastructure Grant funds for the FCT competitive grant program, made available under the Infrastructure Investment and Jobs Act of 2021 (IIJA), Pub. L. 117-58.&nbsp;The purpose of the FCT competitive grant progra [trimmed]",
+        "updated_at": "2026-09-24T15:35:32+00:00",
+        "version_number": 1
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOT",
+      "top_level_agency_name": "Department of Transportation"
+    },
+    {
+      "agency": "DOT-FHWA",
+      "agency_code": "DOT-FHWA",
+      "agency_name": "DOT Federal Highway Administration ",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 363732,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "20.284",
+          "program_title": "Promoting Resilient Operations for Transformative, Efficient, and Cost-Saving Transportation (PROTECT)"
+        }
+      ],
+      "opportunity_id": "b5627a85-1b8b-4248-8b79-24722a396422",
+      "opportunity_number": "FHWA-PROT-26-001",
+      "opportunity_status": "closed",
+      "opportunity_title": "FYs 2024 through 2026 - Promoting Resilient Operations for Transformative, Efficient, and Cost-saving Transportation (PROTECT) Competitive Grant Program Notice of Funding Opportunity",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=127749",
+        "additional_info_url_description": "FYs 2024 through 2026 - Promoting Resilient Operations for Transformative, Efficient, and Cost-saving Transportation (PROTECT) Competitive Grant Program Notice of Funding Opportunity",
+        "agency_contact_description": "Grants.gov Contact Center\nPhone Number: 1-800-518-4726\n\nHours of operation are 24 hours a day, 7 days a week. The contact center is closed on federal holidays.\nsupport@grants.gov",
+        "agency_email_address_description": "Grants.gov Customer Support",
+        "applicant_eligibility_description": "Eligible applicants for the PROTECT Competitive Grant Program funding are States, metropolitan planning organizations (MPO), local governments, federally recognized Indian Tribes, public transportation agencies, port authorities, and Federal Land Managing Agencies (FLMA) when applying jointly with a State or group of States. Specific to At-Risk Coastal Infrastructure Grants, eligibility also inclu [trimmed]",
+        "applicant_types": [
+          "county_governments",
+          "federally_recognized_native_american_tribal_governments",
+          "special_district_governments",
+          "state_governments",
+          "city_or_township_governments"
+        ],
+        "archive_date": "2026-11-08",
+        "award_ceiling": 60000000,
+        "award_floor": 1,
+        "close_date": "2026-10-09",
+        "close_date_description": "FYs 2024 through 2026 PROTECT Competitive Grant Program applications must be submitted through Grants.gov by 11:59 PM EST on October 09, 2026. Grants.gov attaches a time stamp to each application at the time submission is complete.",
+        "created_at": "2026-08-27T20:04:36+00:00",
+        "estimated_total_program_funding": 787000000,
+        "expected_number_of_awards": 80,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "infrastructure_investment_and_jobs_act",
+          "transportation"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2026-08-27",
+        "summary_description": "The intent of the PROTECT Competitive Grant Program is to fund projects to improve the resilience of the surface transportation system, including highways, public transportation, ports, and intercity passenger rail. Program goals include protecting: surface transportation assets by making them more resilient; communities through resilience improvements and strategies that allow for the continued o [trimmed]",
+        "updated_at": "2026-08-28T17:16:40+00:00",
+        "version_number": 2
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOT",
+      "top_level_agency_name": "Department of Transportation"
+    },
+    {
+      "agency": "DOT-FHWA",
+      "agency_code": "DOT-FHWA",
+      "agency_name": "DOT Federal Highway Administration ",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 362989,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "20.267",
+          "program_title": "Competitive Highway Bridge Program (CHBP)"
+        }
+      ],
+      "opportunity_id": "b5f488a4-dc3a-4eb1-a189-d52fbdf00d35",
+      "opportunity_number": "FHWA-CHBP-26-001",
+      "opportunity_status": "archived",
+      "opportunity_title": "Fiscal Year (FY) 2026 Competitive Highway Bridge Program (CHBP)",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=124710",
+        "additional_info_url_description": "Fiscal Year (FY) 2026 Competitive Highway Bridge Program (CHBP)",
+        "agency_contact_description": "Grants.gov Contact Center\nPhone Number: 1-800-518-4726\n\nHours of operation are 24 hours a day, 7 days a week. The contact center is closed on federal holidays.\nsupport@grants.gov",
+        "agency_email_address_description": "Grants.gov Customer Support",
+        "applicant_eligibility_description": "Eligible applicants under FY 2026 CHBP are States with: \n• A population density of less than 115 individuals per square mile; or  A population of less than 1.1 million individuals; and \n• Have less than 26 percent of total bridges classified as in good condition; or Have greater than or equal to 4.9 percent of total bridges classified as in poor condition. \n\nPopulation density is calculated based  [trimmed]",
+        "applicant_types": [
+          "state_governments",
+          "other"
+        ],
+        "archive_date": "2026-08-26",
+        "award_ceiling": 55000000,
+        "award_floor": 0,
+        "close_date": "2026-07-27",
+        "close_date_description": "No Explanation",
+        "created_at": "2026-06-26T19:26:04+00:00",
+        "estimated_total_program_funding": 350000000,
+        "expected_number_of_awards": 15,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "transportation"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2026-06-26",
+        "summary_description": "This NOFO will award up to $350 million in FY 2026 funding via cost reimbursable grants. \n\nThe actual amount available to be awarded under this notice will be subject to the availability of funds.\n\nEligible States (See Additional Eligibility information below) with greater than 14 percent of total bridges classified in poor condition are to receive no less than $32.5 million, provided the State su [trimmed]",
+        "updated_at": "2026-06-26T19:26:04+00:00",
+        "version_number": 1
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOT",
+      "top_level_agency_name": "Department of Transportation"
+    },
+    {
+      "agency": "DOT-FHWA",
+      "agency_code": "DOT-FHWA",
+      "agency_name": "DOT Federal Highway Administration ",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 362657,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "20.198",
+          "program_title": "Competitive Type 3 Highway Bridge Program"
+        }
+      ],
+      "opportunity_id": "b902576e-1636-4037-8dbe-df0f3d633871",
+      "opportunity_number": "FHWA-BIT3-26-001",
+      "opportunity_status": "archived",
+      "opportunity_title": "Fiscal Year 2026 Type 3 Highway Bridge Replacement and Rehabilitation Competitive Grant Program",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": null,
+        "additional_info_url_description": null,
+        "agency_contact_description": "U.S. Department of Transportation\r\nFederal Highway Administration \r\nOffice of Administration\r\n1200 New Jersey Avenue, S.E.\r\nMail Stop: E65-103\r\nWashington, D.C. 20590\r\nAttn: Veronica Jacobson",
+        "agency_email_address_description": "BIT3@dot.gov",
+        "applicant_eligibility_description": "Counties owning a bridge structure classified as Type 3 by USBR and that crosses a water conveyance structure owned by USBR are eligible to apply under this NOFO. USBR structures, facilities, and lands are located in the 17 Western United States of Arizona, California, Colorado, Idaho, Kansas, Montana, Nebraska, Nevada, New Mexico, North Dakota, Oklahoma, Oregon, South Dakota, Texas, Utah, Washing [trimmed]",
+        "applicant_types": [
+          "other"
+        ],
+        "archive_date": "2026-08-15",
+        "award_ceiling": 25000000,
+        "award_floor": 1,
+        "close_date": "2026-07-16",
+        "close_date_description": "",
+        "created_at": "2026-06-02T22:20:46+00:00",
+        "estimated_total_program_funding": null,
+        "expected_number_of_awards": null,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "transportation"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant"
+        ],
+        "is_cost_sharing": false,
+        "is_forecast": false,
+        "post_date": "2026-06-02",
+        "summary_description": "<p>The purpose of the BIT3 Program is to fund the replacement or rehabilitation of county-owned bridges that are classified as Type 3 bridges<a target=\"_blank\">[1]</a> by the U.S. Department of Interior Bureau of Reclamation (USBR) and cross a water conveyance structure owned by USBR.</p> \n<p><br></p> \n<p>Eligible applicants under the BIT3 Competitive Grant Program are counties which own a Type 3  [trimmed]",
+        "updated_at": "2026-06-03T00:23:27+00:00",
+        "version_number": 3
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOT",
+      "top_level_agency_name": "Department of Transportation"
+    },
+    {
+      "agency": "DOT-FRA",
+      "agency_code": "DOT-FRA",
+      "agency_name": "DOT - Federal Railroad Administration",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 361966,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "20.337",
+          "program_title": "Consolidated Rail Infrastructure and Safety Improvements Program"
+        }
+      ],
+      "opportunity_id": "89379503-142e-48b6-a4b5-7fb37ed26f51",
+      "opportunity_number": "FR-CRS-26-001",
+      "opportunity_status": "archived",
+      "opportunity_title": "FY25-26 Consolidated Rail Infrastructure and Safety Improvements Grant Program",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=123207",
+        "additional_info_url_description": "FY25-26 Consolidated Rail Infrastructure and Safety Improvements Grant Program",
+        "agency_contact_description": "Grants.gov Contact Center\nPhone Number: 1-800-518-4726\n\nHours of operation are 24 hours a day, 7 days a week. The contact center is closed on federal holidays.\nsupport@grants.gov",
+        "agency_email_address_description": "Grants.gov Customer Support",
+        "applicant_eligibility_description": "Eligible Applicants: \n1. A State (including the District of Columbia).\n2. A group of States.\n3. An Interstate Compact.\n4. A public agency or publicly chartered authority established by 1 or more States.\n5. A political subdivision of a State.\n6. Amtrak or another rail carrier that provides intercity rail passenger transportation (as rail carrier and intercity rail passenger transportation are defin [trimmed]",
+        "applicant_types": [
+          "city_or_township_governments",
+          "for_profit_organizations_other_than_small_businesses",
+          "county_governments",
+          "small_businesses",
+          "other",
+          "state_governments",
+          "public_and_state_institutions_of_higher_education",
+          "federally_recognized_native_american_tribal_governments",
+          "nonprofits_non_higher_education_with_501c3",
+          "special_district_governments",
+          "private_institutions_of_higher_education"
+        ],
+        "archive_date": "2026-07-25",
+        "award_ceiling": 2039246480,
+        "award_floor": 0,
+        "close_date": "2026-06-25",
+        "close_date_description": "No Explanation",
+        "created_at": "2026-04-20T16:53:24+00:00",
+        "estimated_total_program_funding": 2039246480,
+        "expected_number_of_awards": 130,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "transportation"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2026-04-20",
+        "summary_description": "This program funds projects that improve the safety, efficiency, and reliability of intercity passenger and freight rail.",
+        "updated_at": "2026-06-17T14:19:14+00:00",
+        "version_number": 4
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOT",
+      "top_level_agency_name": "Department of Transportation"
+    },
+    {
+      "agency": "DOT-MA",
+      "agency_code": "DOT-MA",
+      "agency_name": "Maritime Administration",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 361059,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "20.823",
+          "program_title": "Port Infrastructure Development Program"
+        }
+      ],
+      "opportunity_id": "d339d69b-b178-4163-b3aa-abd63c095011",
+      "opportunity_number": "MA-PID-26-001",
+      "opportunity_status": "archived",
+      "opportunity_title": "Port Infrastructure Development Program",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=120728",
+        "additional_info_url_description": "Port Infrastructure Development Program",
+        "agency_contact_description": "Grants.gov Contact Center\r\nPhone Number: 1-800-518-4726\r\n\r\nHours of operation are 24 hours a day, 7 days a week. The contact center is closed on federal holidays.",
+        "agency_email_address_description": "Grants.gov Customer Support",
+        "applicant_eligibility_description": "States, political subdivision of a State or local government, public agency or publicly chartered authority established by one or more States, special purpose district with a transportation function, Indian Tribe, multistate or multijurisdictional group of entities described above, or a lead entity described above jointly with a private entity or group of private entities.",
+        "applicant_types": [
+          "federally_recognized_native_american_tribal_governments",
+          "state_governments",
+          "special_district_governments",
+          "city_or_township_governments",
+          "county_governments"
+        ],
+        "archive_date": "2026-07-26",
+        "award_ceiling": 112500000,
+        "award_floor": 1000000,
+        "close_date": "2026-06-01",
+        "close_date_description": "No Explanation",
+        "created_at": "2025-12-23T23:41:05+00:00",
+        "estimated_total_program_funding": 488628000,
+        "expected_number_of_awards": 40,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "transportation"
+        ],
+        "funding_category_description": "Program funds projects that improve the safety, efficiency, or reliability of the movement of goods through ports or intermodal connections to ports.",
+        "funding_instruments": [
+          "grant"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2025-12-23",
+        "summary_description": "<p>Announces the availability of $488,628,000 for FY 2026 Port Infrastructure Development Program grants.</p>",
+        "updated_at": "2026-04-06T18:55:20+00:00",
+        "version_number": 7
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOT",
+      "top_level_agency_name": "Department of Transportation"
+    },
+    {
+      "agency": "DOT-DOT X-50",
+      "agency_code": "DOT-DOT X-50",
+      "agency_name": "69A345 Office of the Under Secretary for Policy",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 360921,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "20.933",
+          "program_title": "National Infrastructure Investments"
+        }
+      ],
+      "opportunity_id": "4d8f5775-ff01-4a6f-ab4e-b125899043b3",
+      "opportunity_number": "DTOS59-26-RA-BUILD",
+      "opportunity_status": "archived",
+      "opportunity_title": "FY 2026 National Infrastructure Investments",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "https://www.transportation.gov/BUILDgrants",
+        "additional_info_url_description": "BUILD Grants Program Website",
+        "agency_contact_description": "Andrea Jacobson\r\nGrantor",
+        "agency_email_address_description": "BUILD Grants Program Email",
+        "applicant_eligibility_description": "States and the District of Columbia, any territory or possession of the United States, a unit of local government, a public agency or publicly chartered authority established by one or more States, a special purpose district or public authority with a transportation function (including a port authority), A Federally recognized Indian Tribe or a consortium of such Indian Tribes,a transit agency, or [trimmed]",
+        "applicant_types": [
+          "other"
+        ],
+        "archive_date": "2026-03-26",
+        "award_ceiling": 25000000,
+        "award_floor": 1,
+        "close_date": "2026-02-24",
+        "close_date_description": "",
+        "created_at": "2025-11-26T18:14:23+00:00",
+        "estimated_total_program_funding": 1500000000,
+        "expected_number_of_awards": 100,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "transportation"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2025-11-26",
+        "summary_description": "<p><span style=\"color: black;\">The purpose of this notice is to solicit applications for the fiscal year (FY) 2026 Better Utilizing Investments to Leverage Development (BUILD) grant program. The goal of the program is to fund projects that will have a significant local or regional impact and improve transportation infrastructure.</span><strong style=\"color: black;\"> </strong><span style=\"color: bl [trimmed]",
+        "updated_at": "2025-12-15T21:08:26+00:00",
+        "version_number": 4
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOT",
+      "top_level_agency_name": "Department of Transportation"
+    },
+    {
+      "agency": "DOT",
+      "agency_code": "DOT",
+      "agency_name": "Department of Transportation",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 115933,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "20.933",
+          "program_title": "National Infrastructure Investments"
+        }
+      ],
+      "opportunity_id": "969c1371-5cae-4413-a492-7cc4f385c1ea",
+      "opportunity_number": "DTOS59-11-RA-TIGER3",
+      "opportunity_status": "archived",
+      "opportunity_title": "FY 2011 National Infrastructure Investments",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "http://www.dot.gov/docs/FY11_TIGER_NOFA.pdf ",
+        "additional_info_url_description": "TIGER 3 Final Notice of Funding Availability",
+        "agency_contact_description": "John Kennedy\r\nTIGER Program Analyst\r\nPhone 202-493-0282",
+        "agency_email_address_description": "TIGER 3 Point of Contact",
+        "applicant_eligibility_description": "The grants for National Infrastructure Investments in the  FY 2011 Continuing Appropriations Act are for capital investments in surface transportation infrastructure grants to be awarded to a State, local, or Tribal governments, including U.S. territories, tribal governments, transit agencies, port authorities, metropolitan planning organizations (MPOs), other political subdivisions of State or lo [trimmed]",
+        "applicant_types": [
+          "other"
+        ],
+        "archive_date": "2011-11-30",
+        "award_ceiling": 200000000,
+        "award_floor": 1000000,
+        "close_date": "2011-10-31",
+        "close_date_description": "Each applicant is required to submit a Pre-application prior to submitted a Final application.  Pre-applications must be\r\nsubmitted by October 3, 2011, at 5 p.m.\r\nEDT (the Pre-Application Deadline).\r\nFinal applications must be submitted\r\nthrough Grants.gov by October 31, 2011,\r\nat 5 p.m. EDT (the Application\r\nDeadline). The DOT pre-application\r\nsystem will open on or before\r\nSeptember 9, 2011, via the TIGER Website (www.dot.gov/tiger) to allow prospective\r\napplicants to register for and submit pre-applications.\r\nSubsequently, the Grants.gov Apply\r\nfunction will open on October 5, 2011,\r\nallowing applicants to submit\r\nfinal applications. While applicants are\r\nencouraged to submit pre-applications\r\nin advance of the Pre-Application\r\nDeadline, pre-applications will not be\r\nreviewed until after the pre-application\r\ndeadline. Similarly, while applicants\r\nare encouraged to submit final applications\r\nin advance of the Application Deadline,\r\nfinal applications will not be evaluated, and\r\nawards will not be made, until after the\r\nApplication Deadline.",
+        "created_at": "2011-08-19T19:21:39+00:00",
+        "estimated_total_program_funding": 526944000,
+        "expected_number_of_awards": null,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "transportation"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2011-08-19",
+        "summary_description": "Under the FY 2011 Continuing Appropriations Act TIGER Discretionary Grants, $526,944,000 is available through September 30, 2013, for the Department to make grants on a competitive basis for projects that will have a significant impact on the Nation, a metropolitan area, or a region. Projects eligible for funding provided under this program include, but are not limited to, highway or bridge projec [trimmed]",
+        "updated_at": "2011-10-04T18:59:16+00:00",
+        "version_number": 3
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOT",
+      "top_level_agency_name": "Department of Transportation"
+    },
+    {
+      "agency": "DOT",
+      "agency_code": "DOT",
+      "agency_name": "Department of Transportation",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 144933,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "20.933",
+          "program_title": "National Infrastructure Investments"
+        }
+      ],
+      "opportunity_id": "0623a443-3dab-4509-8c99-8b849144f1c8",
+      "opportunity_number": "DTOS59-12-RA-TIGER4",
+      "opportunity_status": "archived",
+      "opportunity_title": "FY 2012 National Infrastructure Investments",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "http://www.dot.gov/tiger/docs/fy12_tiger_nofa.pdf",
+        "additional_info_url_description": "TIGER 2012 Notice of Funding Availability",
+        "agency_contact_description": "Howard Hill\r\nPhone 202-366-0301",
+        "agency_email_address_description": "TIGER Program Staff Contact",
+        "applicant_eligibility_description": "Eligible Applicants for TIGER Discretionary Grants are State, local, and tribal governments, including U.S. territories, transit agencies, port\r\nauthorities, metropolitan planning organizations (MPOs), other political subdivisions of State or local governments, and multi-State or multijurisdictional groups applying through a\r\nsingle lead applicant (for multijurisdictional\r\ngroups, each member of [trimmed]",
+        "applicant_types": [
+          "other"
+        ],
+        "archive_date": "2012-04-18",
+        "award_ceiling": 200000000,
+        "award_floor": 1000000,
+        "close_date": "2012-03-19",
+        "close_date_description": "Each applicant is required to submit a Pre-application prior to submitted a Final application.  Pre-applications must be\r\nsubmitted by February 20, 2012, at 5 p.m.\r\nEST (the Pre-Application Deadline).\r\nFinal applications must be submitted\r\nthrough Grants.gov by March 19, 2012,\r\nat 5 p.m. EDT (the Application\r\nDeadline). The DOT pre-application\r\nsystem will open on or before\r\nFebruary 13, 2012, via the TIGER Website (www.dot.gov/tiger) to allow prospective\r\napplicants to register for and submit pre-applications.\r\nSubsequently, the Grants.gov Apply\r\nfunction will open on February 22, 2012,\r\nallowing applicants to submit\r\nfinal applications. While applicants are\r\nencouraged to submit pre-applications\r\nin advance of the Pre-Application\r\nDeadline, pre-applications will not be\r\nreviewed until after the pre-application\r\ndeadline. Similarly, while applicants\r\nare encouraged to submit final applications\r\nin advance of the Application Deadline,\r\nfinal applications will not be evaluated, and\r\nawards will not be made, until after the\r\nApplication Deadline.",
+        "created_at": "2012-02-17T17:09:28+00:00",
+        "estimated_total_program_funding": 500000000,
+        "expected_number_of_awards": null,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "transportation"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2012-02-17",
+        "summary_description": "Under the FY 2012 Continuing Appropriations Act, $526,944,000 is available through September 30, 2013, for the Department to make TIGER Discretionary Grants on a competitive basis for projects that will have a significant impact on the Nation, a metropolitan area, or a region. Projects eligible for funding provided under this program include, but are not limited to, highway or bridge projects elig [trimmed]",
+        "updated_at": "2012-02-17T17:09:28+00:00",
+        "version_number": 1
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOT",
+      "top_level_agency_name": "Department of Transportation"
+    },
+    {
+      "agency": "DOT",
+      "agency_code": "DOT",
+      "agency_name": "Department of Transportation",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 253392,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "20.933",
+          "program_title": "National Infrastructure Investments"
+        }
+      ],
+      "opportunity_id": "65d86c9d-da9a-4dae-86b8-3e36ab519a54",
+      "opportunity_number": "DTOS59-14-RA-TIGER6",
+      "opportunity_status": "archived",
+      "opportunity_title": "FY 2014 National Infrastructure Investments",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "https://www.federalregister.gov/a/2014-04627",
+        "additional_info_url_description": "TIGER 2014 Notice of Funding Availability",
+        "agency_contact_description": "Howard Hill\r\nPhone: 202-366-0301",
+        "agency_email_address_description": "TIGER Program Staff Contact",
+        "applicant_eligibility_description": "Eligible Applicants for TIGER Discretionary Grants are State, local, and tribal governments, including U.S. territories, transit agencies, port authorities, metropolitan planning organizations (MPOs), other political subdivisions of State or local governments, and multi-State or multi-jurisdictional groups applying through a single lead applicant (for multi-jurisdictional groups, each member of  [trimmed]",
+        "applicant_types": [
+          "other"
+        ],
+        "archive_date": "2014-09-30",
+        "award_ceiling": 200000000,
+        "award_floor": 10000,
+        "close_date": "2014-04-28",
+        "close_date_description": "You must submit final applications through Grants.gov by April 28, 2014, at 5:00 p.m. EDT (the Application Deadline). The Grants.gov Apply function will open on April 3, 2014, allowing applicants to submit applications. You are strongly encouraged to submit applications in advance of the deadline. Please be aware that you must complete the registration process before submitting an application, and that this process usually takes 2-4 weeks to complete. If interested parties experience difficulties at any point during the registration or application process, please call the Grants.gov Customer Support Hotline at 1-800-518-4726, Monday-Friday from 7:00 a.m. to 9:00 p.m. EDT.\r\n\r\n**Late Application Notice**\r\n\r\nApplicants who are unable to successfully submit their application package through grants.gov prior to 5:00PM EDT on Monday, April 28, 2014 MUST submit an e-mail to TIGERGrants@dot.gov before 5:00 PM EDT on April 28th with the following information:\r\n\r\n  The nature of the technical difficulties experienced in attempting to submit an application AND a screenshot of the error;\r\n  The Legal Name for the applicant that was provided in field 8a of the SF-424;\r\n  The name of the Submitter of the SF-424 if different from field 8a;\r\n  The Grants.Gov tracking number (e.g. GRANT12345678).\r\n\r\nDOT will consider late applications on a case-by-case basis and reserves the right to reject late applications which do not meet the conditions outlined in the Notice of Funding Availability.  Late applications from whom DOT does not receive an email with the items specified above will not be considered for this round of TIGER Discretionary Grants.",
+        "created_at": "2014-04-03T15:18:11+00:00",
+        "estimated_total_program_funding": 600000000,
+        "expected_number_of_awards": null,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "transportation"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2014-04-03",
+        "summary_description": "The FY 2014 Appropriations Act appropriated $600 million to be awarded by DOT for the TIGER Discretionary Grants program. As in previous rounds, the FY 2014 TIGER Discretionary Grants are for capital investments in surface transportation infrastructure, and are to be awarded on a competitive basis for projects that will have a significant impact on the Nation, a metropolitan area, or a region. Add [trimmed]",
+        "updated_at": "2014-04-18T14:59:56+00:00",
+        "version_number": 3
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOT",
+      "top_level_agency_name": "Department of Transportation"
+    },
+    {
+      "agency": "DOT",
+      "agency_code": "DOT",
+      "agency_name": "Department of Transportation",
+      "category": "discretionary",
+      "category_explanation": null,
+      "legacy_opportunity_id": 232275,
+      "opportunity_assistance_listings": [
+        {
+          "assistance_listing_number": "20.933",
+          "program_title": "National Infrastructure Investments"
+        }
+      ],
+      "opportunity_id": "7a3f0127-1874-4a83-8772-bb519649c15c",
+      "opportunity_number": "DTOS59-13-RA-TIGER5",
+      "opportunity_status": "archived",
+      "opportunity_title": "FY 2013 National Infrastructure Investments",
+      "purpose_statement": null,
+      "summary": {
+        "additional_info_url": "https://www.federalregister.gov/articles/2013/04/26/2013-09889/notice-of-funding-availability-for-the-department-of-transportations-national-infrastructure",
+        "additional_info_url_description": "TIGER 2013 Notice of Funding Availability",
+        "agency_contact_description": "Howard Hill\r\nPhone 202-366-0301",
+        "agency_email_address_description": "TIGER Program Staff Contact",
+        "applicant_eligibility_description": "Eligible Applicants for TIGER Discretionary Grants are State, local, and tribal governments, including U.S. territories, transit agencies, port authorities, metropolitan planning organizations (MPOs), other political subdivisions of State or local governments, and multi-State or multi-jurisdictional groups applying through a single lead applicant (for multi-jurisdictional groups, each member of  [trimmed]",
+        "applicant_types": [
+          "other"
+        ],
+        "archive_date": "2013-09-30",
+        "award_ceiling": 200000000,
+        "award_floor": 1000000,
+        "close_date": "2013-06-03",
+        "close_date_description": "You must submit final applications through Grants.gov by June 3, 2013, at 5:00 p.m. EDT (the Application Deadline). The Grants.gov Apply function will open on April 29, 2013, allowing applicants to submit final applications. You are strongly encouraged to submit applications in advance of the deadline.",
+        "created_at": "2013-04-29T20:28:51+00:00",
+        "estimated_total_program_funding": 473847000,
+        "expected_number_of_awards": null,
+        "fiscal_year": null,
+        "forecasted_award_date": null,
+        "forecasted_close_date": null,
+        "forecasted_close_date_description": null,
+        "forecasted_post_date": null,
+        "forecasted_project_start_date": null,
+        "funding_categories": [
+          "transportation"
+        ],
+        "funding_category_description": null,
+        "funding_instruments": [
+          "grant"
+        ],
+        "is_cost_sharing": true,
+        "is_forecast": false,
+        "post_date": "2013-04-29",
+        "summary_description": "The FY 2013 Appropriations Act appropriated $473.847 million to be awarded by DOT for the TIGER Discretionary Grants program. Like previous rounds, the FY 2013 TIGER Discretionary Grants are for capital investments in surface transportation infrastructure and are to be awarded on a competitive basis for projects that will have a significant impact on the Nation, a metropolitan area, or a region. L [trimmed]",
+        "updated_at": "2013-04-29T20:28:51+00:00",
+        "version_number": 1
+      },
+      "tagline": null,
+      "top_level_agency_code": "DOT",
+      "top_level_agency_name": "Department of Transportation"
+    }
+  ]
+}

@@ -98,12 +98,13 @@ describe('deep links', () => {
   it('reads the mode and a valid opportunity ID', () => {
     expect(U.readParams(`?mode=nofo&opportunity=${id}`)).toEqual({ mode: 'nofo', opportunity: id });
     expect(U.readParams(`?mode=nofo&opportunity=${id.toUpperCase()}`).opportunity).toBe(id);
-    expect(U.readParams('')).toEqual({ mode: 'search', opportunity: null });
+    expect(U.readParams('')).toEqual({ mode: 'find', opportunity: null });
+    expect(U.readParams('?mode=search').mode).toBe('search');
   });
 
   it('ignores anything that is not a UUID, so nothing odd reaches a request path', () => {
     expect(U.readParams('?mode=nofo&opportunity=../../etc/passwd').opportunity).toBeNull();
-    expect(U.readParams('?mode=evil').mode).toBe('search');
+    expect(U.readParams('?mode=evil').mode).toBe('find');
     expect(U.isUuid(id)).toBe(true);
     expect(U.isUuid('nope')).toBe(false);
   });
