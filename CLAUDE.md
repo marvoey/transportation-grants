@@ -39,7 +39,7 @@ NOFO mean for us, what information is missing, and what should we investigate be
 1. A selected opportunity identified by a Simpler.Grants.gov UUID.
 2. Retrieve opportunity details and the official attachments the API lists; allow manually
    curated supplemental sources (`supplemental.json`) added later.
-3. Ingest PDF and HTML; register every other format honestly as unparsed.
+3. Ingest PDF, HTML and Word (.docx); register every other format honestly as unparsed.
 4. Extract structured, source-linked requirements.
 5. Compare requirements against project facts the user gives in conversation.
 6. Identify conflicts and missing information; ask targeted follow-up questions.

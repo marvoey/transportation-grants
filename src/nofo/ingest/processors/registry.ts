@@ -1,11 +1,12 @@
 import type { DetectedType } from '../../schemas.js';
+import { createDocxProcessor } from './docx.js';
 import { createHtmlProcessor } from './html.js';
 import { createPdfProcessor } from './pdf.js';
 import type { DocumentProcessor } from './types.js';
 
-/** The adapters this milestone supports. Everything else is registered, not parsed. */
+/** The adapters supported today (PDF, HTML, Word .docx). Everything else is registered, not parsed. */
 export function defaultProcessors(): DocumentProcessor[] {
-  return [createPdfProcessor(), createHtmlProcessor()];
+  return [createPdfProcessor(), createHtmlProcessor(), createDocxProcessor()];
 }
 
 /** First adapter that supports the detected type, or null (=> `unsupported_format`). */

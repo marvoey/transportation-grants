@@ -6,6 +6,8 @@ import { SimplerApiError } from '../simpler/client.js';
 import { PackageCorruptError } from '../store.js';
 import { SupplementalConfigError } from '../acquire/supplemental.js';
 import { attachmentDocumentId, ingestOpportunity } from './ingest-opportunity.js';
+import { createDocxProcessor } from './processors/docx.js';
+import { makeDocx } from '../__fixtures__/docx.js';
 import {
   ATT_1,
   ATT_2,
@@ -343,6 +345,32 @@ describe('ingestOpportunity: caching and re-ingestion', () => {
     expect(v2.processCalls).toBe(1);
     expect(pkg.manifest.documents[0].processing.processorVersion).toBe('2');
     expect(pkg.manifest.documents[0].retrieval.status).toBe('cached');
+  });
+
+  it('a Word document registered as unsupported is parsed later, once the adapter exists, without re-downloading', async () => {
+    const t = await setup();
+    const docx = makeDocx([
+      { kind: 'p', style: 'Heading1', text: 'Application Template' },
+      { kind: 'p', text: 'Describe the project, its cost, and the amount of federal funding requested.' },
+    ]);
+    const source = fakeSource(detailOf([TEMPLATE]));
+    const fetchImpl = filesFetch({ '/a/template.docx': docx });
+    const base = { source, store: t.store, fetchImpl: asFetch(fetchImpl), now: () => new Date('2026-11-05T10:00:00Z') };
+
+    // Before the adapter exists: stored and registered, not parsed.
+    const first = await ingestOpportunity(OPP_A, { ...base, processors: [fakeProcessor('pdf')] });
+    expect(first.manifest.documents[0].processing.status).toBe('unsupported_format');
+    expect(first.manifest.coverage.status).toBe('none');
+
+    // After: the stored original is parsed; no new download.
+    const downloads = fetchImpl.calls.length;
+    const second = await ingestOpportunity(OPP_A, { ...base, processors: [fakeProcessor('pdf'), createDocxProcessor()] });
+    expect(fetchImpl.calls.length).toBe(downloads);
+    const doc = second.manifest.documents[0];
+    expect(doc.retrieval.status).toBe('cached');
+    expect(doc.processing).toMatchObject({ status: 'parsed', processorId: 'mammoth-docx', sections: 1 }); // one heading + its paragraph = one section
+    const normalized = await t.store.readNormalized(OPP_A, doc.documentId);
+    expect(normalized?.kind === 'html' && normalized.sections[0].heading).toBe('Application Template');
   });
 
   it('--refresh forces a re-download', async () => {
