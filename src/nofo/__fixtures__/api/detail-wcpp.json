@@ -1,0 +1,57 @@
+{
+  "data": {
+    "opportunity_id": "41eb2492-6242-49f8-89ae-17d15c068be4",
+    "opportunity_number": "FHWA-WCPP-26-002",
+    "legacy_opportunity_id": 364009,
+    "opportunity_title": "Fiscal Year 2026 Wildlife Crossings Pilot Program",
+    "opportunity_status": "posted",
+    "category": "discretionary",
+    "agency_code": "DOT-FHWA",
+    "agency_name": "DOT Federal Highway Administration ",
+    "top_level_agency_code": "DOT",
+    "top_level_agency_name": "Department of Transportation",
+    "updated_at": "2026-09-30T19:11:26+00:00",
+    "summary": {
+      "award_ceiling": 80000000,
+      "award_floor": 0,
+      "estimated_total_program_funding": null,
+      "expected_number_of_awards": 8,
+      "post_date": "2026-09-30",
+      "close_date": "2026-11-16",
+      "archive_date": "2026-12-16",
+      "fiscal_year": null,
+      "is_cost_sharing": true,
+      "applicant_types": [
+        "city_or_township_governments",
+        "other",
+        "county_governments",
+        "state_governments",
+        "federally_recognized_native_american_tribal_governments",
+        "special_district_governments"
+      ],
+      "additional_info_url": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=128831"
+    },
+    "attachments": [
+      {
+        "opportunity_attachment_id": "7b1fd534-6009-4779-ba15-13b0e8b3a734",
+        "file_name": "9.29.26_-_Final_Draft_WCPP_Application_Template.docx",
+        "file_description": "FY 26 WCPP Application Template",
+        "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "file_size_bytes": 241189,
+        "download_path": "https://files.simpler.grants.gov/opportunities/41eb2492-6242-49f8-89ae-17d15c068be4/attachments/7b1fd534-6009-4779-ba15-13b0e8b3a734/9.29.26_-_Final_Draft_WCPP_Application_Template.docx",
+        "created_at": "2026-09-30T19:05:45+00:00",
+        "updated_at": "2026-09-30T19:05:45+00:00"
+      },
+      {
+        "opportunity_attachment_id": "700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+        "file_name": "Final_WCPP_NOFO_HAD-260512-001.pdf",
+        "file_description": "Final FY 26 WCPP NOFO",
+        "mime_type": "application/pdf",
+        "file_size_bytes": 796869,
+        "download_path": "https://files.simpler.grants.gov/opportunities/41eb2492-6242-49f8-89ae-17d15c068be4/attachments/700e33fa-537c-4ce9-ad26-e8aaf6313c7d/Final_WCPP_NOFO_HAD-260512-001.pdf",
+        "created_at": "2026-09-30T19:05:19+00:00",
+        "updated_at": "2026-09-30T19:05:19+00:00"
+      }
+    ]
+  }
+}

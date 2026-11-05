@@ -1,0 +1,42 @@
+{
+  "data": {
+    "opportunity_id": "4d8f5775-ff01-4a6f-ab4e-b125899043b3",
+    "opportunity_number": "DTOS59-26-RA-BUILD",
+    "legacy_opportunity_id": 360921,
+    "opportunity_title": "FY 2026 National Infrastructure Investments",
+    "opportunity_status": "archived",
+    "category": "discretionary",
+    "agency_code": "DOT-DOT X-50",
+    "agency_name": "69A345 Office of the Under Secretary for Policy",
+    "top_level_agency_code": "DOT",
+    "top_level_agency_name": "Department of Transportation",
+    "updated_at": "2026-05-13T17:06:48.152906+00:00",
+    "summary": {
+      "award_ceiling": 25000000,
+      "award_floor": 1,
+      "estimated_total_program_funding": 1500000000,
+      "expected_number_of_awards": 100,
+      "post_date": "2025-11-26",
+      "close_date": "2026-02-24",
+      "archive_date": "2026-03-26",
+      "fiscal_year": null,
+      "is_cost_sharing": true,
+      "applicant_types": [
+        "other"
+      ],
+      "additional_info_url": "https://www.transportation.gov/BUILDgrants"
+    },
+    "attachments": [
+      {
+        "opportunity_attachment_id": "b96259bd-b73a-4187-9695-20c4bb978708",
+        "file_name": "FY_2026_BUILD_NOFO_Final.pdf",
+        "file_description": "FY 2026 BUILD NOFO_Final",
+        "mime_type": "application/pdf",
+        "file_size_bytes": 718157,
+        "download_path": "https://files.simpler.grants.gov/opportunities/4d8f5775-ff01-4a6f-ab4e-b125899043b3/attachments/b96259bd-b73a-4187-9695-20c4bb978708/FY_2026_BUILD_NOFO_Final.pdf",
+        "created_at": "2025-11-26T18:17:34+00:00",
+        "updated_at": "2025-12-15T20:53:48+00:00"
+      }
+    ]
+  }
+}

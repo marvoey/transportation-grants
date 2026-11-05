@@ -29,3 +29,9 @@ yarn-error.log*
 
 # Testing
 coverage/
+
+# Ingested NOFO opportunity packages are a local cache (docs/NOFO_MVP_PLAN.md section 3.2).
+# Commit a demo/fixture package deliberately with `git add -f data/opportunities/<uuid>`
+# after checking its size and contents.
+data/opportunities/
+*.tmp

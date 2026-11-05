@@ -4,6 +4,12 @@ import { Config, GrantServerError } from '../types/index.js';
 // Load environment variables
 dotenvConfig();
 
+/** Positive integer env var, falling back to the default on missing/invalid values. */
+function intEnv(name: string, fallback: number): number {
+  const parsed = parseInt(process.env[name] ?? '', 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 export function loadConfig(): Config {
   // Validate required environment variables
   const samApiKey = process.env.SAM_API_KEY;
@@ -51,6 +57,18 @@ export function loadConfig(): Config {
       baseUrl: process.env.ANTHROPIC_BASE_URL, // undefined => SDK default (api.anthropic.com)
       model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5',
       maxTokens: parseInt(process.env.ANTHROPIC_MAX_TOKENS || '1024', 10),
+    },
+    // Optional, like anthropic: only the NOFO ingestion CLI needs the key.
+    simpler: {
+      apiKey: process.env.SIMPLER_GRANTS_API_KEY || undefined,
+      baseUrl: process.env.SIMPLER_GRANTS_BASE_URL || 'https://api.simpler.grants.gov',
+      timeoutMs: intEnv('SIMPLER_TIMEOUT_MS', 30000),
+      maxRetries: intEnv('SIMPLER_MAX_RETRIES', 3),
+    },
+    nofo: {
+      dataDir: process.env.NOFO_DATA_DIR || 'data/opportunities',
+      maxDownloadBytes: intEnv('NOFO_MAX_DOWNLOAD_BYTES', 50 * 1024 * 1024),
+      maxPackageBytes: intEnv('NOFO_MAX_PACKAGE_BYTES', 200 * 1024 * 1024),
     },
     server: {
       name: 'dot-grants-mcp-server',

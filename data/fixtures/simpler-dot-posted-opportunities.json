@@ -1,0 +1,346 @@
+{
+  "_note": "Test fixture: a snapshot of real Simpler.Grants.gov data, NOT a live source of truth. Statuses, dates and attachments change. Re-run the search to refresh.",
+  "source": {
+    "webSearchUrl": "https://simpler.grants.gov/search?utm_source=Grants.gov&status=posted&query=DOT",
+    "api": "POST https://api.simpler.grants.gov/v1/opportunities/search + GET /v1/opportunities/{opportunity_id}",
+    "searchRequest": {
+      "query": "DOT",
+      "filters": {
+        "opportunity_status": {
+          "one_of": [
+            "posted"
+          ]
+        }
+      },
+      "sort": "post_date desc"
+    },
+    "retrievedAt": "2026-11-05T00:12:57Z",
+    "totalRecords": 9
+  },
+  "opportunities": [
+    {
+      "opportunityId": "aa81e9f0-a4bb-47d5-aa09-d26f0c2734fe",
+      "opportunityNumber": "NHTSA-693JJ927R000007-FY27",
+      "legacyOpportunityId": 364212,
+      "title": "State Process for Informing Consumers of Recalls Program",
+      "agencyCode": "DOT-NHTSA",
+      "agencyName": "National Highway Traffic Safety Administration",
+      "topLevelAgencyName": "Department of Transportation",
+      "status": "posted",
+      "category": "discretionary",
+      "postDate": "2026-11-04",
+      "closeDate": "2027-02-04",
+      "awardCeiling": 1500000,
+      "awardFloor": 300000,
+      "expectedNumberOfAwards": 5,
+      "estimatedTotalProgramFunding": 1500000,
+      "isCostSharing": false,
+      "fiscalYear": null,
+      "additionalInfoUrl": null,
+      "updatedAt": "2026-11-04T18:08:19+00:00",
+      "attachmentCount": 1,
+      "attachments": [
+        {
+          "attachmentId": "eb256267-cfdc-4de1-8275-4c45ea860d2d",
+          "fileName": "State_Process_for_Informing_Consumers_of_Recalls_Program_NOFO_Final_11.4.2026_-_695JJ927R000007.pdf",
+          "mimeType": "application/pdf",
+          "sizeBytes": 4243557,
+          "description": "State Process for Informing Consumers of Recalls Program NOFO",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/aa81e9f0-a4bb-47d5-aa09-d26f0c2734fe/attachments/eb256267-cfdc-4de1-8275-4c45ea860d2d/State_Process_for_Informing_Consumers_of_Recalls_Program_NOFO_Final_11.4.2026_-_695JJ927R000007.pdf"
+        }
+      ]
+    },
+    {
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "opportunityNumber": "FM-CCFP-27-001",
+      "legacyOpportunityId": 364171,
+      "title": "FY 2027 Crash Causal Factors Program",
+      "agencyCode": "DOT-FMCSA",
+      "agencyName": "DOT-Federal Motor Carrier Safety Administration",
+      "topLevelAgencyName": "Department of Transportation",
+      "status": "posted",
+      "category": "discretionary",
+      "postDate": "2026-10-29",
+      "closeDate": "2026-12-28",
+      "awardCeiling": 500000,
+      "awardFloor": 25000,
+      "expectedNumberOfAwards": 30,
+      "estimatedTotalProgramFunding": 7000000,
+      "isCostSharing": false,
+      "fiscalYear": null,
+      "additionalInfoUrl": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=129231",
+      "updatedAt": "2026-10-29T12:31:36+00:00",
+      "attachmentCount": 5,
+      "attachments": [
+        {
+          "attachmentId": "9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "fileName": "FY_2027_CCFP_NOFO.pdf",
+          "mimeType": "application/pdf",
+          "sizeBytes": 890799,
+          "description": "FY 2027 Crash Causal Factors Program (CCFP) Notice of Funding Opportunity (NOFO)",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/63e23729-3766-4dc9-91dc-d1d656541c2d/attachments/9c751ce2-dfa9-4acd-b278-050bc5b28ab3/FY_2027_CCFP_NOFO.pdf"
+        },
+        {
+          "attachmentId": "2185b190-63ff-47f7-9101-a1cbc96dcf1a",
+          "fileName": "FMCSA_Title_VI_Program_Assurance3.docx",
+          "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "sizeBytes": 36589,
+          "description": "FY 2027 FMCSA Title VI Program Assurance",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/63e23729-3766-4dc9-91dc-d1d656541c2d/attachments/2185b190-63ff-47f7-9101-a1cbc96dcf1a/FMCSA_Title_VI_Program_Assurance3.docx"
+        },
+        {
+          "attachmentId": "15372eb2-d682-431e-803d-47e1a14645a0",
+          "fileName": "Updated_FY_2027_FMCSA_APPLICANT_TITLE_VI_PROGRAM_COMPLIANCE_PLAN_CHECKLIST.docx",
+          "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "sizeBytes": 31531,
+          "description": "FY 2027 FMCSA Applicant Title VI Program Compliance Plan Checklist",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/63e23729-3766-4dc9-91dc-d1d656541c2d/attachments/15372eb2-d682-431e-803d-47e1a14645a0/Updated_FY_2027_FMCSA_APPLICANT_TITLE_VI_PROGRAM_COMPLIANCE_PLAN_CHECKLIST.docx"
+        },
+        {
+          "attachmentId": "995a20a5-0c70-4d49-951a-95331d322963",
+          "fileName": "FY_2027_Budget_Narrative_Template.docx",
+          "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "sizeBytes": 38301,
+          "description": "Budget Narrative Template",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/63e23729-3766-4dc9-91dc-d1d656541c2d/attachments/995a20a5-0c70-4d49-951a-95331d322963/FY_2027_Budget_Narrative_Template.docx"
+        },
+        {
+          "attachmentId": "8352293f-5853-4bfb-995e-dd787e4895a8",
+          "fileName": "CCFP_NOFO_Additional_Resources.pdf",
+          "mimeType": "application/pdf",
+          "sizeBytes": 114066,
+          "description": "FY 2027 Crash Causal Factors Program (CCFP) Funding Webinar & Office Hours",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/63e23729-3766-4dc9-91dc-d1d656541c2d/attachments/8352293f-5853-4bfb-995e-dd787e4895a8/CCFP_NOFO_Additional_Resources.pdf"
+        }
+      ]
+    },
+    {
+      "opportunityId": "8b77b132-7aac-4d20-b97e-5964e9878ad6",
+      "opportunityNumber": "FR-AMT-27-002",
+      "legacyOpportunityId": 364167,
+      "title": "FY27 National Network Cooperative Agreement to the National Railroad Passenger Corporation",
+      "agencyCode": "DOT-FRA",
+      "agencyName": "DOT - Federal Railroad Administration",
+      "topLevelAgencyName": "Department of Transportation",
+      "status": "posted",
+      "category": "discretionary",
+      "postDate": "2026-10-28",
+      "closeDate": "2026-11-27",
+      "awardCeiling": 309586389,
+      "awardFloor": 0,
+      "expectedNumberOfAwards": 1,
+      "estimatedTotalProgramFunding": 309586389,
+      "isCostSharing": false,
+      "fiscalYear": null,
+      "additionalInfoUrl": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=129232",
+      "updatedAt": "2026-10-28T13:17:07+00:00",
+      "attachmentCount": 0,
+      "attachments": []
+    },
+    {
+      "opportunityId": "0ed6b1e2-041f-4c71-9020-91e96ea5c30b",
+      "opportunityNumber": "FR-AMT-27-001",
+      "legacyOpportunityId": 364166,
+      "title": "FY27 Northeast Corridor Cooperative Agreement to the National Railroad Passenger Corporation",
+      "agencyCode": "DOT-FRA",
+      "agencyName": "DOT - Federal Railroad Administration",
+      "topLevelAgencyName": "Department of Transportation",
+      "status": "posted",
+      "category": "discretionary",
+      "postDate": "2026-10-28",
+      "closeDate": "2026-11-27",
+      "awardCeiling": 166866475,
+      "awardFloor": 0,
+      "expectedNumberOfAwards": 1,
+      "estimatedTotalProgramFunding": 166866475,
+      "isCostSharing": false,
+      "fiscalYear": null,
+      "additionalInfoUrl": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=129230",
+      "updatedAt": "2026-10-28T13:17:00+00:00",
+      "attachmentCount": 0,
+      "attachments": []
+    },
+    {
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "opportunityNumber": "FHWA-WCPP-26-002",
+      "legacyOpportunityId": 364009,
+      "title": "Fiscal Year 2026 Wildlife Crossings Pilot Program",
+      "agencyCode": "DOT-FHWA",
+      "agencyName": "DOT Federal Highway Administration ",
+      "topLevelAgencyName": "Department of Transportation",
+      "status": "posted",
+      "category": "discretionary",
+      "postDate": "2026-09-30",
+      "closeDate": "2026-11-16",
+      "awardCeiling": 80000000,
+      "awardFloor": 0,
+      "expectedNumberOfAwards": 8,
+      "estimatedTotalProgramFunding": null,
+      "isCostSharing": true,
+      "fiscalYear": null,
+      "additionalInfoUrl": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=128831",
+      "updatedAt": "2026-09-30T19:11:26+00:00",
+      "attachmentCount": 2,
+      "attachments": [
+        {
+          "attachmentId": "7b1fd534-6009-4779-ba15-13b0e8b3a734",
+          "fileName": "9.29.26_-_Final_Draft_WCPP_Application_Template.docx",
+          "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "sizeBytes": 241189,
+          "description": "FY 26 WCPP Application Template",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/41eb2492-6242-49f8-89ae-17d15c068be4/attachments/7b1fd534-6009-4779-ba15-13b0e8b3a734/9.29.26_-_Final_Draft_WCPP_Application_Template.docx"
+        },
+        {
+          "attachmentId": "700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "fileName": "Final_WCPP_NOFO_HAD-260512-001.pdf",
+          "mimeType": "application/pdf",
+          "sizeBytes": 796869,
+          "description": "Final FY 26 WCPP NOFO",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/41eb2492-6242-49f8-89ae-17d15c068be4/attachments/700e33fa-537c-4ce9-ad26-e8aaf6313c7d/Final_WCPP_NOFO_HAD-260512-001.pdf"
+        }
+      ]
+    },
+    {
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "opportunityNumber": "NHTSA-693JJ926R000024-FY26",
+      "legacyOpportunityId": 363446,
+      "title": "Innovative Traffic Safety Enforcement (ITSE) Grant Program",
+      "agencyCode": "DOT-NHTSA",
+      "agencyName": "National Highway Traffic Safety Administration",
+      "topLevelAgencyName": "Department of Transportation",
+      "status": "posted",
+      "category": "discretionary",
+      "postDate": "2026-08-03",
+      "closeDate": "2027-09-01",
+      "awardCeiling": 20000000,
+      "awardFloor": 300000,
+      "expectedNumberOfAwards": 10,
+      "estimatedTotalProgramFunding": 20000000,
+      "isCostSharing": false,
+      "fiscalYear": null,
+      "additionalInfoUrl": null,
+      "updatedAt": "2026-08-12T15:02:26+00:00",
+      "attachmentCount": 4,
+      "attachments": [
+        {
+          "attachmentId": "7939f3db-c26a-4822-9561-83927bfa56b5",
+          "fileName": "NHTSA_ITSE_NOFO_8.3.2026.pdf",
+          "mimeType": "application/pdf",
+          "sizeBytes": 624057,
+          "description": "Innovative Traffic Safety Enforcement (ITSE) Grant Program NOFO",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/5269870b-a071-47ba-a076-d3fbc1955077/attachments/7939f3db-c26a-4822-9561-83927bfa56b5/NHTSA_ITSE_NOFO_8.3.2026.pdf"
+        },
+        {
+          "attachmentId": "4d3e4743-bcb9-424f-89ff-8ebd14387880",
+          "fileName": "ITSE_Pre-Applicant_Webinar_8.7.2026.pdf",
+          "mimeType": "application/pdf",
+          "sizeBytes": 755868,
+          "description": "ITSE Live Webinar Information",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/5269870b-a071-47ba-a076-d3fbc1955077/attachments/4d3e4743-bcb9-424f-89ff-8ebd14387880/ITSE_Pre-Applicant_Webinar_8.7.2026.pdf"
+        },
+        {
+          "attachmentId": "95a6fb2d-f8df-4f77-9ca3-0db119ecceb8",
+          "fileName": "NHTSA_ITSE_NOFO_Questions_and_Answers_8.20.2026.pdf",
+          "mimeType": "application/pdf",
+          "sizeBytes": 302460,
+          "description": "NHTSA ITSE NOFO Questions and Answers 8.20.2026",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/5269870b-a071-47ba-a076-d3fbc1955077/attachments/95a6fb2d-f8df-4f77-9ca3-0db119ecceb8/NHTSA_ITSE_NOFO_Questions_and_Answers_8.20.2026.pdf"
+        },
+        {
+          "attachmentId": "5acd66f9-92f5-4052-941e-e1e1f7514cfa",
+          "fileName": "NHTSA_ITSE_NOFO_Questions_and_Answers_vII._8.26.2026.pdf",
+          "mimeType": "application/pdf",
+          "sizeBytes": 182063,
+          "description": "NHTSA ITSE NOFO Questions and Answers vII. 8.26.2026",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/5269870b-a071-47ba-a076-d3fbc1955077/attachments/5acd66f9-92f5-4052-941e-e1e1f7514cfa/NHTSA_ITSE_NOFO_Questions_and_Answers_vII._8.26.2026.pdf"
+        }
+      ]
+    },
+    {
+      "opportunityId": "ca1829af-e8b7-4caa-8ab4-ae6f675492e5",
+      "opportunityNumber": "FAA-COE-AJFE",
+      "legacyOpportunityId": 243973,
+      "title": "Center of Excellence for Alternative Jet Fuels and Environment",
+      "agencyCode": "DOT-FAA-FAA COE-AJFE",
+      "agencyName": "FAA-COE-AJFE",
+      "topLevelAgencyName": "Department of Transportation",
+      "status": "posted",
+      "category": "discretionary",
+      "postDate": "2023-11-13",
+      "closeDate": "2027-09-30",
+      "awardCeiling": 20000000,
+      "awardFloor": 1,
+      "expectedNumberOfAwards": 200,
+      "estimatedTotalProgramFunding": null,
+      "isCostSharing": true,
+      "fiscalYear": null,
+      "additionalInfoUrl": null,
+      "updatedAt": "2026-10-19T17:22:49+00:00",
+      "attachmentCount": 0,
+      "attachments": []
+    },
+    {
+      "opportunityId": "5cbcf015-ea67-4e2d-ba06-d129fcb90301",
+      "opportunityNumber": "FAA-COE-JAMS",
+      "legacyOpportunityId": 39841,
+      "title": "Joint Center of Excellence for Advanced Materials Research",
+      "agencyCode": "DOT-FAA-FAA COE-FAA JAMS",
+      "agencyName": "FAA-COE-JAMS",
+      "topLevelAgencyName": "Department of Transportation",
+      "status": "posted",
+      "category": "discretionary",
+      "postDate": "2023-11-01",
+      "closeDate": null,
+      "awardCeiling": 20000000,
+      "awardFloor": 0,
+      "expectedNumberOfAwards": null,
+      "estimatedTotalProgramFunding": null,
+      "isCostSharing": true,
+      "fiscalYear": null,
+      "additionalInfoUrl": null,
+      "updatedAt": "2026-05-13T17:06:48.156683+00:00",
+      "attachmentCount": 0,
+      "attachments": []
+    },
+    {
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "opportunityNumber": "20-01",
+      "legacyOpportunityId": 328902,
+      "title": "FAA Aviation Research Grants Program",
+      "agencyCode": "DOT-FAA-FAA ARG",
+      "agencyName": "DOT - FAA Aviation Research Grants",
+      "topLevelAgencyName": "Department of Transportation",
+      "status": "posted",
+      "category": "discretionary",
+      "postDate": "2020-09-08",
+      "closeDate": "2027-09-07",
+      "awardCeiling": 6000000,
+      "awardFloor": 0,
+      "expectedNumberOfAwards": null,
+      "estimatedTotalProgramFunding": null,
+      "isCostSharing": false,
+      "fiscalYear": null,
+      "additionalInfoUrl": null,
+      "updatedAt": "2026-05-13T17:06:48.162712+00:00",
+      "attachmentCount": 2,
+      "attachments": [
+        {
+          "attachmentId": "531b324b-c0d1-4d8a-a463-0197df918a68",
+          "fileName": "NOFO_20-01.myb.pdf",
+          "mimeType": "application/pdf",
+          "sizeBytes": 1413638,
+          "description": "Revised NOFO 20-01",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/721d5c2c-af72-4c33-8ce6-013b1e8ad59b/attachments/531b324b-c0d1-4d8a-a463-0197df918a68/NOFO_20-01.myb.pdf"
+        },
+        {
+          "attachmentId": "718d3a84-91d3-409e-a9f5-2c059ff8f324",
+          "fileName": "FAA_Non-Discrimination_Assurances_V1.1.pdf",
+          "mimeType": "application/pdf",
+          "sizeBytes": 1513365,
+          "description": "FAA Non-Discrimination Assurances",
+          "downloadPath": "https://files.simpler.grants.gov/opportunities/721d5c2c-af72-4c33-8ce6-013b1e8ad59b/attachments/718d3a84-91d3-409e-a9f5-2c059ff8f324/FAA_Non-Discrimination_Assurances_V1.1.pdf"
+        }
+      ]
+    }
+  ]
+}

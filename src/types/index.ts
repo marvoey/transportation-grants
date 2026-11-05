@@ -321,6 +321,19 @@ export interface Config {
     model: string;
     maxTokens: number;
   };
+  // Simpler.Grants.gov access and NOFO package storage (src/nofo). Neither is
+  // required at startup: the ingestion CLI checks the key lazily.
+  simpler: {
+    apiKey?: string;
+    baseUrl: string;
+    timeoutMs: number;
+    maxRetries: number;
+  };
+  nofo: {
+    dataDir: string;
+    maxDownloadBytes: number;
+    maxPackageBytes: number;
+  };
   server: {
     name: string;
     version: string;
