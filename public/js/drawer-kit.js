@@ -6,7 +6,7 @@
  *   tray.setAvailable(false);   // hide it (and close it)
  *   DrawerKit.copyText(text).then(...);
  *
- * A tray is closed by default. The tab toggles it; the × button and Escape close it; only one tray is open at a time;
+ * A tray is closed by default. The tab toggles it; copying from it closes it; the × button and Escape close it; only one tray is open at a time;
  * a closed tray cannot be reached by keyboard.
  */
 (function () {
@@ -39,13 +39,17 @@
     button._flash = setTimeout(function () { button.textContent = original; }, 1500);
   }
 
-  /** A copy button's behavior: copy, flash the result, and announce it through `say` (a screen-reader line). */
-  function wireCopyButton(button, getText, label, say) {
+  /**
+   * A copy button's behavior: copy, flash the result, and announce it through `say` (a screen-reader line).
+   * `onCopied` (optional) runs only after a successful copy; the trays use it to close themselves.
+   */
+  function wireCopyButton(button, getText, label, say, onCopied) {
     button.addEventListener('click', function () {
       copyText(getText()).then(
         function () {
           flash(button, 'Copied ✓');
           say('Copied ' + label + ' to the clipboard.');
+          if (onCopied) onCopied();
         },
         function () {
           flash(button, 'Copy failed');

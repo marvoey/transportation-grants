@@ -34,11 +34,16 @@
     setTimeout(function () { els.status.textContent = message; }, 30);
   }
 
+  /** Copying an answer closes the tray, so the pasted text can be seen and edited in the conversation. */
+  function closeTray() {
+    if (tray) tray.setOpen(false, true);
+  }
+
   function copyButton(text, label, ariaLabel) {
     var button = el('button', 'nofo-secondary find-small', label);
     button.type = 'button';
     button.setAttribute('aria-label', ariaLabel);
-    K.wireCopyButton(button, function () { return text; }, ariaLabel.replace(/^Copy /, ''), say);
+    K.wireCopyButton(button, function () { return text; }, ariaLabel.replace(/^Copy /, ''), say, closeTray);
     return button;
   }
 

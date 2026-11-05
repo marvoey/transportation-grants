@@ -11,6 +11,7 @@
   var K = window.DrawerKit;
   var projects = window.SampleProjects || [];
   var els = {};
+var tray = null;
 
   function el(tag, className, text) {
     var node = document.createElement(tag);
@@ -33,7 +34,10 @@
     var button = el('button', 'nofo-secondary find-small', 'Copy');
     button.type = 'button';
     button.setAttribute('aria-label', 'Copy the description: ' + project.title);
-    K.wireCopyButton(button, function () { return project.text; }, project.title, say);
+    K.wireCopyButton(button, function () { return project.text; }, project.title, say, function () {
+      // Copying a description closes the tray, so the pasted text can be seen in the conversation.
+      if (tray) tray.setOpen(false, true);
+    });
     item.appendChild(button);
     return item;
   }
@@ -52,7 +56,7 @@
     }
 
     projects.forEach(function (project) { els.list.appendChild(renderItem(project)); });
-    var tray = K.create({ drawer: els.drawer, tab: els.tab, panel: els.panel, close: els.close });
+    tray = K.create({ drawer: els.drawer, tab: els.tab, panel: els.panel, close: els.close });
 
     // Available on Find grants and Assess; hidden (and closed) on the original chat tab.
     function applyMode(mode) { tray.setAvailable(mode !== 'search'); }
