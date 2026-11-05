@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | **Rev 4** — Milestone 3 (requirements extraction) implemented, unit-tested and run live on two real opportunities; **awaiting your review. Milestone 4 not started.** Milestones 1–2 (incl. the Word adapter) are committed; M3 is not. The reference set used to evaluate extraction was **drafted by the assistant and is not yet human-verified** (see the M3 implementation record in §5). |
+| **Status** | **Rev 5** — Milestone 4 (applicant assessment and follow-up questions) implemented, unit-tested and run live on the BUILD requirements; **awaiting your review. Milestone 5 not started.** Milestones 1–3 are committed; M4 is not. Every result is **provisional**: no requirement has been human-verified, and the reference set behind M3's accuracy is still the assistant's draft. |
 | **Written** | Rev 1 (Milestone 1 plan): 2026-11-04 · Rev 2: 2026-11-04 |
 | **Branch** | `nofo`. Rev 1 audited `397cced`. Rev 2 reviewed at `583c2e3` (updated guide, `CLAUDE.md` and Rev 1 of this plan committed). |
 | **Demo deadline** | 2026-11-13 (Fri) |
@@ -18,6 +18,7 @@
 | 3 | **Decisions recorded and Milestone 2 implemented.** Q12: Wildlife Crossings is the second integration test. Q14: no manual supplemental documents yet; M2 is automatic retrieval only, with supplemental sources *designed* and potential missing sources *recorded* (BUILD FAQs/checklists/amendments may be added in M3 if needed). Q13: commit small stable fixtures and manifests, never caches, credentials or oversized artifacts. Q15: `CLAUDE.md` updated. Authority classification now lets derivative documents (FAQ, Q&A, template, webinar, …) win over a "NOFO" mention in their name. See §5 "M2 implementation record" and §9. |
 | 3.2 | **Word (.docx) adapter added** at your request (beyond the guide's "register, parse only if essential"). Uses `mammoth` 1.13.0, which you installed, to convert to HTML and then reuses the HTML section extraction. Wildlife Crossings now reaches coverage `api_listed_processed`. 179 tests pass, none skipped. See "Rev 3.2" in the M2 implementation record. |
 | 4 | **Milestone 3 implemented.** Source-grounded requirements extraction with code-verified citations, a reference-set evaluation, and an optional multi-pass mode. Deviation from Rev 1: sampling parameters (temperature) cannot be sent to current models, so reproducibility comes from caching and the evaluation, not from temperature 0. See "M3 implementation record" in §5. |
+| 5 | **Milestone 4 implemented.** Project facts read from the conversation and verified against the applicant's own words; deterministic checks for numbers; narrow model interpretation for free-text conditions; ranked follow-up questions; a code-written advisory. Simplification versus Rev 1: the advisory is written by code, not a model (no extra model call, nothing invented). See "M4 implementation record" in §5. |
 
 **Sections revised in Rev 2:** §1, §2.1–§2.4, §3.1–§3.4, §3.8–§3.10, new §3.11 (verified API contract), §4, §5 (M2 rewritten, M3/M5 adjusted, calendar), §6, §7, §8, §9, §10.
 
@@ -704,7 +705,7 @@ How the numbers moved while I built and tuned it (each row is a real run; the re
 - **Not done:** no HTML/Word extraction has been run on a real document (the unit tests cover section citations); no supplemental BUILD documents were added (your Q14 decision); `evaluation` and `post_award` categories are not extracted.
 
 
-### M4 — Applicant assessment — unchanged
+### M4 — Applicant assessment
 
 - **Work:** `facts.ts`, `checks.ts`, `assess.ts`, `questions.ts`, `advisory.ts`, `service.ts`.
 - **Acceptance (maps to guide §9):**
@@ -726,6 +727,51 @@ How the numbers moved while I built and tuned it (each row is a real run; the re
 
   - The **demo scenario** ($25M project, $18M request, $7M state funds committed, no BCA) is a test with a mocked LLM. It asserts correct arithmetic, the BCA gap, unresolved items left as `unknown`, a cited conflict or support for each consequential conclusion, and the "preliminary" label. Whether the $18M/72% federal share is within FY2026 limits **depends on the real NOFO values, which I haven't seen.** The test fixture is written after the documents are acquired and the requirements verified.
   - Three scenario tests as the guide asks: plausible, conflict, missing information.
+
+> **Status (Rev 5): implemented, unit-tested (413 tests) and run live; awaiting your review.** Two of the guide's scenario rows are **not** met here (see the table). All results are provisional.
+
+#### M4 implementation record (Rev 5)
+
+**Entry points (no web route yet; that is Milestone 5).** `assessTurn(input, deps)` in `src/nofo/service.ts` takes `{opportunityId, messages (1–40, ≤4,000 characters each), facts?}` and returns the new facts (to send back next turn), the arithmetic, findings with evidence, not-applicable items, up to three questions, and the advisory. CLI for trying it: `npm run nofo:assess -- <uuid> --say "<applicant's words>" [--say "..."] [--facts-file facts.json]` (the facts file carries facts between runs).
+
+**How it works.**
+1. **Facts come only from the conversation.** The model reads the latest message (plus up to three before it, so "$18 million" keeps the question it answers) and proposes facts. **Code verifies every fact:** its quote must appear in something the *applicant* said (the assistant's words never count), and a dollar value must be in its quote. Anything else is discarded and reported. A client sends the facts back each turn; they are validated strictly (unknown keys, wrong types, absurd amounts are rejected). The newest statement wins.
+2. **Arithmetic is plain code.** Total project cost and the federal request are separate facts. Federal share = (request + other federal) / total. Assumptions (such as "no other federal funds, since none were stated") are always shown, and the amounts are checked for consistency ($18M + $7M = $25M).
+3. **Routing, per requirement:** optional wording is skipped; a requirement for the wrong project type is *not applicable*; one with a machine-checkable check is evaluated by code; a free-text condition goes to the model; a deliverable still to prepare stays *unknown* on the application checklist.
+4. **Deterministic checks** (`checks.ts`): minimum/maximum request, federal-share limit, minimum match, applicant type, and benefit-cost analysis. A missing fact gives `unknown` and names the fact. A limit whose own text describes exceptions gives `needs_specialist_review` rather than a conflict. A missing required deliverable is a `gap`, not a conflict.
+5. **Model interpretation** (`interpret.ts`) is deliberately narrow: it sees only the free-text facts (never the money), must cite which facts it used, and **"supported" or "conflict" with no cited fact is downgraded to unknown** in code. Invented or repeated requirement IDs are ignored. Batches of 12 run four at a time. Results are cached in memory by the free-text facts, so changing an amount causes no model call.
+6. **Questions** (`questions.ts`): at most three, from fixed templates over the missing fact, each citing the requirement (and its evidence) that makes the answer matter. Ranked by the most consequential requirement waiting on the answer, then a fixed priority order. Questions are only for facts a stated requirement could not be evaluated without.
+7. **Advisory** (`advisory.ts`): written by code from the findings. It folds the same issue stated in several places into one item (e.g. "1 preparation gap (across 4 requirements)"), lists next steps, and always carries the disclaimer.
+
+**Statuses.** The guide's four (`supported`, `conflict`, `unknown`, `needs_specialist_review`) plus a boolean `gap` on a `conflict` meaning "a required deliverable does not exist yet", and a `provisional` flag (true unless a human-verified requirement was judged by plain code; **today everything is provisional**).
+
+**Files added** (under `src/nofo/`): `service.ts`, `advisory.ts`, `assessment/{schemas,arithmetic,facts,checks,interpret,assess,questions,args,cli}.ts`; test support `__fixtures__/assessment.ts`; 11 new test files. **Changed:** `package.json` (script `nofo:assess`), `CLAUDE.md`. Nothing in the extraction, ingestion or existing app was changed.
+
+**Guide scenarios (§9) and where they stand**
+
+| Scenario | Status |
+|---|---|
+| Plausible state DOT and road project: finds the applicable provisions with evidence | **Met** (tests and live) |
+| Requested amount conflicts with a verified maximum: cited conflict, not a vague warning | **Met** (tests and live: "$30,000,000 exceeds the $25,000,000 maximum", page 3) |
+| Matching funds unknown: asks a targeted question, marks the condition unknown | **Met** for the match rule (asks the cost/match/commitment question, rule stays unknown). In the live run the question is third in line behind the request and urban/rural. |
+| BCA unavailable where required: preparation gap with a source | **Met** (live: reported as a gap, with the notice's own page) |
+| Request changes: recalculates affected findings without re-ingestion | **Met**: the request changed from $18M to $30M and back with **0 interpretation calls and about 4 seconds per turn** in one process |
+| Official FAQ clarifies the NOFO; supporting document contradicts the NOFO | **Not met.** Only controlling documents were extracted (your Q14 decision), so no FAQ exists to assess against. These two rows need supplemental documents and cross-document comparison, and are open. |
+| Unverifiable evidence location; unsupported format | Covered earlier (M3 and M2) |
+
+**Live results (real BUILD requirements, real model).** The guide's scenario in two turns. *Turn 1* (project description only): seven facts read, each with a verified quote from my words; a state applicant supported; two project-type items sent to specialist review; **95 of 100 requirements honestly "not yet evaluated"**; three questions (request, benefit-cost analysis, environmental review in that run; the order was later changed to put urban/rural ahead). *Turn 2* ($18 million requested, $7 million state funds committed, no benefit-cost analysis): federal share **72%**, arithmetic consistent; $18M within the $25M maximum (cited); four benefit-cost-analysis requirements reported as one preparation gap; applicant and project-type conditions supported; it then asked whether the project is urban or rural (which decides the minimum: $5M urban or $1M rural), because that fact was still missing. Turn time dropped from about 64 seconds to about 20 once the four interpretation batches ran concurrently. A short correction ("make it $20 million") was applied correctly when sent with its conversation; sent alone, without the question it answers, the model correctly declined to guess what the amount referred to.
+
+**Limitations and things to know**
+
+- **Everything is provisional.** No requirement is human-verified, so no deterministic result can be called settled, and every model judgment is provisional by design. A way for a person to mark requirements `verified` has **not** been built; today it means editing `requirements.json` by hand.
+- **Model interpretations vary between runs.** The same facts produced "supported" in one run and "needs specialist review" in another for two project-type items. The in-process cache keeps results stable within a running server, but the CLI starts fresh each time. Nothing is persisted on disk on purpose (no project data is stored).
+- **Wrong or missing urban/rural, grant category, or applicant type changes which rules apply.** The assessment never assumes them; it asks.
+- **Exceptions are not modeled.** A federal-share limit that has an exception (for example a special area designation) goes to specialist review if exceeded, because the program-specific concept is deliberately not hard-coded.
+- **Applicant-type matching is by wording** (for example "state" against "States and the District of Columbia"); a non-match goes to specialist review, never to a conflict.
+- **Near-duplicate requirements** from M3 appear as several findings (for example four benefit-cost-analysis items); the advisory folds them, the findings list does not.
+- **A deliverable judged by the model** ("level of design stated") can blur "the applicant has this information" with "the application will include it". It is provisional.
+- **Match questions come after the more consequential ones** because of the three-question cap.
+- **Not built:** an HTTP route and chat integration (M5); document upload; a persistent facts store; cross-document conflict detection.
 
 ### M5 — Chat integration and browser demo (adjusted for Rev 2; otherwise unchanged)
 
@@ -878,7 +924,7 @@ For the mission-impact benchmark in guide §10: record actual time-to-requiremen
 - [x] Citations validated against ingested content in code: invented document IDs, nonexistent locations and unsupported quotes are rejected (118 of 118 stored sources re-verify; 4 candidates rejected on the final BUILD run).
 - [x] Unit tests plus an evaluation fixture of 25 reference requirements from the actual BUILD NOFO; 290 tests pass.
 - [ ] **A human verifies the reference set**, and reviews the 23 `needs_review` BUILD requirements (and the BCA applicability).
-- [ ] **Your review of Milestone 3**, and approval before any Milestone 4 work. Nothing from M4 or M5 has been started.
+- [x] Milestone 3 reviewed and committed (`2971c6e`); Milestone 4 started at your request.
 
 - [ ] **Your review of Milestone 2**, and approval before any Milestone 3 work.
 
@@ -894,3 +940,11 @@ For the mission-impact benchmark in guide §10: record actual time-to-requiremen
 ### Files and sources inspected
 
 `NOFO_MVP_CLAUDE_CODE_IMPLEMENTATION_GUIDE.md` (original and the `583c2e3` update, diffed), `CLAUDE.md`, `package.json`, `tsconfig.json`, `.gitignore`, `.env.example` and the variable *names* in `.env` (values not read), `src/web/*`, `src/web/chat/*`, `src/mcp/*`, `src/server.ts`, `src/clients/*`, `src/config/config.ts`, `src/utils/validators.ts`, `src/types/index.ts`, `src/cache/cache-manager.ts`, `src/data/*`, `src/tools/search-grants.ts`, `public/chat.html`, `public/js/{chat,api,common}.js`, `public/css/style.css`, `README.md`, `doc/*`, git history and the `project-discovery` branch, the stale `dist/` tree, `.data/projects.json` (structure only), the Simpler.Grants.gov OpenAPI spec (`https://api.simpler.grants.gov/openapi.json`) and developer page (`https://simpler.grants.gov/developers`).
+
+**Rev 5 (Milestone 4)**
+
+- [x] Assessment service built on the validated M3 requirements: facts from conversation (verified against the applicant's words), deterministic numeric checks, narrow model interpretation, ranked follow-up questions, code-written advisory; no separate project-profile interface; no definitive eligibility determinations.
+- [x] Three scenarios tested (plausible, verified conflict, missing information), plus the checkpoint: changing a fact changes the affected findings without reprocessing the notice, and missing information is `unknown`, never a pass or fail. 413 tests pass.
+- [ ] **Open:** the FAQ-clarifies-the-notice and supporting-document-contradicts-the-notice scenarios (need supplemental documents and cross-document comparison).
+- [ ] **Open:** a human verifies the M3 reference set and reviews flagged requirements; a way to mark requirements `verified`.
+- [ ] **Your review of Milestone 4**, and approval before any Milestone 5 work. Nothing from M5 has been started.

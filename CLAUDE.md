@@ -58,7 +58,7 @@ NOFO mean for us, what information is missing, and what should we investigate be
 1. Repository audit and plan (done)
 2. Generic opportunity acquisition and ingestion (`npm run nofo:ingest -- <uuid>`)
 3. Requirements extraction (`npm run nofo:extract -- <uuid>`, `npm run nofo:eval -- <uuid>`; BUILD FAQs/checklists/amendments may be added as supplemental sources)
-4. Applicant assessment and follow-up questions
+4. Applicant assessment and follow-up questions (`assessTurn` in `src/nofo/service.ts`; `npm run nofo:assess -- <uuid> --say "..."`)
 5. Chat integration and browser demo
 
 Rules:
@@ -83,9 +83,14 @@ Rules:
   missing, unsupported and unparsed documents, and record sources that may exist but were not acquired.
 - A requirement's `check` (a machine-checkable number or document) is only as good as its `reviewStatus`.
   Code verifies that the number is in the quote, not that it means what the model says (the model once
-  turned an agency set-aside into a "minimum request"). Treat checks on unreviewed requirements as
-  advisory; apply them deterministically only after a human sets `reviewStatus: "verified"`.
-- Distinguish **unknown** from **not eligible**. Missing information is `unknown`.
+  turned an agency set-aside into a "minimum request"). The assessment always computes checks, but marks
+  a result `provisional` unless a human has set the requirement to `verified`. Model interpretations are
+  always provisional. Never present a provisional result as settled.
+- Distinguish **unknown** from **not eligible**. Missing information is `unknown`: never a pass, never a fail.
+  Project facts come only from what the applicant said, each with a verbatim quote verified against the
+  applicant's own words (never the assistant's). A required deliverable that does not exist yet is a
+  preparation `gap`, not an eligibility conflict. The advisory text is written by code from the findings,
+  never by a model.
 - Do not conflate project cost with federal request, or eligibility with application
   completeness, readiness or competitiveness. Do not treat conditional requirements as universal.
 - Flag ambiguous federal requirements for human review. Do not resolve them silently.
