@@ -149,8 +149,9 @@ Tests: a safety project with no mode, no amounts, no applicant type beyond "city
 
 > We're a county government and we have a transportation project we'd like to get funded.
 
-Tests: no project type, so this is the one case where the tool should ask a required question. The
-list should still appear once you answer, or when you choose **Show grants now**.
+Tests: no project type, so the tool should ask what kind of project it is (and who the applicant is)
+before searching. The list should still appear once you answer, or when you choose **Skip the
+questions and search**.
 
 ---
 
@@ -162,7 +163,12 @@ list should still appear once you answer, or when you choose **Show grants now**
   programs should always say they are not open for applications.
 - **Weak matches:** a card marked "Weaker match" should never read as a recommendation. If the
   list looks like padding, note which description and what you expected.
-- **Questions:** at most one required question, and only for a description with no project type.
-  After that, only optional refinements, and none from the third message on.
+- **Questions:** nothing is searched on the first message until the tool has asked about what is
+  missing: project type first, then applicant, stage and the federal request, two at a time. It
+  never asks one twice, asks nothing from the third message on, and **Skip the questions and
+  search** always works. A description that already covers everything is searched at once.
+- **Developer console:** it should show the profile, each search being built field by field (a
+  draft, not sent, while questions are open), the exact request, and a summary of the response.
+  The API key must never appear.
 - **Handoff:** a card with **Assess my project against this** should open the Assess tab on that
   program. A card without it shows the two commands an operator runs to prepare that program.

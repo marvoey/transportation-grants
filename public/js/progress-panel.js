@@ -133,11 +133,12 @@
   }
 
   /**
-   * POSTs JSON to a streaming endpoint and reads its lines: progress lines go to onStep, and the result line is
+   * POSTs JSON to a streaming endpoint and reads its lines: progress lines go to onStep, developer-console lines (if
+   * any) go to onConsole, and the result line is
    * returned. A request refused before streaming began (bad input, rate limit, missing configuration) comes back as an
    * ordinary JSON error and is thrown with its message.
    */
-  async function stream(url, body, onStep) {
+  async function stream(url, body, onStep, onConsole) {
     var response;
     try {
       response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -154,6 +155,7 @@
     var result = null;
     function handle(line) {
       if (line.type === 'progress') onStep(line);
+      else if (line.type === 'console') { if (onConsole) onConsole(line); }
       else if (line.type === 'result') result = line.data;
       else if (line.type === 'error') throw new Error(line.error || 'The request failed.');
     }

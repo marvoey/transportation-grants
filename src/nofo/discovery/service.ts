@@ -1,13 +1,19 @@
 import { logger } from '../../config/config.js';
+import { safeConsole, type ConsoleFn } from '../progress.js';
+import { buildLines, describeApiCall, profileLines, requestLines, responseLines } from './console.js';
+import { explainSearch } from './explain.js';
 import type { LlmFn } from '../llm.js';
 import type { OpportunitySearchSource } from '../simpler/source.js';
 import { primaryPlans, wideningPlan, type SearchPlan } from './filters.js';
-import { extractProfile, hasProjectSignal, keywordProfile } from './profile.js';
-import { likelyCount, money, rankCandidates, selectShortlist, SHORTLIST_MIN } from './rank.js';
+import { codeOnlyTerms, extractProfile, hasProjectSignal, keywordProfile, type TermTrace } from './profile.js';
+import { buildTrace } from './trace.js';
+import { describeScored, likelyCount, money, rankCandidates, selectShortlist, SHORTLIST_MIN } from './rank.js';
 import {
   DISCOVERY_DISCLAIMER,
   DiscoverInputSchema,
   PROJECT_TYPE_LABELS,
+  type GuidedQuestion,
+  type GuidedQuestionId,
   type DiscoverResult,
   type FilterNote,
   type ProgressEvent,
@@ -38,7 +44,16 @@ export interface DiscoverDeps {
    * that throws never affects the result.
    */
   onProgress?: (event: ProgressEvent) => void;
+  /**
+   * Called with each line of the developer console: the search being built, the request that goes out and a summary
+   * of the response. A callback that throws never affects the result.
+   */
+  onConsole?: ConsoleFn;
+  /** Shown in the console as the address the request goes to. */
+  apiBaseUrl?: string;
 }
+
+const DEFAULT_API_BASE_URL = 'https://api.simpler.grants.gov';
 
 const APPLICANT_SHORT: Record<string, string> = {
   state: 'State government',
@@ -62,40 +77,67 @@ export function describeProfile(profile: ProjectProfile): string | null {
 }
 
 /**
- * Question policy (the user asked us to stop asking):
- * - At most ONE required question, only on the first message, and only when no project type can be found
- *   (without one there is nothing to search for). Never after that, and never when the user asked for results.
- * - Otherwise search at once. Up to two OPTIONAL refinements are offered, only on the first two messages.
- * - From the third message on there are no questions at all, and a list is always returned.
+ * Question policy. The user wants to be guided, but never trapped:
+ * - Before searching, up to GUIDED_BATCH questions are asked about what is still missing from the profile (project
+ *   type first, then applicant, stage, and the federal request). Each is a fixed template, and no search is made until
+ *   the user answers or chooses to search now.
+ * - Questions are only asked on the first GUIDED_ROUNDS messages. From the next message on there are none and a list is
+ *   always returned.
+ * - A question is never asked twice: the page sends back the ids it has already shown (`asked`), whether or not the
+ *   answer could be read.
+ * - "Search now" skips every question. If the project type is still unknown the list is the closest open programs, and
+ *   the summary says so.
  */
-export const MAX_REFINING_MESSAGES = 2;
+export const GUIDED_BATCH = 2;
+export const GUIDED_ROUNDS = 2;
 
-const ASK_PROJECT_TYPE =
-  'What kind of transportation project is this? For example, a bridge replacement, a trail or sidewalk, a bus or transit project, a rail crossing, or a wildlife crossing.';
+const QUESTION_TEXT: Record<GuidedQuestionId, string> = {
+  projectType:
+    'What kind of transportation project is this? For example, a bridge replacement, a trail or sidewalk, a bus or transit project, a rail crossing, or a wildlife crossing.',
+  applicant: 'Who is the applicant: a state, county, city, tribe, transit agency or another public body?',
+  phase: 'Is the project at the planning, design, or construction-ready stage?',
+  request: 'Roughly how much federal funding would you request? (This helps match award sizes.)',
+};
 
-export function refinementQuestions(profile: ProjectProfile, messageCount: number, forced: boolean): string[] {
-  if (forced || messageCount >= MAX_REFINING_MESSAGES + 1) return [];
-  const out: string[] = [];
-  if (!profile.federalAskUsd) out.push('Roughly how much federal funding would you request? (This helps match award sizes.)');
-  if (!profile.applicantType) out.push('Who is the applicant: a state, county, city, tribe, or transit agency?');
-  if (!profile.phase) out.push('Is the project at the planning, design, or construction-ready stage?');
-  return out.slice(0, 2);
+/** Questions whose answer is still missing from the profile and that have not been asked yet, in asking order. */
+export function pendingQuestions(profile: ProjectProfile, asked: readonly GuidedQuestionId[] = []): GuidedQuestion[] {
+  const missing: GuidedQuestionId[] = [];
+  if (!hasProjectSignal(profile)) missing.push('projectType');
+  if (!profile.applicantType) missing.push('applicant');
+  if (!profile.phase) missing.push('phase');
+  if (!profile.federalAskUsd) missing.push('request');
+  return missing.filter((id) => !asked.includes(id)).map((id) => ({ id, text: QUESTION_TEXT[id] }));
+}
+
+/** The questions to ask before searching, or none when the search should go ahead. */
+export function guidedQuestions(profile: ProjectProfile, messageCount: number, forced: boolean, asked: readonly GuidedQuestionId[] = []): GuidedQuestion[] {
+  if (forced || messageCount > GUIDED_ROUNDS) return [];
+  return pendingQuestions(profile, asked).slice(0, GUIDED_BATCH);
+}
+
+/** Optional refinements shown with a list, only when the user skipped the questions with "Search now". */
+export function refinementQuestions(profile: ProjectProfile, messageCount: number, forced: boolean, asked: readonly GuidedQuestionId[] = []): GuidedQuestion[] {
+  if (!forced || messageCount > GUIDED_ROUNDS) return [];
+  return pendingQuestions(profile, asked).slice(0, GUIDED_BATCH);
 }
 
 const plural = (n: number, one: string, many: string): string => (n === 1 ? one : many);
 
 /** Turns the search runner's hooks into progress events, one line per search. */
-function searchHooks(emit: (event: ProgressEvent) => void): PlanHooks {
+function searchHooks(emit: (event: ProgressEvent) => void, log: ConsoleFn, baseUrl: string): PlanHooks {
   const id = (plan: SearchPlan): string => `search:${plan.id}`;
   return {
-    onStart: (plan) =>
+    onStart: (plan) => {
+      requestLines(plan, baseUrl, log);
       emit({
         id: id(plan),
         status: 'running',
         message: `Sending a request to Simpler.Grants.gov: ${plan.label}`,
         detail: plan.body.query ? `Search words: ${plan.body.query}` : undefined,
-      }),
+      });
+    },
     onDone: (o) => {
+      responseLines(o, log);
       if (o.error) {
         emit({ id: id(o.plan), status: 'failed', message: `That search failed and was skipped: ${o.plan.label}` });
         return;
@@ -145,6 +187,7 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
   const includeHistorical = input.includeHistorical === true;
   const forced = input.forceResults === true;
   const inspect = input.inspect === true;
+  const asked = input.asked ?? [];
   const now = (deps.now ?? (() => new Date()))();
   const warnings: string[] = [];
   const emit = (event: ProgressEvent): void => {
@@ -155,11 +198,20 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
     }
   };
 
+  const log = safeConsole(deps.onConsole);
+  const baseUrl = deps.apiBaseUrl ?? DEFAULT_API_BASE_URL;
+
   let profile: ProjectProfile;
+  let reader: 'model' | 'keyword_fallback' | 'keyword' = 'keyword';
+  let rejected: string[] = [];
+  let termTrace: TermTrace;
   if (deps.llm) {
     emit({ id: 'read', status: 'running', message: 'Sending your description to the language model to pick out the project facts…' });
     const extracted = await extractProfile({ messages, llm: deps.llm });
     profile = extracted.profile;
+    rejected = extracted.rejected;
+    termTrace = extracted.terms;
+    reader = extracted.warnings.length > 0 ? 'keyword_fallback' : 'model';
     warnings.push(...extracted.warnings);
     emit(
       extracted.warnings.length > 0
@@ -169,6 +221,7 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
   } else {
     emit({ id: 'read', status: 'running', message: 'Reading your description for project keywords…' });
     profile = keywordProfile(messages);
+    termTrace = codeOnlyTerms(profile);
     warnings.push('No language model is configured, so a simple keyword reader was used. Results may be less precise.');
     emit({ id: 'read', status: 'done', message: 'Read your description with the keyword reader (no language model is configured).' });
   }
@@ -181,17 +234,26 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
     message: ready ? `Understood: ${understood ?? 'a transportation project'}` : 'I could not tell what kind of project this is.',
   });
 
-  // The one required question: first message, nothing to search for, user has not asked for results.
-  if (!ready && messages.length === 1 && !forced) {
-    emit({ id: 'ask', status: 'done', message: 'I need one detail before I can search.' });
+  profileLines(profile, log);
+
+  // Guided questions: hold the search back while there is something worth asking (and the user has not skipped it).
+  const guided = guidedQuestions(profile, messages.length, forced, asked);
+  if (guided.length > 0) {
+    const draft = primaryPlans(profile, { includeHistorical }).find((p) => p.id === 'keywords');
+    if (draft) buildLines(draft, log, true);
+    else log({ kind: 'note', text: '# no project words yet, so there is no keyword search to draft' });
+    log({ kind: 'note', text: `# waiting for your answers (${guided.length} question${guided.length === 1 ? '' : 's'}); nothing has been sent to Simpler.Grants.gov` });
+    emit({ id: 'ask', status: 'done', message: guided.length === 1 ? 'I have one question before I search.' : `I have ${guided.length} questions before I search.` });
     return {
       preliminary: true,
       stage: 'ask',
       profile,
-      questions: [ASK_PROJECT_TYPE],
+      questions: guided,
       shortlist: [],
       searches: [],
-      summary: 'I need to know what kind of project this is before I can look for matching opportunities.',
+      summary: guided.some((q) => q.id === 'projectType')
+        ? 'I need to know what kind of project this is before I can look for matching opportunities.'
+        : 'A few details will make the list much more relevant. Answer what you can, or search now with what I have.',
       warnings,
       includeHistorical,
       disclaimer: DISCOVERY_DISCLAIMER,
@@ -208,7 +270,8 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
     message: `Built ${plans.length} search${plans.length === 1 ? '' : 'es'}: ${plans.map((p) => p.label).join('; ')}`,
     detail: hasWords ? `Search words: ${profile.terms.join(', ')}` : 'No project words to search for, so only the broad pull will run.',
   });
-  const hooks = searchHooks(emit);
+  for (const plan of plans) buildLines(plan, log, false);
+  const hooks = searchHooks(emit, log, baseUrl);
   const outcomes = await runPlans(deps.source, plans, deps.cache, hooks, inspect);
   if (outcomes.every((o) => o.error)) {
     throw new DiscoveryError(outcomes[0].error ?? 'Search failed.', 'SEARCH_FAILED');
@@ -223,9 +286,12 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
   let ranked = rankCandidates(mergeCandidates(all), { profile, now });
 
   // Widen beyond DOT only when too few listings matched the project's words.
+  let widenedAfterLikely: number | null = null;
   if (ready && likelyCount(ranked) < SHORTLIST_MIN) {
     const widening = wideningPlan(profile, planOptions);
     if (widening) {
+      widenedAfterLikely = likelyCount(ranked);
+      buildLines(widening, log, false);
       emit({ id: 'widen', status: 'running', message: `Only ${likelyCount(ranked)} listing${likelyCount(ranked) === 1 ? '' : 's'} matched your words, so I am widening the search beyond DOT…` });
       const extra = await runPlans(deps.source, [widening], deps.cache, hooks, inspect);
       emit({ id: 'widen', status: extra[0].error ? 'failed' : 'done', message: extra[0].error ? 'The wider search failed and was skipped.' : 'The wider search is finished.' });
@@ -238,12 +304,37 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
 
   const shortlist = selectShortlist(ranked);
   const examined = uniqueCount();
+  log({ kind: 'cmd', text: `$ rank ${examined} unique listings   # project words, applicant type, award size, timing` });
+  shortlist.forEach((item, i) => log({ kind: 'note', text: `  ${i + 1}. ${item.title}  [${item.match}${item.historical ? ', historical' : ''}]` }));
+  if (shortlist.length === 0) log({ kind: 'note', text: '  (nothing looked like a match)' });
   const likely = shortlist.filter((s) => s.match === 'likely').length;
   emit({
     id: 'rank',
     status: 'done',
     message: shortlist.length > 0 ? `Scored ${examined} listings and chose ${shortlist.length} to show.` : `Scored ${examined} listings; none looked like a match.`,
   });
+
+  // The plain-language explanation: the model describes the search from the description, the requests and the outcome.
+  emit({ id: 'explain', status: 'running', message: deps.llm ? 'Asking the language model to explain the search in plain language…' : 'Writing a plain-language explanation of the search…' });
+  log({ kind: 'cmd', text: deps.llm ? '$ explain search   # the language model writes this from your description, the requests above and the outcome' : '$ explain search   # no language model configured: a template is used' });
+  const explanation = await explainSearch(
+    {
+      messages,
+      profile,
+      plans: all.map((o) => o.plan),
+      examined,
+      shownTitles: shortlist.map((s) => s.title),
+      includeHistorical,
+      widened: all.some((o) => o.plan.id === 'beyond_dot'),
+    },
+    deps.llm
+  );
+  emit({
+    id: 'explain',
+    status: 'done',
+    message: explanation.source === 'model' ? 'The language model wrote the explanation.' : 'The explanation was written from a template (the language model was not used or its text did not pass the checks).',
+  });
+  log({ kind: 'ok', text: `← explanation ready (written by ${explanation.source === 'model' ? 'the language model' : 'a template'})` });
 
   let summary: string;
   if (shortlist.length === 0) {
@@ -266,13 +357,27 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
     preliminary: true,
     stage: 'results',
     profile,
-    questions: refinementQuestions(profile, messages.length, forced),
+    questions: refinementQuestions(profile, messages.length, forced, asked),
     shortlist,
     searches: describeSearches(all),
     summary,
     warnings,
     includeHistorical,
     disclaimer: DISCOVERY_DISCLAIMER,
+    trace: buildTrace({
+      reader,
+      messageCount: messages.length,
+      profile,
+      rejected,
+      terms: termTrace,
+      plans: all.map((o) => o.plan),
+      includeHistorical,
+      widenedAfterLikely,
+      minimumLikely: SHORTLIST_MIN,
+    }),
+    scored: describeScored(ranked, new Set(shortlist.map((s) => s.opportunityId))),
+    apiCalls: all.map((o) => describeApiCall(o, baseUrl)),
+    explanation,
     ...(inspect ? { inspection: describeInspection(all) } : {}),
   };
 }

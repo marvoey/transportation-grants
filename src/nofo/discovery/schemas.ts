@@ -71,17 +71,33 @@ export const EMPTY_PROFILE: ProjectProfile = { projectTypes: [], terms: [] };
 
 export const MAX_USER_MESSAGES = 6;
 
+/**
+ * The guided questions, in the order they are asked. Each one fills one field of the profile, so code can tell whether
+ * it is still missing. The wording is a fixed template in service.ts; no model writes a question.
+ */
+export const GUIDED_QUESTION_IDS = ['projectType', 'applicant', 'phase', 'request'] as const;
+export type GuidedQuestionId = (typeof GUIDED_QUESTION_IDS)[number];
+
+export interface GuidedQuestion {
+  id: GuidedQuestionId;
+  text: string;
+}
+
+/** The applicant's messages only (the app writes the other side in code). */
+export const UserMessagesSchema = z
+  .array(z.object({ role: z.literal('user'), content: z.string().trim().min(1).max(4000) }).strict())
+  .min(1)
+  .max(MAX_USER_MESSAGES);
+
 export const DiscoverInputSchema = z
   .object({
-    /** The applicant's messages only (the app writes the other side in code). */
-    messages: z
-      .array(z.object({ role: z.literal('user'), content: z.string().trim().min(1).max(4000) }).strict())
-      .min(1)
-      .max(MAX_USER_MESSAGES),
+    messages: UserMessagesSchema,
     /** Also search closed and archived opportunities (labeled historical). */
     includeHistorical: z.boolean().optional(),
-    /** "Show grants now": never ask, search with what is known. */
+    /** "Search now": never ask, search with what is known. */
     forceResults: z.boolean().optional(),
+    /** Which guided questions this conversation has already been shown, so none is asked twice. */
+    asked: z.array(z.enum(GUIDED_QUESTION_IDS)).max(GUIDED_QUESTION_IDS.length).optional(),
     /** Also return the exact Simpler.Grants.gov requests and responses, for inspection. */
     inspect: z.boolean().optional(),
   })
@@ -119,7 +135,50 @@ export interface ShortlistItem {
   readyToAssess?: boolean;
 }
 
-export type { ProgressEvent } from '../progress.js';
+export type { ConsoleLine, ProgressEvent } from '../progress.js';
+
+export type TraceActor = 'you' | 'model' | 'code';
+
+/** One step of how the API parameters were built from what the applicant said. */
+export interface TraceStep {
+  actor: TraceActor;
+  title: string;
+  detail: string;
+  items?: string[];
+}
+
+/** Where one parameter of one request came from. 'rule' = fixed in code; 'words' = from the applicant's words; 'choice' = a checkbox the applicant ticked. */
+export interface ParameterSource {
+  /** Which search (open_all, keywords, ...). */
+  call: string;
+  parameter: string;
+  value: string;
+  origin: 'rule' | 'words' | 'choice';
+  why: string;
+}
+
+export interface BuildTrace {
+  steps: TraceStep[];
+  parameters: ParameterSource[];
+}
+
+/** One scored listing, for the "all listings and their scores" box. The parts add up to the score. */
+export interface ScoredListing {
+  opportunityId: string;
+  opportunityNumber: string | null;
+  title: string;
+  status: string;
+  historical: boolean;
+  score: number;
+  match: 'likely' | 'weaker';
+  /** True when it is in the shortlist. */
+  shown: boolean;
+  /** Plain reason it was shown or left out. */
+  note: string;
+  otherEditions: number;
+  parts: Array<{ label: string; points: number }>;
+  simplerUrl: string | null;
+}
 
 export interface FilterNote {
   /** Plain-language description of one search that was run. */
@@ -149,13 +208,33 @@ export interface SearchInspection {
   skipped: number;
 }
 
+/** One request made to Simpler.Grants.gov, as it was sent. Contains no credentials: the key is a header the server adds. */
+export interface ApiCall {
+  planId: string;
+  label: string;
+  method: 'POST';
+  url: string;
+  /** The key's value is a placeholder, never the real key. */
+  headers: Record<string, string>;
+  body: unknown;
+  /** The same request as a shell command, with the key read from the reader's own environment. */
+  curl: string;
+  /** True when a request really went out; false when a recent identical answer was reused or the search failed to start. */
+  sent: boolean;
+  cached: boolean;
+  ok: boolean;
+  error: string | null;
+  returned: number;
+  totalRecords: number | null;
+}
+
 export interface DiscoverResult {
   preliminary: true;
   stage: 'ask' | 'results';
   /** The facts understood so far, each with the applicant's own words. */
   profile: ProjectProfile;
-  /** stage "ask": exactly one required question. stage "results": up to two optional refinements. */
-  questions: string[];
+  /** stage "ask": the guided questions for this round (search is held back). stage "results": optional refinements, only when the user skipped the questions. */
+  questions: GuidedQuestion[];
   shortlist: ShortlistItem[];
   searches: FilterNote[];
   /** Plain-language summary of what was found, written by code. */
@@ -163,6 +242,14 @@ export interface DiscoverResult {
   warnings: string[];
   includeHistorical: boolean;
   disclaimer: string;
+  /** How the API parameters were built from the applicant's words, and by whom (results stage only). */
+  trace?: BuildTrace;
+  /** Every listing that was scored, best first, with what made up its score (results stage only). */
+  scored?: ScoredListing[];
+  /** The requests that were made, with every parameter (results stage only). */
+  apiCalls?: ApiCall[];
+  /** A short plain-language explanation of the search (results stage only). */
+  explanation?: { text: string; source: 'model' | 'code' };
   /** Present only when the request asked to inspect the Simpler.Grants.gov traffic. */
   inspection?: SearchInspection[];
 }

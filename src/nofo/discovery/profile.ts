@@ -170,12 +170,28 @@ interface WireFact {
   quote?: unknown;
 }
 
+/** Where each search word came from, for the "how this was built" explanation. */
+export interface TermTrace {
+  /** The words the model proposed, after cleaning (empty when no model read the text). */
+  proposed: string[];
+  /** The proposed words that were found in the applicant's own words and kept. */
+  kept: string[];
+  /** The proposed words that were NOT in the applicant's words and were dropped. */
+  dropped: string[];
+  /** Words code added itself from the project type vocabulary (for example "infrastructure" for a bridge). */
+  addedByCode: string[];
+}
+
 export interface ExtractProfileResult {
   profile: ProjectProfile;
   /** What the model proposed and code discarded. Never shown as facts. */
   rejected: string[];
   warnings: string[];
+  terms: TermTrace;
 }
+
+/** For a profile read without a model: every search word was chosen by code. */
+export const codeOnlyTerms = (profile: ProjectProfile): TermTrace => ({ proposed: [], kept: [], dropped: [], addedByCode: [...profile.terms] });
 
 function addTypeTerms(types: ProjectType[], terms: string[]): string[] {
   return sanitizeTerms([...terms, ...types.flatMap((t) => TYPE_TERMS[t])]);
@@ -212,10 +228,11 @@ export async function extractProfile(options: { messages: string[]; llm: LlmFn; 
   } catch {
     return fallback(messages, 'The model returned a profile that could not be read, so a simple keyword reader was used.');
   }
-  return { ...verifyWire(wire, messages), warnings: [] };
+  const verified = verifyWire(wire, messages);
+  return { profile: verified.profile, rejected: verified.rejected, warnings: [], terms: verified.terms };
 }
 
-export function verifyWire(wire: Record<string, unknown>, messages: string[]): { profile: ProjectProfile; rejected: string[] } {
+export function verifyWire(wire: Record<string, unknown>, messages: string[]): { profile: ProjectProfile; rejected: string[]; terms: TermTrace } {
   const keys = userKeys(messages);
   const textKey = keys.join('');
   const rejected: string[] = [];
@@ -255,7 +272,8 @@ export function verifyWire(wire: Record<string, unknown>, messages: string[]): {
   const oneOf = <T extends string>(allowed: readonly T[]) => (value: unknown): T | null =>
     typeof value === 'string' && (allowed as readonly string[]).includes(value) ? (value as T) : null;
 
-  const groundedTerms = sanitizeTerms(Array.isArray(wire.terms) ? wire.terms : []).filter((t) => termInText(t, textKey));
+  const proposedTerms = sanitizeTerms(Array.isArray(wire.terms) ? wire.terms : []);
+  const groundedTerms = proposedTerms.filter((t) => termInText(t, textKey));
   const types = projectTypes.map((p) => p.value);
 
   const candidate = {
@@ -271,9 +289,15 @@ export function verifyWire(wire: Record<string, unknown>, messages: string[]): {
   const parsed = ProjectProfileSchema.safeParse(cleaned);
   if (!parsed.success) {
     rejected.push('profile: did not fit the expected shape');
-    return { profile: EMPTY_PROFILE, rejected };
+    return { profile: EMPTY_PROFILE, rejected, terms: { proposed: proposedTerms, kept: [], dropped: proposedTerms, addedByCode: [] } };
   }
-  return { profile: parsed.data, rejected };
+  const terms: TermTrace = {
+    proposed: proposedTerms,
+    kept: groundedTerms.filter((t) => parsed.data.terms.includes(t)),
+    dropped: proposedTerms.filter((t) => !groundedTerms.includes(t)),
+    addedByCode: parsed.data.terms.filter((t) => !groundedTerms.includes(t)),
+  };
+  return { profile: parsed.data, rejected, terms };
 }
 
 // ---------------------------------------------------------------------------
@@ -295,7 +319,8 @@ export function keywordProfile(messages: string[]): ProjectProfile {
 }
 
 function fallback(messages: string[], warning: string): ExtractProfileResult {
-  return { profile: keywordProfile(messages), rejected: [], warnings: [warning] };
+  const profile = keywordProfile(messages);
+  return { profile, rejected: [], warnings: [warning], terms: codeOnlyTerms(profile) };
 }
 
 /** True when there is enough to run a meaningful search: a real project type or at least one grounded term. */

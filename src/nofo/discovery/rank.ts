@@ -1,7 +1,7 @@
 import type { SearchCandidate } from '../simpler/search.js';
 import { simplerOpportunityUrl } from '../simpler/urls.js';
 import { detectProjectTypes } from './profile.js';
-import { PROJECT_TYPE_LABELS, type DiscoveryApplicantType, type ProjectProfile, type ProjectType, type ShortlistItem } from './schemas.js';
+import { PROJECT_TYPE_LABELS, type DiscoveryApplicantType, type ProjectProfile, type ProjectType, type ScoredListing, type ShortlistItem } from './schemas.js';
 
 /**
  * Transparent ranking. No model is involved: every score comes from a listed signal, and every line
@@ -44,6 +44,8 @@ export interface Ranked {
   family: string;
   /** A program for a different mode than the project's (rail, port, ...). Never used to pad the list. */
   modeConflict: boolean;
+  /** Every signal that changed the score, in the order it was applied. The points add up to `score`. */
+  parts: Array<{ label: string; points: number }>;
 }
 
 export interface RankOptions {
@@ -92,6 +94,11 @@ export function scoreCandidate(candidate: SearchCandidate, options: RankOptions)
   const why: string[] = [];
   const watch: string[] = [];
   let score = 0;
+  const parts: Array<{ label: string; points: number }> = [];
+  const add = (points: number, label: string): void => {
+    score += points;
+    parts.push({ label, points });
+  };
 
   const title = candidate.title ?? '';
   const body = [candidate.purpose, candidate.description].filter(Boolean).join(' ');
@@ -107,7 +114,7 @@ export function scoreCandidate(candidate: SearchCandidate, options: RankOptions)
       ? candidateModes.filter((m) => MODE_SPECIFIC.has(m) && !userTypes.includes(m))
       : [];
   if (modeConflicts.length > 0) {
-    score -= 12;
+    add(-12, 'Program is for a different mode than your project');
     watch.push(`Focused on ${modeConflicts.map((m) => PROJECT_TYPE_LABELS[m].toLowerCase()).join(' / ')}, which is not what you described`);
   }
 
@@ -117,12 +124,12 @@ export function scoreCandidate(candidate: SearchCandidate, options: RankOptions)
   for (const term of profile.terms) {
     const generic = GENERIC_TERMS.has(term);
     if (termHits(term, title)) {
-      score += generic ? 4 : 12;
+      add(generic ? 4 : 12, `“${term}” in the title`);
       termMatched = true;
       if (!generic) specificMatched = true;
       why.push(`"${term}" appears in the title`);
     } else if (body && termHits(term, body)) {
-      score += generic ? 2 : 6;
+      add(generic ? 2 : 6, `“${term}” in the description`);
       termMatched = true;
       if (!generic) specificMatched = true;
       why.push(`Its description mentions "${term}"`);
@@ -133,10 +140,10 @@ export function scoreCandidate(candidate: SearchCandidate, options: RankOptions)
   const categories = candidate.fundingCategories;
   const transportTagged = categories.some((c) => c === 'transportation' || c === 'infrastructure_investment_and_jobs_act');
   if (transportTagged) {
-    score += 8;
+    add(8, 'Tagged as a transportation program');
     why.push('Tagged as a transportation program');
   } else if (categories.length > 0) {
-    score -= 4;
+    add(-4, 'Tagged for other categories only');
   }
 
   // --- Applicant type (soft: large general-purpose programs list only "other") ---------------
@@ -145,14 +152,14 @@ export function scoreCandidate(candidate: SearchCandidate, options: RankOptions)
   if (profile.applicantType && wanted.length > 0) {
     const label = APPLICANT_LABELS[profile.applicantType.value];
     if (types.some((t) => wanted.includes(t))) {
-      score += 6;
+      add(6, 'Lists your applicant type');
       why.push(`Lists ${label} as eligible applicants`);
     } else if (types.includes('unrestricted')) {
-      score += 3;
+      add(3, 'Open to any applicant type');
     } else if (types.length > 0 && types.every((t) => t === 'other')) {
       watch.push(`Applicant types are listed only as "other", so check the notice to see whether ${label} can apply`);
     } else if (types.length > 0) {
-      score -= 10;
+      add(-10, 'Listed applicant types do not include yours');
       watch.push(`The listing's applicant types do not include ${label}; check the notice`);
     }
   }
@@ -161,21 +168,24 @@ export function scoreCandidate(candidate: SearchCandidate, options: RankOptions)
   const closeAt = parseDay(candidate.closeDate);
   if (historical) {
     watch.push('Closed or archived: not open for applications. Useful only to see what a past round required');
-    if (closeAt !== null) score += now.getTime() - closeAt <= 450 * DAY_MS ? 4 : -4;
+    if (closeAt !== null) {
+      const recent = now.getTime() - closeAt <= 450 * DAY_MS;
+      add(recent ? 4 : -4, recent ? 'Closed or archived recently' : 'Closed or archived long ago');
+    }
   } else if (candidate.status === 'posted') {
-    score += 6;
+    add(6, 'Open for applications');
     why.push('Open for applications (posted)');
     if (closeAt !== null) {
       const days = Math.ceil((closeAt - now.getTime()) / DAY_MS);
       if (days < 0) {
-        score -= 10;
+        add(-10, 'The listed close date has passed');
         watch.push(`The listed close date (${candidate.closeDate}) has passed`);
       } else if (days <= 30) {
         watch.push(`Closes in ${days} day${days === 1 ? '' : 's'} (${candidate.closeDate})`);
       }
     }
   } else if (candidate.status === 'forecasted') {
-    score += 2;
+    add(2, 'Forecasted, not yet open');
     watch.push('Forecasted: not yet open, and details may change');
   }
 
@@ -184,10 +194,10 @@ export function scoreCandidate(candidate: SearchCandidate, options: RankOptions)
   if (ask !== undefined) {
     if (candidate.awardCeiling !== null && candidate.awardCeiling > 0) {
       if (candidate.awardCeiling >= ask) {
-        score += 4;
+        add(4, 'Maximum award covers your request');
         why.push(`Maximum award (${money(candidate.awardCeiling)}) covers your stated request (${money(ask)})`);
       } else {
-        score -= 6;
+        add(-6, 'Maximum award is below your request');
         watch.push(`Maximum award (${money(candidate.awardCeiling)}) is below your stated request (${money(ask)})`);
       }
     }
@@ -203,7 +213,7 @@ export function scoreCandidate(candidate: SearchCandidate, options: RankOptions)
   const match: Ranked['match'] = termsKnown && termMatched && (modeConflicts.length === 0 || specificMatched) ? 'likely' : 'weaker';
   if (match === 'weaker' && termsKnown && transportTagged) why.push('No project keyword matched closely; shown because it is a transportation program');
 
-  return { candidate, score, match, historical, why, watch, family: familyKey(candidate.title), modeConflict: modeConflicts.length > 0 };
+  return { candidate, score, match, historical, why, watch, family: familyKey(candidate.title), modeConflict: modeConflicts.length > 0, parts };
 }
 
 /** Scores, folds editions of one program into the best entry, and sorts best first. */
@@ -273,4 +283,38 @@ function toItem(r: Ranked & { otherEditions: number }): ShortlistItem {
     additionalInfoUrl: c.additionalInfoUrl,
     simplerUrl: simplerOpportunityUrl(c.opportunityId),
   };
+}
+
+const SCORED_MAX = 200;
+
+/**
+ * Every listing that was scored (after earlier editions were folded into one), best first, with the signals behind its
+ * score and a plain reason it was or was not put in the list. For a person to inspect; nothing here changes the ranking.
+ */
+export function describeScored(ranked: Array<Ranked & { otherEditions: number }>, shownIds: ReadonlySet<string>): ScoredListing[] {
+  return ranked.slice(0, SCORED_MAX).map((r) => {
+    const c = r.candidate;
+    const transport = c.fundingCategories.some((x) => x === 'transportation' || x === 'infrastructure_investment_and_jobs_act');
+    const shown = shownIds.has(c.opportunityId);
+    let note: string;
+    if (shown) note = r.match === 'likely' ? 'Shown' : 'Shown as a weaker match to reach four';
+    else if (r.match === 'likely') note = 'A likely match, but outside the best five';
+    else if (r.modeConflict) note = 'Left out: a different mode than your project';
+    else if (!transport) note = 'Left out: no project word matched and it is not tagged as a transportation program';
+    else note = 'Left out: enough likely matches were found';
+    return {
+      opportunityId: c.opportunityId,
+      opportunityNumber: c.opportunityNumber,
+      title: c.title ?? '(untitled)',
+      status: c.status,
+      historical: r.historical,
+      score: r.score,
+      match: r.match,
+      shown,
+      note,
+      otherEditions: r.otherEditions,
+      parts: r.parts,
+      simplerUrl: simplerOpportunityUrl(c.opportunityId),
+    };
+  });
 }

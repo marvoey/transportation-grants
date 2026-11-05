@@ -98,6 +98,9 @@ describe('conversation limits', () => {
     expect(body).toEqual({ messages: [{ role: 'user', content: 'a' }], includeHistorical: true });
     expect(D.buildRequest([{ role: 'user', content: 'a' }], { forceResults: true })).toEqual({ messages: [{ role: 'user', content: 'a' }], forceResults: true });
     expect(D.buildRequest([{ role: 'user', content: 'a' }], {})).toEqual({ messages: [{ role: 'user', content: 'a' }] });
+    // The question ids already shown travel with the request; an empty list is left out.
+    expect(D.buildRequest([{ role: 'user', content: 'a' }], { asked: ['applicant', 'phase'] })).toEqual({ messages: [{ role: 'user', content: 'a' }], asked: ['applicant', 'phase'] });
+    expect(D.buildRequest([{ role: 'user', content: 'a' }], { asked: [] })).toEqual({ messages: [{ role: 'user', content: 'a' }] });
   });
 });
 

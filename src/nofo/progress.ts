@@ -23,3 +23,28 @@ export function safeProgress(listener?: ProgressFn): ProgressFn {
     }
   };
 }
+
+/**
+ * One line of the developer console on the Find grants screen: how a Simpler.Grants.gov request is built and what came
+ * back. Written by code from the search plan and the parsed response; it never carries the applicant's own words, the API
+ * key, or the raw response body.
+ */
+export type ConsoleKind = 'cmd' | 'note' | 'add' | 'http' | 'json' | 'ok' | 'warn' | 'error';
+
+export interface ConsoleLine {
+  kind: ConsoleKind;
+  text: string;
+}
+
+export type ConsoleFn = (line: ConsoleLine) => void;
+
+/** Wraps a console listener so one that throws, or is absent, can never change the work it reports on. */
+export function safeConsole(listener?: ConsoleFn): ConsoleFn {
+  return (line) => {
+    try {
+      listener?.(line);
+    } catch {
+      /* the console is a courtesy; it must never change the result */
+    }
+  };
+}

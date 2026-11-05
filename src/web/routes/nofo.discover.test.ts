@@ -34,7 +34,9 @@ const post = async (url: string, body: unknown) => {
   const r = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
   return { status: r.status, body: (await r.json()) as any, headers: r.headers };
 };
-const say = (...contents: string[]) => ({ messages: contents.map((content) => ({ role: 'user', content })) });
+/** `say` marks every guided question as already shown, so these tests reach the search. `sayFresh` is a first message. */
+const say = (...contents: string[]) => ({ ...sayFresh(...contents), asked: ['projectType', 'applicant', 'phase', 'request'] });
+const sayFresh = (...contents: string[]) => ({ messages: contents.map((content) => ({ role: 'user', content })) });
 
 const wildlifeLlm = () =>
   profileLlm({
@@ -56,6 +58,11 @@ describe('POST /discover', () => {
     expect(body.data.shortlist[0].opportunityId).toBe(WCPP_ID);
     expect(body.count).toBe(body.data.shortlist.length);
     expect(body.data.disclaimer).toMatch(/not an eligibility determination/);
+    // The actual API calls, and a plain-language explanation (a template here: the stub model only returns profiles).
+    expect(body.data.apiCalls.length).toBeGreaterThan(0);
+    expect(body.data.apiCalls[0]).toMatchObject({ method: 'POST', url: expect.stringMatching(/\/v1\/opportunities\/search$/) });
+    expect(JSON.stringify(body.data.apiCalls)).not.toMatch(/test-key/);
+    expect(body.data.explanation).toMatchObject({ source: 'code' });
   });
 
   it('marks which listed opportunities this server can already assess', async () => {
@@ -80,14 +87,19 @@ describe('POST /discover', () => {
     expect(byId[WCPP_ID]).toBe(false);
   });
 
-  it('asks one question, and runs no search, for a vague first message', async () => {
+  it('asks guided questions, and runs no search, for a first message that leaves things out', async () => {
     const source = fixtureSearchSource();
     const { base } = await start({ searchSource: source, isModelConfigured: () => false });
-    const { status, body } = await post(`${base}/discover`, say('We need money for a project'));
+    const { status, body } = await post(`${base}/discover`, sayFresh('We need money for a project'));
     expect(status).toBe(200);
     expect(body.data.stage).toBe('ask');
-    expect(body.data.questions).toHaveLength(1);
+    expect(body.data.questions.map((q: any) => q.id)).toEqual(['projectType', 'applicant']);
     expect(source.bodies).toHaveLength(0);
+  });
+
+  it('rejects an unknown question id in "asked"', async () => {
+    const { base } = await start({ searchSource: fixtureSearchSource() });
+    expect((await post(`${base}/discover`, { ...sayFresh('hello'), asked: ['password'] })).status).toBe(400);
   });
 
   it('still returns a list, with a visible warning, when no model key is configured', async () => {
@@ -169,10 +181,17 @@ describe('POST /discover?stream=1 (live progress)', () => {
     expect(streamed.headers.get('content-type')).toMatch(/application\/x-ndjson/);
     expect(streamed.headers.get('cache-control')).toBe('no-store');
     const types = streamed.lines.map((l) => l.type);
-    expect(types.slice(0, -1).every((t) => t === 'progress')).toBe(true);
+    expect(types.slice(0, -1).every((t) => t === 'progress' || t === 'console')).toBe(true);
     expect(types[types.length - 1]).toBe('result');
     const ids = streamed.lines.filter((l) => l.type === 'progress').map((l) => l.id);
     expect(ids).toEqual(expect.arrayContaining(['read', 'understood', 'plan', 'search:open_all', 'rank']));
+
+    // The developer console rides the same stream: only a kind and a line of text, never credentials.
+    const consoleLines = streamed.lines.filter((l) => l.type === 'console');
+    expect(consoleLines.length).toBeGreaterThan(0);
+    for (const l of consoleLines) expect(Object.keys(l).sort()).toEqual(['kind', 'text', 'type']);
+    expect(consoleLines.map((l) => l.text).join('\n')).toMatch(/POST .*\/v1\/opportunities\/search/);
+    expect(streamed.text).not.toMatch(/test-key|X-API-Key: [^•\s]/);
 
     const plain = await post(`${base}/discover`, say(WILDLIFE));
     const final = streamed.lines[streamed.lines.length - 1].data;
@@ -246,5 +265,32 @@ describe('POST /discover with inspect', () => {
   it('rejects a non-boolean inspect with a 400', async () => {
     const { base } = await start({ searchSource: fixtureSearchSource() });
     expect((await post(`${base}/discover`, { ...say(WILDLIFE), inspect: 'yes' })).status).toBe(400);
+  });
+});
+
+describe('POST /project-description', () => {
+  it('returns a description for the Assess tab, from the applicant\'s own messages when there is no model', async () => {
+    const { base } = await start({ searchSource: fixtureSearchSource(), isModelConfigured: () => false });
+    const { status, body, headers } = await post(`${base}/project-description`, sayFresh(WILDLIFE, 'Design is 30 percent complete.'));
+    expect(status).toBe(200);
+    expect(headers.get('cache-control')).toBe('no-store');
+    expect(body.data.source).toBe('code');
+    expect(body.data.text).toContain(WILDLIFE);
+    expect(body.data.text).toContain('Design is 30 percent complete.');
+  });
+
+  it('rejects invalid requests with a 400', async () => {
+    const { base } = await start({ searchSource: fixtureSearchSource(), isModelConfigured: () => false });
+    for (const payload of [{}, { messages: [] }, { ...sayFresh('ok'), asked: ['phase'] }, sayFresh('x'.repeat(4001))]) {
+      expect((await post(`${base}/project-description`, payload)).status).toBe(400);
+    }
+  });
+
+  it('never logs what the applicant wrote', async () => {
+    const spies = [vi.spyOn(console, 'log'), vi.spyOn(console, 'error'), vi.spyOn(console, 'info'), vi.spyOn(console, 'warn')];
+    const { base } = await start({ searchSource: fixtureSearchSource(), isModelConfigured: () => false });
+    await post(`${base}/project-description`, sayFresh('Confidential bridge at 123 Secret Street'));
+    const logged = spies.flatMap((s) => s.mock.calls.map((c) => c.map(String).join(' '))).join('\n');
+    expect(logged).not.toMatch(/Secret Street|Confidential/);
   });
 });

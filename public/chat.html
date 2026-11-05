@@ -30,6 +30,15 @@
     </div>
 
     <div id="findPanel" role="tabpanel" aria-labelledby="modeFindTab">
+      <details id="findConsole" class="dev-console" open>
+        <summary>Developer console <span class="nofo-meta">how the Simpler.Grants.gov request is built</span></summary>
+        <div class="dev-console-bar">
+          <button type="button" id="findConsoleCopy" class="nofo-secondary find-small">Copy</button>
+          <button type="button" id="findConsoleClear" class="nofo-secondary find-small">Clear</button>
+        </div>
+        <div id="findConsoleLog" class="dev-console-log" role="log" aria-label="Developer console: the Simpler.Grants.gov request as it is built and sent" aria-live="off" tabindex="0"></div>
+      </details>
+
       <div class="card">
         <div class="collapsible" id="findIntro" data-collapsible><div class="collapsible-inner">
         <h2>Find Grants for Your Project</h2>
@@ -38,6 +47,8 @@
           <strong>Preliminary only.</strong> This list is a starting point, not an eligibility determination, a recommendation, or a prediction of success. Your description is sent to the Anthropic API to read the facts you state, and a few search words from it are sent to Simpler.Grants.gov. Nothing is saved on the server; the conversation stays in this browser tab.
         </div>
         </div></div>
+        <!-- The conversation sits above the input box, as on the Assess tab, so the questions are right above where you answer. -->
+        <div id="findThread" class="chat-messages find-thread" role="log" aria-live="polite" aria-label="Conversation"></div>
         <form id="findForm" class="nofo-form">
           <label for="findInput" class="nofo-sr">Describe your project</label>
           <textarea id="findInput" rows="5" maxlength="4000" required></textarea>
@@ -47,15 +58,13 @@
           </div>
           <div class="nofo-form-actions">
             <button type="submit" id="findSend">Find grants</button>
-            <button type="button" id="findNow" class="nofo-secondary" hidden>Show grants now</button>
+            <button type="button" id="findNow" class="nofo-secondary" hidden>Skip the questions and search</button>
             <button type="button" id="findReset" class="nofo-secondary">Start over</button>
           </div>
           <p id="findLimit" class="nofo-warning" hidden>That is the limit for one search. Use Start over to try a different description.</p>
           <p id="findError" class="error" role="alert" hidden></p>
         </form>
       </div>
-
-      <div id="findThread" class="chat-messages find-thread" role="log" aria-live="polite" aria-label="Conversation"></div>
 
       <div id="findProgress" class="card find-progress" hidden>
         <div class="find-progress-head">
@@ -111,6 +120,7 @@
         <div id="nofoMessages" class="chat-messages" role="log" aria-live="polite" aria-label="Conversation"></div>
         <form id="nofoForm" class="nofo-form" hidden>
           <label for="nofoInput" class="nofo-sr">Describe your project or answer the questions</label>
+          <p id="nofoDraftNote" class="nofo-meta find-draft-note" hidden></p>
           <textarea id="nofoInput" rows="3" maxlength="4000" placeholder="For example: We are a state DOT planning an intersection redesign in an urban area&hellip;" required></textarea>
           <div class="nofo-form-actions">
             <button type="submit" id="nofoSend">Send</button>
@@ -149,7 +159,7 @@
     </div>
   </aside>
 
-  <!-- Slide-out tray of suggested answers to the follow-up questions. Closed by default; Assess only. -->
+  <!-- Slide-out tray of suggested answers to the follow-up questions. Closed by default; Find grants and Assess only. -->
   <aside id="answersDrawer" class="tray tray--answers" aria-label="Suggested answers to the follow-up questions" hidden>
     <button type="button" id="answersTab" class="tray-tab" aria-expanded="false" aria-controls="answersPanel" title="Suggested answers to the follow-up questions">
       <span class="tray-tab-label">Answers</span>
@@ -159,7 +169,7 @@
         <h2 id="answersTitle">Suggested answers</h2>
         <button type="button" id="answersClose" class="tray-close" aria-label="Close the suggested answers">&times;</button>
       </div>
-      <p class="nofo-meta">Made-up example answers for testing, not facts about your project. They keep the amounts consistent with what you have already told the assessment.</p>
+      <p class="nofo-meta">Made-up example answers for testing, not facts about your project. They keep the amounts consistent with what you have already said.</p>
       <div id="answersList"></div>
       <p id="answersStatus" class="nofo-sr" role="status" aria-live="polite"></p>
     </div>
@@ -171,6 +181,7 @@
   <script src="/js/discover-util.js"></script>
   <script src="/js/discover.js"></script>
   <script src="/js/progress-panel.js"></script>
+  <script src="/js/dev-console.js"></script>
   <script src="/js/drawer-kit.js"></script>
   <script src="/js/sample-projects.js"></script>
   <script src="/js/samples-drawer.js"></script>

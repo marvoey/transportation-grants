@@ -1,8 +1,9 @@
 /**
- * Slide-out tray of suggested answers to the assessment's follow-up questions (the "To sharpen this, tell me:" list).
- * Closed by default, available on the Assess tab only. Each time an assessment returns, nofo.js announces its questions
- * and known facts in an "assessresult" event; this tray turns them into made-up example answers (answer-suggestions.js)
- * that can be copied and pasted into the conversation. Open/close and copy behavior come from drawer-kit.js.
+ * Slide-out tray of suggested answers to the follow-up questions (the "To sharpen this, tell me:" list). Closed by
+ * default, available on the Find grants and Assess tabs. Each time an assessment returns, nofo.js announces its questions
+ * and known facts in an "assessresult" event; the Find grants page does the same with "findquestions". The tray keeps the
+ * latest of each, shows the one for the tab that is open, and turns it into made-up example answers
+ * (answer-suggestions.js) that can be copied and pasted into the conversation. Open/close and copy behavior come from drawer-kit.js.
  *
  * Every string is rendered with textContent.
  */
@@ -13,6 +14,8 @@
   var S = window.AnswerSuggestions;
   var els = {};
   var tray = null;
+  var latest = { find: null, nofo: null }; // the questions last announced by each tab
+  var current = 'find';
 
   function el(tag, className, text) {
     var node = document.createElement(tag);
@@ -64,12 +67,12 @@
   function show(detail) {
     clear(els.list);
     if (!detail) {
-      els.list.appendChild(el('p', 'nofo-meta', 'Nothing to suggest yet. Once the assessment asks follow-up questions, example answers will appear here.'));
+      els.list.appendChild(el('p', 'nofo-meta', 'Nothing to suggest yet. Once you are asked follow-up questions, example answers will appear here.'));
       return;
     }
     var suggestions = S.build(detail.questions, detail.facts);
     if (suggestions.items.length === 0) {
-      els.list.appendChild(el('p', 'nofo-meta', 'The assessment has no follow-up questions right now, so there is nothing to answer.'));
+      els.list.appendChild(el('p', 'nofo-meta', 'There are no follow-up questions right now, so there is nothing to answer.'));
       return;
     }
     var heading = el('h3', 'answers-section', 'Answer everything at once');
@@ -93,11 +96,23 @@
     tray = K.create({ drawer: els.drawer, tab: els.tab, panel: els.panel, close: els.close });
     show(null);
 
-    // Only the Assess tab asks follow-up questions, so only it has this tray.
-    function applyMode(mode) { tray.setAvailable(mode === 'nofo'); }
+    // Find grants and Assess ask questions; the original chat tab does not.
+    function applyMode(mode) {
+      current = mode;
+      tray.setAvailable(mode === 'nofo' || mode === 'find');
+      if (mode === 'nofo' || mode === 'find') show(latest[mode]);
+    }
     applyMode(document.body.dataset.chatMode || 'find');
     document.addEventListener('chatmodechange', function (event) { applyMode(event.detail && event.detail.mode); });
-    document.addEventListener('assessresult', function (event) { show(event.detail || null); });
+    // A tab's questions are stored always, and shown only while that tab is the open one.
+    document.addEventListener('assessresult', function (event) {
+      latest.nofo = event.detail || null;
+      if (current === 'nofo') show(latest.nofo);
+    });
+    document.addEventListener('findquestions', function (event) {
+      latest.find = event.detail || null;
+      if (current === 'find') show(latest.find);
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

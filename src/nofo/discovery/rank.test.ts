@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BUILD_ID, WCPP_ID, historicalResult, makeCandidate, openResult } from '../__fixtures__/discovery.js';
-import { familyKey, likelyCount, rankCandidates, scoreCandidate, selectShortlist } from './rank.js';
+import { describeScored, familyKey, likelyCount, rankCandidates, scoreCandidate, selectShortlist } from './rank.js';
 import { EMPTY_PROFILE, type ProjectProfile } from './schemas.js';
 
 const NOW = new Date('2026-11-05T12:00:00Z');
@@ -146,5 +146,24 @@ describe('link to the opportunity on Simpler.Grants.gov', () => {
     const list = shortlistFor(bridge);
     expect(list.length).toBeGreaterThan(0);
     for (const item of list) expect(item.simplerUrl).toBe(`https://simpler.grants.gov/opportunity/${item.opportunityId}`);
+  });
+});
+
+describe('scored listings (the "all listings and their scores" box)', () => {
+  it('every score is the sum of its listed signals, so the box can show how it was made', () => {
+    const ranked = rankCandidates([...openResult().candidates, ...historicalResult().candidates], { profile: bridge, now: NOW });
+    expect(ranked.length).toBeGreaterThan(5);
+    for (const r of ranked) expect(r.parts.reduce((sum, p) => sum + p.points, 0)).toBe(r.score);
+  });
+
+  it('lists every scored listing best first, marks the ones in the shortlist, and says why the others were left out', () => {
+    const ranked = rankCandidates(openResult().candidates, { profile: bridge, now: NOW });
+    const shortlist = selectShortlist(ranked);
+    const scored = describeScored(ranked, new Set(shortlist.map((s) => s.opportunityId)));
+    expect(scored).toHaveLength(ranked.length);
+    expect(scored.map((s) => s.score)).toEqual([...scored.map((s) => s.score)].sort((a, b) => b - a));
+    expect(scored.filter((s) => s.shown).map((s) => s.opportunityId).sort()).toEqual(shortlist.map((s) => s.opportunityId).sort());
+    for (const row of scored.filter((s) => !s.shown)) expect(row.note).toMatch(/^(Left out|A likely match)/);
+    for (const row of scored) expect(row.simplerUrl).toBe(`https://simpler.grants.gov/opportunity/${row.opportunityId}`);
   });
 });

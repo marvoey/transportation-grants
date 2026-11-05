@@ -73,7 +73,7 @@ window.SampleProjects = [
   {
     "id": "sample-12",
     "title": "Short: no project type at all",
-    "note": "no project type, so this is the one case where the tool should ask a required question. The list should still appear once you answer, or when you choose **Show grants now**.",
+    "note": "no project type, so the tool should ask what kind of project it is (and who the applicant is) before searching. The list should still appear once you answer, or when you choose “Skip the questions and search”.",
     "text": "We're a county government and we have a transportation project we'd like to get funded."
   }
 ];

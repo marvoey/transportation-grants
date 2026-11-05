@@ -8,12 +8,13 @@ import { FactsError } from '../../nofo/assessment/facts.js';
 import { createInterpretCache, type InterpretCache } from '../../nofo/assessment/interpret.js';
 import { createDiscoveryLlm, createSearchSource, isSearchConfigured } from '../../nofo/discovery/default-source.js';
 import { SearchCache } from '../../nofo/discovery/search.js';
-import { DiscoverInputSchema } from '../../nofo/discovery/schemas.js';
+import { DiscoverInputSchema, UserMessagesSchema } from '../../nofo/discovery/schemas.js';
+import { describeProject } from '../../nofo/discovery/describe.js';
 import { DiscoveryError, discoverTurn } from '../../nofo/discovery/service.js';
 import type { LlmFn } from '../../nofo/llm.js';
 import { SimplerApiError } from '../../nofo/simpler/client.js';
 import { AssessInputSchema } from '../../nofo/assessment/schemas.js';
-import type { ProgressEvent, ProgressFn } from '../../nofo/progress.js';
+import type { ConsoleFn, ProgressEvent, ProgressFn } from '../../nofo/progress.js';
 import { PrepareError, PrepareManager } from '../../nofo/prepare/manager.js';
 import { RecentOpportunities } from '../../nofo/prepare/recent.js';
 import { createCliRunner } from '../../nofo/prepare/runner.js';
@@ -109,11 +110,11 @@ function translate(error: unknown): unknown {
 
 /**
  * Streams a long-running job as newline-delimited JSON: {"type":"progress",...} lines while it works, then one
- * {"type":"result","data":...} line, or one {"type":"error",...} line if it fails (the HTTP status was already sent, so a
+ * {"type":"console",...} lines (the Find grants developer console), then one {"type":"result","data":...} line, or one {"type":"error",...} line if it fails (the HTTP status was already sent, so a
  * failure can only be reported in the stream). Errors are translated to generic, safe messages; nothing the
  * person wrote is logged.
  */
-async function streamLines(res: Response, work: (onProgress: ProgressFn) => Promise<unknown>, label: string): Promise<void> {
+async function streamLines(res: Response, work: (onProgress: ProgressFn, onConsole: ConsoleFn) => Promise<unknown>, label: string): Promise<void> {
   res.status(200);
   res.set({ 'Content-Type': 'application/x-ndjson; charset=utf-8', 'X-Accel-Buffering': 'no', 'X-Content-Type-Options': 'nosniff' });
   res.flushHeaders();
@@ -121,7 +122,10 @@ async function streamLines(res: Response, work: (onProgress: ProgressFn) => Prom
     if (!res.writableEnded && !res.destroyed) res.write(JSON.stringify(line) + '\n');
   };
   try {
-    const result = await work((event) => send({ type: 'progress', ...event }));
+    const result = await work(
+      (event) => send({ type: 'progress', ...event }),
+      (line) => send({ type: 'console', kind: line.kind, text: line.text })
+    );
     send({ type: 'result', data: result });
   } catch (e) {
     const failure = translate(e);
@@ -237,8 +241,8 @@ export function createNofoRouter(deps: NofoRouterDeps = {}): Router {
       const modelConfigured = deps.isModelConfigured ?? (() => Boolean(getConfig().anthropic.apiKey));
       const llm = deps.llm ?? (modelConfigured() ? createDiscoveryLlm() : null);
 
-      const run = async (onProgress?: (event: ProgressEvent) => void) => {
-        const result = await discoverTurn(req.body, { source: searchSource(), llm, cache: searchCache, onProgress }).catch((e) => { throw translate(e); });
+      const run = async (onProgress?: (event: ProgressEvent) => void, onConsole?: ConsoleFn) => {
+        const result = await discoverTurn(req.body, { source: searchSource(), llm, cache: searchCache, onProgress, onConsole, apiBaseUrl: getConfig().simpler.baseUrl }).catch((e) => { throw translate(e); });
         // Which listed opportunities can be opened in the Assess tab right now (extracted requirements exist here).
         const ready = new Set(
           (await listOpportunities(store()).catch(() => [])).filter((o) => o.requirements.ready).map((o) => o.opportunityId)
@@ -261,6 +265,21 @@ export function createNofoRouter(deps: NofoRouterDeps = {}): Router {
         throw new GrantServerError('VALIDATION_ERROR', 'The request is not valid.', false);
       }
       await streamLines(res, run, 'Discover');
+    })
+  );
+
+  router.post(
+    '/project-description',
+    discoverLimiter,
+    asyncHandler(async (req: Request, res: Response) => {
+      const parsed = z.object({ messages: UserMessagesSchema }).strict().safeParse(req.body);
+      if (!parsed.success) throw new GrantServerError('VALIDATION_ERROR', 'The request is not valid.', false);
+      // No model key is not an error: the applicant's own messages are returned instead, and the source says so.
+      const modelConfigured = deps.isModelConfigured ?? (() => Boolean(getConfig().anthropic.apiKey));
+      const llm = deps.llm ?? (modelConfigured() ? createDiscoveryLlm() : null);
+      const description = await describeProject(parsed.data.messages.map((m) => m.content), llm);
+      res.set('Cache-Control', NO_STORE);
+      res.json(successResponse(description));
     })
   );
 

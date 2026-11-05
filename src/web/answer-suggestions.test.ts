@@ -126,6 +126,25 @@ describe('build: suggestions for the questions the assessment asked', () => {
     expect(items.map((i: any) => i.group)).toEqual(['bca']);
   });
 
+  it('covers every guided question the Find grants page can ask, using the ids the server defines', () => {
+    const schemas = read('src/nofo/discovery/schemas.ts');
+    const ids = [...schemas.slice(schemas.indexOf('GUIDED_QUESTION_IDS'), schemas.indexOf('as const', schemas.indexOf('GUIDED_QUESTION_IDS'))).matchAll(/'(\w+)'/g)].map((m) => m[1]);
+    expect(ids).toEqual(['projectType', 'applicant', 'phase', 'request']);
+    for (const id of ids) expect(S.build([q(id)], {}).items, `no suggestion for guided question "${id}"`).toHaveLength(1);
+  });
+
+  it('answers the stage question differently for a well advanced and an early project, and keeps a known cost consistent', () => {
+    const { items, replies } = S.build([q('projectType'), q('phase'), q('request')], { totalProjectCostUsd: fact(30e6) });
+    expect(items[1].variants.map((v: any) => v.stage)).toEqual(['advanced', 'early']);
+    expect(items[1].variants[0].text).toMatch(/construction-ready/);
+    expect(items[1].variants[1].text).toMatch(/planning stage/);
+    // $30 million total: the suggested request is a share of it, never the whole cost.
+    const [request] = nums(items[2].variants[0].text);
+    expect(request).toBeGreaterThan(0);
+    expect(request).toBeLessThan(30e6);
+    expect(replies).toHaveLength(2);
+  });
+
   it('covers every question group the server can ask', () => {
     const server = read('src/nofo/assessment/questions.ts');
     // Only the TEXT block (one entry per question group), not the fact-key lines above it.
@@ -162,10 +181,15 @@ describe('the suggested-answers tray in chat.html', () => {
     expect(at('answers-drawer.js')).toBeLessThan(at('nofo.js'));
   });
 
-  it('is available on the Assess tab only, and learns of each assessment from nofo.js', () => {
+  it('is available on the Find grants and Assess tabs only, and learns of each set of questions from the page that asked', () => {
     const tray = read('public/js/answers-drawer.js');
-    expect(tray).toMatch(/setAvailable\(mode === 'nofo'\)/);
+    expect(tray).toMatch(/setAvailable\(mode === 'nofo' \|\| mode === 'find'\)/);
     expect(tray).toContain("addEventListener('assessresult'");
+    expect(tray).toContain("addEventListener('findquestions'");
+    const find = read('public/js/discover.js');
+    expect(find).toContain("new CustomEvent('findquestions'");
+    // Announced when a turn returns, and cleared on start over.
+    expect((find.match(/announceQuestions\(/g) ?? []).length).toBeGreaterThanOrEqual(3);
     const nofo = read('public/js/nofo.js');
     expect(nofo).toContain("new CustomEvent('assessresult'");
     // Announced when a result arrives, and cleared on start over, on switching opportunity and on opening another one.

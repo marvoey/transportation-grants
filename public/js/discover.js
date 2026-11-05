@@ -14,10 +14,12 @@
   var state = {
     messages: [], // the applicant's messages only: { role: 'user', content }
     stage: null, // 'ask' | 'results' | null
+    asked: [], // ids of the guided questions already shown, so none is asked twice
     busy: false,
     inspection: null // the Simpler.Grants.gov requests and responses of the latest turn, when asked for
   };
   var els = {};
+  var devConsole = { begin: function () {}, push: function () {}, end: function () {}, clear: function () {} }; // replaced at start-up
 
   // ---------------------------------------------------------------------------
   // Small DOM helpers
@@ -82,6 +84,53 @@
     return div;
   }
 
+  /** An assistant message made of a label and a list, like the "To sharpen this, tell me:" list on the Assess tab. */
+  function addQuestions(intro, questions) {
+    var div = el('div', 'chat-message assistant');
+    append(div, el('p', null, intro), el('p', 'nofo-reply-label', 'To sharpen this, tell me:'));
+    var ol = el('ol', 'nofo-reply-list find-questions');
+    questions.forEach(function (q) { append(ol, el('li', null, q.text)); });
+    append(div, ol);
+    append(div, el('p', 'nofo-meta', 'Answer in your own words, all in one message. Anything you skip is fine.'));
+    append(els.thread, div);
+    els.thread.scrollTop = els.thread.scrollHeight;
+  }
+
+  /**
+   * Tells the suggested-answers tray what was just asked (null when nothing is open). The tray's builder wants a
+   * `group` per question; for this page that is the question's id.
+   */
+  function announceQuestions(questions, profile) {
+    var detail = null;
+    if (questions) {
+      var facts = {};
+      if (profile && profile.totalCostUsd) facts.totalProjectCostUsd = { value: profile.totalCostUsd.value };
+      if (profile && profile.federalAskUsd) facts.requestedFederalUsd = { value: profile.federalAskUsd.value };
+      detail = { questions: questions.map(function (q) { return { group: q.id, text: q.text }; }), facts: facts };
+    }
+    document.dispatchEvent(new CustomEvent('findquestions', { detail: detail }));
+  }
+
+  /** The plain-language explanation of the search, as an assistant message, with a line saying who wrote it. */
+  function addExplanation(explanation) {
+    if (!explanation || typeof explanation.text !== 'string') return;
+    var div = el('div', 'chat-message assistant find-explanation');
+    append(div, el('p', null, explanation.text));
+    append(div, el('p', 'nofo-meta', explanation.source === 'model'
+      ? 'About this search. Written by the language model from your description and the results; it describes the search and is not advice. Check it against the API call below.'
+      : 'About this search. Written by the app from a template (the language model was not used for this one).'));
+    append(els.thread, div);
+    els.thread.scrollTop = els.thread.scrollHeight;
+  }
+
+  /** Brings the newest message (the questions) into view, with the input box right below it. */
+  function showLatestMessage() {
+    var last = els.thread.lastElementChild;
+    if (!last) return;
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(function () { last.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); }, 60);
+  }
+
   function setError(message) {
     els.error.textContent = message || '';
     els.error.hidden = !message;
@@ -97,20 +146,21 @@
     els.results.setAttribute('aria-busy', busy ? 'true' : 'false');
   }
 
-  /** Reflects the conversation state in the form: what to type next, and whether "Show grants now" makes sense. */
+  /** Reflects the conversation state in the form: what to type next, and whether "Skip the questions and search" makes sense. */
   function syncForm() {
     var left = D.messagesLeft(state.messages);
     var started = state.messages.length > 0;
     els.input.disabled = left === 0;
-    els.send.textContent = started ? 'Update the list' : 'Find grants';
+    els.input.rows = started ? 3 : 5; // once the conversation has begun, the box gives room back to the console and results
+    els.send.textContent = !started ? 'Continue' : state.stage === 'ask' ? 'Send answers' : 'Update the list';
     els.now.hidden = state.stage !== 'ask';
     els.limit.hidden = left > 0;
     if (!started) {
       els.input.placeholder = 'For example: We are a state DOT and want to replace a structurally deficient bridge on a rural route. The project costs about $40 million and we would request $25 million in federal funds. Design is complete.';
     } else if (state.stage === 'ask') {
-      els.input.placeholder = 'Tell me what kind of project this is…';
+      els.input.placeholder = 'Answer the questions above in your own words…';
     } else {
-      els.input.placeholder = 'Optional: add detail to refine the list, or answer a question above.';
+      els.input.placeholder = 'Optional: add detail to refine the list.';
     }
   }
 
@@ -218,44 +268,10 @@
     Object.keys(held).forEach(function (id) { showStep(held[id]); });
   }
 
-  /** POSTs the turn and reads the stream of progress lines, resolving with the final result. */
-  async function streamDiscover(body, onStep) {
-    var response;
-    try {
-      response = await fetch(API + '/discover?stream=1', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    } catch (e) {
-      throw new Error('Could not reach the server. Check your connection and try again.');
-    }
-    if (!response.ok || (response.headers.get('content-type') || '').indexOf('ndjson') === -1) {
-      // Rejected before streaming began (bad input, rate limit, missing configuration): an ordinary JSON error.
-      var failure = null;
-      try { failure = await response.json(); } catch (e) { failure = null; }
-      throw new Error(failure && failure.error ? failure.error : 'The request failed (HTTP ' + response.status + ').');
-    }
-    var result = null;
-    function handle(line) {
-      if (line.type === 'progress') onStep(line);
-      else if (line.type === 'result') result = line.data;
-      else if (line.type === 'error') throw new Error(line.error || 'The search failed.');
-    }
-    if (response.body && response.body.getReader) {
-      var reader = response.body.getReader();
-      var decoder = new TextDecoder();
-      var buffer = '';
-      for (;;) {
-        var chunk = await reader.read();
-        if (chunk.done) break;
-        buffer += decoder.decode(chunk.value, { stream: true });
-        var parsed = D.parseNdjson(buffer);
-        buffer = parsed.rest;
-        parsed.events.forEach(handle);
-      }
-      D.parseNdjson(buffer + decoder.decode() + '\n').events.forEach(handle);
-    } else {
-      D.parseNdjson((await response.text()) + '\n').events.forEach(handle);
-    }
-    if (!result) throw new Error('The search ended before a result arrived. Please try again.');
-    return result;
+  /** Brings the progress panel (and the console under it) into view, so a turn can be followed without scrolling. */
+  function scrollToProgress() {
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(function () { els.progress.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); }, 60);
   }
 
   async function runTurn(options) {
@@ -264,22 +280,39 @@
     setBusy(true);
     clear(els.results);
     progressStart();
+    scrollToProgress();
+    devConsole.begin('Turn ' + state.messages.length + (options && options.forceResults ? ' (searching now)' : ''));
     try {
-      var data = await streamDiscover(
-        D.buildRequest(state.messages, { includeHistorical: els.historical.checked, inspect: els.inspect.checked, forceResults: !!(options && options.forceResults) }),
-        enqueueStep
+      var data = await window.ProgressPanel.stream(
+        API + '/discover?stream=1',
+        D.buildRequest(state.messages, {
+          includeHistorical: els.historical.checked,
+          inspect: els.inspect.checked,
+          forceResults: !!(options && options.forceResults),
+          asked: state.asked
+        }),
+        enqueueStep,
+        devConsole.push
       );
       flushSteps();
+      devConsole.end();
       progressStop();
       state.stage = data.stage;
+      announceQuestions(data.questions, data.profile);
       if (data.stage === 'ask') {
-        addThread('assistant', data.questions[0] || data.summary);
+        state.asked = state.asked.concat(data.questions.map(function (q) { return q.id; }));
+        addQuestions(data.summary, data.questions);
         clear(els.results);
+        showLatestMessage();
       } else {
         // The summary is shown once, at the top of the results, not repeated in the thread.
         renderResults(data);
+        addExplanation(data.explanation);
+        showLatestMessage();
       }
     } catch (e) {
+      devConsole.push({ kind: 'error', text: '✕ ' + e.message });
+      devConsole.end();
       progressStop();
       setError(e.message);
       throw e;
@@ -326,7 +359,10 @@
     if (state.busy) return;
     state.messages = [];
     state.stage = null;
+    state.asked = [];
     state.inspection = null;
+    announceQuestions(null);
+    devConsole.clear();
     clear(els.thread);
     clear(els.results);
     setError('');
@@ -362,10 +398,34 @@
 
   var POLL_MS = 3000;
 
+  /**
+   * Opens the Assess tab on this opportunity, with the first message pre-filled: a project description the language
+   * model writes from what was said here (code-checked; the applicant's own messages if that fails). Assess opens
+   * either way, so a failure here never blocks it.
+   */
   function assessButton(item) {
-    var go = el('button', null, 'Assess my project against this');
+    var label = 'Assess my project against this';
+    var go = el('button', null, label);
     go.type = 'button';
-    go.addEventListener('click', function () { window.NofoApp.openAssess(item.opportunityId); });
+    go.addEventListener('click', async function () {
+      go.disabled = true;
+      go.textContent = 'Writing your project description…';
+      var draft = null;
+      try {
+        var data = await request('/project-description', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: state.messages.map(function (m) { return { role: 'user', content: m.content }; }) })
+        });
+        draft = { text: data.text, source: data.source };
+      } catch (e) {
+        // Fall back to the applicant's own messages, joined, so Assess still opens with something to edit.
+        draft = { text: state.messages.map(function (m) { return m.content; }).join('\n\n'), source: 'code' };
+      }
+      go.disabled = false;
+      go.textContent = label;
+      window.NofoApp.openAssess(item.opportunityId, { draft: draft });
+    });
     return go;
   }
 
@@ -653,10 +713,154 @@
     return card;
   }
 
+  function callSummary(call) {
+    if (!call.ok) return 'failed';
+    var count = call.totalRecords !== null && call.totalRecords > call.returned ? call.returned + ' of ' + call.totalRecords + ' listings' : call.returned + ' listing' + (call.returned === 1 ? '' : 's');
+    return (call.cached ? 'reused a recent answer, ' : '') + count;
+  }
+
+  /** The requests that were made, with every parameter, and a curl command for each. */
+  function renderApiCalls(calls) {
+    if (!calls || calls.length === 0) return null;
+    var card = el('div', 'card find-apicalls');
+    append(card, el('h3', null, 'The Simpler.Grants.gov API call' + (calls.length === 1 ? '' : 's')));
+    append(card, el('p', 'nofo-meta', 'Exactly what this server sent, one request per search, with every parameter. The API key is a header the server adds and is never shown; the curl command reads it from SIMPLER_GRANTS_API_KEY in your own environment.'));
+    // The search that carries the project's words is the interesting one, so it starts open.
+    var primary = calls.filter(function (c) { return c.body && c.body.query; })[0] || calls[0];
+    calls.forEach(function (call) {
+      var details = el('details', 'nofo-collapsible find-inspect-item');
+      if (call === primary) details.open = true;
+      append(details, el('summary', null, call.label + ' — ' + callSummary(call)));
+      append(details, el('code', 'find-command', call.method + ' ' + call.url));
+      var headerText = Object.keys(call.headers).map(function (name) { return name + ': ' + call.headers[name]; }).join('\n');
+      var headers = el('pre', 'find-json find-headers', headerText);
+      append(details, headers);
+      var body = jsonBlock('Request body (JSON)', call.body, 'request-' + D.safeFileName(call.planId));
+      append(details, body.node);
+      if (details.open) body.fill();
+      details.addEventListener('toggle', function () { if (details.open) body.fill(); });
+      var tools = el('div', 'find-json-head');
+      append(tools, el('strong', null, 'As a curl command'));
+      append(tools, smallButton('Copy curl command', function (b) { copyText(call.curl, b); }));
+      var curl = el('pre', 'find-json', call.curl);
+      curl.tabIndex = 0;
+      append(details, tools, curl);
+      if (call.error) append(details, el('p', 'error', call.error));
+      append(card, details);
+    });
+    return card;
+  }
+
+  function signed(points) {
+    return (points > 0 ? '+' : points < 0 ? '−' : '') + Math.abs(points);
+  }
+
+  /** A collapsible table of every listing that was scored, with the signals behind each score. */
+  function renderScored(scored) {
+    if (!scored || scored.length === 0) return null;
+    var details = el('details', 'nofo-collapsible find-scored');
+    var shown = scored.filter(function (r) { return r.shown; }).length;
+    append(details, el('summary', null, 'All ' + scored.length + ' listings that were scored (' + shown + ' shown below)'));
+    append(details, el('p', 'nofo-meta', 'Every listing the searches returned, best score first. The score is the sum of the signals listed under each title; no model is involved. Earlier editions of the same program are folded into one row.'));
+    var wrap = el('div', 'find-table-wrap');
+    var table = el('table', 'find-table');
+    var head = el('tr');
+    ['#', 'Listing and what made up its score', 'Score', 'Match', 'In the list'].forEach(function (name) { append(head, el('th', null, name)); });
+    var thead = el('thead');
+    append(thead, head);
+    append(table, thead);
+    var tbody = el('tbody');
+    scored.forEach(function (row, index) {
+      var tr = el('tr', row.shown ? 'find-row-shown' : null);
+      append(tr, el('td', 'find-num', String(index + 1)));
+      var info = el('td');
+      var pageUrl = D.safeUrl(row.simplerUrl);
+      if (pageUrl) {
+        var link = el('a', 'find-title-link', row.title);
+        link.href = pageUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        append(info, link);
+      } else {
+        append(info, el('strong', null, row.title));
+      }
+      append(info, el('div', 'nofo-meta', [row.opportunityNumber, row.status + (row.historical ? ' (historical)' : ''), row.otherEditions > 0 ? '+' + row.otherEditions + ' other edition' + (row.otherEditions === 1 ? '' : 's') : null].filter(Boolean).join(' · ')));
+      if (row.parts.length > 0) {
+        var ul = el('ul', 'find-parts');
+        row.parts.forEach(function (part) {
+          append(ul, el('li', part.points < 0 ? 'find-part-neg' : 'find-part-pos', signed(part.points) + '  ' + part.label));
+        });
+        append(info, ul);
+      } else {
+        append(info, el('div', 'nofo-meta', 'No signal added or removed points.'));
+      }
+      append(tr, info);
+      append(tr, el('td', 'find-score', String(row.score)));
+      append(tr, el('td', null, row.match === 'likely' ? 'Likely' : 'Weaker'));
+      append(tr, el('td', null, (row.shown ? '✓ ' : '') + row.note));
+      append(tbody, tr);
+    });
+    append(table, tbody);
+    append(wrap, table);
+    append(details, wrap);
+    return details;
+  }
+
+  var ACTORS = { you: 'You', model: 'Language model', code: 'Code' };
+  var ORIGINS = { rule: 'Fixed rule', words: 'Your words', choice: 'Your choice' };
+
+  /** How this search's parameters were built, step by step, and where each value came from. Written by code on the server. */
+  function renderTrace(trace) {
+    if (!trace || !trace.steps || trace.steps.length === 0) return null;
+    var card = el('div', 'card find-trace');
+    append(card, el('h3', null, 'How the code and the language model built these API calls'));
+    append(card, el('p', 'nofo-meta', 'Written by the app from what actually happened in this search (not by the language model), so it matches the calls above. The model proposes facts from your words; code checks them and builds every parameter.'));
+    var ol = el('ol', 'find-trace-steps');
+    trace.steps.forEach(function (step) {
+      var li = el('li', 'find-trace-step');
+      var head = el('div', 'find-trace-head');
+      append(head, el('span', 'find-actor find-actor-' + step.actor, ACTORS[step.actor] || step.actor), el('strong', null, step.title));
+      append(li, head, el('p', null, step.detail));
+      if (step.items && step.items.length) append(li, list('find-trace-items', step.items));
+      append(ol, li);
+    });
+    append(card, ol);
+    if (trace.parameters && trace.parameters.length) {
+      append(card, el('h4', null, 'Where each parameter came from'));
+      var wrap = el('div', 'find-table-wrap');
+      var table = el('table', 'find-table');
+      var thead = el('thead');
+      var hr = el('tr');
+      ['Search', 'Parameter', 'Value', 'Source', 'Why'].forEach(function (name) { append(hr, el('th', null, name)); });
+      append(thead, hr);
+      append(table, thead);
+      var tbody = el('tbody');
+      trace.parameters.forEach(function (row) {
+        var tr = el('tr');
+        append(tr, el('td', null, row.call), el('td', null, row.parameter), el('td', 'find-trace-value', row.value));
+        var origin = el('td');
+        append(origin, el('span', 'find-origin find-origin-' + row.origin, ORIGINS[row.origin] || row.origin));
+        append(tr, origin, el('td', null, row.why));
+        append(tbody, tr);
+      });
+      append(table, tbody);
+      append(wrap, table);
+      append(card, wrap);
+    }
+    return card;
+  }
+
   function renderResults(data) {
     clear(els.results);
+    var apiCalls = renderApiCalls(data.apiCalls);
+    if (apiCalls) append(els.results, apiCalls);
+    var trace = renderTrace(data.trace);
+    if (trace) append(els.results, trace);
     var facts = renderFacts(data.profile);
     if (facts) append(els.results, facts);
+
+    var scoredBox = renderScored(data.scored);
+    if (scoredBox) append(els.results, scoredBox);
 
     var summaryCard = el('div', 'card');
     append(summaryCard, el('h3', null, data.shortlist.length ? 'Opportunities worth a closer look' : 'No close matches found'));
@@ -674,8 +878,8 @@
     if (data.questions.length > 0) {
       var q = el('div', 'card');
       append(q, el('h3', null, 'Optional: tell me more to refine the list'));
-      append(q, list('nofo-reply-list', data.questions));
-      append(q, el('p', 'nofo-meta', 'You do not need to answer these. Type in the box above to update the list, or leave it as it is.'));
+      append(q, list('nofo-reply-list', data.questions.map(function (item) { return item.text; })));
+      append(q, el('p', 'nofo-meta', 'You skipped the questions, so these are optional. Type in the box above to update the list, or leave it as it is.'));
       append(els.results, q);
     }
 
@@ -704,7 +908,16 @@
     els.progressTime = document.getElementById('findProgressTime');
     els.steps = document.getElementById('findSteps');
     els.results = document.getElementById('findResults');
-    if (!els.form || !D || !els.progress || !els.inspect) return;
+    if (!els.form || !D || !els.progress || !els.inspect || !window.ProgressPanel) return;
+    var consoleRoot = document.getElementById('findConsole');
+    if (consoleRoot && window.DevConsole) {
+      devConsole = window.DevConsole.create({
+        root: consoleRoot,
+        log: document.getElementById('findConsoleLog'),
+        copy: document.getElementById('findConsoleCopy'),
+        clear: document.getElementById('findConsoleClear')
+      });
+    }
 
     els.form.addEventListener('submit', onSubmit);
     els.now.addEventListener('click', onShowNow);

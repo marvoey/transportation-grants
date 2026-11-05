@@ -125,6 +125,7 @@
     if (options && options.includeHistorical) body.includeHistorical = true;
     if (options && options.forceResults) body.forceResults = true;
     if (options && options.inspect) body.inspect = true;
+    if (options && Array.isArray(options.asked) && options.asked.length) body.asked = options.asked.slice();
     return body;
   }
 

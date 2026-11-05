@@ -1,9 +1,11 @@
 /**
- * Made-up example answers to the assessment's follow-up questions (the "To sharpen this, tell me:" list), for testing.
+ * Made-up example answers to the follow-up questions (the "To sharpen this, tell me:" list) on the Assess tab and the
+ * guided questions on the Find grants tab, for testing.
  * Pure helpers, no DOM access. Exposes window.AnswerSuggestions.
  *
- * The questions themselves are fixed templates written by the server, one per group of missing facts (request,
- * costMatch, area, category, bca, applicant, design, environmental, description). The answers are written here the
+ * The questions themselves are fixed templates written by the server, one per group of missing facts (Assess: request,
+ * costMatch, area, category, bca, applicant, design, environmental, description; Find grants: projectType, applicant,
+ * phase, request). The answers are written here the
  * same way: by code, from the question's group and the facts already known, never by a model. They are what an
  * applicant COULD type; they are not facts about anyone's project.
  *
@@ -128,6 +130,13 @@
         return {
           advanced: 'The environmental review is complete; we received a categorical exclusion.',
           early: 'The environmental review has not started; we expect a categorical exclusion.'
+        };
+      case 'projectType':
+        return both('This is a bridge replacement project: we want to replace a structurally deficient bridge.');
+      case 'phase':
+        return {
+          advanced: 'The project is construction-ready: design and environmental review are complete.',
+          early: 'The project is at the planning stage: we have not started design yet.'
         };
       case 'description':
         return both('The project reconstructs the existing facility, including new pavement, drainage, sidewalks and lighting.');

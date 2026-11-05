@@ -751,6 +751,11 @@ button.nofo-link-button:disabled {
   display: none;
 }
 
+.find-thread > * {
+  /* Leave room for the pinned developer console when scrolling a message into view. */
+  scroll-margin-top: 17rem;
+}
+
 .find-card-head {
   display: flex;
   flex-wrap: wrap;
@@ -1237,4 +1242,262 @@ body.tray-open .tray:not(.is-open) .tray-tab {
   .collapsible.is-collapsed {
     transition: none;
   }
+}
+
+/* Developer console on the Find grants screen: the Simpler.Grants.gov request as it is built and sent. */
+.dev-console {
+  /* Pinned to the top of the Find grants panel, so the request can be watched while the page scrolls. */
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin: 0 0 1rem;
+  border-radius: 6px;
+  background: #111827;
+  color: #d1d5db;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.dev-console > summary {
+  cursor: pointer;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  color: #f3f4f6;
+  background: #1f2937;
+}
+
+.dev-console > summary .nofo-meta {
+  color: #9ca3af;
+  font-weight: 400;
+  margin-left: 0.5rem;
+}
+
+.dev-console-bar {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.6rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dev-console-bar .nofo-secondary {
+  background: transparent;
+  color: #d1d5db;
+  border-color: #4b5563;
+}
+
+.dev-console-log {
+  /* Exactly nine lines tall (line-height 1.5); older lines scroll up inside the box. */
+  box-sizing: content-box;
+  height: calc(9 * 1.5em);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.4rem 1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.dc-line {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  animation: dc-in 0.18s ease-out;
+}
+
+.dc-cmd { color: #7dd3fc; font-weight: 600; }
+.dc-note { color: #9ca3af; }
+.dc-add { color: #86efac; }
+.dc-http { color: #fcd34d; font-weight: 600; }
+.dc-json { color: #e5e7eb; background: #0b1220; border-left: 3px solid #374151; padding: 0 0.6rem; }
+.dc-ok { color: #86efac; font-weight: 600; }
+.dc-warn { color: #fbbf24; }
+.dc-error { color: #fca5a5; font-weight: 600; }
+
+.dc-cursor {
+  color: #7dd3fc;
+  animation: dc-blink 1s steps(2, start) infinite;
+}
+
+@keyframes dc-in {
+  from { opacity: 0; transform: translateX(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes dc-blink {
+  to { visibility: hidden; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dc-line,
+  .dc-cursor {
+    animation: none;
+  }
+}
+
+.find-questions {
+  margin: 0.25rem 0 0.5rem 1.25rem;
+}
+
+.dev-console-log:empty::before {
+  content: '# waiting for a project description…';
+  color: #9ca3af;
+}
+
+#findProgress {
+  /* Leave room for the pinned console when the page scrolls to the progress panel. */
+  scroll-margin-top: 17rem;
+}
+
+@media (max-width: 600px) {
+  .dev-console > summary .nofo-meta {
+    display: none;
+  }
+}
+
+.find-explanation p {
+  margin: 0 0 0.4rem;
+}
+
+.find-headers {
+  max-height: 5rem;
+  margin: 0.5rem 0;
+}
+
+/* "All listings and their scores" box on the Find grants results. */
+.find-scored {
+  margin-bottom: 1rem;
+}
+
+.find-table-wrap {
+  overflow-x: auto;
+  margin-top: 0.5rem;
+}
+
+.find-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.find-table th,
+.find-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid #e2e5ea;
+}
+
+.find-table th {
+  background: #f1f3f6;
+  position: sticky;
+  top: 0;
+}
+
+.find-table .find-num,
+.find-table .find-score {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.find-table .find-score {
+  font-weight: 700;
+}
+
+.find-row-shown {
+  background: #eef6ff;
+}
+
+.find-parts {
+  list-style: none;
+  margin: 0.3rem 0 0;
+  padding: 0;
+  font-size: 0.82rem;
+}
+
+.find-parts li {
+  white-space: pre-wrap;
+}
+
+.find-part-pos {
+  color: #1b6b3a;
+}
+
+.find-part-neg {
+  color: #a12a2a;
+}
+
+.find-draft-note {
+  margin: 0 0 0.4rem;
+}
+
+/* "How the code and the language model built these API calls". */
+.find-trace-steps {
+  list-style: none;
+  counter-reset: step;
+  margin: 0.75rem 0 0;
+  padding: 0;
+}
+
+.find-trace-step {
+  counter-increment: step;
+  position: relative;
+  margin: 0 0 0.9rem;
+  padding: 0 0 0 2.2rem;
+}
+
+.find-trace-step::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: #e8edf5;
+  color: #003c78;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-align: center;
+  line-height: 1.5rem;
+}
+
+.find-trace-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.find-trace-step p {
+  margin: 0.2rem 0;
+}
+
+.find-trace-items {
+  margin: 0.3rem 0 0 1.1rem;
+  font-size: 0.9rem;
+}
+
+.find-actor,
+.find-origin {
+  display: inline-block;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.find-actor-you { background: #e5e7eb; color: #1f2937; }
+.find-actor-model { background: #ede4fb; color: #4a2a8a; }
+.find-actor-code { background: #dbeafe; color: #1e3a8a; }
+.find-origin-rule { background: #e5e7eb; color: #1f2937; }
+.find-origin-words { background: #ede4fb; color: #4a2a8a; }
+.find-origin-choice { background: #fef3c7; color: #78350f; }
+
+.find-trace-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
 }

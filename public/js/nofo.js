@@ -212,6 +212,7 @@
     state.messages.push({ role: 'user', content: text });
     addMessage('user', text);
     els.input.value = '';
+    clearDraftNote();
     runTurn();
   }
 
@@ -233,6 +234,8 @@
     clear(els.messages);
     clear(els.results);
     showIntroMessage();
+    if (els.input.value.trim() === state.lastDraft) els.input.value = '';
+    clearDraftNote();
     els.input.focus();
   }
 
@@ -689,7 +692,31 @@
   }
 
   /** Called by the Find grants panel: open the Assess tab on an opportunity (without a page reload). */
-  function openAssess(id) {
+  /**
+   * Pre-fills the first message with a project description drafted on the Find grants tab. Only when nothing has been
+   * said here yet, and never over text the person typed themselves (a draft from an earlier click may be replaced).
+   */
+  function applyDraft(draft) {
+    if (!draft || typeof draft.text !== 'string' || !draft.text.trim()) return;
+    if (lastUserMessageIndex() >= 0) return;
+    var current = els.input.value.trim();
+    if (current && current !== state.lastDraft) return;
+    els.input.value = draft.text;
+    els.input.rows = 9;
+    state.lastDraft = draft.text;
+    els.draftNote.textContent = draft.source === 'model'
+      ? 'Drafted by the language model from what you told Find grants, using only the facts you gave. Read it, correct anything, add what is missing, then send it.'
+      : 'This is what you told Find grants, joined together (a drafted description was not available). Edit it, add what is missing, then send it.';
+    els.draftNote.hidden = false;
+  }
+
+  function clearDraftNote() {
+    els.draftNote.hidden = true;
+    els.input.rows = 3;
+    state.lastDraft = null;
+  }
+
+  function openAssess(id, options) {
     if (!U.isUuid(id)) return;
     state.requestedOpportunity = String(id).toLowerCase();
     els.loadError.hidden = true;
@@ -703,8 +730,10 @@
     }
     state.loaded = true;
     setMode('nofo');
-    loadOpportunities();
-    if (els.input && !els.form.hidden) els.input.focus();
+    applyDraft(options && options.draft);
+    Promise.resolve(loadOpportunities()).then(function () {
+      if (els.input && !els.form.hidden) els.input.focus();
+    });
   }
 
   function init() {
@@ -721,6 +750,7 @@
     els.messages = document.getElementById('nofoMessages');
     els.form = document.getElementById('nofoForm');
     els.input = document.getElementById('nofoInput');
+    els.draftNote = document.getElementById('nofoDraftNote');
     els.send = document.getElementById('nofoSend');
     els.reset = document.getElementById('nofoReset');
     els.results = document.getElementById('nofoResults');

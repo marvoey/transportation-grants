@@ -2,11 +2,12 @@
 /**
  * Operator CLI: find opportunities worth considering from a project description.
  *
- *   npm run nofo:find -- "<project description>" [--say "<follow-up>"]... [--historical] [--now]
+ *   npm run nofo:find -- "<project description>" [--say "<follow-up>"]... [--historical] [--guided]
  *
  * Prints what was understood, which Simpler.Grants.gov searches ran, and the shortlist. Each --say adds
  * another applicant message (the conversation so far). --historical also searches closed and archived
- * opportunities. --now never asks a question.
+ * opportunities. By default the CLI always searches (it has no way to remember which questions it
+ * asked); --guided runs the same question policy as the web page.
  * Exit codes: 0 ok; 2 failure (config, search, validation).
  */
 import { GrantServerError } from '../../types/index.js';
@@ -17,24 +18,24 @@ import { PROJECT_TYPE_LABELS } from './schemas.js';
 import { DiscoveryError, discoverTurn } from './service.js';
 import { SearchCache } from './search.js';
 
-const USAGE = 'Usage: npm run nofo:find -- "<project description>" [--say "<follow-up>"]... [--historical] [--now]';
+const USAGE = 'Usage: npm run nofo:find -- "<project description>" [--say "<follow-up>"]... [--historical] [--guided]';
 
-function parseArgs(argv: string[]): { messages: string[]; historical: boolean; now: boolean; help: boolean } {
+function parseArgs(argv: string[]): { messages: string[]; historical: boolean; guided: boolean; help: boolean } {
   const messages: string[] = [];
   let historical = false;
-  let now = false;
+  let guided = false;
   let help = false;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--historical') historical = true;
-    else if (a === '--now') now = true;
+    else if (a === '--guided') guided = true;
     else if (a === '--help') help = true;
     else if (a === '--say') {
       const next = argv[++i];
       if (next) messages.push(next);
     } else if (!a.startsWith('--')) messages.unshift(a);
   }
-  return { messages, historical, now, help };
+  return { messages, historical, guided, help };
 }
 
 const money = (n: number | null): string => (n === null ? 'n/a' : `$${n.toLocaleString('en-US')}`);
@@ -52,7 +53,7 @@ async function main(argv: string[]): Promise<number> {
       {
         messages: args.messages.map((content) => ({ role: 'user', content })),
         includeHistorical: args.historical,
-        forceResults: args.now,
+        forceResults: !args.guided,
       },
       { source: createSearchSource(), llm, cache: new SearchCache() }
     );
@@ -82,8 +83,8 @@ async function main(argv: string[]): Promise<number> {
     });
 
     if (result.questions.length > 0) {
-      console.log(result.stage === 'ask' ? '\nQuestion:' : '\nOptional refinements:');
-      for (const q of result.questions) console.log(`  ? ${q}`);
+      console.log(result.stage === 'ask' ? '\nQuestions before searching (re-run with more detail, without --guided):' : '\nOptional refinements:');
+      for (const q of result.questions) console.log(`  ? ${q.text}`);
     }
     for (const w of result.warnings) console.log(`\nWarning: ${w}`);
     console.log(`\n${result.disclaimer}`);

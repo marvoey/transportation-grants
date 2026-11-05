@@ -73,7 +73,10 @@ NOFO mean for us, what information is missing, and what should we investigate be
    reliable fields (DOT agency, status, project-term query); applicant type, award size, cost
    sharing and funding category are scored in code, not filtered, because upstream metadata is
    often null or `other` (BUILD lists applicant type `other`). Ranking and the "why it may fit"
-   text are written by code, not a model.
+   text are written by code, not a model. The one model-written piece is the short plain-language
+   explanation of the search shown after the questions: it is built from the applicant's words, the
+   exact request and the counts, checked in code (no links, markup or eligibility claims), labelled
+   as model-written, and replaced by a code template if it fails the checks.
 
 Rules:
 - **Work on one milestone only, and only when the user asks for it.** Never start the next one.
