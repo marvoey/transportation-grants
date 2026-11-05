@@ -119,18 +119,7 @@ export interface ShortlistItem {
   readyToAssess?: boolean;
 }
 
-/**
- * One step of what the code is doing, for the progress display. Written by code in plain language; it
- * names search words and counts but never repeats the applicant's own text.
- */
-export interface ProgressEvent {
-  /** Stable per step: a later event with the same id updates the earlier line. */
-  id: string;
-  status: 'running' | 'done' | 'failed';
-  message: string;
-  /** Optional second line, for example the search words that were sent. */
-  detail?: string;
-}
+export type { ProgressEvent } from '../progress.js';
 
 export interface FilterNote {
   /** Plain-language description of one search that was run. */

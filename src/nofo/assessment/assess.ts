@@ -1,4 +1,5 @@
 import type { LlmFn } from '../llm.js';
+import { safeProgress, type ProgressFn } from '../progress.js';
 import { mapLimit } from '../util.js';
 import type { Requirement, RequirementsFile } from '../extraction/schemas.js';
 import { deriveArithmetic, type Derived } from './arithmetic.js';
@@ -29,6 +30,8 @@ export interface AssessOptions {
   batchSize?: number;
   /** Upper bound on requirements sent to the model in one assessment. */
   maxInterpreted?: number;
+  /** Called as each stage really starts and finishes, so a screen can say what is happening. */
+  onProgress?: ProgressFn;
 }
 
 export interface AssessmentResult {
@@ -88,6 +91,8 @@ function chunk<T>(items: T[], size: number): T[][] {
 
 export async function assess(options: AssessOptions): Promise<AssessmentResult> {
   const { facts } = options;
+  const emit = safeProgress(options.onProgress);
+  emit({ id: 'rules', status: 'running', message: "Applying the notice's exact rules (amounts, match, required documents) to the facts you gave…" });
   const derived = deriveArithmetic(facts);
   const findings: Finding[] = [];
   const notApplicable: NotApplicable[] = [];
@@ -158,8 +163,16 @@ export async function assess(options: AssessOptions): Promise<AssessmentResult> 
     }
   }
 
+  emit({
+    id: 'rules',
+    status: 'done',
+    message: `Checked ${options.requirements.requirements.length} requirements: ${notApplicable.length} do not apply to this project, ${skipped.length} are optional wording, ${toInterpret.length} need the language model to interpret.`,
+  });
+
   // ---- model interpretation of the free-text conditions ----------------------------
   const interpretation = { requirements: 0, modelCalls: 0, cacheHits: 0 };
+  let batchesRun = 0;
+  let batchesFailed = 0;
   const hasVisibleFacts = Object.keys(visibleFacts(facts)).length > 0;
   const limit = options.maxInterpreted ?? 60;
   const selected = toInterpret.slice(0, limit);
@@ -167,13 +180,27 @@ export async function assess(options: AssessOptions): Promise<AssessmentResult> 
 
   const results = new Map<string, Interpretation>();
   if (!options.llm) {
-    if (toInterpret.length > 0) warnings.push('Model interpretation was not available, so requirements that need it stay unknown.');
+    if (toInterpret.length > 0) {
+      warnings.push('Model interpretation was not available, so requirements that need it stay unknown.');
+      emit({ id: 'interpret', status: 'failed', message: `The language model is not available, so ${toInterpret.length} conditions stay unknown.` });
+    }
   } else if (!hasVisibleFacts) {
     // Nothing for the model to read: skip the calls entirely. These stay unknown.
+    if (toInterpret.length > 0) emit({ id: 'interpret', status: 'done', message: 'Nothing to interpret yet: describe the project first, and the free-text conditions will be read against it.' });
   } else {
     // Batches are independent, so they run concurrently (a few at a time) instead of one after another.
     const batches = chunk(selected, options.batchSize ?? 12);
-    const outcomes = await mapLimit(batches, 4, (batch) => interpretBatch({ llm: options.llm as LlmFn, facts, requirements: batch, cache: options.cache }));
+    let finished = 0;
+    batchesRun = batches.length;
+    if (batches.length > 0) {
+      emit({ id: 'interpret', status: 'running', message: `Asking the language model to interpret ${selected.length} conditions in ${batches.length} batch${batches.length === 1 ? '' : 'es'}…` });
+    }
+    const outcomes = await mapLimit(batches, 4, async (batch) => {
+      const outcome = await interpretBatch({ llm: options.llm as LlmFn, facts, requirements: batch, cache: options.cache });
+      finished += 1;
+      emit({ id: 'interpret', status: 'running', message: `Interpreting conditions with the language model: ${finished} of ${batches.length} batch${batches.length === 1 ? '' : 'es'} done…` });
+      return outcome;
+    });
     outcomes.forEach((outcome, index) => {
       if (outcome.ok) {
         if (outcome.fromCache) interpretation.cacheHits += 1;
@@ -182,11 +209,22 @@ export async function assess(options: AssessOptions): Promise<AssessmentResult> 
         for (const [id, value] of outcome.results) results.set(id, value);
       } else {
         interpretation.modelCalls += 1;
+        batchesFailed += 1;
         warnings.push(`Some requirements could not be interpreted this time (${outcome.error}).`);
       }
     });
   }
   if (overflow.length > 0) warnings.push(`${overflow.length} requirement(s) were not interpreted because of the per-assessment limit.`);
+  if (batchesRun > 0) {
+    emit({
+      id: 'interpret',
+      status: batchesFailed > 0 ? 'failed' : 'done',
+      message:
+        batchesFailed > 0
+          ? `${batchesFailed} of ${batchesRun} batch${batchesRun === 1 ? '' : 'es'} could not be interpreted this time, so those conditions stay unknown.`
+          : `Interpreted ${interpretation.requirements} conditions (${interpretation.modelCalls} new model call${interpretation.modelCalls === 1 ? '' : 's'}, ${interpretation.cacheHits} reused from earlier).`,
+    });
+  }
 
   for (const requirement of toInterpret) {
     const result = results.get(requirement.id);

@@ -1,6 +1,6 @@
 # Test project descriptions for "Find grants"
 
-Six realistic, **fictional** project descriptions for trying the Find grants tab in `chat.html`
+Twelve realistic, **fictional** project descriptions (six detailed, six short and vague) for trying the Find grants tab in `chat.html`
 (`npm run start:web`, then open `/chat.html`). Paste one into the box. They vary the project type,
 the applicant, the money and how far along the project is. Every place, number and fact is invented.
 
@@ -104,6 +104,53 @@ Seen on 2026-11-05:
 - **With closed and archived:** includes the 2026 Tribal Transportation Program Safety Fund, which
   is a good match, plus training and pollinator programs that are not. The tool should offer
   optional questions about the amount and the project stage, because neither was given.
+
+---
+
+## Short, vague descriptions
+
+Real applicants often type one or two plain sentences. These are for checking how the tool behaves
+when there is little to go on: does it still find a sensible list, and does it ask only what it
+needs? They have **not been run yet**, so the notes below say what each one is meant to test, not
+what it returns.
+
+## 7. Short: main street in bad shape
+
+> We're a small town and our main street is falling apart. We need help paying to fix it.
+
+Tests: a city applicant implied but not named, a roadway project, no amounts, no stage.
+
+## 8. Short: old county bridge
+
+> Our county has an old bridge that needs to be replaced and we can't afford it on our own.
+
+Tests: a county applicant, a bridge project, nothing else. Compare with the full bridge description
+above: the list should be similar, with more optional questions.
+
+## 9. Short: bike lanes near schools
+
+> We want to add bike lanes and sidewalks around our schools so kids can get there safely.
+
+Tests: an applicant that is not stated, bike and pedestrian plus safety wording.
+
+## 10. Short: new buses
+
+> Our transit agency needs to replace some old buses. Is there any funding for that?
+
+Tests: a transit applicant, a vehicle purchase, phrased as a question.
+
+## 11. Short: dangerous intersections
+
+> There are a few intersections in our city where people keep getting hurt. We want to do something about it.
+
+Tests: a safety project with no mode, no amounts, no applicant type beyond "city".
+
+## 12. Short: no project type at all
+
+> We're a county government and we have a transportation project we'd like to get funded.
+
+Tests: no project type, so this is the one case where the tool should ask a required question. The
+list should still appear once you answer, or when you choose **Show grants now**.
 
 ---
 

@@ -31,11 +31,13 @@
 
     <div id="findPanel" role="tabpanel" aria-labelledby="modeFindTab">
       <div class="card">
+        <div class="collapsible" id="findIntro" data-collapsible><div class="collapsible-inner">
         <h2>Find Grants for Your Project</h2>
         <p class="mb-2">Describe your transportation project in your own words. We will look through current U.S. Department of Transportation funding opportunities and show a short list worth a closer look, with the reasons and the things to watch out for.</p>
         <div class="nofo-banner" role="note">
           <strong>Preliminary only.</strong> This list is a starting point, not an eligibility determination, a recommendation, or a prediction of success. Your description is sent to the Anthropic API to read the facts you state, and a few search words from it are sent to Simpler.Grants.gov. Nothing is saved on the server; the conversation stays in this browser tab.
         </div>
+        </div></div>
         <form id="findForm" class="nofo-form">
           <label for="findInput" class="nofo-sr">Describe your project</label>
           <textarea id="findInput" rows="5" maxlength="4000" required></textarea>
@@ -86,11 +88,13 @@
 
     <div id="nofoPanel" role="tabpanel" aria-labelledby="modeNofoTab" hidden>
       <div class="card">
+        <div class="collapsible" id="nofoIntro" data-collapsible><div class="collapsible-inner">
         <h2>Assess a Project Against a Funding Notice</h2>
         <p class="mb-2">Choose a funding opportunity that has already been loaded, describe your transportation project in your own words, and get a preliminary read of what the notice means for you, what is still unknown, and what to investigate before applying.</p>
         <div class="nofo-banner" role="note">
           <strong>Preliminary only.</strong> This is not an eligibility determination and does not predict an award; confirm with the program office. Your messages are sent to the Anthropic API to read the facts you state. Nothing is saved on the server; the conversation stays in this browser tab.
         </div>
+        </div></div>
         <div class="form-group">
           <label for="nofoOpportunity">Funding opportunity</label>
           <select id="nofoOpportunity">
@@ -115,16 +119,65 @@
         </form>
       </div>
 
+      <div id="nofoProgress" class="card find-progress" hidden>
+        <div class="find-progress-head">
+          <span class="find-spinner" aria-hidden="true"></span>
+          <strong id="nofoProgressTitle" role="status" aria-live="polite">Starting…</strong>
+          <span id="nofoProgressTime" class="nofo-meta" aria-hidden="true"></span>
+        </div>
+        <div class="find-bar" aria-hidden="true"><span></span></div>
+        <ol id="nofoSteps" class="find-steps" aria-hidden="true"></ol>
+      </div>
+
       <div id="nofoResults" aria-live="polite" aria-busy="false"></div>
     </div>
   </div>
+
+  <!-- Slide-out tray of sample project descriptions. Closed by default; shown on Find grants and Assess only. -->
+  <aside id="samplesDrawer" class="tray tray--samples" aria-label="Sample project descriptions">
+    <button type="button" id="samplesTab" class="tray-tab" aria-expanded="false" aria-controls="samplesPanel" title="Sample project descriptions to copy">
+      <span class="tray-tab-label">Samples</span>
+    </button>
+    <div id="samplesPanel" class="tray-panel" role="region" aria-labelledby="samplesTitle" aria-hidden="true">
+      <div class="tray-head">
+        <h2 id="samplesTitle">Sample project descriptions</h2>
+        <button type="button" id="samplesClose" class="tray-close" aria-label="Close the sample project descriptions">&times;</button>
+      </div>
+      <p class="nofo-meta">Fictional projects for testing. Copy one and paste it into the box on this page.</p>
+      <div id="samplesList"></div>
+      <p id="samplesStatus" class="nofo-sr" role="status" aria-live="polite"></p>
+    </div>
+  </aside>
+
+  <!-- Slide-out tray of suggested answers to the follow-up questions. Closed by default; Assess only. -->
+  <aside id="answersDrawer" class="tray tray--answers" aria-label="Suggested answers to the follow-up questions" hidden>
+    <button type="button" id="answersTab" class="tray-tab" aria-expanded="false" aria-controls="answersPanel" title="Suggested answers to the follow-up questions">
+      <span class="tray-tab-label">Answers</span>
+    </button>
+    <div id="answersPanel" class="tray-panel" role="region" aria-labelledby="answersTitle" aria-hidden="true">
+      <div class="tray-head">
+        <h2 id="answersTitle">Suggested answers</h2>
+        <button type="button" id="answersClose" class="tray-close" aria-label="Close the suggested answers">&times;</button>
+      </div>
+      <p class="nofo-meta">Made-up example answers for testing, not facts about your project. They keep the amounts consistent with what you have already told the assessment.</p>
+      <div id="answersList"></div>
+      <p id="answersStatus" class="nofo-sr" role="status" aria-live="polite"></p>
+    </div>
+  </aside>
 
   <script src="/js/common.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/chat.js"></script>
   <script src="/js/discover-util.js"></script>
   <script src="/js/discover.js"></script>
+  <script src="/js/progress-panel.js"></script>
+  <script src="/js/drawer-kit.js"></script>
+  <script src="/js/sample-projects.js"></script>
+  <script src="/js/samples-drawer.js"></script>
+  <script src="/js/answer-suggestions.js"></script>
+  <script src="/js/answers-drawer.js"></script>
   <script src="/js/nofo-util.js"></script>
   <script src="/js/nofo.js"></script>
+  <script src="/js/intro-collapse.js"></script>
 </body>
 </html>

@@ -11,6 +11,7 @@
   'use strict';
 
   var U = window.NofoUtil;
+  var P = window.ProgressPanel;
   var API = '/api/nofo';
   var MAX_SENT_MESSAGES = 12;
 
@@ -25,6 +26,7 @@
   };
 
   var els = {};
+  var panel = null; // the live progress panel (see progress-panel.js)
 
   // ---------------------------------------------------------------------------
   // Small DOM helpers
@@ -126,6 +128,11 @@
     for (var i = 0; i < removeButtons.length; i++) removeButtons[i].disabled = busy;
   }
 
+  /** Tells the rest of the page (the suggested-answers tray) what the latest assessment asked; null when there is none. */
+  function announceResult(data) {
+    document.dispatchEvent(new CustomEvent('assessresult', { detail: data ? { questions: data.questions || [], facts: data.facts || {} } : null }));
+  }
+
   function lastUserMessageIndex() {
     for (var i = state.messages.length - 1; i >= 0; i--) if (state.messages[i].role === 'user') return i;
     return -1;
@@ -148,20 +155,26 @@
     var body = { opportunityId: state.opportunityId, messages: sent };
     if (Object.keys(state.facts).length > 0) body.facts = state.facts;
     if (!readMessage) body.readMessage = false;
+    // The server reports each step as it really happens; fall back to a plain request if the panel is unavailable.
+    if (panel && P) return P.stream(API + '/assess?stream=1', body, panel.push);
     return request('/assess', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   }
 
   async function runTurn(options) {
     if (state.busy || !state.opportunityId) return;
     setBusy(true);
-    var pending = addMessage('assistant', 'Reading your message and checking it against the requirements… this can take up to a minute.', { pending: true });
+    var pending = null;
+    if (panel) panel.start();
+    else pending = addMessage('assistant', 'Reading your message and checking it against the requirements… this can take up to a minute.', { pending: true });
     try {
       var data = await assess(options);
+      if (panel) { panel.flush(); panel.stop(); }
       removePending();
       if (!data) return;
       state.facts = data.facts || {};
       state.result = data;
       renderResults(data);
+      announceResult(data);
       if (!options || options.readMessage !== false) {
         var reply = el('div');
         append(reply, el('p', null, data.advisory.headline));
@@ -177,9 +190,11 @@
         addMessage('assistant', 'Updated. ' + data.advisory.headline);
       }
     } catch (e) {
+      if (panel) panel.stop();
       removePending();
       addError(e.message || 'Something went wrong.');
     } finally {
+      if (panel) panel.stop();
       if (pending && pending.parentNode) pending.remove();
       setBusy(false);
       if (!els.input.disabled) els.input.focus();
@@ -214,6 +229,7 @@
     state.windowStart = 0;
     state.facts = {};
     state.result = null;
+    announceResult(null);
     clear(els.messages);
     clear(els.results);
     showIntroMessage();
@@ -279,6 +295,7 @@
     syncUrl();
     if (!changed || (options && options.silent)) return;
     state.result = null;
+    announceResult(null);
     clear(els.results);
     // Same project, different notice: re-check the facts already given, without reading anything again.
     if (state.opportunityId && lastUserMessageIndex() >= 0) {
@@ -651,6 +668,9 @@
   function setMode(mode) {
     mode = mode === 'nofo' || mode === 'search' ? mode : 'find';
     state.mode = mode;
+    // Other parts of the page (the sample-projects tray) follow the mode without knowing how it is switched.
+    document.body.dataset.chatMode = mode;
+    document.dispatchEvent(new CustomEvent('chatmodechange', { detail: { mode: mode } }));
     var panels = { find: els.findPanel, nofo: els.panel, search: els.searchPanel };
     var tabs = { find: els.tabFind, nofo: els.tabNofo, search: els.tabSearch };
     Object.keys(panels).forEach(function (key) {
@@ -678,6 +698,7 @@
       // A different notice than before: do not show an old assessment under it.
       state.opportunityId = null;
       state.result = null;
+      announceResult(null);
       clear(els.results);
     }
     state.loaded = true;
@@ -703,7 +724,16 @@
     els.send = document.getElementById('nofoSend');
     els.reset = document.getElementById('nofoReset');
     els.results = document.getElementById('nofoResults');
+    els.progress = document.getElementById('nofoProgress');
     if (!els.panel || !els.tabNofo || !U) return;
+    if (P && els.progress) {
+      panel = P.create({
+        root: els.progress,
+        title: document.getElementById('nofoProgressTitle'),
+        time: document.getElementById('nofoProgressTime'),
+        steps: document.getElementById('nofoSteps')
+      });
+    }
 
     if (els.tabFind) els.tabFind.addEventListener('click', function () { setMode('find'); });
     els.tabSearch.addEventListener('click', function () { setMode('search'); });

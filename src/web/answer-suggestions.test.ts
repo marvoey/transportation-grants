@@ -1,0 +1,183 @@
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import vm from 'vm';
+import { describe, expect, it } from 'vitest';
+
+const root = process.cwd();
+const read = (path: string) => readFileSync(join(root, path), 'utf-8');
+
+// A plain browser script that sets window.AnswerSuggestions. Load it the way a page would.
+const sandbox: Record<string, unknown> = {};
+sandbox.window = sandbox;
+vm.runInNewContext(read('public/js/answer-suggestions.js'), sandbox);
+const S = sandbox.AnswerSuggestions as any;
+
+const q = (group: string, text = `Question about ${group}?`) => ({ group, text, factKeys: [], because: [] });
+const fact = (value: unknown) => ({ value, provenance: 'user', quote: 'x' });
+const nums = (text: string) => [...text.matchAll(/\$([\d.]+) million/g)].map((m) => Number(m[1]) * 1e6);
+
+describe('amounts: total = federal request + match, and never contradicting what is known', () => {
+  const consistent = (a: { total: number; request: number; match: number }) => Math.abs(a.total - a.request - a.match) < 1 && a.request > 0 && a.match > 0;
+
+  it('uses a coherent default scenario when nothing is known', () => {
+    expect(S.amounts({})).toEqual({ total: 40e6, request: 25e6, match: 15e6 });
+  });
+
+  it('keeps what the applicant already said and derives the rest', () => {
+    expect(S.amounts({ totalProjectCostUsd: fact(25e6), requestedFederalUsd: fact(18e6) })).toEqual({ total: 25e6, request: 18e6, match: 7e6 });
+    expect(S.amounts({ requestedFederalUsd: fact(12e6), nonFederalMatchUsd: fact(6e6) })).toEqual({ total: 18e6, request: 12e6, match: 6e6 });
+    expect(S.amounts({ totalProjectCostUsd: fact(20e6), nonFederalMatchUsd: fact(5e6) })).toEqual({ total: 20e6, request: 15e6, match: 5e6 });
+  });
+
+  it('stays consistent for every combination of known amounts, including odd ones', () => {
+    const options = [undefined, 3e6, 12e6, 18e6, 25e6, 55e6];
+    for (const total of options) {
+      for (const request of options) {
+        for (const match of options) {
+          const facts: Record<string, unknown> = {};
+          if (total) facts.totalProjectCostUsd = fact(total);
+          if (request) facts.requestedFederalUsd = fact(request);
+          if (match) facts.nonFederalMatchUsd = fact(match);
+          const a = S.amounts(facts);
+          expect(consistent(a), JSON.stringify({ total, request, match, a })).toBe(true);
+          // A stated total or request is never silently changed to a different number unless the three could not all hold.
+          if (total && request && total > request) {
+            expect(a.total).toBe(total);
+            expect(a.request).toBe(request);
+          }
+        }
+      }
+    }
+  });
+
+  it('ignores nonsense values rather than using them', () => {
+    expect(S.amounts({ totalProjectCostUsd: fact(-5), requestedFederalUsd: fact('lots') })).toEqual({ total: 40e6, request: 25e6, match: 15e6 });
+  });
+});
+
+describe('build: suggestions for the questions the assessment asked', () => {
+  it('returns one item per question, in the order asked, with the question text kept', () => {
+    const { items } = S.build([q('bca', 'Has a BCA been done?'), q('costMatch'), q('environmental')], {});
+    expect(items.map((i: any) => i.group)).toEqual(['bca', 'costMatch', 'environmental']);
+    expect(items[0].question).toBe('Has a BCA been done?');
+  });
+
+  it('offers a well-advanced and an early-stage answer where the answer depends on the stage, and one answer where it does not', () => {
+    const { items } = S.build([q('bca'), q('request')], {});
+    expect(items[0].variants.map((v: any) => v.stage)).toEqual(['advanced', 'early']);
+    expect(items[0].variants[0].text).toMatch(/has been completed/);
+    expect(items[0].variants[1].text).toMatch(/not completed .* yet/);
+    expect(items[1].variants).toHaveLength(1);
+    expect(items[1].variants[0].stage).toBe('either');
+  });
+
+  it('keeps the money consistent inside the answer, and says "request" for the request and "total" for the total', () => {
+    const { items } = S.build([q('costMatch')], {});
+    const text = items[0].variants[0].text as string;
+    expect(text).toContain('The total project cost is $40 million');
+    expect(text).toContain('We would request $25 million in federal funds');
+    expect(text).toContain('remaining $15 million is non-federal match');
+    const [total, request, match] = nums(text);
+    expect(total).toBe(request + match);
+  });
+
+  it('builds on the facts already known, so a reply never contradicts the conversation', () => {
+    const facts = { totalProjectCostUsd: fact(25e6), requestedFederalUsd: fact(18e6) };
+    const { items } = S.build([q('costMatch'), q('request')], facts);
+    expect(items[0].variants[0].text).toContain('The total project cost is $25 million');
+    expect(items[0].variants[0].text).toContain('remaining $7 million');
+    expect(items[1].variants[0].text).toBe('We would request $18 million in federal funds.');
+  });
+
+  it('follows a match-committed fact that is already known, for both stages', () => {
+    const committed = S.build([q('costMatch')], { matchCommitted: fact(true) }).items[0].variants;
+    expect(committed).toHaveLength(1);
+    expect(committed[0].text).toMatch(/That match is committed/);
+    const notYet = S.build([q('costMatch')], { matchCommitted: fact(false) }).items[0].variants;
+    expect(notYet[0].text).toMatch(/not committed yet/);
+    const unknown = S.build([q('costMatch')], {}).items[0].variants;
+    expect(unknown.map((v: any) => /not committed/.test(v.text))).toEqual([false, true]);
+  });
+
+  it('uses known area, category and applicant facts', () => {
+    const facts = { areaType: fact('rural'), grantCategory: fact('planning'), applicantType: fact('tribal') };
+    const text = S.build([q('area'), q('category'), q('applicant')], facts).items.map((i: any) => i.variants[0].text);
+    expect(text[0]).toBe('The project is in a rural area.');
+    expect(text[1]).toMatch(/planning application/);
+    expect(text[2]).toBe('We are a tribal government.');
+    expect(S.build([q('applicant')], {}).items[0].variants[0].text).toBe('We are a state department of transportation.');
+  });
+
+  it('gives one complete reply per stage that answers every question once, in order', () => {
+    const { replies, items } = S.build([q('bca'), q('costMatch'), q('environmental')], {});
+    expect(replies.map((r: any) => r.stage)).toEqual(['advanced', 'early']);
+    const advanced = replies[0].text as string;
+    expect(advanced.indexOf('benefit-cost')).toBeLessThan(advanced.indexOf('total project cost'));
+    expect(advanced.indexOf('total project cost')).toBeLessThan(advanced.indexOf('environmental review'));
+    expect(advanced).toBe(items.map((i: any) => i.answers.advanced).join(' '));
+    expect(replies[1].text).toMatch(/not completed/);
+    expect(replies[0].text).not.toBe(replies[1].text);
+  });
+
+  it('gives nothing when there are no questions, and skips a question it does not recognise', () => {
+    expect(S.build([], {})).toEqual({ items: [], replies: [] });
+    expect(S.build(null, null)).toEqual({ items: [], replies: [] });
+    const { items } = S.build([q('mystery'), { nope: true }, null, q('bca')], {});
+    expect(items.map((i: any) => i.group)).toEqual(['bca']);
+  });
+
+  it('covers every question group the server can ask', () => {
+    const server = read('src/nofo/assessment/questions.ts');
+    // Only the TEXT block (one entry per question group), not the fact-key lines above it.
+    const start = server.indexOf('const TEXT');
+    const block = server.slice(start, server.indexOf('};', start));
+    const groups = [...block.matchAll(/^  (\w+): ['"]/gm)].map((m) => m[1]);
+    expect(groups.length).toBeGreaterThanOrEqual(9);
+    for (const group of groups) {
+      expect(S.build([q(group)], {}).items, `no suggestion for question group "${group}"`).toHaveLength(1);
+    }
+  });
+});
+
+describe('the suggested-answers tray in chat.html', () => {
+  const html = read('public/chat.html');
+
+  it('is closed by default and starts hidden, so it never shows before the Assess tab is chosen', () => {
+    expect(html).toMatch(/<aside[^>]*id="answersDrawer"[^>]*\bhidden\b/);
+    expect(html).toMatch(/<button[^>]*id="answersTab"[^>]*aria-expanded="false"/);
+    expect(html).toMatch(/id="answersPanel"[^>]*aria-hidden="true"/);
+    expect(html).not.toMatch(/class="[^"]*is-open[^"]*"/);
+  });
+
+  it('says plainly that the answers are made up', () => {
+    expect(html).toMatch(/Made-up example answers for testing, not facts about your project/);
+  });
+
+  it('loads the shared kit before either tray, the suggestion logic before its tray, and all before nofo.js', () => {
+    const at = (name: string) => html.indexOf(`/js/${name}`);
+    expect(at('drawer-kit.js')).toBeGreaterThan(-1);
+    expect(at('drawer-kit.js')).toBeLessThan(at('samples-drawer.js'));
+    expect(at('drawer-kit.js')).toBeLessThan(at('answers-drawer.js'));
+    expect(at('answer-suggestions.js')).toBeLessThan(at('answers-drawer.js'));
+    expect(at('answers-drawer.js')).toBeLessThan(at('nofo.js'));
+  });
+
+  it('is available on the Assess tab only, and learns of each assessment from nofo.js', () => {
+    const tray = read('public/js/answers-drawer.js');
+    expect(tray).toMatch(/setAvailable\(mode === 'nofo'\)/);
+    expect(tray).toContain("addEventListener('assessresult'");
+    const nofo = read('public/js/nofo.js');
+    expect(nofo).toContain("new CustomEvent('assessresult'");
+    // Announced when a result arrives, and cleared on start over, on switching opportunity and on opening another one.
+    expect((nofo.match(/announceResult\(/g) ?? []).length).toBeGreaterThanOrEqual(5);
+  });
+
+  it('opening one tray closes the other', () => {
+    const kit = read('public/js/drawer-kit.js');
+    expect(kit).toContain("new CustomEvent('trayopen'");
+    expect(kit).toContain("addEventListener('trayopen'");
+    // The other tab moves beside the open panel so it is not hidden behind it (and can be clicked to switch trays).
+    expect(kit).toContain("classList.toggle('tray-open'");
+    expect(read('public/css/style.css')).toContain('body.tray-open .tray:not(.is-open) .tray-tab');
+  });
+});

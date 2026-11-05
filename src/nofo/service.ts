@@ -14,6 +14,7 @@ import {
   type Question,
 } from './assessment/schemas.js';
 import { createAnthropicLlm, type LlmFn } from './llm.js';
+import { safeProgress, type ProgressFn } from './progress.js';
 import { parseOpportunityId } from './schemas.js';
 import { PackageStore } from './store.js';
 
@@ -32,6 +33,8 @@ export interface AssessTurnDeps {
   store?: PackageStore;
   llm?: LlmFn;
   interpretCache?: InterpretCache;
+  /** Called as each step really starts and finishes, so a screen can say what is happening. */
+  onProgress?: ProgressFn;
 }
 
 export interface AssessTurnResult {
@@ -71,12 +74,16 @@ export async function assessTurn(input: unknown, deps: AssessTurnDeps = {}): Pro
   const opportunityId = parseOpportunityId(parsed.data.opportunityId);
   const prior = parseIncomingFacts(parsed.data.facts);
   const store = deps.store ?? PackageStore.fromConfig();
+  const emit = safeProgress(deps.onProgress);
 
+  emit({ id: 'load', status: 'running', message: 'Loading the extracted requirements for this opportunity…' });
   const requirements = await store.readRequirements(opportunityId);
   if (!requirements) {
     throw new AssessmentError(`No extracted requirements for ${opportunityId}. Run: npm run nofo:extract -- ${opportunityId}`, 'NOT_FOUND');
   }
   const opportunity = await store.readOpportunity(opportunityId).catch(() => null);
+  const title = opportunity?.title ? ` for ${opportunity.title.slice(0, 120)}` : '';
+  emit({ id: 'load', status: 'done', message: `Loaded ${requirements.requirements.length} requirements${title}${requirements.status === 'partial' ? ' (the extraction was incomplete)' : ''}.` });
 
   const warnings: string[] = [];
   let llm = deps.llm;
@@ -90,13 +97,31 @@ export async function assessTurn(input: unknown, deps: AssessTurnDeps = {}): Pro
 
   let extracted: ExtractFactsResult = { facts: {}, rejected: [], warnings: [] };
   // `readMessage: false` re-assesses with the facts as given (for example after the user removes a fact), without re-reading the message.
-  if (llm && parsed.data.readMessage !== false) extracted = await extractFacts({ messages, llm });
+  if (llm && parsed.data.readMessage !== false) {
+    emit({ id: 'read', status: 'running', message: 'Sending your message to the language model to read the facts you stated…' });
+    extracted = await extractFacts({ messages, llm });
+    const added = Object.keys(extracted.facts).length;
+    const dropped = extracted.rejected.length;
+    emit({
+      id: 'read',
+      status: extracted.warnings.length > 0 && added === 0 ? 'failed' : 'done',
+      message:
+        (added > 0 ? `Read ${added} new fact${added === 1 ? '' : 's'} from your message.` : 'No new facts found in your message.') +
+        (dropped > 0 ? ` ${dropped} proposed fact${dropped === 1 ? ' was' : 's were'} discarded because ${dropped === 1 ? 'it' : 'they'} could not be matched to your own words.` : ''),
+    });
+  } else if (parsed.data.readMessage === false) {
+    emit({ id: 'read', status: 'done', message: 'Re-checking the facts you already gave, without reading your message again.' });
+  } else {
+    emit({ id: 'read', status: 'failed', message: 'The language model is not configured, so no facts could be read from your message.' });
+  }
   warnings.push(...extracted.warnings);
   const facts = mergeFacts(prior, extracted.facts);
 
-  const result = await assess({ requirements, facts, llm, cache: deps.interpretCache ?? sharedCache });
+  const result = await assess({ requirements, facts, llm, cache: deps.interpretCache ?? sharedCache, onProgress: deps.onProgress });
+  emit({ id: 'summary', status: 'running', message: 'Building the findings, the follow-up questions and the summary…' });
   const questions = buildQuestions(result.findings);
   const advisory = buildAdvisory(result, questions);
+  emit({ id: 'summary', status: 'done', message: `Built ${result.findings.length} findings and ${questions.length} follow-up question${questions.length === 1 ? '' : 's'}.` });
   warnings.push(...result.warnings);
 
   logger.info(`Assessed ${opportunityId}: ${result.findings.length} findings, ${questions.length} questions, ${result.interpretation.modelCalls} model call(s)`);

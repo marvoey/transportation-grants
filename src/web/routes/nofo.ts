@@ -8,10 +8,12 @@ import { FactsError } from '../../nofo/assessment/facts.js';
 import { createInterpretCache, type InterpretCache } from '../../nofo/assessment/interpret.js';
 import { createDiscoveryLlm, createSearchSource, isSearchConfigured } from '../../nofo/discovery/default-source.js';
 import { SearchCache } from '../../nofo/discovery/search.js';
-import { DiscoverInputSchema, type ProgressEvent } from '../../nofo/discovery/schemas.js';
+import { DiscoverInputSchema } from '../../nofo/discovery/schemas.js';
 import { DiscoveryError, discoverTurn } from '../../nofo/discovery/service.js';
 import type { LlmFn } from '../../nofo/llm.js';
 import { SimplerApiError } from '../../nofo/simpler/client.js';
+import { AssessInputSchema } from '../../nofo/assessment/schemas.js';
+import type { ProgressEvent, ProgressFn } from '../../nofo/progress.js';
 import { PrepareError, PrepareManager } from '../../nofo/prepare/manager.js';
 import { RecentOpportunities } from '../../nofo/prepare/recent.js';
 import { createCliRunner } from '../../nofo/prepare/runner.js';
@@ -103,6 +105,35 @@ function translate(error: unknown): unknown {
   if (error instanceof FactsError) return new GrantServerError('VALIDATION_ERROR', error.message, false);
   if (error instanceof PackageCorruptError) return new GrantServerError('API_ERROR', 'The stored data for this opportunity could not be read.', false);
   return error;
+}
+
+/**
+ * Streams a long-running job as newline-delimited JSON: {"type":"progress",...} lines while it works, then one
+ * {"type":"result","data":...} line, or one {"type":"error",...} line if it fails (the HTTP status was already sent, so a
+ * failure can only be reported in the stream). Errors are translated to generic, safe messages; nothing the
+ * person wrote is logged.
+ */
+async function streamLines(res: Response, work: (onProgress: ProgressFn) => Promise<unknown>, label: string): Promise<void> {
+  res.status(200);
+  res.set({ 'Content-Type': 'application/x-ndjson; charset=utf-8', 'X-Accel-Buffering': 'no', 'X-Content-Type-Options': 'nosniff' });
+  res.flushHeaders();
+  const send = (line: Record<string, unknown>): void => {
+    if (!res.writableEnded && !res.destroyed) res.write(JSON.stringify(line) + '\n');
+  };
+  try {
+    const result = await work((event) => send({ type: 'progress', ...event }));
+    send({ type: 'result', data: result });
+  } catch (e) {
+    const failure = translate(e);
+    logger.error(`${label} stream failed: ${failure instanceof Error ? failure.name : 'error'}`);
+    send(
+      failure instanceof GrantServerError
+        ? { type: 'error', error: failure.message, code: failure.code, retryable: failure.retryable }
+        : { type: 'error', error: 'Something went wrong. Please try again.', code: 'INTERNAL_ERROR', retryable: true }
+    );
+  } finally {
+    res.end();
+  }
 }
 
 export function createNofoRouter(deps: NofoRouterDeps = {}): Router {
@@ -225,31 +256,11 @@ export function createNofoRouter(deps: NofoRouterDeps = {}): Router {
         return;
       }
 
-      // Streaming: one JSON object per line. Bad input is rejected here, before any stream starts, so it keeps its
-      // normal 400. After that, failures are reported as a final {"type":"error"} line, because the status is already sent.
+      // Streaming: bad input is rejected here, before any stream starts, so it keeps its normal 400.
       if (!DiscoverInputSchema.safeParse(req.body).success) {
         throw new GrantServerError('VALIDATION_ERROR', 'The request is not valid.', false);
       }
-      res.status(200);
-      res.set({ 'Content-Type': 'application/x-ndjson; charset=utf-8', 'X-Accel-Buffering': 'no', 'X-Content-Type-Options': 'nosniff' });
-      res.flushHeaders();
-      const send = (line: Record<string, unknown>): void => {
-        if (!res.writableEnded && !res.destroyed) res.write(JSON.stringify(line) + '\n');
-      };
-      try {
-        const result = await run((event) => send({ type: 'progress', ...event }));
-        send({ type: 'result', data: result });
-      } catch (e) {
-        const failure = translate(e);
-        logger.error(`Discover stream failed: ${failure instanceof Error ? failure.name : 'error'}`);
-        send(
-          failure instanceof GrantServerError
-            ? { type: 'error', error: failure.message, code: failure.code, retryable: failure.retryable }
-            : { type: 'error', error: 'Something went wrong while searching. Please try again.', code: 'INTERNAL_ERROR', retryable: true }
-        );
-      } finally {
-        res.end();
-      }
+      await streamLines(res, run, 'Discover');
     })
   );
 
@@ -293,9 +304,23 @@ export function createNofoRouter(deps: NofoRouterDeps = {}): Router {
       if (!deps.llm && !configured()) {
         throw new GrantServerError('MISSING_CONFIG', 'The assessment needs ANTHROPIC_API_KEY to be set on the server.', false);
       }
-      const result = await assessTurn(req.body, { store: store(), llm: deps.llm, interpretCache }).catch((e) => { throw translate(e); });
       res.set('Cache-Control', NO_STORE);
-      res.json(successResponse(result));
+      if (req.query.stream !== '1') {
+        const result = await assessTurn(req.body, { store: store(), llm: deps.llm, interpretCache }).catch((e) => { throw translate(e); });
+        res.json(successResponse(result));
+        return;
+      }
+
+      // Streaming: refuse bad input and an opportunity without requirements here, with their normal HTTP statuses,
+      // before any stream starts.
+      const input = AssessInputSchema.safeParse(req.body);
+      if (!input.success || !input.data.messages.some((m) => m.role === 'user')) {
+        throw new GrantServerError('VALIDATION_ERROR', 'The request is not valid: it needs an opportunity ID and 1-40 messages of at most 4,000 characters each.', false);
+      }
+      const id = parseOpportunityId(input.data.opportunityId);
+      const stored = await store().readRequirements(id).catch((e) => { throw translate(e); });
+      if (!stored) throw new GrantServerError('NOT_FOUND', 'This opportunity has no extracted requirements yet, so it cannot be assessed.', false);
+      await streamLines(res, (onProgress) => assessTurn(req.body, { store: store(), llm: deps.llm, interpretCache, onProgress }), 'Assess');
     })
   );
 

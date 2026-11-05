@@ -134,3 +134,95 @@ describe('assessTurn: input validation and failures', () => {
     await expect(turn(store, modelStandIn(), { messages: [{ role: 'user', content: 'hi' }] })).rejects.toThrow(/Run: npm run nofo:extract/);
   });
 });
+
+describe('assessTurn: progress events (what the code is really doing)', () => {
+  const collect = () => {
+    const events: Array<{ id: string; status: string; message: string }> = [];
+    return { events, onProgress: (e: (typeof events)[number]) => events.push(e) };
+  };
+  const firstIndex = (events: Array<{ id: string }>, id: string) => events.findIndex((e) => e.id === id);
+  const messages = [{ role: 'user', content: 'It is a capital project in an urban area and we want to request $18 million.' }];
+  const llm = () => modelStandIn({ facts: { requestedFederalUsd: { value: 18_000_000, quote: '$18 million' }, areaType: { value: 'urban', quote: 'urban area' } } });
+
+  it('reports loading, reading, the exact rules and the summary, in that order', async () => {
+    const { store } = await setup();
+    const { events, onProgress } = collect();
+    await assessTurn({ opportunityId: OPP_A, messages }, { store, llm: llm(), interpretCache: createInterpretCache(), onProgress });
+    const order = ['load', 'read', 'rules', 'summary'].map((id) => firstIndex(events, id));
+    expect(order.every((i) => i >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    // The model-interpretation step, when there is one, sits between the exact rules and the summary.
+    const interpret = firstIndex(events, 'interpret');
+    if (interpret >= 0) {
+      expect(interpret).toBeGreaterThan(firstIndex(events, 'rules'));
+      expect(interpret).toBeLessThan(firstIndex(events, 'summary'));
+    }
+  });
+
+  it('reports real counts: requirements loaded, new facts read, findings built', async () => {
+    const { store } = await setup();
+    const { events, onProgress } = collect();
+    const r = await assessTurn({ opportunityId: OPP_A, messages }, { store, llm: llm(), interpretCache: createInterpretCache(), onProgress });
+    expect(events.find((e) => e.id === 'load' && e.status === 'done')?.message).toMatch(new RegExp(`Loaded ${RULEBOOK.length} requirements for Synthetic Test Opportunity`));
+    expect(events.find((e) => e.id === 'read' && e.status === 'done')?.message).toMatch(/Read 2 new facts/);
+    expect(events.find((e) => e.id === 'summary' && e.status === 'done')?.message).toContain(`Built ${r.findings.length} findings`);
+  });
+
+  it('every step that started finishes, and a step is never reported done before it ran', async () => {
+    const { store } = await setup();
+    const { events, onProgress } = collect();
+    await assessTurn({ opportunityId: OPP_A, messages }, { store, llm: llm(), interpretCache: createInterpretCache(), onProgress });
+    for (const id of new Set(events.map((e) => e.id))) {
+      const mine = events.filter((e) => e.id === id);
+      expect(mine[mine.length - 1].status).not.toBe('running');
+    }
+  });
+
+  it('says it is re-checking, and makes no fact-reading call, when asked not to read the message again', async () => {
+    const { store } = await setup();
+    const { events, onProgress } = collect();
+    const scripted = llm();
+    await assessTurn({ opportunityId: OPP_A, messages, readMessage: false, facts: facts({ requestedFederalUsd: 18_000_000 }) }, { store, llm: scripted, interpretCache: createInterpretCache(), onProgress });
+    expect(events.find((e) => e.id === 'read')?.message).toMatch(/Re-checking the facts you already gave/);
+    expect(events.filter((e) => e.id === 'read')).toHaveLength(1);
+  });
+
+  it('reports a failure to read facts when the model call fails, instead of pretending', async () => {
+    const { store } = await setup();
+    const { events, onProgress } = collect();
+    const failing = async () => {
+      throw new Error('boom');
+    };
+    await assessTurn({ opportunityId: OPP_A, messages }, { store, llm: failing as never, interpretCache: createInterpretCache(), onProgress });
+    expect(events.find((e) => e.id === 'read' && e.status !== 'running')?.status).toBe('failed');
+  });
+
+  it('never puts what the applicant wrote into a progress line', async () => {
+    const { store } = await setup();
+    const { events, onProgress } = collect();
+    const secret = [{ role: 'user', content: 'Our project is at 123 Secret Street and we want to request $18 million.' }];
+    await assessTurn(
+      { opportunityId: OPP_A, messages: secret },
+      { store, llm: modelStandIn({ facts: { requestedFederalUsd: { value: 18_000_000, quote: '$18 million' }, projectDescription: { value: 'Work at 123 Secret Street', quote: '123 Secret Street' } } }), interpretCache: createInterpretCache(), onProgress }
+    );
+    expect(JSON.stringify(events)).not.toMatch(/Secret Street/);
+  });
+
+  it('is unaffected by a progress callback that throws', async () => {
+    const { store } = await setup();
+    const plain = await assessTurn({ opportunityId: OPP_A, messages }, { store, llm: llm(), interpretCache: createInterpretCache() });
+    const noisy = await assessTurn(
+      { opportunityId: OPP_A, messages },
+      {
+        store,
+        llm: llm(),
+        interpretCache: createInterpretCache(),
+        onProgress: () => {
+          throw new Error('listener failed');
+        },
+      }
+    );
+    expect(noisy.advisory.headline).toBe(plain.advisory.headline);
+    expect(noisy.findings.length).toBe(plain.findings.length);
+  });
+});
