@@ -12,6 +12,7 @@ import {
   type Opportunity,
   type PackageManifest,
 } from './schemas.js';
+import { RequirementsFileSchema, type RequirementsFile } from './extraction/schemas.js';
 
 /** Thrown when a package on disk cannot be read or does not match its schema. Fails closed. */
 export class PackageCorruptError extends Error {
@@ -95,6 +96,25 @@ export class PackageStore {
   async writeOpportunity(opportunityId: string, opportunity: Opportunity): Promise<void> {
     const valid = OpportunitySchema.parse(opportunity);
     await this.writeAtomic(join(this.packageDir(opportunityId), 'opportunity.json'), JSON.stringify(valid, null, 2) + '\n');
+  }
+
+  // ---- extracted requirements ----------------------------------------------------
+
+  async readRequirements(opportunityId: string): Promise<RequirementsFile | null> {
+    const raw = await this.readJson(join(this.packageDir(opportunityId), 'requirements.json'));
+    if (raw === null) return null;
+    const parsed = RequirementsFileSchema.safeParse(raw);
+    if (!parsed.success || parsed.data.opportunityId !== opportunityId) {
+      throw new PackageCorruptError(
+        `The stored requirements for ${opportunityId} are invalid. Re-run extraction with --refresh.`
+      );
+    }
+    return parsed.data;
+  }
+
+  async writeRequirements(opportunityId: string, file: RequirementsFile): Promise<void> {
+    const valid = RequirementsFileSchema.parse(file);
+    await this.writeAtomic(join(this.packageDir(opportunityId), 'requirements.json'), JSON.stringify(valid, null, 2) + '\n');
   }
 
   // ---- documents ---------------------------------------------------------------

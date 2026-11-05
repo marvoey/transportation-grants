@@ -319,6 +319,8 @@ export interface Config {
     apiKey?: string;
     baseUrl?: string;
     model: string;
+    /** Model for offline NOFO requirements extraction; falls back to `model`. */
+    extractionModel?: string;
     maxTokens: number;
   };
   // Simpler.Grants.gov access and NOFO package storage (src/nofo). Neither is

@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "opportunityId": "4d8f5775-ff01-4a6f-ab4e-b125899043b3",
+  "verification": {
+    "status": "drafted_from_source_pending_human_review",
+    "draftedBy": "Claude, by reading the ingested NOFO text before the extractor was written or run",
+    "draftedOn": "2026-11-04",
+    "verifiedBy": null,
+    "verifiedOn": null,
+    "note": "Every quote is machine-checked to appear on its stated page (npm run nofo:eval validates this). The selection, categories and mandatory/conditional flags are NOT human-verified: a person must read the NOFO and confirm or correct each item before this set is treated as a manually verified reference. mandatory=null means the NOFO wording is 'should'/guidance or otherwise ambiguous."
+  },
+  "items": [
+    {
+      "id": "g01", "category": "eligibility", "topic": "applicant_type",
+      "title": "Eligible applicant types", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 6, "quote": "Eligible BUILD grant applicants are: States and the District of Columbia" }]
+    },
+    {
+      "id": "g02", "category": "eligibility", "topic": "applicant_type",
+      "title": "Ineligible applicant types (federal agencies, non-profits, private entities, individuals)", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 6, "quote": "The following are not eligible BUILD grant applicants: Federal agencies Non-profits Private entities Individuals" }]
+    },
+    {
+      "id": "g03", "category": "eligibility", "topic": "minimum_request",
+      "title": "Minimum request for capital projects in urban areas ($5 million)", "mandatory": true, "programVariant": "capital",
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 6, "quote": "Applicants submitting capital grant applications for projects located in urban areas must request at least $5 million in BUILD funding" }]
+    },
+    {
+      "id": "g04", "category": "eligibility", "topic": "minimum_request",
+      "title": "Minimum request for capital projects in rural areas ($1 million)", "mandatory": true, "programVariant": "capital",
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 6, "quote": "projects located in rural areas must request at least $1 million in BUILD funding" }]
+    },
+    {
+      "id": "g05", "category": "eligibility", "topic": "application_limit",
+      "title": "Each applicant may submit up to three applications", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 7, "quote": "Each applicant can submit up to three applications." }]
+    },
+    {
+      "id": "g06", "category": "funding", "topic": "federal_share",
+      "title": "Federal share may not exceed 80 percent unless rural or APP/HDC", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 7, "quote": "The Federal share for BUILD grant projects shall not exceed 80 percent unless the project receives one of the following location designations" }]
+    },
+    {
+      "id": "g07", "category": "eligibility", "topic": "federal_share",
+      "title": "Urban projects (not APP/HDC) with more than 80 percent federal funding are ineligible", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 7, "quote": "Projects located in an urban area, that are not designated APP/HDC, that have more than 80 percent federal funding will be ineligible." }]
+    },
+    {
+      "id": "g08", "category": "funding", "topic": "non_federal_match",
+      "title": "Recipient must complete the project with at least the stated non-Federal funding", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 8, "quote": "the terms of the award will require the recipient to complete the project using at least the amount of non-Federal funding that was specified in the application" }]
+    },
+    {
+      "id": "g09", "category": "funding", "topic": "non_federal_match",
+      "title": "Toll credits count as a Federal source, not non-Federal match", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 8, "quote": "Toll credits under 23 U.S.C. 120(i) are considered a Federal source under the BUILD program." }]
+    },
+    {
+      "id": "g10", "category": "funding", "topic": "pre_award_costs",
+      "title": "Pre-award costs are ineligible for reimbursement and cost share", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 8, "quote": "any costs incurred prior to the Department's obligation of funds for a project" }]
+    },
+    {
+      "id": "g11", "category": "funding", "topic": "maximum_request",
+      "title": "Maximum BUILD funding request is $25 million", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 15, "quote": "The maximum request amount is $25 million." }]
+    },
+    {
+      "id": "g12", "category": "eligibility", "topic": "project_type",
+      "title": "Ineligible project types (for example school buses, standalone broadband)", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 10, "quote": "Ineligible projects are: Purchasing school buses Deploying broadband as a standalone project" }]
+    },
+    {
+      "id": "g13", "category": "eligibility", "topic": "project_type",
+      "title": "Research, demonstration or pilot projects are eligible only if they lead to permanent infrastructure", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 11, "quote": "Research, demonstration, or pilot projects are only eligible if they lead to long-term, permanent surface transportation infrastructure with independent utility" }]
+    },
+    {
+      "id": "g14", "category": "eligibility", "topic": "project_type",
+      "title": "Components funded individually must independently meet minimums and eligibility", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 11, "quote": "Components may be funded individually if they meet the following criteria: Independently satisfy minimum award amounts and eligibility requirements." }]
+    },
+    {
+      "id": "g15", "category": "funding", "topic": "funding_restriction",
+      "title": "Grant funds must be obligated by September 30, 2030", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 13, "quote": "FY 2026 BUILD grant funds must be obligated by September 30, 2030." }]
+    },
+    {
+      "id": "g16", "category": "application", "topic": "application_content",
+      "title": "Application files: single-spaced, 12-point font, 1-inch margins", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 14, "quote": "Single-spaced, 12-point standard font with 1-inch margins." }]
+    },
+    {
+      "id": "g17", "category": "application", "topic": "application_content",
+      "title": "Applications must be complete at submission", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 14, "quote": "Applications must be complete at submission" }]
+    },
+    {
+      "id": "g18", "category": "application", "topic": "application_content",
+      "title": "Standard forms SF-424 and SF-LLL are required", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 14, "quote": "All applicants must submit the following standard forms: SF-424 Application for Federal Assistance SF-LLL Disclosure of Lobbying Activities" }]
+    },
+    {
+      "id": "g19", "category": "application", "topic": "benefit_cost_analysis",
+      "title": "Capital projects must submit a Benefit-Cost Analysis narrative and an unlocked calculation spreadsheet", "mandatory": true, "programVariant": "capital",
+      "sources": [
+        { "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 14, "quote": "Benefit-Cost Analysis Narrative (capital projects only) BCA Narrative" },
+        { "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 23, "quote": "There should be two BCA files included in the application: (1) a narrative description of the BCA; and (2) an unlocked spreadsheet revealing the underlying calculations" }
+      ]
+    },
+    {
+      "id": "g20", "category": "application", "topic": "project_location",
+      "title": "Project location file (Shapefile or KML/KMZ)", "mandatory": null, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 17, "quote": "Applicants should submit one of the following file types that detail the project's location so the Department can verify location designations" }]
+    },
+    {
+      "id": "g21", "category": "application", "topic": "budget",
+      "title": "Budget table must show total cost by component and the three funding sources", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 18, "quote": "At a minimum, the budget table must show the total project cost by project component and the following funding sources" }]
+    },
+    {
+      "id": "g22", "category": "application", "topic": "budget",
+      "title": "Cost estimates no older than a year from the deadline, with an inflation factor", "mandatory": null, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 19, "quote": "Cost estimates should be no older than a year from the application deadline and include an inflation factor." }]
+    },
+    {
+      "id": "g23", "category": "readiness", "topic": "environmental_nepa",
+      "title": "State the NEPA class of action", "mandatory": null, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 21, "quote": "NEPA Class of Action: List the class of action/type of document that has already been or will be prepared to comply with the National Environmental Policy Act (NEPA) of 1969" }]
+    },
+    {
+      "id": "g24", "category": "readiness", "topic": "planning_consistency",
+      "title": "Say whether the project is already listed in the STIP, TIP, TTIP and/or TAM Plan", "mandatory": null, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 20, "quote": "Is the project already listed in the STIP, TIP, Tribal Transportation Improvement Program (TTIP), and/or Transit Asset Management (TAM) Plan, if applicable?" }]
+    },
+    {
+      "id": "g25", "category": "application", "topic": "deadline",
+      "title": "Applications must be submitted through the portal by the stated deadline", "mandatory": true, "programVariant": null,
+      "sources": [{ "documentId": "sg-b96259bd-b73a-4187-9695-20c4bb978708", "page": 25, "quote": "Applications must be submitted through Valid Eval by 5:00 PM eastern on February 24, 2026." }]
+    }
+  ]
+}

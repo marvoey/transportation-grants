@@ -15,7 +15,9 @@
     "lint": "eslint src/",
     "format": "prettier --write src/",
     "test:run": "vitest run",
-    "nofo:ingest": "tsx src/nofo/ingest/cli.ts"
+    "nofo:ingest": "tsx src/nofo/ingest/cli.ts",
+    "nofo:extract": "tsx src/nofo/extraction/cli.ts",
+    "nofo:eval": "tsx src/nofo/eval/run-eval.ts"
   },
   "keywords": [
     "mcp",

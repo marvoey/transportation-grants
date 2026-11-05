@@ -56,6 +56,7 @@ export function loadConfig(): Config {
       apiKey: process.env.ANTHROPIC_API_KEY,
       baseUrl: process.env.ANTHROPIC_BASE_URL, // undefined => SDK default (api.anthropic.com)
       model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5',
+      extractionModel: process.env.ANTHROPIC_EXTRACTION_MODEL || undefined,
       maxTokens: parseInt(process.env.ANTHROPIC_MAX_TOKENS || '1024', 10),
     },
     // Optional, like anthropic: only the NOFO ingestion CLI needs the key.

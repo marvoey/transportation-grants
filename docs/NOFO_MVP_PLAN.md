@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | **Rev 3.1** — Milestone 2 implemented, unit-tested and verified live on real opportunities, **including PDF parsing and page addressing**. The gate is met with the caveats listed in the "M2 implementation record" (§5): no visual page-render comparison was possible, and the new dependencies are declared with caret ranges rather than exact pins. **Awaiting your review. Milestone 3 not started.** |
+| **Status** | **Rev 4** — Milestone 3 (requirements extraction) implemented, unit-tested and run live on two real opportunities; **awaiting your review. Milestone 4 not started.** Milestones 1–2 (incl. the Word adapter) are committed; M3 is not. The reference set used to evaluate extraction was **drafted by the assistant and is not yet human-verified** (see the M3 implementation record in §5). |
 | **Written** | Rev 1 (Milestone 1 plan): 2026-11-04 · Rev 2: 2026-11-04 |
 | **Branch** | `nofo`. Rev 1 audited `397cced`. Rev 2 reviewed at `583c2e3` (updated guide, `CLAUDE.md` and Rev 1 of this plan committed). |
 | **Demo deadline** | 2026-11-13 (Fri) |
@@ -17,6 +17,7 @@
 | 2.1 | **Step 0 live API checks** done with the key you supplied (read-only, ~15 requests). **FY2026 BUILD is in Simpler.Grants.gov** (archived, retrievable by UUID) with **one** attachment, the NOFO PDF. Downloads are public, so no key is sent to the files host. A second-opportunity candidate is recommended. The authority classifier gains "Q&A" patterns. R1/R12/R13 and Q11/Q12/Q14 are updated. The key is stored only in your gitignored `.env`. See §3.11. |
 | 3 | **Decisions recorded and Milestone 2 implemented.** Q12: Wildlife Crossings is the second integration test. Q14: no manual supplemental documents yet; M2 is automatic retrieval only, with supplemental sources *designed* and potential missing sources *recorded* (BUILD FAQs/checklists/amendments may be added in M3 if needed). Q13: commit small stable fixtures and manifests, never caches, credentials or oversized artifacts. Q15: `CLAUDE.md` updated. Authority classification now lets derivative documents (FAQ, Q&A, template, webinar, …) win over a "NOFO" mention in their name. See §5 "M2 implementation record" and §9. |
 | 3.2 | **Word (.docx) adapter added** at your request (beyond the guide's "register, parse only if essential"). Uses `mammoth` 1.13.0, which you installed, to convert to HTML and then reuses the HTML section extraction. Wildlife Crossings now reaches coverage `api_listed_processed`. 179 tests pass, none skipped. See "Rev 3.2" in the M2 implementation record. |
+| 4 | **Milestone 3 implemented.** Source-grounded requirements extraction with code-verified citations, a reference-set evaluation, and an optional multi-pass mode. Deviation from Rev 1: sampling parameters (temperature) cannot be sent to current models, so reproducibility comes from caching and the evaluation, not from temperature 0. See "M3 implementation record" in §5. |
 
 **Sections revised in Rev 2:** §1, §2.1–§2.4, §3.1–§3.4, §3.8–§3.10, new §3.11 (verified API contract), §4, §5 (M2 rewritten, M3/M5 adjusted, calendar), §6, §7, §8, §9, §10.
 
@@ -640,9 +641,68 @@ BUILD and Wildlife Crossings went through the identical code path; no program, y
   - Zero requirements without a verified source.
   - Against the human-verified gold set (15–25 manually verified requirements from the actual BUILD documents), the eval script reports **coverage** and **citation accuracy**. Target: all gold items recovered, or each miss explained and fixed. If no gold set exists yet, the milestone report **states that limitation explicitly** rather than substituting model self-assessment.
   - Ambiguous items carry `reviewStatus:'needs_review'` and `mandatory:null`.
-  - Re-running extraction is reproducible (temperature 0; output diffed).
+  - Re-running extraction is reproducible **from the cache** (no model call when documents, prompt and model are unchanged). *Rev 4 deviation:* current models reject sampling parameters such as temperature, so a fresh run can differ from the last one (verified: recall varied between runs); the multi-pass option and the evaluation script manage that.
   - Tests (mocked LLM): schema rejection, invented document ID rejected, wrong page corrected, unsupported quote dropped, dedupe across chunks, batch boundaries.
 - **Critical path:** a human must write or verify the gold set from the actual documents. See §7 R2.
+
+> **Status (Rev 4): implemented, unit-tested, run live on BUILD and Wildlife Crossings; awaiting your review.** The reference set is **drafted by the assistant and is not human-verified**, so the gate's accuracy claim is provisional. Details in the record below.
+
+#### M3 implementation record (Rev 4)
+
+**Entry points (CLI only; no web route).** `npm run nofo:extract -- <uuid> [--refresh] [--include-guidance] [--passes N]` writes `data/opportunities/<uuid>/requirements.json`; `npm run nofo:eval -- <uuid> [--gold <path>] [--min-coverage 0.8]` scores it. `extractRequirements(uuid, options)` is the library entry point. Run `nofo:ingest` first.
+
+**How it works.** (1) Load the M2 package; use only documents that parsed and are `controlling` (guidance only with `--include-guidance`; never `unclassified` or removed ones). (2) Cut each document into bounded, overlapping batches (6 pages or 16,000 characters, 1-page overlap). (3) Send each batch to the model inside a fixed system prompt, with the document text framed as untrusted data and tag-like text neutralized. The model returns JSON through **structured outputs** (`output_config.format`); no forced tool use, and no temperature, thinking or tool parameters are sent. (4) Validate each candidate with Zod, **one item at a time**, so one bad item never discards a batch. (5) **Verify every citation in code** against the stored text: the document must be in the package, the quote must appear on the cited page or section (a wrong page is corrected and flagged; a quote that spans a page break is accepted only if it is on no single page), and quotes under 20 letters/digits are rejected. A candidate with no verifiable source is rejected. (6) A numeric `check` is kept only if its number appears in the verified quote. (7) Merge duplicates conservatively (same category and topic, plus a shared passage, identical title, or identical check; **candidates with different checks never merge**), assign stable IDs, and flag anything doubtful `needs_review`. (8) Cache the result; it is reused when the documents, prompt version, model and pass count are unchanged and the last run was complete.
+
+**Files added** (all under `src/nofo/`): `llm.ts` (injectable model call), `quotes.ts` (quote overlap), `citations.ts` (verification), `util.ts`; `extraction/{schemas,chunker,prompts,check-values,merge,extract,args,cli}.ts`; `eval/{compare,run-eval}.ts`; the reference set `data/fixtures/nofo-gold/4d8f5775-ff01-4a6f-ab4e-b125899043b3.gold.json`; test support `__fixtures__/extraction.ts`; and 12 new test files. **Changed:** `store.ts` (read/write `requirements.json`), `types/index.ts` + `config/config.ts` (optional `ANTHROPIC_EXTRACTION_MODEL`), `.env.example`, `package.json` (scripts), `CLAUDE.md`.
+
+**Model settings.** Default model `claude-sonnet-5` (the configured chat model; override with `ANTHROPIC_EXTRACTION_MODEL`). Effort defaults to `medium` (`ANTHROPIC_EXTRACTION_EFFORT`, or `off`). `medium` cut output tokens about 50% versus the default and removed an output-truncation failure; if output is still cut off, the batch is split in half automatically (up to two levels) instead of losing pages. A one-call smoke test of the model and structured-output mechanism passed before the first extraction.
+
+**Results (live, real documents).** Model `claude-sonnet-5`, effort `medium`, prompt version 4.
+
+| BUILD NOFO (51 pages), final run: 2 passes | |
+|---|---|
+| Batches | 22 of 22 succeeded (11 per pass), none truncated |
+| Tokens | 163,196 in, 83,046 out (about $1.2 at list prices of $2 / $10 per million tokens; an estimate, not a bill) |
+| Candidates | 193 proposed; **4 rejected** for having no verifiable source; 85 merged as duplicates; **104 requirements kept** |
+| Review status | 81 `unreviewed`, **23 `needs_review`**, 0 `verified` (no human has reviewed any) |
+| Evaluation vs. the 25-item reference set | **23 of 25 recovered by an overlapping quote (92%)**; **25 of 25 (100%)** if a requirement on the same page and topic that cites a different sentence also counts. The two strict misses (toll-credit rule, STIP/TIP listing) both have such a same-page, same-topic requirement. |
+| Agreement on matched items | category 19 of 25 (the differences are judgment calls such as money rules filed under `funding` rather than `eligibility`); mandatory 24 of 25 |
+| **Citation accuracy** | **118 of 118 stored sources re-verified** against the stored document text by an independent pass (the same check run again from the stored file) |
+| Reference quotes | 25 of 25 found on their stated pages |
+
+How the numbers moved while I built and tuned it (each row is a real run; the reference set is the same throughout):
+
+| Run | Prompt / passes | Result | Strict coverage |
+|---|---|---|---|
+| 1 | v1, 1 pass, default effort | 100 kept; **1 batch cut off (pages 11–16), file `partial`** | 19/25 (76%) |
+| 2 | v2, 1 pass, medium effort | 84 kept, complete; output tokens halved | 21/25 (84%); 22/25 lenient |
+| 3 | v3, 2 passes | 99 kept; fixed the set-aside "checks" | 22/25 (88%); 23/25 lenient |
+| 4 | v4, 2 passes, check-aware merging | **104 kept** | **23/25 (92%); 25/25 lenient** |
+
+*Run 1 was first scored with a simpler matcher (first match instead of best match); I did not re-score it with the final one.*
+
+| Wildlife Crossings NOFO (24 pages), 1 pass | |
+|---|---|
+| Result | 5 of 5 batches; 37 candidates, 0 rejected, 5 merged, **32 requirements kept**; 2 page locations corrected by code; 25 `unreviewed`, 7 `needs_review`; 36,919 tokens in, 15,588 out |
+| What it shows | The same code extracted a different program's requirements (for example the 20 percent non-Federal share, State highway agency consultation, no application limit) with **no program-specific code or configuration**. There is **no reference set for it, so no accuracy claim is made**. |
+| Cache | A repeat run answered in under a second with **no model call**. |
+
+**Does it cover the demo scenario?** The guide's scenario asks about the federal request, matching funds and a benefit-cost analysis for a capital project. The extraction holds the pieces M4 needs: minimum request checks for rural ($1M) and urban ($5M) capital projects (each citing pages 6 and 15), a $25M maximum (pages 3 and 15), federal-share limits (80 percent urban, 100 percent rural/APP/HDC), four non-federal-match rules, applicant-type rules, a mandatory BCA requirement, seven NEPA items and the submission deadline. **Caveat for M4:** the BCA requirement cites only page 23, has `programVariant` null and is flagged `needs_review`, because the "capital projects only" statement is on page 14 and different batches disagreed. A human should confirm that BCA applies to capital projects only before M4 relies on it.
+
+**Tests and build.** `npm run build` exit 0; `npm run test:run` **290 passed, 0 skipped, 0 failed** (24 files). New tests cover: citation verification (every branch), numeric-check verification, merging, batching, prompt framing and tag neutralization, the model wrapper (exact request parameters), the pipeline with a scripted stand-in for the model (invented IDs, wrong pages, unsupported claims, truncation, refusals, caching, passes, document selection, hostile text), the evaluation logic, and the CLI arguments. The guard test still finds no program-specific strings in `src/nofo`.
+
+**Known limitations and things I observed**
+
+- **The reference set is not human-verified.** I drafted 25 items (26 quotes; all machine-checked to appear on their pages) by reading the NOFO before writing or running the extractor. Selection, categories and mandatory flags still need a person. Status field: `drafted_from_source_pending_human_review`.
+- **The prompt was tuned after seeing evaluation results** (version 1 → 4), including a generic line that cost-share and match rules count as funding requirements. The reference set is therefore not a clean held-out test for the final prompt.
+- **Recall varies between runs.** Sampling parameters cannot be set on current models. Across live runs the same prompt family recovered different reference items (for example one run caught the toll-credit rule and a later one did not). `--passes 2` takes the union of two independent passes and raised coverage; it costs about twice as much and leaves more near-duplicates.
+- **Code verifies that quotes and numbers are real, not what they mean.** An earlier run produced "minimum share for planning projects: $75 million" from an agency set-aside; the number was in the quote, so the number check passed. The prompt now forbids program-wide totals as checks, but **a `check` on an unreviewed requirement must be treated as advisory**; Milestone 4 should apply checks deterministically only for requirements a human has set to `verified`.
+- **Near-duplicates remain** when the same requirement is stated in two places with different sentences (for example two entries for the maximum request, on pages 3 and 15). Merging is deliberately conservative: a missed merge costs reviewer time, a wrong merge hides a requirement.
+- **Category and "mandatory" are judgment calls.** Minimum-request rules sit under "Eligibility" in the NOFO but are about money; the model files them under `funding`. The evaluation reports these disagreements separately and does not treat them as errors.
+- **Scope leakage.** Some candidates come from the merit-criteria and post-award sections (pages 37–51) despite the prompt; they are cited and verified, so they are not wrong, but they are not all applicant-facing.
+- **Bugs found and fixed during this milestone** (each has a regression test): (1) citation verification accepted a quote that sat wholly on page N+1 as "spanning" pages N and N+1, silently keeping the wrong page; (2) merging two requirements that cite one sentence stating both an urban and a rural threshold dropped the rural check and mixed their conditions; (3) the CLI dropped the first argument when `--passes` was absent.
+- **Not done:** no HTML/Word extraction has been run on a real document (the unit tests cover section citations); no supplemental BUILD documents were added (your Q14 decision); `evaluation` and `post_award` categories are not extracted.
+
 
 ### M4 — Applicant assessment — unchanged
 
@@ -702,7 +762,7 @@ For the mission-impact benchmark in guide §10: record actual time-to-requiremen
 | # | Risk | Likelihood / impact | Mitigation |
 |---|---|---|---|
 | R1 | **Supplemental official sources are not reachable by automation, and BUILD's API package is only the NOFO.** *(Rev 2.1: the API key is in hand and works.)* The agency page (BUILD landing page) returned **403** to automation. FAQs, checklists or amendments for BUILD would have to be downloaded manually. | High / medium (core demo needs only the NOFO; the FAQ scenarios need more) | Supplemental sources accept manual files (`manual_file`, with sha256), kept at M2 P1. Coverage honestly reads `api_listed_processed` with its completeness note. You decide whether to add FAQs (Q14). If a live run is blocked, **document the blocker, don't claim a pass.** |
-| R2 | **No gold set → no way to validate extraction accuracy**; this is the guide's "central technical risk". | High / blocks the M3 gate | A human reviewer starts the gold set on 11/6 in parallel. Even 15 items beats none. If it slips, say so in the report. |
+| R2 | **No human-verified reference set → extraction accuracy cannot be fully validated**; this is the guide's "central technical risk". *(Rev 4: partly mitigated.)* | High / blocks a *confirmed* M3 gate | A 25-item reference set now exists, but **I drafted it from the source text; a person must verify it** (`verifiedBy` is null). Citations are verified by code regardless, so the open risk is selection, category and wording judgments, not invented evidence. |
 | R3 | **PDF text extraction quality** (multi-column layout, tables, headers/footers, hyphenation, footnotes) breaks quote matching and headings. | Medium / high | Test on the real NOFO early in M2. Shared `normalize()`. Fuzzy-match fallback. Heading detection falls back to page-only citations. |
 | R4 | **Conditional applicability** (capital vs planning; urban vs rural; thresholds differing by category) produces wrong findings if flattened. | Medium / high | `programVariant` and the `grantCategory`/`areaType` facts are first-class. If the category is unknown, the finding is `unknown` and a question is asked. |
 | R5 | **Schedule: 7 working days, 4 milestones, no float, and M2 is larger in Rev 2.** | High / high | Strict gates and the revised cut list (§8). P0/P1/P2 inside M2. Parallelize the gold set. Freeze on 11/12. |
@@ -810,6 +870,16 @@ For the mission-impact benchmark in guide §10: record actual time-to-requiremen
 - [x] **PDF parsing verified on real documents** (Rev 3.1: BUILD 51 pages, Wildlife Crossings 24 pages, page addressing confirmed against printed TOCs and quote spot-checks). The HTML adapter is verified by unit tests only: neither real opportunity attaches an HTML document. R17 resolved by the install (lockfile change awaits your review).
 - [x] **Rev 3.2:** Word (.docx) adapter added and verified live on the Wildlife Crossings template (179 tests, 0 skipped; coverage now `api_listed_processed`).
 - [ ] Optional, open: visual page-render comparison (needs a PDF renderer) and exact-pinning of `pdfjs-dist`, `cheerio` and `mammoth`.
+
+**Rev 4 (Milestone 3)**
+
+- [x] Extraction service built on the generic M2 package (no BUILD-specific paths or IDs; guard test green); runs on BUILD and Wildlife Crossings.
+- [x] Zod-validated requirements with category, description, mandatory/conditional status, applicability, evidence needed and sources; cached as `requirements.json` with review statuses.
+- [x] Citations validated against ingested content in code: invented document IDs, nonexistent locations and unsupported quotes are rejected (118 of 118 stored sources re-verify; 4 candidates rejected on the final BUILD run).
+- [x] Unit tests plus an evaluation fixture of 25 reference requirements from the actual BUILD NOFO; 290 tests pass.
+- [ ] **A human verifies the reference set**, and reviews the 23 `needs_review` BUILD requirements (and the BCA applicability).
+- [ ] **Your review of Milestone 3**, and approval before any Milestone 4 work. Nothing from M4 or M5 has been started.
+
 - [ ] **Your review of Milestone 2**, and approval before any Milestone 3 work.
 
 ### Not verified
