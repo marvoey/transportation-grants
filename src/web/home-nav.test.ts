@@ -86,3 +86,26 @@ describe('home page', () => {
     expect(index).not.toMatch(/\bhours\b|\b70%|\b800\b/);
   });
 });
+
+describe('the product names', () => {
+  const GF = '<span class="gf">Grant<span class="gf-flow">Flow</span></span>';
+  const GR = '<span class="gf gr">Gov<span class="gf-flow">Rail</span></span>';
+
+  it('are styled as the wordmark everywhere they appear as visible text', () => {
+    for (const html of [index, chat]) {
+      const body = html
+        .replace(/<title>[\s\S]*?<\/title>/g, '')
+        .replace(/<span class="brand-product">[\s\S]*?<\/span><\/span>/g, '') // header wordmark has its own markup
+        .split(GF).join('')
+        .split(GR).join('')
+        .replace(/<[^>]+>/g, '<>'); // drop tags and attributes (alt text, hrefs)
+      expect(body).not.toContain('GrantFlow');
+      expect(body).not.toContain('GovRail');
+    }
+  });
+
+  it('use the wordmark markup in the home page text', () => {
+    expect(index.split(GF).length - 1).toBeGreaterThanOrEqual(4);
+    expect(index.split(GR).length - 1).toBeGreaterThanOrEqual(1);
+  });
+});

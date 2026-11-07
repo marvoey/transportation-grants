@@ -283,3 +283,19 @@ header .brand-product {
   border-left: 1px solid var(--afs-line);
 }
 header .brand-flow { color: var(--afs-purple); }
+
+/* ---- The product names wherever they appear in text -----------------------
+ * Same look as the header wordmark: bold sans, first half in ink, second half in core purple.
+ * Use <span class="gf">Grant<span class="gf-flow">Flow</span></span> and
+ * <span class="gf gr">Gov<span class="gf-flow">Rail</span></span>. Size and line height are inherited.
+ */
+.gf {
+  font-family: var(--afs-font-sans);
+  font-weight: 700;
+  color: var(--afs-ink);
+  letter-spacing: normal;
+}
+.gf-flow { color: var(--afs-purple); }
+/* On dark surfaces (as in the reversed logo): white and light lilac. */
+.home-hero .gf { color: var(--afs-white); }
+.home-hero .gf-flow { color: var(--afs-purple-200); }

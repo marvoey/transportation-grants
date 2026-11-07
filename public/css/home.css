@@ -76,3 +76,8 @@
   .home-actions { flex-direction: column; align-items: stretch; }
   .home-btn { text-align: center; }
 }
+
+/* GovRail mark beside the intro to the principles */
+.home-govrail { display: flex; align-items: flex-start; gap: 1.25rem; margin-bottom: 1.25rem; }
+.home-govrail img { flex: none; width: 56px; height: 56px; }
+.home-govrail .home-section-intro { margin-bottom: 0; }
