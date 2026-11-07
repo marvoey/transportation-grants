@@ -28,7 +28,7 @@
     </div>
 
     <div id="findPanel" role="tabpanel" aria-labelledby="modeFindTab">
-      <details id="findConsole" class="dev-console dev-only" open>
+      <details id="findConsole" class="dev-console dev-only dev-section-console" open>
         <summary>Developer console <span class="nofo-meta">how the Simpler.Grants.gov request is built</span></summary>
         <div class="dev-console-bar">
           <button type="button" id="findConsoleCopy" class="nofo-secondary find-small">Copy</button>
@@ -52,7 +52,7 @@
           <textarea id="findInput" rows="5" maxlength="4000" required></textarea>
           <div class="form-group find-options">
             <label><input type="checkbox" id="findHistorical"> Include closed and archived opportunities (past rounds, not open for applications)</label>
-            <label class="dev-only"><input type="checkbox" id="findInspect"> Show the raw Simpler.Grants.gov requests and responses (for inspection)</label>
+            <label class="dev-only dev-section-apicalls"><input type="checkbox" id="findInspect"> Show the raw Simpler.Grants.gov requests and responses (for inspection)</label>
           </div>
           <div class="nofo-form-actions">
             <button type="submit" id="findSend">Find grants</button>
@@ -172,13 +172,17 @@
         <input type="checkbox" id="devModeToggle" role="switch">
         <span>Developer mode</span>
       </label>
-      <p class="nofo-meta">Off by default. When on, Find grants also shows:</p>
-      <ul class="nofo-reply-list">
-        <li>the developer console, with how the Simpler.Grants.gov request is built</li>
-        <li>the API calls that were sent, with a curl command for each, and an option to show the raw requests and responses</li>
-        <li>the explanations: the plain-language note about the search, how the code and the language model built the calls, how the list was built, and every listing that was scored</li>
-      </ul>
-      <p class="nofo-meta">Your choice is remembered in this browser.</p>
+      <p class="nofo-meta">Off by default. When on, Find grants also shows the sections ticked below.</p>
+      <fieldset class="dev-sections">
+        <legend>Sections to show</legend>
+        <label class="dev-section"><input type="checkbox" data-dev-section="console"> <span><strong>Developer console</strong> how the Simpler.Grants.gov request is built, as it happens</span></label>
+        <label class="dev-section"><input type="checkbox" data-dev-section="apicalls"> <span><strong>API calls</strong> every request that was sent, with a curl command for each, and the option to show the raw requests and responses</span></label>
+        <label class="dev-section"><input type="checkbox" data-dev-section="note"> <span><strong>Note about the search</strong> the plain-language note written about the search</span></label>
+        <label class="dev-section"><input type="checkbox" data-dev-section="trace"> <span><strong>How the calls were built</strong> what the code and the language model each did</span></label>
+        <label class="dev-section"><input type="checkbox" data-dev-section="built"> <span><strong>How the list was built</strong> the searches behind the list</span></label>
+        <label class="dev-section"><input type="checkbox" data-dev-section="scored"> <span><strong>Scored listings</strong> every listing the searches returned, with its score</span></label>
+      </fieldset>
+      <p class="nofo-meta">Your choices are remembered in this browser.</p>
       <p id="devStatus" class="nofo-sr" role="status" aria-live="polite"></p>
     </div>
   </aside>

@@ -1176,6 +1176,49 @@ body:not(.dev-mode) .dev-only {
   display: none !important;
 }
 
+/* ...and a section that is unticked in the Dev tray stays hidden even in developer mode. */
+body.dev-hide-console .dev-section-console,
+body.dev-hide-apicalls .dev-section-apicalls,
+body.dev-hide-note .dev-section-note,
+body.dev-hide-trace .dev-section-trace,
+body.dev-hide-built .dev-section-built,
+body.dev-hide-scored .dev-section-scored {
+  display: none !important;
+}
+
+.dev-sections {
+  border: 1px solid #d5dde8;
+  padding: 0.5rem 0.75rem 0.75rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.dev-sections legend {
+  padding: 0 0.35rem;
+  font-weight: 600;
+}
+
+.dev-sections:disabled {
+  opacity: 0.55;
+}
+
+.dev-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.4rem 0;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.dev-section input {
+  flex: none;
+  margin-top: 0.2rem;
+}
+
+.dev-section strong {
+  display: block;
+}
+
 /* A small dot on the tab says there is something new inside */
 .tray-tab.has-news::after {
   content: '';

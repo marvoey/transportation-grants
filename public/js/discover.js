@@ -77,9 +77,9 @@
   // Conversation thread
   // ---------------------------------------------------------------------------
 
-  /** Developer mode is switched in the Dev tray (dev-mode.js). The raw Simpler.Grants.gov traffic is only requested while it is on. */
-  function developerMode() {
-    return !!(window.DevMode && window.DevMode.isOn());
+  /** Developer mode and its sections are chosen in the Dev tray (dev-mode.js). The raw Simpler.Grants.gov traffic is only requested while the API calls section is showing. */
+  function developerShows(section) {
+    return !!(window.DevMode && window.DevMode.shows(section));
   }
 
   function addThread(role, text) {
@@ -119,7 +119,7 @@
   /** The plain-language explanation of the search, as an assistant message, with a line saying who wrote it. */
   function addExplanation(explanation) {
     if (!explanation || typeof explanation.text !== 'string') return;
-    var div = el('div', 'chat-message assistant find-explanation dev-only');
+    var div = el('div', 'chat-message assistant find-explanation dev-only dev-section-note');
     append(div, el('p', null, explanation.text));
     append(div, el('p', 'nofo-meta', explanation.source === 'model'
       ? 'About this search. Written by the language model from your description and the results; it describes the search and is not advice. Check it against the API call below.'
@@ -292,7 +292,7 @@
         API + '/discover?stream=1',
         D.buildRequest(state.messages, {
           includeHistorical: els.historical.checked,
-          inspect: developerMode() && els.inspect.checked,
+          inspect: developerShows('apicalls') && els.inspect.checked,
           forceResults: !!(options && options.forceResults),
           asked: state.asked
         }),
@@ -604,7 +604,7 @@
     }
     var raw = state.inspection ? D.findRawListing(state.inspection, item.opportunityId) : null;
     if (raw) {
-      var rawDetails = el('details', 'nofo-collapsible find-inspect-item dev-only');
+      var rawDetails = el('details', 'nofo-collapsible find-inspect-item dev-only dev-section-apicalls');
       append(rawDetails, el('summary', null, 'Raw listing from Simpler.Grants.gov (from: ' + raw.label + ')'));
       var block = jsonBlock('Listing as received', raw.listing, 'listing-' + D.safeFileName(item.opportunityNumber || item.opportunityId));
       append(rawDetails, block.node);
@@ -617,7 +617,7 @@
 
   function renderSearches(searches) {
     if (!searches.length) return null;
-    var details = el('details', 'nofo-collapsible dev-only');
+    var details = el('details', 'nofo-collapsible dev-only dev-section-built');
     append(details, el('summary', null, 'How the list was built (' + searches.length + ' search' + (searches.length === 1 ? '' : 'es') + ')'));
     var ul = el('ul', 'nofo-reply-list');
     searches.forEach(function (s) {
@@ -689,7 +689,7 @@
   }
 
   function renderInspection(inspection) {
-    var card = el('div', 'card find-inspect dev-only');
+    var card = el('div', 'card find-inspect dev-only dev-section-apicalls');
     append(card, el('h3', null, 'Simpler.Grants.gov requests and responses'));
     append(card, el('p', 'nofo-meta', 'Exactly what this server sent to Simpler.Grants.gov and what came back, for each search. The API key travels in a header and is never shown here. The responses are public listing data.'));
     var all = smallButton('Download everything (JSON)', function () {
@@ -727,7 +727,7 @@
   /** The requests that were made, with every parameter, and a curl command for each. */
   function renderApiCalls(calls) {
     if (!calls || calls.length === 0) return null;
-    var card = el('div', 'card find-apicalls dev-only');
+    var card = el('div', 'card find-apicalls dev-only dev-section-apicalls');
     append(card, el('h3', null, 'The Simpler.Grants.gov API call' + (calls.length === 1 ? '' : 's')));
     append(card, el('p', 'nofo-meta', 'Exactly what this server sent, one request per search, with every parameter. The API key is a header the server adds and is never shown; the curl command reads it from SIMPLER_GRANTS_API_KEY in your own environment.'));
     // The search that carries the project's words is the interesting one, so it starts open.
@@ -763,7 +763,7 @@
   /** A collapsible table of every listing that was scored, with the signals behind each score. */
   function renderScored(scored) {
     if (!scored || scored.length === 0) return null;
-    var details = el('details', 'nofo-collapsible find-scored dev-only');
+    var details = el('details', 'nofo-collapsible find-scored dev-only dev-section-scored');
     var shown = scored.filter(function (r) { return r.shown; }).length;
     append(details, el('summary', null, 'All ' + scored.length + ' listings that were scored (' + shown + ' shown below)'));
     append(details, el('p', 'nofo-meta', 'Every listing the searches returned, best score first. The score is the sum of the signals listed under each title; no model is involved. Earlier editions of the same program are folded into one row.'));
@@ -817,7 +817,7 @@
   /** How this search's parameters were built, step by step, and where each value came from. Written by code on the server. */
   function renderTrace(trace) {
     if (!trace || !trace.steps || trace.steps.length === 0) return null;
-    var card = el('div', 'card find-trace dev-only');
+    var card = el('div', 'card find-trace dev-only dev-section-trace');
     append(card, el('h3', null, 'How the code and the language model built these API calls'));
     append(card, el('p', 'nofo-meta', 'Written by the app from what actually happened in this search (not by the language model), so it matches the calls above. The model proposes facts from your words; code checks them and builds every parameter.'));
     var ol = el('ol', 'find-trace-steps');
