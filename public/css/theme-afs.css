@@ -299,3 +299,8 @@ header .brand-flow { color: var(--afs-purple); }
 /* On dark surfaces (as in the reversed logo): white and light lilac. */
 .home-hero .gf { color: var(--afs-white); }
 .home-hero .gf-flow { color: var(--afs-purple-200); }
+
+/* Dev tab: dot shows developer mode is on */
+.tray--dev .tray-tab[data-on="true"]::after { background: var(--afs-purple); }
+
+input[type="checkbox"], input[type="radio"] { accent-color: var(--afs-purple-800); }

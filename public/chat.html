@@ -28,7 +28,7 @@
     </div>
 
     <div id="findPanel" role="tabpanel" aria-labelledby="modeFindTab">
-      <details id="findConsole" class="dev-console" open>
+      <details id="findConsole" class="dev-console dev-only" open>
         <summary>Developer console <span class="nofo-meta">how the Simpler.Grants.gov request is built</span></summary>
         <div class="dev-console-bar">
           <button type="button" id="findConsoleCopy" class="nofo-secondary find-small">Copy</button>
@@ -52,7 +52,7 @@
           <textarea id="findInput" rows="5" maxlength="4000" required></textarea>
           <div class="form-group find-options">
             <label><input type="checkbox" id="findHistorical"> Include closed and archived opportunities (past rounds, not open for applications)</label>
-            <label><input type="checkbox" id="findInspect"> Show the raw Simpler.Grants.gov requests and responses (for inspection)</label>
+            <label class="dev-only"><input type="checkbox" id="findInspect"> Show the raw Simpler.Grants.gov requests and responses (for inspection)</label>
           </div>
           <div class="nofo-form-actions">
             <button type="submit" id="findSend">Find grants</button>
@@ -157,7 +157,34 @@
     </div>
   </aside>
 
+  <!-- Slide-out tray with the developer-mode switch. Closed by default. Developer mode shows the developer console, the API
+       calls and the explanations of how the list was built on Find grants; it is off unless someone turns it on. -->
+  <aside id="devDrawer" class="tray tray--dev" aria-label="Developer mode">
+    <button type="button" id="devTab" class="tray-tab" aria-expanded="false" aria-controls="devPanel" title="Developer mode">
+      <span class="tray-tab-label">Dev</span>
+    </button>
+    <div id="devPanel" class="tray-panel" role="region" aria-labelledby="devTitle" aria-hidden="true">
+      <div class="tray-head">
+        <h2 id="devTitle">Developer mode</h2>
+        <button type="button" id="devClose" class="tray-close" aria-label="Close the developer mode panel">&times;</button>
+      </div>
+      <label class="dev-toggle">
+        <input type="checkbox" id="devModeToggle" role="switch">
+        <span>Developer mode</span>
+      </label>
+      <p class="nofo-meta">Off by default. When on, Find grants also shows:</p>
+      <ul class="nofo-reply-list">
+        <li>the developer console, with how the Simpler.Grants.gov request is built</li>
+        <li>the API calls that were sent, with a curl command for each, and an option to show the raw requests and responses</li>
+        <li>the explanations: the plain-language note about the search, how the code and the language model built the calls, how the list was built, and every listing that was scored</li>
+      </ul>
+      <p class="nofo-meta">Your choice is remembered in this browser.</p>
+      <p id="devStatus" class="nofo-sr" role="status" aria-live="polite"></p>
+    </div>
+  </aside>
+
   <script src="/js/common.js"></script>
+  <script src="/js/dev-mode.js"></script>
   <script src="/js/discover-util.js"></script>
   <script src="/js/discover.js"></script>
   <script src="/js/progress-panel.js"></script>
@@ -167,6 +194,7 @@
   <script src="/js/samples-drawer.js"></script>
   <script src="/js/answer-suggestions.js"></script>
   <script src="/js/answers-drawer.js"></script>
+  <script src="/js/dev-drawer.js"></script>
   <script src="/js/nofo-util.js"></script>
   <script src="/js/site-nav.js"></script>
   <script src="/js/nofo.js"></script>

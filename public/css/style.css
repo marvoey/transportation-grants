@@ -1135,9 +1135,45 @@ button.tray-close:hover {
   }
 }
 
-/* A second tray stacks its tab under the first one's */
+/* A second tray stacks its tab under the first one's, and a third under that */
 .tray--answers .tray-tab {
   top: calc(38% + 6.5rem);
+}
+
+.tray--dev .tray-tab {
+  top: calc(38% + 13rem);
+  height: 3.75rem;
+}
+
+/* A small dot on the Dev tab says developer mode is on */
+.tray--dev .tray-tab[data-on="true"]::after {
+  content: '';
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #d4a017;
+}
+
+.dev-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.5rem 0 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dev-toggle input {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* Developer-only content (see dev-mode.js) is hidden unless developer mode is on. */
+body:not(.dev-mode) .dev-only {
+  display: none !important;
 }
 
 /* A small dot on the tab says there is something new inside */
