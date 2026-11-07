@@ -1,0 +1,251 @@
+/*
+ * AFS theme: an Accenture Federal Services look with a Simpler.Grants.gov flavor.
+ *
+ * Load AFTER /css/style.css:
+ *   <link rel="stylesheet" href="/css/style.css">
+ *   <link rel="stylesheet" href="/css/theme-afs.css">
+ * Remove the second link to go back to the original navy look. This file only
+ * overrides colors, type, shape and spacing; it changes no markup or behavior.
+ *
+ * Where the values come from (observed on the live sites, November 2026):
+ *   Accenture  #a100ff core purple, #7500c0, #460073, #39005e, #dcafff, black
+ *              #101010/#202020, greys #616160/#a2a2a0/#e3e3df, accents #ff50a0
+ *              pink, #ff7800 orange, #feb149 yellow. Square corners (radius 0),
+ *              flat buttons, 14px/500 button text. Fonts Graphik (sans) and GT
+ *              Sectra Fine (serif), both licensed: not bundled, Georgia/system
+ *              fallbacks are used instead.
+ *   Simpler    Public Sans (open source), warm greys #171716/#454545/#cac9c0/
+ *              #e6e6e2/#f0f0ec, green #286846/#204e34/#2e8367/#dbf6ed, alert
+ *              boxes with a thick left border (warning #face00, error #d54309,
+ *              success #00a91c), white header with a colored bottom rule,
+ *              pill-shaped tags.
+ * Values marked "derived" are tints/shades computed for this theme, not copied.
+ *
+ * Not included on purpose: Accenture logos or the ">" mark, and the ".gov
+ * official website" banner. This app is neither a federal site nor an official
+ * Accenture property; add marks only with brand approval.
+ */
+
+/* Optional: if Public Sans is installed locally it is used; nothing is downloaded. */
+@font-face {
+  font-family: 'Public Sans';
+  src: local('Public Sans'), local('PublicSans-Regular');
+  font-weight: 400;
+}
+
+:root {
+  /* Brand: Accenture purples */
+  --afs-purple: #a100ff;          /* core: accents, focus ring, active marker */
+  --afs-purple-600: #7500c0;      /* text links, hover on light */
+  --afs-purple-800: #460073;      /* primary buttons need AA with white text: use this */
+  --afs-purple-900: #310051;      /* header rule, deepest surfaces */
+  --afs-purple-200: #dcafff;      /* light accent on dark surfaces */
+  --afs-purple-50: #f7efff;       /* derived: tinted hover/selected surface */
+
+  /* Simpler.Grants.gov flavor: warm neutrals */
+  --afs-ink: #171716;
+  --afs-ink-2: #454545;
+  --afs-muted: #616160;
+  --afs-line: #cac9c0;
+  --afs-line-soft: #e6e6e2;
+  --afs-surface: #f0f0ec;         /* page background */
+  --afs-surface-2: #f7f7f4;       /* derived: chips, list items */
+  --afs-white: #ffffff;
+
+  /* Simpler.Grants.gov flavor: green = "supported / verified / done" */
+  --afs-green: #286846;
+  --afs-green-700: #204e34;
+  --afs-green-100: #dbf6ed;
+
+  /* Status (Simpler alert palette) */
+  --afs-warn: #face00;
+  --afs-warn-bg: #fff5c2;
+  --afs-warn-ink: #5c4a00;        /* derived: text on warn-bg */
+  --afs-error: #d54309;
+  --afs-error-bg: #f4e3db;
+  --afs-error-ink: #8a2c06;       /* derived */
+  --afs-success: #00a91c;
+  --afs-success-bg: #ecf3ec;
+
+  /* Shape and type */
+  --afs-radius: 0;                /* Accenture: square */
+  --afs-radius-pill: 99rem;       /* Simpler: tags */
+  --afs-font-sans: 'Public Sans', Graphik, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --afs-font-display: 'GT Sectra Fine', Georgia, Palatino, 'Times New Roman', serif;
+  --afs-font-mono: 'Roboto Mono', ui-monospace, Consolas, 'Courier New', monospace;
+}
+
+/* ---- Base ---------------------------------------------------------------- */
+body {
+  font-family: var(--afs-font-sans);
+  color: var(--afs-ink);
+  background-color: var(--afs-surface);
+}
+
+a { color: var(--afs-purple-600); }
+a:hover { color: var(--afs-purple-800); }
+
+:focus-visible {
+  outline: 3px solid var(--afs-purple);
+  outline-offset: 2px;
+}
+
+code, pre { font-family: var(--afs-font-mono); }
+
+/* ---- Header: white bar with a purple rule (Simpler layout, Accenture colors) */
+header {
+  background: var(--afs-white);
+  color: var(--afs-ink);
+  border-bottom: 4px solid var(--afs-purple);
+}
+header h1 {
+  font-family: var(--afs-font-display);
+  font-weight: 400;
+  font-size: 1.625rem;
+  letter-spacing: -0.01em;
+}
+nav a {
+  color: var(--afs-ink);
+  border-radius: var(--afs-radius);
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+nav a:hover {
+  background: var(--afs-purple-50);
+  color: var(--afs-purple-800);
+  border-bottom-color: var(--afs-purple);
+}
+
+/* ---- Forms and buttons ---------------------------------------------------- */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  font-family: var(--afs-font-sans);
+  border: 1px solid var(--afs-ink-2);
+  border-radius: var(--afs-radius);
+  background: var(--afs-white);
+  color: var(--afs-ink);
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--afs-purple);
+}
+
+button {
+  font-family: var(--afs-font-sans);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  letter-spacing: -0.005em;
+  background: var(--afs-purple-800);
+  color: var(--afs-white);
+  border-radius: var(--afs-radius);
+  transition: background-color 0.35s cubic-bezier(0.85, 0, 0, 1);
+}
+button:hover { background: var(--afs-purple-600); }
+button:active { background: var(--afs-purple-900); }
+button:disabled { background: #c9c9c9; color: #5d5d52; }
+
+/* Secondary / outline buttons */
+button.nofo-secondary,
+.mode-switch button {
+  color: var(--afs-purple-800);
+  border: 1px solid var(--afs-purple-800);
+  background: var(--afs-white);
+}
+button.nofo-secondary:hover,
+.mode-switch button:hover {
+  background: var(--afs-purple-50);
+  color: var(--afs-purple-800);
+}
+.mode-switch button.active {
+  background: var(--afs-purple-800);
+  color: var(--afs-white);
+  box-shadow: inset 0 -4px 0 var(--afs-purple);
+}
+button.nofo-link-button { color: var(--afs-purple-600); }
+button.nofo-link-button:hover { background: var(--afs-purple-50); }
+
+/* ---- Cards and badges ----------------------------------------------------- */
+.card {
+  border-radius: var(--afs-radius);
+  border: 1px solid var(--afs-line-soft);
+  border-top: 3px solid var(--afs-purple);
+  box-shadow: none;
+}
+.card h3 { color: var(--afs-purple-800); font-family: var(--afs-font-display); font-weight: 400; }
+
+.badge { border-radius: var(--afs-radius-pill); }
+.badge-success { background: var(--afs-green-100); color: var(--afs-green-700); }
+.badge-warning { background: var(--afs-warn-bg); color: var(--afs-warn-ink); }
+.badge-danger  { background: var(--afs-error-bg); color: var(--afs-error-ink); }
+.badge-secondary { background: var(--afs-line-soft); color: var(--afs-ink-2); }
+
+/* Simpler-style alert boxes: tinted body, thick left border */
+.error, .success {
+  border-radius: var(--afs-radius);
+  border-left: 0.5rem solid;
+}
+.error   { background: var(--afs-error-bg);   border-left-color: var(--afs-error);   color: var(--afs-ink); }
+.success { background: var(--afs-success-bg); border-left-color: var(--afs-success); color: var(--afs-ink); }
+
+/* ---- Chat ----------------------------------------------------------------- */
+.chat-message.user { background: var(--afs-purple-800); }
+.chat-message.assistant h3 { color: var(--afs-purple-800); }
+.chat-message.assistant code,
+.chat-tool-call code { color: var(--afs-purple-800); }
+.chat-message.assistant a { color: var(--afs-purple-600); }
+.chat-message.assistant a:hover { color: var(--afs-purple-800); }
+.timeline-item::before { background: var(--afs-purple); }
+
+/* ---- NOFO assessment ------------------------------------------------------ */
+.nofo-banner,
+.nofo-warning,
+.nofo-finding-specialist {
+  border-left: 0.5rem solid var(--afs-warn);   /* Simpler alert pattern */
+  border-left-color: var(--afs-warn);
+}
+.nofo-label { color: var(--afs-purple-800); }
+.nofo-summary h3,
+.nofo-finding h4 { color: var(--afs-purple-800); }
+.nofo-chip,
+.samples-item,
+.answers-question {
+  border: 1px solid var(--afs-line);
+  background: var(--afs-surface-2);
+}
+.nofo-finding { border: 1px solid var(--afs-line); }
+.nofo-collapsible summary { color: var(--afs-purple-800); }
+.nofo-drawer-head h3,
+.nofo-drawer-links a { color: var(--afs-purple-600); }
+.find-json { border: 1px solid var(--afs-line); }
+
+/* ---- Find grants progress ------------------------------------------------- */
+.find-progress { border-left: 0.5rem solid var(--afs-purple); }
+.find-progress-head strong,
+.find-step-running .find-step-msg { color: var(--afs-purple-800); }
+.find-step-running .find-icon { border-color: var(--afs-purple-200); border-top-color: var(--afs-purple); }
+.find-bar { background: var(--afs-line-soft); }
+.find-bar span { background: var(--afs-purple); }
+
+/* ---- Trays / drawers ------------------------------------------------------ */
+.tray-tab { border: 1px solid var(--afs-line); }
+.tray.is-open .tray-tab { color: var(--afs-purple-800); }
+.tray-panel { border-left: 1px solid var(--afs-line); }
+.tray-head h2,
+.samples-item h3,
+.answers-question h3,
+.answers-variant-label { color: var(--afs-purple-800); }
+button.tray-close:hover { background: var(--afs-purple-50); color: var(--afs-purple-800); }
+.tray-tab.has-news::after { background: var(--afs-purple); }
+
+/* ---- "Who wrote this" markers ---------------------------------------------
+ * The original app used purple for "written by the model". With purple now the
+ * brand color, model-written text moves to the Accenture pink family so it
+ * stays visibly different from the brand chrome and from code-written text.
+ */
+.find-actor-model, .find-origin-words { background: #ffe0f0; color: #8a0a4a; }   /* derived tint of #ff50a0 */
+.find-actor-code,  .find-origin-rule  { background: var(--afs-green-100); color: var(--afs-green-700); }
+.find-actor-you                       { background: var(--afs-line-soft); color: var(--afs-ink); }
+.find-origin-choice                   { background: var(--afs-warn-bg); color: var(--afs-warn-ink); }
