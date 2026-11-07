@@ -667,15 +667,15 @@
     }
   }
 
-  /** Three modes share the page: "find" (default), "nofo" (assess) and "search" (the original chat). */
+  /** Two modes share the page: "find" (default) and "nofo" (assess). */
   function setMode(mode) {
-    mode = mode === 'nofo' || mode === 'search' ? mode : 'find';
+    mode = mode === 'nofo' ? mode : 'find';
     state.mode = mode;
     // Other parts of the page (the sample-projects tray) follow the mode without knowing how it is switched.
     document.body.dataset.chatMode = mode;
     document.dispatchEvent(new CustomEvent('chatmodechange', { detail: { mode: mode } }));
-    var panels = { find: els.findPanel, nofo: els.panel, search: els.searchPanel };
-    var tabs = { find: els.tabFind, nofo: els.tabNofo, search: els.tabSearch };
+    var panels = { find: els.findPanel, nofo: els.panel };
+    var tabs = { find: els.tabFind, nofo: els.tabNofo };
     Object.keys(panels).forEach(function (key) {
       var active = key === mode;
       if (panels[key]) panels[key].hidden = !active;
@@ -739,9 +739,7 @@
   function init() {
     els.tabFind = document.getElementById('modeFindTab');
     els.findPanel = document.getElementById('findPanel');
-    els.tabSearch = document.getElementById('modeSearchTab');
     els.tabNofo = document.getElementById('modeNofoTab');
-    els.searchPanel = document.getElementById('searchPanel');
     els.panel = document.getElementById('nofoPanel');
     els.select = document.getElementById('nofoOpportunity');
     els.info = document.getElementById('nofoOpportunityInfo');
@@ -766,7 +764,6 @@
     }
 
     if (els.tabFind) els.tabFind.addEventListener('click', function () { setMode('find'); });
-    els.tabSearch.addEventListener('click', function () { setMode('search'); });
     els.tabNofo.addEventListener('click', function () { setMode('nofo'); });
     els.select.addEventListener('change', function () { selectOpportunity(els.select.value); });
     els.form.addEventListener('submit', onSubmit);

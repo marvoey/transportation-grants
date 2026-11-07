@@ -99,7 +99,7 @@ describe('deep links', () => {
     expect(U.readParams(`?mode=nofo&opportunity=${id}`)).toEqual({ mode: 'nofo', opportunity: id });
     expect(U.readParams(`?mode=nofo&opportunity=${id.toUpperCase()}`).opportunity).toBe(id);
     expect(U.readParams('')).toEqual({ mode: 'find', opportunity: null });
-    expect(U.readParams('?mode=search').mode).toBe('search');
+    expect(U.readParams('?mode=search').mode).toBe('find'); // the old chat mode no longer exists
   });
 
   it('ignores anything that is not a UUID, so nothing odd reaches a request path', () => {

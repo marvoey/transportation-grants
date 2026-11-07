@@ -23,17 +23,16 @@ describe('main navigation', () => {
     expect(navLinks(index)).toEqual(navLinks(chat));
   });
 
-  it('offers Home plus the three chat modes', () => {
+  it('offers Home plus the two chat modes', () => {
     expect(navLinks(chat)).toEqual([
       'Home -> /',
       'Find grants -> /chat.html',
       'Assess a project -> /chat.html?mode=nofo',
-      'Ask about grants -> /chat.html?mode=search',
     ]);
   });
 
   it('marks each link with a data-nav key that has a matching chat tab', () => {
-    for (const [key, tabId] of [['find', 'modeFindTab'], ['nofo', 'modeNofoTab'], ['search', 'modeSearchTab']]) {
+    for (const [key, tabId] of [['find', 'modeFindTab'], ['nofo', 'modeNofoTab']]) {
       expect(chat).toContain(`data-nav="${key}"`);
       expect(chat).toContain(`id="${tabId}"`);
     }
@@ -48,7 +47,7 @@ describe('main navigation', () => {
 });
 
 describe('links in the pages', () => {
-  const validModes = new Set(['nofo', 'search']);
+  const validModes = new Set(['nofo']);
 
   it('only point at the home page or at chat.html with a known mode', () => {
     for (const html of [index, chat]) {
@@ -65,6 +64,7 @@ describe('links in the pages', () => {
 
   it('no longer reference the removed pages', () => {
     const removed = ['search.html', 'eligibility.html', 'deadlines.html', 'details.html'];
+    for (const name of ['chat.js', 'api.js']) expect(existsSync(join(root, 'public/js', name))).toBe(false);
     const files = ['public/index.html', 'public/chat.html', ...readdirSync(join(root, 'public/js')).map((f) => `public/js/${f}`)];
     for (const file of files) {
       const text = read(file);
@@ -78,7 +78,7 @@ describe('home page', () => {
   it('links one card to each chat mode', () => {
     expect(index).toContain('href="/chat.html"');
     expect(index).toContain('href="/chat.html?mode=nofo"');
-    expect(index).toContain('href="/chat.html?mode=search"');
+    expect(index).not.toContain('mode=search');
   });
 
   it('states that the output is preliminary and avoids unproven savings claims', () => {

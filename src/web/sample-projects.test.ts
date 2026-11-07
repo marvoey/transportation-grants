@@ -66,10 +66,9 @@ describe('the slide-out tray in chat.html', () => {
     expect(at('samples-drawer.js')).toBeLessThan(at('nofo.js'));
   });
 
-  it('follows the page mode: nofo.js announces it, and the tray reads it and hides on the original chat tab', () => {
-    expect(read('public/js/nofo.js')).toContain("new CustomEvent('chatmodechange'");
+  it('is available on both remaining modes: nothing hides it when the mode changes', () => {
     const drawer = read('public/js/samples-drawer.js');
-    expect(drawer).toContain("addEventListener('chatmodechange'");
-    expect(drawer).toMatch(/mode !== 'search'/);
+    expect(drawer).not.toContain('chatmodechange');
+    expect(drawer).not.toContain('setAvailable');
   });
 });

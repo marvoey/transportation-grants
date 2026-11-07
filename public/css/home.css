@@ -81,3 +81,6 @@
 .home-govrail { display: flex; align-items: flex-start; gap: 1.25rem; margin-bottom: 1.25rem; }
 .home-govrail img { flex: none; width: 56px; height: 56px; }
 .home-govrail .home-section-intro { margin-bottom: 0; }
+
+/* Fill the row whatever the number of cards: auto-fit collapses empty tracks (style.css uses auto-fill, which leaves them). */
+.card-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }

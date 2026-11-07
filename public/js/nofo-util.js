@@ -151,7 +151,7 @@
     var mode = params.get('mode');
     return {
       // "find" (project description first) is the default; anything unrecognized falls back to it.
-      mode: mode === 'nofo' || mode === 'search' ? mode : 'find',
+      mode: mode === 'nofo' ? mode : 'find',
       opportunity: opportunity && UUID.test(opportunity) ? opportunity.toLowerCase() : null
     };
   }

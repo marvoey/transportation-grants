@@ -16,7 +16,6 @@
           <li><a href="/" data-nav="home">Home</a></li>
           <li><a href="/chat.html" data-nav="find">Find grants</a></li>
           <li><a href="/chat.html?mode=nofo" data-nav="nofo">Assess a project</a></li>
-          <li><a href="/chat.html?mode=search" data-nav="search">Ask about grants</a></li>
         </ul>
       </nav>
     </div>
@@ -26,7 +25,6 @@
     <div class="mode-switch" role="tablist" aria-label="Chat mode">
       <button type="button" role="tab" id="modeFindTab" class="active" aria-selected="true" aria-controls="findPanel">Find grants</button>
       <button type="button" role="tab" id="modeNofoTab" aria-selected="false" aria-controls="nofoPanel">Assess a project</button>
-      <button type="button" role="tab" id="modeSearchTab" aria-selected="false" aria-controls="searchPanel">Ask about grants</button>
     </div>
 
     <div id="findPanel" role="tabpanel" aria-labelledby="modeFindTab">
@@ -79,22 +77,6 @@
       <div id="findResults" aria-live="polite" aria-busy="false"></div>
     </div>
 
-    <div id="searchPanel" role="tabpanel" aria-labelledby="modeSearchTab" hidden>
-      <div class="card">
-        <h2>Ask About DOT Grants</h2>
-        <p class="mb-2">Ask in plain English — e.g. "transit grants over $1M for cities" or a follow-up like "what about for tribal governments instead?"</p>
-
-        <div id="chatMessages" class="chat-messages"></div>
-
-        <form id="chatForm" class="chat-form">
-          <div class="form-group mb-2">
-            <input type="text" id="chatInput" name="chatInput" placeholder="Ask about grants, eligibility, or deadlines..." autocomplete="off" required>
-          </div>
-          <button type="submit">Send</button>
-        </form>
-      </div>
-    </div>
-
     <div id="nofoPanel" role="tabpanel" aria-labelledby="modeNofoTab" hidden>
       <div class="card">
         <div class="collapsible" id="nofoIntro" data-collapsible><div class="collapsible-inner">
@@ -143,7 +125,7 @@
     </div>
   </div>
 
-  <!-- Slide-out tray of sample project descriptions. Closed by default; shown on Find grants and Assess only. -->
+  <!-- Slide-out tray of sample project descriptions. Closed by default; shown on Find grants and Assess. -->
   <aside id="samplesDrawer" class="tray tray--samples" aria-label="Sample project descriptions">
     <button type="button" id="samplesTab" class="tray-tab" aria-expanded="false" aria-controls="samplesPanel" title="Sample project descriptions to copy">
       <span class="tray-tab-label">Samples</span>
@@ -176,8 +158,6 @@
   </aside>
 
   <script src="/js/common.js"></script>
-  <script src="/js/api.js"></script>
-  <script src="/js/chat.js"></script>
   <script src="/js/discover-util.js"></script>
   <script src="/js/discover.js"></script>
   <script src="/js/progress-panel.js"></script>

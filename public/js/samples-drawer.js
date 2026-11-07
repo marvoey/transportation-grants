@@ -1,7 +1,7 @@
 /**
  * Slide-out tray of sample project descriptions (data: sample-projects.js). Closed by default. A small tab on the
- * right edge opens and closes it. It is available on the Find grants and Assess tabs only: on the original chat tab it
- * is hidden, and it closes if you switch there. Open/close and copy behavior comes from drawer-kit.js.
+ * right edge opens and closes it, on both the Find grants and Assess tabs. Open/close and copy behavior comes from
+ * drawer-kit.js.
  *
  * Every string is rendered with textContent.
  */
@@ -57,11 +57,6 @@ var tray = null;
 
     projects.forEach(function (project) { els.list.appendChild(renderItem(project)); });
     tray = K.create({ drawer: els.drawer, tab: els.tab, panel: els.panel, close: els.close });
-
-    // Available on Find grants and Assess; hidden (and closed) on the original chat tab.
-    function applyMode(mode) { tray.setAvailable(mode !== 'search'); }
-    applyMode(document.body.dataset.chatMode || 'find');
-    document.addEventListener('chatmodechange', function (event) { applyMode(event.detail && event.detail.mode); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

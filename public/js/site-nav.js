@@ -8,7 +8,7 @@
 (function () {
   'use strict';
 
-  var TAB_IDS = { find: 'modeFindTab', nofo: 'modeNofoTab', search: 'modeSearchTab' };
+  var TAB_IDS = { find: 'modeFindTab', nofo: 'modeNofoTab' };
   var links = Array.prototype.slice.call(document.querySelectorAll('nav a[data-nav]'));
   var onChatPage = !!document.getElementById(TAB_IDS.find);
 
