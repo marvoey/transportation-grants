@@ -3,53 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DOT Grant Search - Find Transportation Funding</title>
+  <title>GrantFlow - Find Transportation Funding</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/theme-afs.css">
+  <link rel="stylesheet" href="/css/home.css">
 </head>
 <body>
   <header>
     <div class="container">
-      <h1>DOT Grant Search</h1>
-      <nav>
+      <h1><a href="/" class="brand-link"><img src="/img/logos/accenture-logo.svg" alt="Accenture" width="122" height="32"><span class="brand-product">Grant<span class="brand-flow">Flow</span></span></a></h1>
+      <nav aria-label="Main">
         <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/search.html">Search Grants</a></li>
-          <li><a href="/eligibility.html">Check Eligibility</a></li>
-          <li><a href="/deadlines.html">Deadlines</a></li>
-          <li><a href="/chat.html">Chat</a></li>
+          <li><a href="/" data-nav="home">Home</a></li>
+          <li><a href="/chat.html" data-nav="find">Find grants</a></li>
+          <li><a href="/chat.html?mode=nofo" data-nav="nofo">Assess a project</a></li>
+          <li><a href="/chat.html?mode=search" data-nav="search">Ask about grants</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <div class="container">
-    <div class="card text-center">
-      <h2>Find U.S. Department of Transportation Grant Opportunities</h2>
-      <p>Search active federal grants for states, cities, counties, tribal governments, MPOs, and transit agencies.</p>
+  <main>
+    <section class="home-hero" aria-labelledby="homeTitle">
+      <div class="container">
+        <h2 id="homeTitle">Know what a funding notice means for your project before you apply</h2>
+        <p class="home-lead">GrantFlow helps state and local transportation agencies find federal funding opportunities and understand what each notice requires of them, with every finding linked back to the official source.</p>
+        <div class="home-actions">
+          <a class="home-btn home-btn--primary" href="/chat.html">Find grants</a>
+          <a class="home-btn home-btn--secondary" href="/chat.html?mode=nofo">Assess a project</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <section aria-labelledby="waysTitle">
+        <h2 id="waysTitle" class="home-section-title">Three ways to work</h2>
+        <div class="card-grid">
+          <div class="card">
+            <h3>Find grants</h3>
+            <p>Describe your project in your own words and answer a few short questions. You get a short list of U.S. Department of Transportation opportunities from Simpler.Grants.gov, with the reasons each one may fit and what to watch out for.</p>
+            <a class="home-btn home-btn--primary" href="/chat.html">Find grants</a>
+          </div>
+
+          <div class="card">
+            <h3>Assess a project</h3>
+            <p>Choose a funding notice that has been prepared, describe your project, and get a preliminary read: what the notice supports, where it may conflict, what you still need to prepare, and what is unknown. Each finding points to its source document.</p>
+            <a class="home-btn home-btn--primary" href="/chat.html?mode=nofo">Assess a project</a>
+          </div>
+
+          <div class="card">
+            <h3>Ask about grants</h3>
+            <p>Ask plain-English questions about transportation grants, such as "transit grants over $1M for cities", and follow up as you go.</p>
+            <a class="home-btn home-btn--primary" href="/chat.html?mode=search">Ask about grants</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-principles" aria-labelledby="principlesTitle">
+        <h2 id="principlesTitle" class="home-section-title">How GrantFlow stays reliable</h2>
+        <p class="home-section-intro">GrantFlow is built on GovRail, an approach that pairs a language model with plain, checkable code. The model interprets and guides; code enforces the rules; people make the decisions.</p>
+        <ul class="home-principle-list">
+          <li><strong>Model reasoning</strong> Reads your project description and the notice's complex language, asks clarifying questions and explains what it found.</li>
+          <li><strong>Deterministic checks</strong> Apply explicit rules in code, so numbers and conditions are checked rather than guessed.</li>
+          <li><strong>Evidence grounding</strong> Links each finding to the official document and keeps missing information separate from real conflicts.</li>
+          <li><strong>Guided questions</strong> Use the gaps it finds to decide what to ask or investigate next.</li>
+        </ul>
+        <div class="nofo-banner" role="note">
+          <strong>Preliminary guidance only.</strong> GrantFlow does not make eligibility determinations or funding decisions. Confirm anything that matters with the program office.
+        </div>
+      </section>
     </div>
-
-    <div class="card-grid">
-      <div class="card">
-        <h3>🔍 Search Grants</h3>
-        <p>Find grants by applicant type, funding amount, keywords, and deadlines.</p>
-        <a href="/search.html"><button>Start Searching</button></a>
-      </div>
-
-      <div class="card">
-        <h3>✓ Check Eligibility</h3>
-        <p>Determine if your organization qualifies for DOT grant programs.</p>
-        <a href="/eligibility.html"><button>Check Now</button></a>
-      </div>
-
-      <div class="card">
-        <h3>📅 Track Deadlines</h3>
-        <p>Monitor upcoming grant deadlines and never miss an opportunity.</p>
-        <a href="/deadlines.html"><button>View Deadlines</button></a>
-      </div>
-    </div>
-  </div>
+  </main>
 
   <script src="/js/common.js"></script>
+  <script src="/js/site-nav.js"></script>
 </body>
 </html>

@@ -1,0 +1,78 @@
+/* Home page layout. Loaded only by index.html, after style.css and theme-afs.css (uses its --afs-* tokens). */
+
+.home-hero {
+  background: var(--afs-purple-900);
+  color: var(--afs-white);
+  padding: 4rem 0 4.5rem;
+  margin-top: -2rem; /* header has a 2rem bottom margin in style.css; let the hero sit against it */
+  border-bottom: 4px solid var(--afs-purple);
+}
+.home-hero h2 {
+  font-family: var(--afs-font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  max-width: 22ch;
+  margin-bottom: 1.25rem;
+}
+.home-lead {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  max-width: 56ch;
+  color: #ece4f4;
+  margin-bottom: 2rem;
+}
+.home-actions { display: flex; flex-wrap: wrap; gap: 1rem; }
+
+/* Link buttons: same look as the theme's buttons, but real anchors. */
+.home-btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: var(--afs-radius);
+  transition: background-color 0.35s cubic-bezier(0.85, 0, 0, 1), color 0.35s;
+}
+.home-btn--primary { background: var(--afs-purple-800); color: var(--afs-white); }
+.home-btn--primary:hover { background: var(--afs-purple-600); color: var(--afs-white); }
+.home-hero .home-btn--primary { background: var(--afs-purple); }
+.home-hero .home-btn--primary:hover { background: var(--afs-purple-200); color: var(--afs-purple-900); }
+.home-btn--secondary { background: transparent; color: var(--afs-white); border-color: var(--afs-white); }
+.home-btn--secondary:hover { background: var(--afs-white); color: var(--afs-purple-900); }
+
+.home-section-title {
+  font-family: var(--afs-font-display);
+  font-weight: 400;
+  font-size: 1.75rem;
+  margin: 3rem 0 1.25rem;
+}
+.home-section-intro { max-width: 70ch; margin-bottom: 1.25rem; color: var(--afs-ink-2); }
+
+.card-grid .card { display: flex; flex-direction: column; }
+.card-grid .card p { margin-bottom: 1.25rem; }
+.card-grid .card .home-btn { margin-top: auto; align-self: flex-start; }
+
+.home-principles { margin-bottom: 3rem; }
+.home-principle-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.home-principle-list li {
+  background: var(--afs-white);
+  border: 1px solid var(--afs-line-soft);
+  border-left: 0.5rem solid var(--afs-purple);
+  padding: 1rem 1.25rem;
+}
+.home-principle-list strong { display: block; margin-bottom: 0.25rem; color: var(--afs-purple-800); }
+
+@media (max-width: 600px) {
+  .home-hero { padding: 2.5rem 0 3rem; }
+  .home-actions { flex-direction: column; align-items: stretch; }
+  .home-btn { text-align: center; }
+}

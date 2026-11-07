@@ -12,9 +12,9 @@
  *              #101010/#202020, greys #616160/#a2a2a0/#e3e3df, accents #ff50a0
  *              pink, #ff7800 orange, #feb149 yellow. Square corners (radius 0),
  *              flat buttons, 14px/500 button text. Fonts Graphik (sans) and GT
- *              Sectra Fine (serif), both licensed: not bundled, Georgia/system
- *              fallbacks are used instead.
- *   Simpler    Public Sans (open source), warm greys #171716/#454545/#cac9c0/
+ *              Sectra Fine (serif), both licensed: not bundled, used only when
+ *              installed, with the same Arial/Palatino fallbacks the site uses.
+ *   Simpler    Warm greys #171716/#454545/#cac9c0/
  *              #e6e6e2/#f0f0ec, green #286846/#204e34/#2e8367/#dbf6ed, alert
  *              boxes with a thick left border (warning #face00, error #d54309,
  *              success #00a91c), white header with a colored bottom rule,
@@ -26,12 +26,13 @@
  * Accenture property; add marks only with brand approval.
  */
 
-/* Optional: if Public Sans is installed locally it is used; nothing is downloaded. */
-@font-face {
-  font-family: 'Public Sans';
-  src: local('Public Sans'), local('PublicSans-Regular');
-  font-weight: 400;
-}
+/* Accenture's own typefaces. They are licensed, so they are NOT bundled: they are used
+ * only if installed on the viewer's machine. To ship them, add licensed .woff2 files under
+ * public/fonts/ and add url('/fonts/<file>.woff2') format('woff2') after each local(). */
+@font-face { font-family: 'Graphik'; src: local('Graphik'), local('Graphik-Regular'); font-weight: 400; }
+@font-face { font-family: 'Graphik'; src: local('Graphik Medium'), local('Graphik-Medium'); font-weight: 500; }
+@font-face { font-family: 'Graphik'; src: local('Graphik Semibold'), local('Graphik-Semibold'); font-weight: 600; }
+@font-face { font-family: 'GT Sectra Fine'; src: local('GT Sectra Fine'), local('GT-Sectra-Fine'); font-weight: 400; }
 
 :root {
   /* Brand: Accenture purples */
@@ -70,8 +71,9 @@
   /* Shape and type */
   --afs-radius: 0;                /* Accenture: square */
   --afs-radius-pill: 99rem;       /* Simpler: tags */
-  --afs-font-sans: 'Public Sans', Graphik, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --afs-font-display: 'GT Sectra Fine', Georgia, Palatino, 'Times New Roman', serif;
+  /* Same stacks accenture.com uses: Graphik / GT Sectra Fine, then Arial/Helvetica and Palatino */
+  --afs-font-sans: Graphik, Arial, Helvetica, sans-serif;
+  --afs-font-display: 'GT Sectra Fine', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
   --afs-font-mono: 'Roboto Mono', ui-monospace, Consolas, 'Courier New', monospace;
 }
 
@@ -249,3 +251,35 @@ button.tray-close:hover { background: var(--afs-purple-50); color: var(--afs-pur
 .find-actor-code,  .find-origin-rule  { background: var(--afs-green-100); color: var(--afs-green-700); }
 .find-actor-you                       { background: var(--afs-line-soft); color: var(--afs-ink); }
 .find-origin-choice                   { background: var(--afs-warn-bg); color: var(--afs-warn-ink); }
+
+/* ---- Main navigation: current page ---------------------------------------- */
+nav a[aria-current="page"] {
+  font-weight: 700;
+  color: var(--afs-purple-800);
+  border-bottom-color: var(--afs-purple);
+}
+header .brand-link { color: inherit; text-decoration: none; }
+header .brand-link:hover { color: var(--afs-purple-800); }
+
+@media (max-width: 600px) {
+  header .container { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  nav ul { flex-wrap: wrap; gap: 0.25rem 1rem; }
+  nav a { padding: 0.5rem 0.25rem; }
+}
+
+/* ---- Header logo: Accenture logo + product name -------------------------- */
+/* Baseline alignment: the image's bottom edge is the Accenture wordmark's baseline, so the product
+ * name's text baseline lines up with it. (Centering would include the ">" above the "t" and sink the wordmark.) */
+header .brand-link { display: inline-flex; align-items: baseline; gap: 1rem; line-height: 1; }
+header .brand-link img { display: block; height: 32px; width: auto; }
+/* Wordmark styled like the GrantFlow logo: bold sans, "Grant" in ink, "Flow" in core purple. */
+header .brand-product {
+  font-family: var(--afs-font-sans);
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--afs-ink);
+  padding-left: 1rem;
+  border-left: 1px solid var(--afs-line);
+}
+header .brand-flow { color: var(--afs-purple); }

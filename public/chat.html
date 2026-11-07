@@ -3,21 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat - DOT Grant Search</title>
+  <title>Chat - GrantFlow</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/theme-afs.css">
 </head>
 <body>
   <header>
     <div class="container">
-      <h1>DOT Grant Search</h1>
-      <nav>
+      <h1><a href="/" class="brand-link"><img src="/img/logos/accenture-logo.svg" alt="Accenture" width="122" height="32"><span class="brand-product">Grant<span class="brand-flow">Flow</span></span></a></h1>
+      <nav aria-label="Main">
         <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/search.html">Search Grants</a></li>
-          <li><a href="/eligibility.html">Check Eligibility</a></li>
-          <li><a href="/deadlines.html">Deadlines</a></li>
-          <li><a href="/chat.html">Chat</a></li>
+          <li><a href="/" data-nav="home">Home</a></li>
+          <li><a href="/chat.html" data-nav="find">Find grants</a></li>
+          <li><a href="/chat.html?mode=nofo" data-nav="nofo">Assess a project</a></li>
+          <li><a href="/chat.html?mode=search" data-nav="search">Ask about grants</a></li>
         </ul>
       </nav>
     </div>
@@ -189,6 +188,7 @@
   <script src="/js/answer-suggestions.js"></script>
   <script src="/js/answers-drawer.js"></script>
   <script src="/js/nofo-util.js"></script>
+  <script src="/js/site-nav.js"></script>
   <script src="/js/nofo.js"></script>
   <script src="/js/intro-collapse.js"></script>
 </body>
