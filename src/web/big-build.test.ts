@@ -176,11 +176,10 @@ describe('claims discipline', () => {
     expect(html).toContain('class="calc-tag">Illustrative model');
   });
 
-  it('keeps the preliminary disclaimer in the footer, outside the slides', () => {
+  it('keeps the footer limited to the home link (the preliminary disclaimer was removed on purpose)', () => {
     const footer = /<footer class="deck-foot"[\s\S]*?<\/footer>/.exec(html)?.[0] ?? '';
-    expect(footer).toContain('Preliminary guidance for human review');
-    expect(footer).toContain('Not an official eligibility determination');
-    expect(read('public/css/big-build.css')).not.toMatch(/\.deck-foot-text\s*\{[^}]*display:\s*none/);
+    expect(footer).toContain('href="/"');
+    expect(footer).not.toContain('Preliminary guidance for human review');
   });
 
   it('calls BUILD an archived historical demonstration, not open funding', () => {

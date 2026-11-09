@@ -92,8 +92,7 @@ body { overflow: hidden; }
   display: flex; align-items: center; gap: 24px; padding: 0 20px;
   background: var(--purple-900); color: #ece4f4; font-size: clamp(12px, 0.95vw, 18px);
 }
-.deck-foot-text { flex: 1; }
-.deck-home { color: var(--purple-200); text-decoration: none; border-bottom: 1px solid currentColor; margin-right: 150px; }
+.deck-home { color: var(--purple-200); text-decoration: none; border-bottom: 1px solid currentColor; margin-left: auto; margin-right: 150px; }
 .deck-home:hover { color: #fff; }
 [data-mode="record"] .deck-home { display: none; }
 [data-mode="record"] .deck-foot { justify-content: center; }
