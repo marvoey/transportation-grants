@@ -19,7 +19,8 @@
     "nofo:extract": "tsx src/nofo/extraction/cli.ts",
     "nofo:eval": "tsx src/nofo/eval/run-eval.ts",
     "nofo:assess": "tsx src/nofo/assessment/cli.ts",
-    "nofo:find": "tsx src/nofo/discovery/cli.ts"
+    "nofo:find": "tsx src/nofo/discovery/cli.ts",
+    "presentation:vendor": "node scripts/copy-reveal.mjs"
   },
   "keywords": [
     "mcp",
@@ -42,6 +43,7 @@
     "mammoth": "^1.13.0",
     "pdfjs-dist": "^6.5.438",
     "playwright": "^1.64.1",
+    "reveal.js": "6.0.2",
     "unzipper": "^0.10.0",
     "xml2js": "^0.6.0",
     "zod": "^3.23.0"

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="audience">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GovRail + GrantFlow AI - Big Build walkthrough</title>
+  <link rel="stylesheet" href="/vendor/reveal/reset.css">
+  <link rel="stylesheet" href="/vendor/reveal/reveal.css">
+  <link rel="stylesheet" href="/css/big-build.css">
+</head>
+<body>
+  <!--
+    Big Build presentation. Presenter-controlled Reveal.js deck, served locally (no CDN).
+      /big-build.html                 audience view
+      /big-build.html?mode=presenter  adds the presenter checklist slide and timing badges; press S for speaker notes
+      /big-build.html?mode=record     clean screen capture: no controls, no animation, no presenter material
+    Disclaimers stay visible in every mode. See docs/BIG_BUILD_PRESENTATION.md.
+  -->
+  <a class="skip-link" href="#main-deck">Skip to the slides</a>
+
+  <div class="reveal" id="main-deck">
+    <div class="slides">
+
+      <!-- 1. The government problem -->
+      <section id="problem" class="slide slide--light" aria-labelledby="problem-title">
+        <div class="slide-head">
+          <p class="kicker">1 &middot; The government problem</p>
+          <p class="timing presenter-only">0:00&ndash;0:30 &middot; 30 s</p>
+        </div>
+        <h2 id="problem-title">Before applying, staff must work out what a long notice means for <em>their</em> project.</h2>
+
+        <div class="problem-stage">
+          <div class="problem-one">
+            <div class="doc-mock" role="img" aria-label="Illustration of a long funding notice: a page of text lines">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div>
+              <p class="stat-line">One notice. One project.</p>
+              <p class="stat-sub fragment" data-fragment-index="1">That can consume an entire workday.</p>
+            </div>
+          </div>
+
+          <div class="problem-many fragment" data-fragment-index="2">
+            <div class="tile-grid" id="applicantGrid" role="img" aria-label="Illustration: many applicants working toward the same deadline"></div>
+            <p class="stat-line">&hellip;multiplied across hundreds of applicants, one deadline.</p>
+            <p class="illustration-note">Illustration only. Application volume varies by program.</p>
+          </div>
+        </div>
+
+        <p class="problem-fed fragment" data-fragment-index="3">Federal administrators face the other side: concentrated application volumes, clarification requests and potentially avoidable rework.</p>
+        <p class="problem-question fragment" data-fragment-index="4">What if we could reduce that burden on both sides?</p>
+
+        <aside class="notes">
+          <p><strong>0:00&ndash;0:30 &middot; Talking head, then this slide.</strong></p>
+          <p>"Federal grants help state and local governments deliver critical infrastructure. But before applying, staff must interpret complex funding requirements and determine how they apply to their specific projects."</p>
+          <p>"That can consume an entire workday. Now multiply the effort across hundreds of applicants working toward the same deadline."</p>
+          <p>"Federal administrators face the other side of that complexity: concentrated application volumes, clarification requests, and potentially avoidable rework."</p>
+          <p>"What if we could reduce that burden on both sides?"</p>
+          <p><strong>Cue:</strong> advance fragments with the lines. One project (left), then the funding round (grid), then the federal side, then the question.</p>
+          <p><strong>Guardrail:</strong> do NOT claim a percentage of applications arrive in the last week, and do not imply volume is uniform across programs. The document and tile graphics are illustrations, not data.</p>
+        </aside>
+      </section>
+
+      <!-- 2. GovRail: the core innovation (general architecture) -->
+      <section id="govrail" class="slide slide--light" aria-labelledby="govrail-title">
+        <div class="slide-head">
+          <p class="kicker">2 &middot; The innovation</p>
+          <p class="timing presenter-only">0:30&ndash;1:00 &middot; 30 s</p>
+        </div>
+        <h2 id="govrail-title"><span class="gf gr">Gov<span class="gf-flow">Rail</span></span>: an evidence-grounded AI guidance harness</h2>
+
+        <figure class="arch arch--general">
+          <div class="arch-frame">
+            <img src="/img/big-build/govrail-architecture-general.png" width="1672" height="941"
+                 alt="GovRail architecture, general. Inputs on the left: user goals and context, source documents such as notices, regulations and guidance, and workflow rules such as explicit criteria, thresholds and required fields. In the center, GovRail combines four parts around an orchestration loop: LLM reasoning, deterministic code, evidence grounding and guided interaction. Outputs on the right: structured findings, source-backed evidence, next-step guidance and human-in-the-loop decisions. Example workflow types along the bottom: grant assessment, regulatory compliance, procurement review and program eligibility.">
+            <span class="spot spot--llm fragment fade-in-then-out" data-fragment-index="1" aria-hidden="true"></span>
+            <span class="spot spot--code fragment fade-in-then-out" data-fragment-index="2" aria-hidden="true"></span>
+            <span class="spot spot--evidence fragment fade-in-then-out" data-fragment-index="3" aria-hidden="true"></span>
+            <span class="spot spot--guided fragment fade-in-then-out" data-fragment-index="4" aria-hidden="true"></span>
+          </div>
+          <figcaption class="spot-captions" aria-live="polite">
+            <span class="spot-caption spot-caption--idle">Hybrid AI guidance for complex, requirements-driven workflows. Example workflows shown are potential uses, not implemented applications.</span>
+            <span class="spot-caption fragment fade-in-then-out" data-fragment-index="1"><strong>LLM reasoning</strong> interprets language, understands context and explains findings.</span>
+            <span class="spot-caption fragment fade-in-then-out" data-fragment-index="2"><strong>Deterministic code</strong> applies explicit rules, validates facts and structures results.</span>
+            <span class="spot-caption fragment fade-in-then-out" data-fragment-index="3"><strong>Evidence grounding</strong> connects findings to their sources and preserves traceability.</span>
+            <span class="spot-caption fragment" data-fragment-index="4"><strong>Guided interaction</strong> identifies missing information and asks targeted next questions.</span>
+          </figcaption>
+        </figure>
+
+        <aside class="notes">
+          <p><strong>0:30&ndash;1:00 &middot; General GovRail architecture, full screen.</strong> Advance one fragment at a time: LLM Reasoning, then Deterministic Code, then Evidence Grounding, then Guided Interaction.</p>
+          <p>"We developed GovRail, an evidence-grounded AI guidance harness for complex, requirements-driven workflows."</p>
+          <p>"It combines the reasoning capabilities of large language models with the reliability of deterministic code."</p>
+          <p>"AI interprets language and context. Code applies explicit rules, validates facts, and controls the process. Evidence grounding links findings back to their sources, while guided questions help resolve what's missing."</p>
+          <p>"The result is structured guidance that supports human decisions rather than replacing them."</p>
+          <p><strong>Say "harness".</strong> Do not say "autonomous agent platform", and make no MCP or tool-calling claim. The four example workflow types in the diagram are potential extensions; do not present them as built. GovRail is not an independently packaged SDK, service or production platform.</p>
+        </aside>
+      </section>
+
+      <!-- 3. GrantFlow: the working proof of concept -->
+      <section id="grantflow" class="slide slide--light" aria-labelledby="grantflow-title">
+        <div class="slide-head">
+          <p class="kicker">3 &middot; The working proof of concept</p>
+          <p class="timing presenter-only">1:00&ndash;1:25 &middot; 25 s</p>
+        </div>
+        <h2 id="grantflow-title"><span class="gf">Grant<span class="gf-flow">Flow</span></span> AI: a working proof of concept built on <span class="gf gr">Gov<span class="gf-flow">Rail</span></span></h2>
+
+        <figure class="arch arch--app">
+          <div class="arch-frame">
+            <img src="/img/big-build/govrail-grantflow-architecture.png" width="1752" height="897"
+                 alt="GovRail architecture applied to grants. Inputs: project information (project details, applicant, funding request) and the funding notice with its official attachments. In the center, GovRail pairs LLM reasoning, which interprets requirements and explains findings, with deterministic code, which applies explicit rules and validates facts such as limits, dates and eligibility, supported by evidence grounding, validation and safeguards, structured assessment and guided questions. Outputs: requirement findings (supported, potential conflict, unknown, specialist review), source evidence with citations and quotations from official documents, and next steps with targeted questions and preparation guidance. Along the bottom, GrantFlow AI, a working proof of concept built on GovRail, offers two workflows: Find Grants and Assess a Project.">
+            <span class="spot spot--find fragment fade-in-then-out" data-fragment-index="1" aria-hidden="true"></span>
+            <span class="spot spot--assess fragment" data-fragment-index="2" aria-hidden="true"></span>
+          </div>
+          <figcaption class="spot-captions" aria-live="polite">
+            <span class="spot-caption spot-caption--idle"><span class="gf gr">Gov<span class="gf-flow">Rail</span></span> is the underlying approach. <span class="gf">Grant<span class="gf-flow">Flow</span></span> is the application we demonstrate.</span>
+            <span class="spot-caption fragment fade-in-then-out" data-fragment-index="1"><strong>Find Grants:</strong> identify relevant funding opportunities for a transportation project.</span>
+            <span class="spot-caption fragment" data-fragment-index="2"><strong>Assess a Project:</strong> evaluate a project against a specific funding notice's requirements.</span>
+          </figcaption>
+        </figure>
+
+        <aside class="notes">
+          <p><strong>1:00&ndash;1:25 &middot; GovRail + GrantFlow architecture.</strong> Fragment 1 spotlights Find Grants, fragment 2 Assess a Project. Then switch to the real GrantFlow home page (slide 4 has the launch button).</p>
+          <p>"To demonstrate GovRail, we built GrantFlow AI, a working proof of concept for federal grant discovery and assessment."</p>
+          <p>"It applies this hybrid architecture across two workflows. First, it helps identify potentially relevant opportunities from the government's actual project. Then, more importantly, it guides applicants through assessing that project against a funding notice's requirements."</p>
+          <p>"Here's how it works."</p>
+          <p><strong>Note on the script:</strong> the brief's line reads "from the government's actual project"; the applicant is a state or local agency describing <em>their</em> project, so consider saying "from the agency's project description" when you record.</p>
+          <p><strong>Guardrail:</strong> GovRail = approach. GrantFlow = demonstrated application. Do not claim independent SDK-level reusability; the MVP shows shared architectural principles across two workflows.</p>
+        </aside>
+      </section>
+
+      <!-- 4. Project-first discovery -->
+      <section id="find-grants" class="slide slide--light" aria-labelledby="find-title">
+        <div class="slide-head">
+          <p class="kicker">4 &middot; Project-first discovery</p>
+          <p class="timing presenter-only">1:25&ndash;1:50 &middot; 25 s</p>
+        </div>
+        <h2 id="find-title">Start with the transportation project, not a program name or keywords.</h2>
+
+        <ol class="steps">
+          <li><span class="step-n" aria-hidden="true">1</span><span><strong>Describe the project</strong> in your own words.</span></li>
+          <li><span class="step-n" aria-hidden="true">2</span><span><strong>Answer a few short questions</strong> that clarify the project facts.</span></li>
+          <li><span class="step-n" aria-hidden="true">3</span><span><strong>Get a short list</strong> of possible matches, with the reasons each one may fit.</span></li>
+        </ol>
+
+        <div class="split">
+          <div class="split-card split-card--model">
+            <h3>Language model</h3>
+            <p>Helps interpret the description and clarify the relevant project facts.</p>
+          </div>
+          <div class="split-card split-card--code">
+            <h3>Deterministic code</h3>
+            <p>Ranks candidate opportunities and explains their potential relevance.</p>
+          </div>
+        </div>
+
+        <p class="chip chip--caution">Possible matches, not eligibility determinations.</p>
+
+        <div class="launch-row">
+          <a class="launch launch--secondary" href="/chat.html" target="_blank" rel="noopener noreferrer">Open GrantFlow: Find grants <span aria-hidden="true">&#8599;</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+          <p class="launch-hint">Opens in a new tab. Return to this tab to continue the walkthrough.</p>
+        </div>
+
+        <p class="capture-slot presenter-only">Presenter: use the live Find grants screen with the fictional project, or an authentic pre-captured run labelled as recorded. No capture has been added to this deck.</p>
+
+        <aside class="notes">
+          <p><strong>1:25&ndash;1:50 &middot; Cut to the real Find grants screen.</strong> Use a fictional but realistic project (e.g. sample 1 in <code>docs/NOFO_TEST_PROJECTS.md</code>). Paste prewritten text; show one clarification and the resulting shortlist if available. Do not spend 30 seconds waiting on a search: if it is slow, use a previously captured authentic run and label it "recorded".</p>
+          <p>"GrantFlow starts with the transportation project, not a grant program or set of keywords."</p>
+          <p>"The language model helps interpret the description and clarify the relevant project facts. Deterministic ranking code then evaluates candidate opportunities and explains their potential relevance."</p>
+          <p>"But discovery is just the entry point. The real challenge is understanding what a specific funding notice means for the project."</p>
+          <p><strong>Guardrail:</strong> results are <em>possible matches</em>, not eligibility guarantees, rankings of competitiveness or recommendations.</p>
+        </aside>
+      </section>
+
+      <!-- 5. Requirements assessment (the centerpiece) -->
+      <section id="assess" class="slide slide--light" aria-labelledby="assess-title">
+        <div class="slide-head">
+          <p class="kicker">5 &middot; Requirements assessment</p>
+          <p class="timing presenter-only">1:50&ndash;3:15 &middot; 85 s</p>
+        </div>
+        <h2 id="assess-title">What does this notice mean for <em>our</em> project?</h2>
+
+        <ol class="flow" aria-label="How an assessment is built">
+          <li>Official funding notice and attachments</li>
+          <li>Structured requirements, each linked to its source</li>
+          <li>Checked against the project facts you give</li>
+          <li>Preliminary findings and targeted questions</li>
+        </ol>
+
+        <div class="assess-grid">
+          <div class="split-card split-card--code">
+            <h3>Checked by code</h3>
+            <p>Explicit conditions such as a funding limit or a matching requirement. The numbers are compared to the stated rule, with no model guessing.</p>
+          </div>
+          <div class="split-card split-card--model">
+            <h3>Interpreted by the model, always provisional</h3>
+            <p>Requirements that depend on nuanced language and project context. The application controls the permitted findings and keeps the uncertainty.</p>
+          </div>
+          <div class="split-card split-card--evidence">
+            <h3>Evidence and questions</h3>
+            <p>Each finding links to the official source. Missing information becomes a follow-up question, not an invented answer.</p>
+          </div>
+        </div>
+
+        <ul class="legend" aria-label="Finding statuses">
+          <li><span class="badge badge--ok">Appears supported</span></li>
+          <li><span class="badge badge--conflict">Possible conflict</span></li>
+          <li><span class="badge badge--gap">Preparation gap</span></li>
+          <li><span class="badge badge--unknown">Unknown</span></li>
+        </ul>
+        <p class="legend-note">Unknown is not a rejection. A preparation gap is not an eligibility conflict. Everything is preliminary and for human review.</p>
+
+        <div class="launch-row">
+          <a class="launch launch--primary" id="launchLive" href="/chat.html?mode=nofo&amp;opportunity=4d8f5775-ff01-4a6f-ab4e-b125899043b3" target="_blank" rel="noopener noreferrer">Launch Live GrantFlow <span aria-hidden="true">&#8599;</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+          <p class="launch-hint">Opens Assess a project in a new tab with the FY2026 BUILD notice selected. This is an archived notice used as a historical demonstration, not a claim that funding is open. Return to this tab to continue.</p>
+        </div>
+
+        <aside class="notes">
+          <p><strong>1:50&ndash;3:15 &middot; The main demonstration. Click Launch Live GrantFlow.</strong> Show the prepared notice's source-package coverage line briefly. Enter the fictional project, answer one real follow-up question truthfully, then walk the findings. If the live APIs are unavailable, show a clearly labelled authentic recording or previously captured real output. Never fake a result and never call a recording "live".</p>
+          <p>"This is where the GovRail approach becomes especially valuable."</p>
+          <p>"A federal funding notice may contain dozens of pages of requirements, restrictions, and supporting instructions. GrantFlow processes available official documents into structured requirements that can be evaluated against a particular project."</p>
+          <p>"I'll describe the project and answer a targeted question about the applicant, funding request, or readiness."</p>
+          <p><em>[Show an actual follow-up question. Provide a truthful fictional-project answer.]</em></p>
+          <p>"Notice that GrantFlow distinguishes conditions that appear supported, potential conflicts, preparation gaps, and information that is still unknown."</p>
+          <p><em>[Show a real deterministic finding, ideally a monetary threshold or cost-sharing rule.]</em></p>
+          <p>"For explicit conditions, such as a funding limit or matching requirement, deterministic code checks the facts against the stated rule. There's no reason to ask a language model to guess whether a number meets a threshold."</p>
+          <p><em>[Show a real LLM-interpreted finding, only if this assessment actually contains one.]</em></p>
+          <p>"Other requirements depend on nuanced language and project context. That's where constrained LLM interpretation helps, while the application still controls the permissible findings and preserves uncertainty."</p>
+          <p><em>[Open the official source quotation / document page for a real finding.]</em></p>
+          <p>"Each finding links back to the official source, so users can inspect the evidence. And when information is missing, GrantFlow asks targeted follow-up questions instead of inventing a confident answer."</p>
+          <p>"That's GovRail in practice: reasoning, deterministic checks, evidence, and guidance working together, with the applicant in control."</p>
+          <p><strong>Guardrails:</strong> model interpretation is provisional. Unknown is not a rejection. A preparation gap is not an eligibility conflict. The software evaluates structured requirements and the facts the applicant gave; it does not certify eligibility, submit applications or review federal submissions. Source coverage is limited to the documents the API listed (plus curated additions): say so if coverage is partial. Narrate only restrictions that are in the ingested source package (FAQs, amendments and Q&amp;A are not included unless added as supplemental sources).</p>
+        </aside>
+      </section>
+
+      <!-- 6. Impact at scale -->
+      <section id="impact" class="slide slide--light" aria-labelledby="impact-title">
+        <div class="slide-head">
+          <p class="kicker">6 &middot; Productivity at funding-cycle scale</p>
+          <p class="timing presenter-only">3:15&ndash;3:45 &middot; 30 s</p>
+        </div>
+        <h2 id="impact-title" class="visually-hidden">Modeled productivity impact</h2>
+        <p class="model-banner" role="note"><strong>Illustrative model &mdash; not measured results.</strong></p>
+
+        <div class="numerals">
+          <div class="numeral">
+            <p class="numeral-value" id="numHours">6&ndash;10 h &rarr; 2&ndash;3 h</p>
+            <p class="numeral-label">per preliminary assessment, manual vs. projected with GrantFlow</p>
+          </div>
+          <div class="numeral">
+            <p class="numeral-value"><span id="numPercent">~70</span>%</p>
+            <p class="numeral-label">less active assessment effort (midpoints: 8 h to 2.5 h)</p>
+          </div>
+          <div class="numeral">
+            <p class="numeral-value" id="numApps">300</p>
+            <p class="numeral-label">applications in one illustrative funding round</p>
+          </div>
+          <div class="numeral">
+            <p class="numeral-value"><span id="numAdoption">50</span>%</p>
+            <p class="numeral-label">scenario adoption</p>
+          </div>
+          <div class="numeral numeral--key">
+            <p class="numeral-value">~<span id="numFreed">800</span> h</p>
+            <p class="numeral-label">applicant staff hours potentially freed</p>
+          </div>
+        </div>
+
+        <p class="impact-fed">Better-prepared applicants could also reduce clarification requests and avoidable rework during federal review. That is a hypothesis to validate, not a measured result.</p>
+
+        <form class="calc" id="scenarioCalc" aria-labelledby="calcTitle" novalidate>
+          <h3 id="calcTitle">Scenario calculator <span class="calc-tag">Illustrative model</span></h3>
+          <label>Applications in the round
+            <input type="number" name="applications" id="calcApps" min="1" max="5000" step="1" value="300" inputmode="numeric">
+          </label>
+          <label>Adoption (%)
+            <input type="number" name="adoption" id="calcAdoption" min="0" max="100" step="1" value="50" inputmode="decimal">
+          </label>
+          <label>Hours saved per assessment
+            <input type="number" name="hours" id="calcHours" min="0" max="40" step="0.5" value="5.5" inputmode="decimal">
+          </label>
+          <output class="calc-out" id="calcOut" for="calcApps calcAdoption calcHours" aria-live="polite"></output>
+          <button type="button" class="calc-reset" id="calcReset">Reset to defaults</button>
+        </form>
+
+        <details class="assumptions">
+          <summary>Assumptions and arithmetic</summary>
+          <ul>
+            <li>Per assessment: manual 6&ndash;10 h (midpoint 8 h) vs. projected 2&ndash;3 h (midpoint 2.5 h). Difference 5.5 h, or 68.75%, shown as ~70%.</li>
+            <li>One round: 300 applications &times; 50% adoption = 150 assisted assessments; 150 &times; 5.5 h = 825 h, shown as ~800 h.</li>
+            <li>The 300-application round is an illustrative scenario, not an average across programs.</li>
+            <li>Hours freed are potential capacity, not automatically budget savings. Preparation and verification overhead is not yet measured. These estimates need validation.</li>
+            <li>Federal side, hypothesis only: 150 assisted applicants &times; 40% assumed clarification incidence &times; 25% avoided &times; 1 h = 15 h under simplifying assumptions.</li>
+          </ul>
+        </details>
+
+        <aside class="notes">
+          <p><strong>3:15&ndash;3:45 &middot; Impact slide.</strong> Keep the "Illustrative model" banner in frame the whole time.</p>
+          <p>"Our preliminary workflow model estimates six to ten hours for a manual assessment, compared with a projected two to three hours using GrantFlow, approximately seventy percent less active effort."</p>
+          <p>"In a funding round receiving three hundred applications, if half the applicants use GrantFlow, that translates to roughly eight hundred applicant staff hours potentially freed within one funding cycle."</p>
+          <p>"Better-prepared applicants could also reduce clarification requests and avoidable rework during the federal review period. These estimates are modeled, not yet measured."</p>
+          <p><strong>Math:</strong> midpoint manual 8 h, assisted 2.5 h, difference 5.5 h, 68.75% &rarr; ~70%. 300 &times; 50% &times; 5.5 = 825 &rarr; ~800 h. Federal hypothesis: 150 &times; 40% &times; 25% &times; 1 h = 15 h under simplifying assumptions; mention verbally as a possibility only, never as proven savings.</p>
+          <p><strong>Context for the 300-application scenario:</strong> informed by historic DOT volumes (SMART FY2024 reportedly about 308 applications; RAISE FY2024 reportedly 1,048 eligible applications). Verify against the original authoritative sources before citing as fact. Not an average across all grants.</p>
+          <p><strong>Say:</strong> "modeled", "scenario-based", "potential", "subject to validation". Never "we saved 800 hours". Hours freed is capacity, not cash. The calculator shows what the model implies; it does not measure usage or achieved savings.</p>
+        </aside>
+      </section>
+
+      <!-- 7. Closing -->
+      <section id="closing" class="slide slide--dark" data-background-color="#310051" aria-labelledby="closing-title">
+        <div class="slide-head">
+          <p class="kicker">7 &middot; Closing</p>
+          <p class="timing presenter-only">3:45&ndash;4:00 &middot; 15 s</p>
+        </div>
+        <div class="closing-logos">
+          <img src="/img/logos/govrail-logo-reversed.svg" width="354" height="96" alt="GovRail">
+          <span class="closing-plus" aria-hidden="true">+</span>
+          <img src="/img/logos/grantflow-logo-reversed.svg" width="424" height="96" alt="GrantFlow AI">
+        </div>
+        <h2 id="closing-title"><span class="gf gr">Gov<span class="gf-flow">Rail</span></span> is our innovation. <span class="gf">Grant<span class="gf-flow">Flow</span></span> is the working proof of concept.</h2>
+        <p class="closing-body">Together they show how evidence-grounded AI guidance can reduce administrative complexity at scale, improve government productivity, and give people more time to deliver on their mission.</p>
+        <p class="tagline fragment" data-fragment-index="1">GovRail: grounded reasoning. GrantFlow: government productivity in action.</p>
+
+        <aside class="notes">
+          <p><strong>3:45&ndash;4:00 &middot; Back to the presenter on camera, logos on screen.</strong> Fade to the final tagline.</p>
+          <p>"GovRail is our innovation. GrantFlow is the working proof of concept."</p>
+          <p>"Together, they show how evidence-grounded AI guidance can reduce administrative complexity at scale, improve government productivity, and give people more time to deliver on their mission."</p>
+          <p><strong>Final on-screen line:</strong> "GovRail: grounded reasoning. GrantFlow: government productivity in action."</p>
+        </aside>
+      </section>
+
+      <!-- Presenter only: removed from the page unless ?mode=presenter -->
+      <section id="presenter-checklist" class="slide slide--light" data-visibility="hidden" data-presenter-slide aria-labelledby="checklist-title">
+        <div class="slide-head">
+          <p class="kicker">Presenter only</p>
+          <p class="timing presenter-only">Not part of the recorded deck</p>
+        </div>
+        <h2 id="checklist-title">Live demo preparation checklist</h2>
+        <ul class="checklist">
+          <li><label><input type="checkbox"> Prepared notice selected (FY2026 BUILD by default) and its source-package coverage line checked. If coverage is partial, show it or choose a better-prepared notice.</label></li>
+          <li><label><input type="checkbox"> At least one real citation verified: the source link opens the right page and the quotation is highlighted.</label></li>
+          <li><label><input type="checkbox"> Fictional project script written (for BUILD, the Virginia DOT samples in <code>docs/NOFO_TEST_PROJECTS.md</code>). No real client data, no CUI.</label></li>
+          <li><label><input type="checkbox"> A deterministic finding (funding limit or cost share) appears in the real assessment.</label></li>
+          <li><label><input type="checkbox"> An interpreted finding appears too. If not, skip the contrast; do not stage one.</label></li>
+          <li><label><input type="checkbox"> A real follow-up question appears and the answer you give is true for the fictional project.</label></li>
+          <li><label><input type="checkbox"> <code>ANTHROPIC_API_KEY</code> and network work for the assessment (a first turn takes roughly 20&ndash;30 s). Find grants also needs the Simpler.Grants.gov key.</label></li>
+          <li><label><input type="checkbox"> Backup: an authentic recording or captured real output, labelled as recorded, ready if a live call fails.</label></li>
+          <li><label><input type="checkbox"> Rehearsed to fit 2&ndash;5 minutes (target about 4). Use <code>?mode=record</code> for the capture.</label></li>
+          <li><label><input type="checkbox"> No API keys, tokens or personal data visible on screen (check the Dev tray is off).</label></li>
+        </ul>
+      </section>
+
+    </div>
+  </div>
+
+  <footer class="deck-foot" role="contentinfo">
+    <span class="deck-foot-text">Preliminary guidance for human review. Not an official eligibility determination.</span>
+    <a class="deck-home" href="/">GrantFlow home</a>
+  </footer>
+
+  <script src="/vendor/reveal/reveal.js"></script>
+  <script src="/vendor/reveal/plugin/notes.js"></script>
+  <script src="/js/big-build-model.js"></script>
+  <script src="/js/big-build.js"></script>
+</body>
+</html>
