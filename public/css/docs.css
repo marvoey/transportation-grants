@@ -1,0 +1,219 @@
+/* Documentation pages (/docs): markdown rendered in the site's look. Loaded after style.css and theme-afs.css. */
+.docs-container {
+  max-width: 52rem;
+}
+
+.docs-container > h2 {
+  font-family: var(--afs-font-display);
+  font-weight: 400;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.docs-container section + section {
+  margin-top: 1.75rem;
+}
+
+.docs-container section > h3 {
+  margin-bottom: 0.5rem;
+  color: var(--afs-ink);
+}
+
+.docs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--afs-white);
+  border: 1px solid var(--afs-line);
+  border-radius: var(--afs-radius, 4px);
+}
+
+.docs-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--afs-line-soft);
+}
+
+.docs-list li:last-child {
+  border-bottom: 0;
+}
+
+.docs-file {
+  color: var(--afs-muted);
+  font-family: var(--afs-font-mono);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.docs-crumbs {
+  margin-bottom: 1rem;
+  color: var(--afs-muted);
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+/* The rendered document */
+.docs-article {
+  background: var(--afs-white);
+  border: 1px solid var(--afs-line);
+  border-radius: var(--afs-radius, 4px);
+  padding: 1.5rem 1.75rem;
+  color: var(--afs-ink);
+  overflow-wrap: break-word;
+}
+
+.docs-article > :first-child {
+  margin-top: 0;
+}
+
+.docs-article h1,
+.docs-article h2,
+.docs-article h3,
+.docs-article h4,
+.docs-article h5,
+.docs-article h6 {
+  color: var(--afs-ink);
+  line-height: 1.25;
+  margin: 1.75rem 0 0.6rem;
+  scroll-margin-top: 1rem;
+}
+
+.docs-article h1 {
+  font-family: var(--afs-font-display);
+  font-weight: 400;
+  font-size: 2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 4px solid var(--afs-purple);
+}
+
+.docs-article h2 {
+  font-size: 1.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--afs-line);
+}
+
+.docs-article h3 {
+  font-size: 1.2rem;
+}
+
+.docs-article h4,
+.docs-article h5,
+.docs-article h6 {
+  font-size: 1rem;
+}
+
+.docs-article p,
+.docs-article ul,
+.docs-article ol,
+.docs-article blockquote,
+.docs-article pre,
+.docs-article .doc-table {
+  margin: 0 0 1rem;
+}
+
+.docs-article ul,
+.docs-article ol {
+  padding-left: 1.5rem;
+}
+
+.docs-article li + li {
+  margin-top: 0.25rem;
+}
+
+.docs-article li > ul,
+.docs-article li > ol {
+  margin: 0.25rem 0 0;
+}
+
+.docs-article hr {
+  border: 0;
+  border-top: 1px solid var(--afs-line);
+  margin: 1.5rem 0;
+}
+
+.docs-article blockquote {
+  padding: 0.5rem 1rem;
+  background: var(--afs-purple-50);
+  border-left: 4px solid var(--afs-purple);
+  color: var(--afs-ink-2);
+}
+
+.docs-article blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.docs-article code {
+  background: var(--afs-surface-2);
+  border: 1px solid var(--afs-line-soft);
+  border-radius: 3px;
+  padding: 0.05em 0.35em;
+  font-size: 0.88em;
+}
+
+.docs-article pre {
+  background: var(--afs-surface-2);
+  border: 1px solid var(--afs-line);
+  border-radius: var(--afs-radius, 4px);
+  padding: 0.85rem 1rem;
+  overflow-x: auto;
+  line-height: 1.45;
+}
+
+.docs-article pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+/* Wide tables scroll inside their own box instead of widening the page. */
+.docs-article .doc-table {
+  overflow-x: auto;
+}
+
+.docs-article table {
+  border-collapse: collapse;
+  min-width: 100%;
+  font-size: 0.92rem;
+}
+
+.docs-article th,
+.docs-article td {
+  border: 1px solid var(--afs-line);
+  padding: 0.45rem 0.7rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.docs-article th {
+  background: var(--afs-surface);
+  font-weight: 600;
+}
+
+.docs-article tbody tr:nth-child(even) {
+  background: var(--afs-surface-2);
+}
+
+.docs-article input[type="checkbox"] {
+  margin-right: 0.4rem;
+}
+
+@media (max-width: 600px) {
+  .docs-article {
+    padding: 1rem;
+  }
+}
+
+@media print {
+  .fab {
+    display: none;
+  }
+  .docs-article {
+    border: 0;
+    padding: 0;
+  }
+}

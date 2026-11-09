@@ -183,6 +183,12 @@ error but every other page keeps working normally.
 - Feature descriptions
 - Getting started guide
 
+### 7. Documentation
+
+**Location**: http://localhost:3000/docs (also in the round menu button at the bottom left of the home and chat pages)
+
+Shows the project's markdown files from `doc/` and `docs/` as web pages in the site's look. The index lists every `.md` file with its title; links between documents work, and links to the outside open in a new tab. Raw HTML inside a document is shown as text, and images are not loaded. The pages are read-only, and anything a person can reach on the site can read them, so keep secrets out of those folders.
+
 ## Navigation
 
 **Top Menu Bar** (on all pages):

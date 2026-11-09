@@ -1,0 +1,75 @@
+/* Floating menu button (bottom-left, clear of the right-edge trays). Built by /js/floating-menu.js. */
+.fab {
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 60; /* above the trays (50), below the source drawer overlay (1000) */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.fab-button {
+  width: 3rem;
+  height: 3rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--afs-purple-800, #460073);
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.fab-button:hover {
+  background: var(--afs-purple-600, #7500c0);
+}
+
+.fab-button:focus-visible,
+.fab-link:focus-visible {
+  outline: 3px solid var(--afs-purple, #a100ff);
+  outline-offset: 2px;
+}
+
+.fab-button[aria-expanded="true"] {
+  transform: rotate(90deg);
+}
+
+.fab-menu {
+  order: -1; /* opens upward, above the button */
+  min-width: 14rem;
+  margin: 0;
+  padding: 0.25rem;
+  list-style: none;
+  background: var(--afs-white, #fff);
+  border: 1px solid var(--afs-line, #cac9c0);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.fab-menu[hidden] {
+  display: none;
+}
+
+.fab-link {
+  display: block;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.35rem;
+  color: var(--afs-ink, #171716);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.fab-link:hover {
+  background: var(--afs-purple-50, #f7efff);
+  color: var(--afs-purple-800, #460073);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fab-button {
+    transition: none;
+  }
+}

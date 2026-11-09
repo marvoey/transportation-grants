@@ -13,6 +13,7 @@ import eligibilityRouter from './routes/eligibility.js';
 import deadlinesRouter from './routes/deadlines.js';
 import chatRouter from './routes/chat.js';
 import { createNofoRouter } from './routes/nofo.js';
+import { createDocsRouter } from './routes/docs.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -42,6 +43,9 @@ export function createApp(): Application {
   const publicPath = join(__dirname, '../../public');
   app.use(express.static(publicPath));
   logger.info(`Serving static files from ${publicPath}`);
+
+  // Project documentation (doc/ and docs/ markdown files), read-only.
+  app.use('/docs', createDocsRouter());
 
   // API Routes
   app.use('/api/grants', grantsRouter);
