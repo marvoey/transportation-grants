@@ -21,43 +21,44 @@
   <div class="reveal" id="main-deck">
     <div class="slides">
 
-      <!-- 1. The government problem -->
-      <section id="problem" class="slide slide--light" aria-labelledby="problem-title">
+      <!-- 1. The government problem (general: why GovRail needs to exist) -->
+      <section id="problem" class="slide slide--light slide--problem" aria-labelledby="problem-title">
         <div class="slide-head">
           <p class="kicker">1 &middot; The government problem</p>
           <p class="timing presenter-only">0:00&ndash;0:30 &middot; 30 s</p>
         </div>
-        <h2 id="problem-title">Before applying, staff must work out what a long notice means for <em>their</em> project.</h2>
+        <h2 id="problem-title">Government runs on complex rules. Navigating them consumes valuable time.</h2>
 
-        <div class="problem-stage">
-          <div class="problem-one">
-            <div class="doc-mock" role="img" aria-label="Illustration of a long funding notice: a page of text lines">
-              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-            </div>
-            <div>
-              <p class="stat-line">One notice. One project.</p>
-              <p class="stat-sub fragment" data-fragment-index="1">That can consume an entire workday.</p>
-            </div>
-          </div>
+        <ol class="trio" aria-label="Why complex rules are hard to work with">
+          <li class="trio-card fragment" data-fragment-index="1">
+            <span class="trio-icon" aria-hidden="true">&sect;</span>
+            <h3>Complex requirements</h3>
+            <p>Regulations, policies, guidance, documentation</p>
+          </li>
+          <li class="trio-card fragment" data-fragment-index="2">
+            <span class="trio-icon" aria-hidden="true">?</span>
+            <h3>Human interpretation</h3>
+            <p>Research, judgment, expertise, repeated clarification</p>
+          </li>
+          <li class="trio-card fragment" data-fragment-index="3">
+            <span class="trio-icon" aria-hidden="true">&#10003;</span>
+            <h3>Accountable outcomes</h3>
+            <p>Reliable, traceable, defensible findings</p>
+          </li>
+        </ol>
 
-          <div class="problem-many fragment" data-fragment-index="2">
-            <div class="tile-grid" id="applicantGrid" role="img" aria-label="Illustration: many applicants working toward the same deadline"></div>
-            <p class="stat-line">&hellip;multiplied across hundreds of applicants, one deadline.</p>
-            <p class="illustration-note">Illustration only. Application volume varies by program.</p>
-          </div>
-        </div>
-
-        <p class="problem-fed fragment" data-fragment-index="3">Federal administrators face the other side: concentrated application volumes, clarification requests and potentially avoidable rework.</p>
-        <p class="problem-question fragment" data-fragment-index="4">What if we could reduce that burden on both sides?</p>
+        <p class="problem-question fragment" data-fragment-index="4">AI can interpret the complexity. But how do we make its guidance reliable?</p>
 
         <aside class="notes">
-          <p><strong>0:00&ndash;0:30 &middot; Talking head, then this slide.</strong></p>
-          <p>"Federal grants help state and local governments deliver critical infrastructure. But before applying, staff must interpret complex funding requirements and determine how they apply to their specific projects."</p>
-          <p>"That can consume an entire workday. Now multiply the effort across hundreds of applicants working toward the same deadline."</p>
-          <p>"Federal administrators face the other side of that complexity: concentrated application volumes, clarification requests, and potentially avoidable rework."</p>
-          <p>"What if we could reduce that burden on both sides?"</p>
-          <p><strong>Cue:</strong> advance fragments with the lines. One project (left), then the funding round (grid), then the federal side, then the question.</p>
-          <p><strong>Guardrail:</strong> do NOT claim a percentage of applications arrive in the last week, and do not imply volume is uniform across programs. The document and tile graphics are illustrations, not data.</p>
+          <p><strong>0:00&ndash;0:30 &middot; Talking head, then this slide.</strong> Advance one fragment per line: complex requirements, human interpretation, accountable outcomes, then the question.</p>
+          <p>"Government runs on complex rules."</p>
+          <p>"Every day, government employees navigate regulations, policies, and requirements to determine how they apply to specific situations."</p>
+          <p>"It's time-consuming work that requires research, expertise, and careful interpretation."</p>
+          <p>"Large language models offer tremendous potential to accelerate this process. But in government, generating a convincing answer isn't enough. The guidance must also be reliable, traceable, and accountable."</p>
+          <p>"So how do we combine the reasoning power of AI with the reliability of traditional software?"</p>
+          <p>"That's the challenge we set out to address with GovRail."</p>
+          <p><strong>Cue:</strong> this slide is deliberately general. Do not mention grants yet; GrantFlow is introduced on slide 3, and the funding-round scale picture is on the impact slide (6).</p>
+          <p><strong>Guardrail:</strong> no unsupported statistics about workload, deadlines or application volume. This is a framing slide, not a measured claim.</p>
         </aside>
       </section>
 
@@ -79,7 +80,7 @@
             <span class="spot spot--guided fragment fade-in-then-out" data-fragment-index="4" aria-hidden="true"></span>
           </div>
           <figcaption class="spot-captions" aria-live="polite">
-            <span class="spot-caption spot-caption--idle">Hybrid AI guidance for complex, requirements-driven workflows. Example workflows shown are potential uses, not implemented applications.</span>
+            <span class="spot-caption spot-caption--idle">Rules engines follow predefined rules. LLMs interpret language and context. GovRail brings both together. <span class="caption-small">(Example workflows in the diagram are potential uses, not implemented applications.)</span></span>
             <span class="spot-caption fragment fade-in-then-out" data-fragment-index="1"><strong>LLM reasoning</strong> interprets language, understands context and explains findings.</span>
             <span class="spot-caption fragment fade-in-then-out" data-fragment-index="2"><strong>Deterministic code</strong> applies explicit rules, validates facts and structures results.</span>
             <span class="spot-caption fragment fade-in-then-out" data-fragment-index="3"><strong>Evidence grounding</strong> connects findings to their sources and preserves traceability.</span>
@@ -88,7 +89,8 @@
         </figure>
 
         <aside class="notes">
-          <p><strong>0:30&ndash;1:00 &middot; General GovRail architecture, full screen.</strong> Advance one fragment at a time: LLM Reasoning, then Deterministic Code, then Evidence Grounding, then Guided Interaction.</p>
+          <p><strong>0:30&ndash;1:00 &middot; General GovRail architecture, full screen.</strong> Transition from slide 1: "That's the challenge we set out to address." Advance one fragment at a time: LLM Reasoning, then Deterministic Code, then Evidence Grounding, then Guided Interaction.</p>
+          <p><strong>Central message (before the narration):</strong> traditional automation follows predefined rules; LLMs can interpret complex language and context; GovRail brings those capabilities together. Neither a conventional rules engine nor an LLM alone is enough for guided, requirements-driven work.</p>
           <p>"We developed GovRail, an evidence-grounded AI guidance harness for complex, requirements-driven workflows."</p>
           <p>"It combines the reasoning capabilities of large language models with the reliability of deterministic code."</p>
           <p>"AI interprets language and context. Code applies explicit rules, validates facts, and controls the process. Evidence grounding links findings back to their sources, while guided questions help resolve what's missing."</p>
@@ -240,7 +242,13 @@
           <p class="timing presenter-only">3:15&ndash;3:45 &middot; 30 s</p>
         </div>
         <h2 id="impact-title" class="visually-hidden">Modeled productivity impact</h2>
-        <p class="model-banner" role="note"><strong>Illustrative model &mdash; not measured results.</strong></p>
+        <div class="impact-head">
+          <p class="model-banner" role="note"><strong>Illustrative model &mdash; not measured results.</strong></p>
+          <div class="round-visual">
+            <div class="tile-grid" id="applicantGrid" role="img" aria-label="Illustration: many applicants working toward the same funding deadline"></div>
+            <p class="illustration-note">Illustration of one funding round. Volume varies by program.</p>
+          </div>
+        </div>
 
         <div class="numerals">
           <div class="numeral">
@@ -295,6 +303,7 @@
 
         <aside class="notes">
           <p><strong>3:15&ndash;3:45 &middot; Impact slide.</strong> Keep the "Illustrative model" banner in frame the whole time.</p>
+          <p><strong>Cue:</strong> the tile picture is the funding-round scale idea: one assessment, multiplied across hundreds of applicants working toward one deadline. Federal administrators see the other side: concentrated volumes, clarification requests and potentially avoidable rework. Say it as a possibility, not a measured effect, and do not imply volume is uniform across programs.</p>
           <p>"Our preliminary workflow model estimates six to ten hours for a manual assessment, compared with a projected two to three hours using GrantFlow, approximately seventy percent less active effort."</p>
           <p>"In a funding round receiving three hundred applications, if half the applicants use GrantFlow, that translates to roughly eight hundred applicant staff hours potentially freed within one funding cycle."</p>
           <p>"Better-prepared applicants could also reduce clarification requests and avoidable rework during the federal review period. These estimates are modeled, not yet measured."</p>
@@ -317,12 +326,14 @@
         </div>
         <h2 id="closing-title"><span class="gf gr">Gov<span class="gf-flow">Rail</span></span> is our innovation. <span class="gf">Grant<span class="gf-flow">Flow</span></span> is the working proof of concept.</h2>
         <p class="closing-body">Together they show how evidence-grounded AI guidance can reduce administrative complexity at scale, improve government productivity, and give people more time to deliver on their mission.</p>
-        <p class="tagline fragment" data-fragment-index="1">GovRail: grounded reasoning. GrantFlow: government productivity in action.</p>
+        <p class="potential fragment" data-fragment-index="1">The same approach could extend to other requirements-intensive government workflows. That is a potential direction, not something built today.</p>
+        <p class="tagline fragment" data-fragment-index="2">GovRail: grounded reasoning. GrantFlow: government productivity in action.</p>
 
         <aside class="notes">
           <p><strong>3:45&ndash;4:00 &middot; Back to the presenter on camera, logos on screen.</strong> Fade to the final tagline.</p>
           <p>"GovRail is our innovation. GrantFlow is the working proof of concept."</p>
           <p>"Together, they show how evidence-grounded AI guidance can reduce administrative complexity at scale, improve government productivity, and give people more time to deliver on their mission."</p>
+          <p><strong>Optional beat (broader potential):</strong> if time allows, say that the approach could extend to other requirements-intensive workflows. It is a potential direction; nothing beyond grant discovery and assessment is built.</p>
           <p><strong>Final on-screen line:</strong> "GovRail: grounded reasoning. GrantFlow: government productivity in action."</p>
         </aside>
       </section>

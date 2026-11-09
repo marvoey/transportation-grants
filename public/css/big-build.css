@@ -101,27 +101,27 @@ body { overflow: hidden; }
 .reveal .slide-number { left: 50%; right: auto; bottom: 9px; transform: translateX(-50%); background: none; color: #ece4f4; font-size: clamp(12px, 0.95vw, 18px); z-index: 40; }
 .reveal .progress { bottom: var(--foot-h); color: var(--purple); }
 
-/* ---- Slide 1: the problem ---- */
-.problem-stage { display: flex; align-items: center; gap: 90px; margin-top: 6px; }
-.problem-one { display: flex; align-items: center; gap: 36px; }
-.doc-mock {
-  width: 150px; height: 190px; flex: none; background: #fff; border: 2px solid var(--ink); padding: 18px 16px;
-  display: flex; flex-direction: column; gap: 9px; box-shadow: 8px 8px 0 var(--purple-200);
-}
-.doc-mock span { display: block; height: 7px; background: var(--line); }
-.doc-mock span:nth-child(3n) { width: 70%; }
-.doc-mock span:nth-child(5n) { width: 85%; }
-.stat-line { font-size: 46px; font-weight: 600; line-height: 1.2; }
-.stat-sub { font-size: 40px; color: var(--purple-600); margin-top: 6px; }
-.problem-many { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
-.tile-grid { display: grid; grid-template-columns: repeat(20, 1fr); gap: 7px; width: 640px; flex: none; }
+/* ---- Slide 1: the problem (general) ---- */
+.slide--problem h2 { max-width: 1500px; font-size: 68px; }
+.reveal .trio { display: flex; align-items: stretch; gap: 28px; margin: 18px 0 40px; }
+.trio-card { flex: 1; padding: 26px 30px 30px; background: var(--surface-2); border-top: 8px solid var(--purple-800); position: relative; }
+.trio-card:nth-child(2) { border-top-color: var(--purple); background: var(--purple-50); }
+.trio-card:nth-child(3) { border-top-color: var(--green); background: #eef8f3; }
+.trio-card h3 { font-size: 40px; margin: 14px 0 10px; }
+.trio-card p { font-size: 30px; color: var(--ink-2); line-height: 1.3; }
+.trio-icon { display: grid; place-items: center; width: 64px; height: 64px; background: var(--purple-800); color: #fff; font-family: var(--font-display); font-size: 40px; }
+.trio-card:nth-child(2) .trio-icon { background: var(--purple); }
+.trio-card:nth-child(3) .trio-icon { background: var(--green); }
+.problem-question { font-family: var(--font-display); font-size: 62px; line-height: 1.15; color: var(--purple-800); max-width: 1500px; }
+
+/* Funding-round tiles: used on the impact slide */
+.tile-grid { display: grid; grid-template-columns: repeat(20, 1fr); gap: 5px; width: 420px; flex: none; }
 .tile { display: block; aspect-ratio: 1; background: var(--purple-800); opacity: 0.85; }
 .tile:nth-child(7n) { background: var(--purple); }
 .tile:nth-child(11n) { background: var(--purple-200); }
-.problem-many .stat-line { font-size: 38px; }
-.illustration-note { font-size: 24px; color: var(--muted); }
-.problem-fed { font-size: 36px; margin-top: 30px; max-width: 1500px; color: var(--ink-2); }
-.problem-question { font-family: var(--font-display); font-size: 56px; margin-top: 16px; color: var(--purple-800); }
+.illustration-note { font-size: 20px; color: var(--muted); margin-top: 6px; }
+.impact-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 18px; }
+.impact-head .model-banner { margin-bottom: 0; }
 
 /* ---- Slides 2 and 3: architecture images with spotlight overlays ---- */
 .arch { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-height: 0; }
@@ -141,6 +141,7 @@ body { overflow: hidden; }
 .spot-caption { display: block; }
 .spot-caption.fragment { position: absolute; left: 0; right: 0; top: 0; }
 .spot-caption--idle { color: var(--ink-2); }
+.caption-small { font-size: 24px; color: var(--muted); }
 /* Idle caption is replaced once the first spotlight begins. */
 .spot-captions:has(.fragment.visible) .spot-caption--idle { visibility: hidden; }
 .spot-caption strong { color: var(--purple-600); }
@@ -224,6 +225,7 @@ body { overflow: hidden; }
 .closing-logos img { height: 96px; width: auto; display: block; }
 .closing-plus { font-size: 64px; color: var(--purple-200); }
 .closing-body { font-size: 36px; max-width: 46ch; color: #ece4f4; }
+.potential { font-size: 34px; max-width: 46ch; margin-top: 30px; color: #ece4f4; }
 .tagline { margin-top: auto; font-family: var(--font-display); font-size: 52px; line-height: 1.2; color: var(--purple-200); }
 
 /* ---- Presenter checklist ---- */

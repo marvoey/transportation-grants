@@ -22,13 +22,13 @@ Keys: arrow keys, space, Page Up/Down, **F** full screen, **Esc** overview. The 
 
 | # | Slide | Time | Notes |
 |---|---|---|---|
-| 1 | Government problem | 0:00-0:30 | Talking head first, then this slide. Fragments: one project, a funding round, the federal side, the question. |
-| 2 | GovRail (general architecture) | 0:30-1:00 | Four spotlight fragments: LLM reasoning, deterministic code, evidence grounding, guided interaction. |
+| 1 | Government problem (general) | 0:00-0:30 | Talking head first, then this slide. "Government runs on complex rules": complex requirements, human interpretation, accountable outcomes, then "how do we make AI guidance reliable?" Deliberately not grant-specific; sets up GovRail. |
+| 2 | GovRail (general architecture) | 0:30-1:00 | Central message: rules engines follow predefined rules, LLMs interpret language, GovRail brings both together. Four spotlight fragments: LLM reasoning, deterministic code, evidence grounding, guided interaction. |
 | 3 | GrantFlow (GovRail + GrantFlow architecture) | 1:00-1:25 | Spotlights Find Grants, then Assess a Project. |
 | 4 | Project-first discovery | 1:25-1:50 | **Open GrantFlow: Find grants** opens `/chat.html` in a new tab. |
 | 5 | Requirements assessment | 1:50-3:15 | **Launch Live GrantFlow** opens `/chat.html?mode=nofo&opportunity=4d8f5775-ff01-4a6f-ab4e-b125899043b3` (FY2026 BUILD) in a new tab. The centerpiece. |
-| 6 | Impact at scale | 3:15-3:45 | Big numerals, an always-visible "Illustrative model, not measured results" banner, and a scenario calculator. |
-| 7 | Closing | 3:45-4:00 | Talking head over this slide, then the tagline. |
+| 6 | Impact at scale | 3:15-3:45 | The funding-round tile picture (one assessment multiplied across many applicants) lives here. Big numerals, an always-visible "Illustrative model, not measured results" banner, and a scenario calculator. |
+| 7 | Closing | 3:45-4:00 | Talking head over this slide. Optional "broader potential" line (a potential direction, not built), then the tagline. |
 
 The full narration is in each slide's speaker notes (it is the brief's section 4 script).
 

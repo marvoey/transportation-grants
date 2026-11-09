@@ -55,6 +55,24 @@ describe('slide structure', () => {
     expect(ids).toEqual(['problem', 'govrail', 'grantflow', 'find-grants', 'assess', 'impact', 'closing', 'presenter-checklist']);
   });
 
+  it('opens with the general GovRail problem, not a grant-specific one', () => {
+    const slide = /<section id="problem"[\s\S]*?<\/section>/.exec(html)?.[0] ?? '';
+    const visible = slide.replace(/<aside class="notes">[\s\S]*?<\/aside>/, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+    expect(visible).toContain('Government runs on complex rules');
+    for (const word of ['Complex requirements', 'Human interpretation', 'Accountable outcomes']) expect(visible).toContain(word);
+    expect(visible).toContain('how do we make its guidance reliable');
+    expect(visible).not.toMatch(/\b(grant|notice|NOFO|applicant|GrantFlow)/i);
+    // The funding-round picture belongs to the impact slide.
+    expect(slide).not.toContain('applicantGrid');
+    const impact = /<section id="impact"[\s\S]*?<\/section>/.exec(html)?.[0] ?? '';
+    expect(impact).toContain('id="applicantGrid"');
+  });
+
+  it('states the rules-engine / LLM / GovRail distinction on the architecture slide', () => {
+    const slide = /<section id="govrail"[\s\S]*?<\/section>/.exec(html)?.[0] ?? '';
+    expect(slide).toContain('Rules engines follow predefined rules. LLMs interpret language and context. GovRail brings both together.');
+  });
+
   it('keeps the presenter checklist hidden by default and marks it for removal outside presenter mode', () => {
     const tag = /<section id="presenter-checklist"[^>]*>/.exec(html)?.[0] ?? '';
     expect(tag).toContain('data-visibility="hidden"');
