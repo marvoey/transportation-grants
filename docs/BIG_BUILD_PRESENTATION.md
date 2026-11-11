@@ -14,11 +14,11 @@ Start the app (`npm run build && WEB_PORT=3000 npm run start:web`), then:
 | Presenter | `http://localhost:3000/big-build.html?mode=presenter` | Adds the **preparation checklist** slide and a **timing badge** on each slide. Press **S** for the speaker view (narration, timestamps, cues, guardrails). |
 | Record | `http://localhost:3000/big-build.html?mode=record` | For screen capture: no controls, progress bar, slide numbers or home link, no transitions, no speaker view, no presenter slide. **The disclaimers stay visible.** |
 
-Jump to a slide with a hash: `#/problem`, `#/govrail`, `#/grantflow`, `#/find-grants`, `#/assess`, `#/impact`, `#/closing`.
+Jump to a slide with a hash: `#/problem`, `#/govrail`, `#/grantflow`, `#/find-grants`, `#/assess`, `#/impact`, `#/beyond`, `#/closing`.
 
 Keys: arrow keys, space, Page Up/Down, **F** full screen, **Esc** overview. The calculator's number boxes keep their own keys.
 
-## Slides and timing (about 4 minutes)
+## Slides and timing (about 4 minutes 15 seconds)
 
 | # | Slide | Time | Notes |
 |---|---|---|---|
@@ -27,8 +27,9 @@ Keys: arrow keys, space, Page Up/Down, **F** full screen, **Esc** overview. The 
 | 3 | GrantFlow (GovRail + GrantFlow architecture) | 1:00-1:25 | Spotlights Find Grants, then Assess a Project. |
 | 4 | Project-first discovery | 1:25-1:50 | **Open GrantFlow: Find grants** opens `/chat.html` in a new tab. |
 | 5 | Requirements assessment | 1:50-3:15 | **Launch Live GrantFlow** opens `/chat.html?mode=nofo&opportunity=4d8f5775-ff01-4a6f-ab4e-b125899043b3` (FY2026 BUILD) in a new tab. The centerpiece. |
-| 6 | Impact at scale | 3:15-3:45 | The funding-round tile picture (one assessment multiplied across many applicants) lives here. Big numerals, an always-visible "Illustrative model, not measured results" banner, and a scenario calculator. |
-| 7 | Closing | 3:45-4:00 | Talking head over this slide. Optional "broader potential" line (a potential direction, not built), then the tagline. |
+| 6 | Impact at scale | 3:15-3:40 | The funding-round tile picture (one assessment multiplied across many applicants) lives here. Big numerals, an always-visible "Illustrative model, not measured results" banner, and a scenario calculator. |
+| 7 | The bigger idea (beyond grants) | 3:40-4:00 | GovRail is a pattern, not a grants tool. The four-step pattern (read rules, check against case facts, cite findings, a person decides), six example workflows and "Same harness. Different rulebook." A caveat ("Potential directions, not built today") is always on screen. Added so the innovation is emphasized instead of a single line on the closing slide. |
+| 8 | Closing | 4:00-4:15 | Talking head over this slide, then the tagline. |
 
 The full narration is in each slide's speaker notes (it is the brief's section 4 script).
 
@@ -61,7 +62,7 @@ Also available as the presenter-only checklist slide. In short:
 - **No video has been recorded** and no screen capture of Find grants or Assess a project has been added to the deck. Slide 4 notes where one would go; nothing is faked.
 - The brief's NHTSA enforcement example is not used: that notice is not in `data/opportunities/`. FY2026 BUILD was chosen instead.
 - The 308 / 1,048 historical application counts (SMART, RAISE) appear only in speaker notes, marked "verify before citing".
-- GovRail's other example workflows (regulatory compliance, procurement review, program eligibility) are in the supplied diagram as potential uses and are described that way.
+- GovRail's other example workflows are potential uses and are described that way. Regulatory compliance, procurement review and program eligibility come from the supplied diagram; permitting and licensing, disaster-recovery assistance and award compliance are added illustrations of the same pattern. None is built, tested or planned.
 
 ## Files
 

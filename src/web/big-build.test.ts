@@ -50,9 +50,9 @@ function audienceText(): string {
 }
 
 describe('slide structure', () => {
-  it('has the seven audience sections in the storyboard order', () => {
+  it('has the eight audience sections in the storyboard order', () => {
     const ids = [...html.matchAll(/<section id="([^"]+)" class="slide/g)].map((m) => m[1]);
-    expect(ids).toEqual(['problem', 'govrail', 'grantflow', 'find-grants', 'assess', 'impact', 'closing', 'presenter-checklist']);
+    expect(ids).toEqual(['problem', 'govrail', 'grantflow', 'find-grants', 'assess', 'impact', 'beyond', 'closing', 'presenter-checklist']);
   });
 
   it('opens with the general GovRail problem, not a grant-specific one', () => {
@@ -189,6 +189,18 @@ describe('claims discipline', () => {
   it('says GovRail is a harness and the example workflows are potential uses', () => {
     expect(text).toContain('evidence-grounded AI guidance harness');
     expect(text).toMatch(/potential uses, not implemented applications/);
+  });
+
+  it('gives the broader-potential idea its own slide, with examples labelled as potential, not built', () => {
+    const slide = /<section id="beyond"[\s\S]*?<\/section>/.exec(html)?.[0] ?? '';
+    const visible = slide.replace(/<aside class="notes">[\s\S]*?<\/aside>/, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+    expect(visible).toContain('is not a grants tool');
+    for (const example of ['Regulatory compliance', 'Procurement review', 'Program eligibility', 'Permitting and licensing', 'Disaster-recovery assistance', 'Award compliance']) {
+      expect(visible, example).toContain(example);
+    }
+    // The caveat is not a fragment: it is on screen whenever the examples are.
+    expect(slide).toMatch(/<p class="beyond-caveat">Potential directions, not built today\./);
+    expect(slide).not.toMatch(/beyond-caveat[^>]*fragment/);
   });
 
   it('shows the final tagline exactly', () => {
