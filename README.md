@@ -259,11 +259,13 @@ For issues with:
 
 ## Documentation
 
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture and how WebMCP works
-- **[WEB_INTERFACE_GUIDE.md](WEB_INTERFACE_GUIDE.md)** - Complete user guide for the web interface
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment options, configuration, and scaling
-- **[MCP_USAGE.md](MCP_USAGE.md)** - How the MCP server is utilized by AI assistants
-- **[SAM_API_GUIDE.md](SAM_API_GUIDE.md)** - SAM.gov API details and optimization
+The project documents are in [`docs/`](docs/) and are also served in the web app at `/docs`.
+
+- **[NOFO_MVP_PLAN.md](docs/NOFO_MVP_PLAN.md)** - The audit, architecture, risks and a record of every change to the NOFO assessment work
+- **[NOFO_DEMO.md](docs/NOFO_DEMO.md)** - How to run the demo, including demo mode (a replayed recording)
+- **[NOFO_FACT_SHEETS.md](docs/NOFO_FACT_SHEETS.md)** and **[NOFO_TEST_PROJECTS.md](docs/NOFO_TEST_PROJECTS.md)** - The prepared grants and the sample projects used to test them
+- **[BigBuild3_GrantFlow_ConOps.md](docs/BigBuild3_GrantFlow_ConOps.md)** - The concept of operations for the consultation
+- **[GrantFlow_BigBuild_Live_App_Demo_Script.md](docs/GrantFlow_BigBuild_Live_App_Demo_Script.md)** - The timed demo script (shown in the presenter window)
 
 ## Web Interface
 
@@ -280,7 +282,7 @@ The web interface provides:
 - **Track Deadlines** - Monitor upcoming due dates  
 - **Grant Details** - Comprehensive program information
 
-See [WEB_INTERFACE_GUIDE.md](WEB_INTERFACE_GUIDE.md) for complete usage instructions.
+See [NOFO_DEMO.md](docs/NOFO_DEMO.md) for how to run the demo.
 
 ## Resources
 
