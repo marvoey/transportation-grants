@@ -3,17 +3,53 @@
  * (samples-drawer.js). The text is the same as docs/NOFO_TEST_PROJECTS.md, which is the place to edit it; a test
  * (src/web/sample-projects.test.ts) fails if the two drift apart. Every place, number and fact is invented.
  *
- * The tray shows them in array order. First come ten "Stress test" projects, two per program (the two Crash Causal
- * Factors ones first), written to produce as many finding cards as possible on the Assess tab: each runs into many rules in its notice (an ineligible applicant,
+ * The tray shows them in array order. First come six short, vague ones (one per program, and one generic with no
+ * project type). Then ten "Stress test" projects, two per program (the two Crash Causal Factors ones first), written to
+ * produce as many finding cards as possible on the Assess tab: each runs into many rules in its notice (an ineligible applicant,
  * an amount outside the range, banned costs, a duplicate application). Each problem is phrased as something the
  * project "would include", because the fact-reading step picks those phrases up and drops passing remarks.
  *
  * Then there are two for each of the five open listings whose notice documents are downloaded in data/opportunities
  * (Wildlife Crossings, Crash Causal Factors, Recalls, ITSE, FAA Aviation Research): a project that would apply but is
- * missing one thing, and one that is missing two. Last come six short, vague ones (one per program, and one generic
- * with no project type). The program facts come from docs/NOFO_FACT_SHEETS.md.
+ * missing one thing, and one that is missing two. The program facts come from docs/NOFO_FACT_SHEETS.md.
  */
 window.SampleProjects = [
+  {
+    "id": "sample-11",
+    "title": "Short: deer on our highway",
+    "note": "A county applicant and a wildlife crossing in plain words: no program name, no amounts, no stage. Written for the Wildlife Crossings Pilot Program.",
+    "text": "Our county wants fencing and a wildlife crossing on a highway where deer keep getting hit."
+  },
+  {
+    "id": "sample-12",
+    "title": "Short: big-truck crash study",
+    "note": "A state law enforcement applicant (a state patrol), phrased as a question. Written for the Crash Causal Factors Program.",
+    "text": "Our state patrol wants to join a federal study of fatal crashes involving big trucks. Is there funding for the extra work?"
+  },
+  {
+    "id": "sample-13",
+    "title": "Short: recall notices at registration",
+    "note": "A state vehicle-registration agency and a recall notification process, phrased as a question. Written for the State Process for Informing Consumers of Recalls Program.",
+    "text": "Our state motor vehicle agency wants to inform owners of open safety recalls at vehicle registration. Is there funding for a notification process?"
+  },
+  {
+    "id": "sample-14",
+    "title": "Short: speeding and drunk driving",
+    "note": "A local law enforcement applicant (a police department) and an enforcement program, nothing else. Written for the ITSE Grant Program.",
+    "text": "Our police department wants money to try a new traffic safety enforcement program to cut speeding and drunk driving."
+  },
+  {
+    "id": "sample-15",
+    "title": "Short: aviation research",
+    "note": "A university applicant, which this program accepts but a state or local transportation agency would not be. Written for the FAA Aviation Research Grants Program.",
+    "text": "Our university wants funding for aviation safety research, like stronger materials for aircraft."
+  },
+  {
+    "id": "sample-16",
+    "title": "Short: no project type at all",
+    "note": "No project type, so the tool should ask what kind of project it is (and who the applicant is) before searching. The list should still appear once you answer, or when you choose “Skip the questions and search”.",
+    "text": "We're a county government and we have a transportation project we'd like to get funded."
+  },
   {
     "id": "sample-19",
     "title": "Stress test: Crash Causal Factors, Colorado patrol",
@@ -133,41 +169,5 @@ window.SampleProjects = [
     "title": "FAA research: nonprofit weather decisions (2 gaps)",
     "note": "FAA Aviation Research Grants Program. A 501(c)(3) research institute, human factors and weather research, 24 months, registered in SAM.gov. Two gaps: no negotiated indirect cost agreement, and current and pending support not compiled.",
     "text": "We are a nonprofit 501(c)(3) research institute and we want to study how pilots make decisions in deteriorating weather, using flight simulator experiments, to improve aviation safety. We would request about $900,000 over 24 months, mostly for researcher salaries and simulator time. We are registered in SAM.gov and have our key personnel and a draft description of the work, but we do not yet have a negotiated indirect cost agreement, and we have not yet compiled our current and pending support."
-  },
-  {
-    "id": "sample-11",
-    "title": "Short: deer on our highway",
-    "note": "A county applicant and a wildlife crossing in plain words: no program name, no amounts, no stage. Written for the Wildlife Crossings Pilot Program.",
-    "text": "Our county wants fencing and a wildlife crossing on a highway where deer keep getting hit."
-  },
-  {
-    "id": "sample-12",
-    "title": "Short: big-truck crash study",
-    "note": "A state law enforcement applicant (a state patrol), phrased as a question. Written for the Crash Causal Factors Program.",
-    "text": "Our state patrol wants to join a federal study of fatal crashes involving big trucks. Is there funding for the extra work?"
-  },
-  {
-    "id": "sample-13",
-    "title": "Short: recall notices at registration",
-    "note": "A state vehicle-registration agency and a recall notification process, phrased as a question. Written for the State Process for Informing Consumers of Recalls Program.",
-    "text": "Our state motor vehicle agency wants to inform owners of open safety recalls at vehicle registration. Is there funding for a notification process?"
-  },
-  {
-    "id": "sample-14",
-    "title": "Short: speeding and drunk driving",
-    "note": "A local law enforcement applicant (a police department) and an enforcement program, nothing else. Written for the ITSE Grant Program.",
-    "text": "Our police department wants money to try a new traffic safety enforcement program to cut speeding and drunk driving."
-  },
-  {
-    "id": "sample-15",
-    "title": "Short: aviation research",
-    "note": "A university applicant, which this program accepts but a state or local transportation agency would not be. Written for the FAA Aviation Research Grants Program.",
-    "text": "Our university wants funding for aviation safety research, like stronger materials for aircraft."
-  },
-  {
-    "id": "sample-16",
-    "title": "Short: no project type at all",
-    "note": "No project type, so the tool should ask what kind of project it is (and who the applicant is) before searching. The list should still appear once you answer, or when you choose “Skip the questions and search”.",
-    "text": "We're a county government and we have a transportation project we'd like to get funded."
   }
 ];

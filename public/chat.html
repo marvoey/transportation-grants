@@ -54,7 +54,8 @@
           <label for="findInput" class="nofo-sr">Describe your project</label>
           <textarea id="findInput" rows="5" maxlength="4000" required></textarea>
           <div class="form-group find-options">
-            <label><input type="checkbox" id="findHistorical"> Include closed and archived opportunities (past rounds, not open for applications)</label>
+            <!-- Developer mode only: searching closed and archived opportunities is not part of the normal flow. -->
+            <label class="dev-only dev-section-apicalls"><input type="checkbox" id="findHistorical"> Include closed and archived opportunities (past rounds, not open for applications)</label>
             <label class="dev-only dev-section-apicalls"><input type="checkbox" id="findInspect"> Show the raw Simpler.Grants.gov requests and responses (for inspection)</label>
           </div>
           <div class="nofo-form-actions">
@@ -85,7 +86,7 @@
         <div class="collapsible" id="nofoIntro" data-collapsible><div class="collapsible-inner">
         <h2>Assess a Project Against a Funding Notice</h2>
         <p class="mb-2">Choose a funding opportunity that has already been loaded, describe your transportation project in your own words, and get a preliminary read of what the notice means for you, what is still unknown, and what to investigate before applying.</p>
-        <div class="nofo-banner" role="note">
+        <div class="nofo-banner" id="assessNotice" role="note">
           <strong>Preliminary only.</strong> This is not an eligibility determination and does not predict an award; confirm with the program office. Your messages are sent to the Anthropic API to read the facts you state. Nothing is saved on the server; the conversation stays in this browser tab.
         </div>
         </div></div>
@@ -107,6 +108,7 @@
           <label for="nofoInput" class="nofo-sr">Describe your project or answer the questions</label>
           <p id="nofoDraftNote" class="nofo-meta find-draft-note" hidden></p>
           <textarea id="nofoInput" rows="3" maxlength="4000" placeholder="For example: We are a state DOT planning an intersection redesign in an urban area&hellip;" required></textarea>
+          <p id="nofoDoneNote" class="nofo-meta" hidden>All of the questions have been answered, so there is nothing more to send. You can review or remove your answers in the results below, or start over.</p>
           <div class="nofo-form-actions">
             <button type="submit" id="nofoSend">Send</button>
             <button type="button" id="nofoReset" class="nofo-secondary">Start over</button>
@@ -190,9 +192,10 @@
     </div>
   </aside>
 
-  <!-- Slide-out tray of settings. Closed by default; Find grants only. Two switches: show the "Preliminary only"
-       notice at the top of Find grants (off by default), and simulate "Prepare this opportunity" for opportunities whose
-       documents are already downloaded (on by default). Using a switch closes the tray. -->
+  <!-- Slide-out tray of settings. Closed by default; on Find grants and Assess, each with its own switches. Find grants: show
+       the "Preliminary only" notice (off by default) and simulate "Prepare this opportunity" for opportunities whose
+       documents are already downloaded (on by default). Assess: hide the "Preliminary only" box (shown by default).
+       Using a switch closes the tray. -->
   <aside id="settingsDrawer" class="tray tray--settings" aria-label="Settings" hidden>
     <button type="button" id="settingsTab" class="tray-tab" aria-expanded="false" aria-controls="settingsPanel" title="Settings">
       <span class="tray-tab-label">Settings</span>
@@ -202,6 +205,7 @@
         <h2 id="settingsTitle">Settings</h2>
         <button type="button" id="settingsClose" class="tray-close" aria-label="Close the settings panel">&times;</button>
       </div>
+      <div data-settings-for="find">
       <label class="settings-toggle">
         <input type="checkbox" id="findNoticeToggle" role="switch">
         <span><strong>Preliminary-use notice</strong> Show the &ldquo;Preliminary only&rdquo; box at the top of Find grants: what the list is and is not, and where your description is sent.</span>
@@ -211,7 +215,16 @@
         <input type="checkbox" id="simulatePrepareToggle" role="switch">
         <span><strong>Simulate preparing</strong> For an opportunity whose documents are already downloaded and read on this server, show the download, reading and requirement-extraction progress as if they were new, then offer &ldquo;Assess my project against this&rdquo;. For demonstrations: nothing is downloaded and the language model is not called.</span>
       </label>
-      <p class="nofo-meta">On by default. Applies to the next search. Using a switch closes this panel. Your choices are remembered in this browser.</p>
+      <p class="nofo-meta">On by default. Applies to the next search.</p>
+      </div>
+      <div data-settings-for="nofo" hidden>
+      <label class="settings-toggle">
+        <input type="checkbox" id="assessNoticeToggle" role="switch">
+        <span><strong>Hide the &ldquo;Preliminary only&rdquo; box</strong> Hide the box at the top of Assess that says the assessment is not an eligibility determination and where your messages are sent.</span>
+      </label>
+      <p class="nofo-meta">Shown by default.</p>
+      </div>
+      <p class="nofo-meta">Using a switch closes this panel. Your choices are remembered in this browser.</p>
       <p id="settingsStatus" class="nofo-sr" role="status" aria-live="polite"></p>
     </div>
   </aside>

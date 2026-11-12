@@ -11,6 +11,8 @@ interface SettingsApi {
   setShowFindNotice(on: boolean): void;
   simulatePrepare(): boolean;
   setSimulatePrepare(on: boolean): void;
+  hideAssessNotice(): boolean;
+  setHideAssessNotice(on: boolean): void;
 }
 
 const KEY = 'grantflow.showFindNotice';
@@ -23,10 +25,11 @@ function memoryStorage(initial: Record<string, string> = {}) {
 /** Loads public/js/app-settings.js the way a page would, with a fake document (holding the notice) and storage. */
 function load(storage: ReturnType<typeof memoryStorage> | 'blocked', options: { notice?: boolean } = {}) {
   const notice = { hidden: true };
+  const assessNotice = { hidden: false };
   const events: Array<{ type: string; detail: { showFindNotice: boolean } }> = [];
   const document = {
     readyState: 'complete',
-    getElementById: (id: string) => (id === 'findNotice' && options.notice !== false ? notice : null),
+    getElementById: (id: string) => (id === 'findNotice' && options.notice !== false ? notice : id === 'assessNotice' && options.notice !== false ? assessNotice : null),
     addEventListener() {},
     dispatchEvent(event: { type: string; detail: { showFindNotice: boolean } }) {
       events.push(event);
@@ -44,7 +47,7 @@ function load(storage: ReturnType<typeof memoryStorage> | 'blocked', options: { 
   sandbox.window = sandbox;
   sandbox.localStorage = storage === 'blocked' ? blocked : storage;
   vm.runInNewContext(read('public/js/app-settings.js'), sandbox);
-  return { settings: sandbox.AppSettings as SettingsApi, notice, events };
+  return { settings: sandbox.AppSettings as SettingsApi, notice, assessNotice, events };
 }
 
 describe('the "Preliminary only" notice setting', () => {
@@ -121,6 +124,36 @@ describe('the "Simulate preparing" setting', () => {
   });
 });
 
+describe('the "Hide the Preliminary only box on Assess" setting', () => {
+  const HIDE_KEY = 'grantflow.hideAssessNotice';
+
+  it('shows the box by default, hides it when turned on, and remembers each choice', () => {
+    const storage = memoryStorage();
+    const { settings, assessNotice, notice } = load(storage);
+    expect(settings.hideAssessNotice()).toBe(false);
+    expect(assessNotice.hidden).toBe(false);
+    settings.setHideAssessNotice(true);
+    expect(assessNotice.hidden).toBe(true);
+    expect(storage.data[HIDE_KEY]).toBe('on');
+    expect(notice.hidden).toBe(true); // the Find grants notice setting is separate
+    settings.setHideAssessNotice(false);
+    expect(assessNotice.hidden).toBe(false);
+    expect(storage.data[HIDE_KEY]).toBe('off');
+  });
+
+  it('comes back as the person left it, and anything unexpected in storage means shown', () => {
+    expect(load(memoryStorage({ [HIDE_KEY]: 'on' })).assessNotice.hidden).toBe(true);
+    expect(load(memoryStorage({ [HIDE_KEY]: 'banana' })).settings.hideAssessNotice()).toBe(false);
+  });
+
+  it('announces the change with the other settings, and works when storage is blocked', () => {
+    const { settings, events } = load('blocked');
+    settings.setHideAssessNotice(true);
+    expect(settings.hideAssessNotice()).toBe(true);
+    expect((events[0].detail as unknown as { hideAssessNotice: boolean }).hideAssessNotice).toBe(true);
+  });
+});
+
 describe('chat.html wiring', () => {
   const html = read('public/chat.html');
 
@@ -133,6 +166,8 @@ describe('chat.html wiring', () => {
     expect(html).toMatch(/id="settingsTab"[^>]*aria-expanded="false"/);
     expect(html).toContain('id="findNoticeToggle"');
     expect(html).toContain('id="simulatePrepareToggle"');
+    expect(html).toContain('id="assessNoticeToggle"');
+    expect(html).toContain('id="assessNotice"');
     expect(html).toContain('id="settingsClose"');
   });
 

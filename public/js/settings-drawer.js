@@ -1,10 +1,10 @@
 /**
- * The "Settings" slide-out tray: two switches (app-settings.js). One shows or hides the "Preliminary only" notice at the
- * top of Find grants; the other turns on a simulated "Prepare this opportunity" for opportunities whose documents are
- * already downloaded (prepare-replay.js). Closed by default, next to the Samples, Answers and Dev trays. Using a switch
- * closes the tray, like the other trays, so the page is visible. The tray is only offered on the Find grants view,
- * because that is where both settings apply. Open/close behavior comes from drawer-kit.js. Every string is set with
- * textContent.
+ * The "Settings" slide-out tray (app-settings.js). On Find grants: one switch shows or hides the "Preliminary only" notice at
+ * the top, and another turns on a simulated "Prepare this opportunity" for opportunities whose documents are already
+ * downloaded (prepare-replay.js). On Assess: one switch hides the "Preliminary only" box. Each tab shows only its own
+ * switches. Closed by default, next to the Samples, Answers and Dev trays. Using a switch closes the tray, like the other
+ * trays, so the page is visible. The tray is offered on Find grants and Assess (not on the original chat tab). Open/close
+ * behavior comes from drawer-kit.js. Every string is set with textContent.
  */
 (function () {
   'use strict';
@@ -19,14 +19,16 @@
     var close = document.getElementById('settingsClose');
     var toggle = document.getElementById('findNoticeToggle');
     var simulateToggle = document.getElementById('simulatePrepareToggle');
+    var assessToggle = document.getElementById('assessNoticeToggle');
     var status = document.getElementById('settingsStatus');
-    if (!K || !S || !drawer || !tab || !panel || !close || !toggle || !simulateToggle || !status) return;
+    if (!K || !S || !drawer || !tab || !panel || !close || !toggle || !simulateToggle || !assessToggle || !status) return;
 
     var tray = K.create({ drawer: drawer, tab: tab, panel: panel, close: close });
 
     function show() {
       toggle.checked = S.showFindNotice();
       simulateToggle.checked = S.simulatePrepare();
+      assessToggle.checked = S.hideAssessNotice();
     }
     show();
 
@@ -45,12 +47,20 @@
       tray.setOpen(false, true);
     });
 
+    assessToggle.addEventListener('change', function () {
+      S.setHideAssessNotice(assessToggle.checked);
+      status.textContent = assessToggle.checked ? 'The Preliminary only box is hidden on Assess.' : 'The Preliminary only box is shown on Assess.';
+      tray.setOpen(false, true);
+    });
+
     // Kept in step if something else changes the setting.
     document.addEventListener('appsettingschange', show);
 
-    // Both settings apply to Find grants only, so the tray is offered there only.
+    // Each tab has its own settings: the tray is offered on Find grants and Assess, showing only that tab's switches.
+    var groups = panel.querySelectorAll('[data-settings-for]');
     function applyMode(mode) {
-      tray.setAvailable(mode === 'find');
+      tray.setAvailable(mode === 'find' || mode === 'nofo');
+      for (var i = 0; i < groups.length; i++) groups[i].hidden = groups[i].getAttribute('data-settings-for') !== mode;
     }
     applyMode(document.body.dataset.chatMode || 'find');
     document.addEventListener('chatmodechange', function (event) { applyMode(event.detail && event.detail.mode); });

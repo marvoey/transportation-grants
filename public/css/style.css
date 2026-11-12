@@ -180,6 +180,12 @@ button:disabled {
   padding: 0.5rem;
 }
 
+/* The Assess conversation grows with the page instead of scrolling inside a box. */
+#nofoMessages {
+  max-height: none;
+  overflow-y: visible;
+}
+
 .chat-message {
   padding: 0.75rem 1rem;
   border-radius: 8px;
@@ -1703,4 +1709,183 @@ body.tray-open .tray:not(.is-open) .tray-tab {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.82rem;
   overflow-wrap: anywhere;
+}
+
+/* The button under the first listings of a Find grants result that reveals the rest. */
+.find-more {
+  margin: 0.75rem 0 1rem;
+}
+
+/* The button under a Find grants reply that takes the person to the closest listing's own action. */
+.find-reply-action {
+  margin-top: 0.6rem;
+}
+
+/* The progress panel sits inside the conversation, under the message just sent. */
+.find-thread .find-progress {
+  margin: 0.5rem 0 0.75rem;
+}
+
+/* The row of jump buttons under a Find grants reply. */
+.find-reply-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.find-reply-actions .find-reply-action {
+  margin-top: 0;
+}
+
+/* On Assess the progress panel sits inside the conversation, under the message just sent. */
+.chat-messages .find-progress {
+  margin: 0.5rem 0 0.75rem;
+}
+
+/* Answers to the notice's questions: one compact, grouped list instead of a card each. */
+.nofo-answers-details > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.nofo-answers-group {
+  margin: 0.9rem 0 0.25rem;
+  font-size: 0.95rem;
+}
+
+.nofo-answer-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nofo-answer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.3rem 0;
+  border-top: 1px solid #e7ebf1;
+}
+
+.nofo-answer-open {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  flex: 1;
+  background: none;
+  border: 0;
+  padding: 0.15rem 0.25rem;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.nofo-answer-open:hover {
+  background: #f1f4f8;
+}
+
+.nofo-answer-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nofo-answer-badge {
+  flex: none;
+  width: 6.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  background: #eceff3;
+  color: #394150;
+}
+
+.nofo-answer-badge.is-yes {
+  background: #ecf4f1;
+  color: #176d53;
+}
+
+.nofo-answer-badge.is-no {
+  background: #ffebea;
+  color: #9b3935;
+}
+
+.nofo-answer-badge.is-unsure {
+  background: #fff1d1;
+  color: #805500;
+}
+
+.nofo-answers-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.nofo-rejected {
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.nofo-rejected > summary {
+  cursor: pointer;
+  color: #555;
+}
+
+/* "Where you stand": the bottom line and three numbers at the top of the Assess results. */
+.nofo-standing {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.nofo-standing-tile {
+  display: flex;
+  flex-direction: column;
+  min-width: 8.5rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 6px;
+  border-left: 5px solid #cfd6df;
+  background: #f4f6f9;
+}
+
+.nofo-standing-tile strong {
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+.nofo-standing-tile span {
+  font-size: 0.85rem;
+  color: #4a5361;
+}
+
+.nofo-standing-tile.is-workable {
+  border-left-color: #2e8b6a;
+  background: #ecf4f1;
+}
+
+.nofo-standing-tile.is-attention {
+  border-left-color: #c2573b;
+  background: #fdf0ec;
+}
+
+.nofo-standing-tile.is-unknown {
+  border-left-color: #b8a050;
+  background: #fbf6e6;
+}
+
+.nofo-changes {
+  margin: 0.4rem 0 0;
+  font-weight: 600;
 }

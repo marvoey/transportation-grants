@@ -11,17 +11,21 @@
  *   AppSettings.setShowFindNotice(true)   -> shows or hides the notice and remembers the choice
  *   AppSettings.simulatePrepare()         -> boolean
  *   AppSettings.setSimulatePrepare(true)  -> turns the simulated preparation on or off and remembers the choice
+ *   AppSettings.hideAssessNotice()        -> boolean (the "Preliminary only" box on Assess is shown unless this is true)
+ *   AppSettings.setHideAssessNotice(true) -> hides or shows that box and remembers the choice
  *
  * The choices are kept in localStorage where the browser allows it; when it does not (private window, blocked storage)
  * they still work for the life of the page. Each change announces "appsettingschange" with { showFindNotice,
- * simulatePrepare }.
+ * simulatePrepare, hideAssessNotice }.
  */
 (function () {
   'use strict';
 
   var KEY = 'grantflow.showFindNotice';
   var SIMULATE_KEY = 'grantflow.simulatePrepare';
+  var HIDE_ASSESS_KEY = 'grantflow.hideAssessNotice';
   var NOTICE_ID = 'findNotice';
+  var ASSESS_NOTICE_ID = 'assessNotice';
 
   /** The saved choice, or `fallback` when nothing (or nothing recognisable) is saved or storage is blocked. */
   function remembered(key, fallback) {
@@ -45,14 +49,17 @@
 
   var shown = remembered(KEY, false);
   var simulate = remembered(SIMULATE_KEY, true);
+  var hideAssess = remembered(HIDE_ASSESS_KEY, false);
 
   function apply() {
     var notice = document.getElementById(NOTICE_ID);
     if (notice) notice.hidden = !shown;
+    var assessNotice = document.getElementById(ASSESS_NOTICE_ID);
+    if (assessNotice) assessNotice.hidden = hideAssess;
   }
 
   function announce() {
-    document.dispatchEvent(new CustomEvent('appsettingschange', { detail: { showFindNotice: shown, simulatePrepare: simulate } }));
+    document.dispatchEvent(new CustomEvent('appsettingschange', { detail: { showFindNotice: shown, simulatePrepare: simulate, hideAssessNotice: hideAssess } }));
   }
 
   function set(value) {
@@ -68,11 +75,20 @@
     announce();
   }
 
+  function setHideAssess(value) {
+    hideAssess = !!value;
+    remember(HIDE_ASSESS_KEY, hideAssess);
+    apply();
+    announce();
+  }
+
   window.AppSettings = {
     showFindNotice: function () { return shown; },
     setShowFindNotice: set,
     simulatePrepare: function () { return simulate; },
-    setSimulatePrepare: setSimulate
+    setSimulatePrepare: setSimulate,
+    hideAssessNotice: function () { return hideAssess; },
+    setHideAssessNotice: setHideAssess
   };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply);

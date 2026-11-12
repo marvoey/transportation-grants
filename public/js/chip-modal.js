@@ -5,6 +5,7 @@
  * Exposes window.ChipModal.
  *
  *   ChipModal.attach(chipEl, textEl, { label, value, quote })
+ *   ChipModal.open({ label, value, quote })      opens the same modal directly (for a row or a button that is not a fact card)
  *
  * Call it after the card is in the page (it measures what is cut). `value` and `quote` are the FULL strings; `quote` is the
  * text without any "You said:" wrapper. Cards that are not cut stay plain text, not buttons. A resize re-checks every
@@ -118,5 +119,5 @@
   window.addEventListener('resize', recheckAll);
   document.addEventListener('chatmodechange', recheckAll);
 
-  window.ChipModal = { attach: attach };
+  window.ChipModal = { attach: attach, open: open };
 })();
