@@ -9,7 +9,8 @@
  *
  * While on, a request under /api/nofo is answered from the recording or refused. It is never sent on to a real API.
  * The only calls passed through are read-only GETs of local opportunity data (the "View source" views).
- * A replayed answer is never presented as live: a badge says so while demo mode is on.
+ * A replayed answer is never presented as live: while demo mode is on, a small play icon at the bottom-right says so (demo-indicator.js);
+ * recording mode keeps a red badge at the top.
  *
  *   DemoMode.isOn()  DemoMode.isRecording()  DemoMode.toggle()  DemoMode.reset()  DemoMode.download()
  */
@@ -255,12 +256,15 @@
   // ---------------------------------------------------------------------------
 
   function showBadge() {
-    if (!on && !recording) return;
-    var badge = document.createElement('div');
-    badge.className = 'demo-badge' + (recording ? ' demo-badge-record' : '');
-    badge.setAttribute('role', 'status');
-    badge.textContent = recording ? 'Recording mode: capturing live responses' : 'Demo mode: recorded run, not live';
-    document.body.appendChild(badge);
+    if (recording) {
+      var badge = document.createElement('div');
+      badge.className = 'demo-badge demo-badge-record';
+      badge.setAttribute('role', 'status');
+      badge.textContent = 'Recording mode: capturing live responses';
+      document.body.appendChild(badge);
+    } else if (on && window.DemoIndicator) {
+      window.DemoIndicator.show('Demo mode: recorded run, not live');
+    }
   }
 
   if (document.body) showBadge();

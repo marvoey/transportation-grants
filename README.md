@@ -59,7 +59,7 @@ npm run nofo:stats                                  # what has been prepared
 
 ## Demo mode and presenting
 
-- **Demo mode** replays a recorded run in the browser with no API calls, downloads or parsing: open `/chat.html?demo=1` (`?demo=0` turns it off, `?demo=record` captures a new recording). A badge always says the run is a recording, not live. "Simulate preparing" shows the preparation progress for opportunities whose documents are already downloaded.
+- **Demo mode** replays a recorded run in the browser with no API calls, downloads or parsing: open `/chat.html?demo=1` (`?demo=0` turns it off, `?demo=record` captures a new recording). A small play icon at the bottom-right always says the run is a recording, not live. "Simulate preparing" shows the preparation progress for opportunities whose documents are already downloaded.
 - The **floating menu** (bottom-left) opens the **demo script window**: a separate window with the timed script (SHOW/DO, SAY, DIRECTING NOTE), the sample projects and suggested answers, each with a Copy button that types into the app. A small toggle at the bottom-right hides the drawer tabs for a clean screen. After editing `docs/GrantFlow_BigBuild_Live_App_Demo_Script.md`, run `npm run demo:script` to rebuild what the window shows.
 - `/big-build-v2.html` is the Big Build presentation companion (framing and impact scenes; the video itself shows the real app); `/docs` shows the project's markdown documents in the browser.
 

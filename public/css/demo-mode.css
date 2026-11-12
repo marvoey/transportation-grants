@@ -1,4 +1,4 @@
-/* Demo mode (see /js/demo-mode.js): the badge, the finished progress panel, and the menu actions. */
+/* Demo mode (see /js/demo-mode.js): the play icon, the recording badge, the finished progress panel, and the menu actions. */
 
 .demo-badge {
   position: fixed;
@@ -15,6 +15,29 @@
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   pointer-events: none;
+}
+
+/* The small play icon at the bottom-right that says demo mode is on (demo-indicator.js). On a page with the tray toggle it sits
+   beside it (the toggle is 1.5rem wide at 0.5rem from the edge); under the trays' layer (50), so an open tray covers it. */
+.demo-play {
+  position: fixed;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 49;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid var(--afs-purple-800, #460073);
+  border-radius: 50%;
+  background: var(--afs-purple-800, #460073);
+  color: #fff;
+  cursor: default;
+}
+
+body:has(.tray-toggle) .demo-play {
+  right: 2.25rem;
 }
 
 .demo-badge-record {
