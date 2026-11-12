@@ -53,7 +53,7 @@
    * the result would be longer than the box accepts).
    *
    * The text is typed in, character by character, at a human and uneven pace (typing-util.js), while the box is read-only.
-   * All of it is typed within 3 seconds, however long it is.
+   * All of it is typed within 1.5 seconds, however long it is.
    * It appears all at once instead when the person asks their system for reduced motion or typing-util.js is missing.
    * Clicking a second Copy while one is typing cancels the first. Returns true when the box is being filled, false when
    * there is no box to fill (another tab, or the box is switched off while a request runs), in which case the clipboard copy
@@ -96,7 +96,7 @@
     box.value = base;
     box.readOnly = true;
     box.setAttribute('aria-busy', 'true');
-    // The delays add up to at most three seconds, so a long text has under a millisecond per character, which no timer can
+    // The delays add up to at most 1.5 seconds, so a long text has under a millisecond per character, which no timer can
     // fire at. Instead, every ~16 ms show all the characters whose time has come (a few at once, in uneven bursts).
     var due = [];
     var running = 0;

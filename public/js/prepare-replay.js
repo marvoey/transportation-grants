@@ -8,7 +8,7 @@
  * Nothing is downloaded and the language model is not called. The names, page counts and requirement counts shown are the
  * real ones from the local files (item.downloaded); only the pacing is made up, and the panel says so.
  *
- *   PrepareReplay.applies(item, { enabled, demoModeOn })  -> boolean
+ *   PrepareReplay.applies(item, { enabled })  -> boolean
  *   PrepareReplay.plan(item)  -> [{ state: { status, message, requirements? }, holdMs }]
  *
  * "state" has the same shape as the server's prepare state, so the existing progress panel can draw it. "holdMs" is how long
@@ -21,17 +21,24 @@
 
   var MAX_TITLE = 70;
   var MAX_SHOWN_DOCS = 12; // more than this and the rest are folded into the last step, so the replay stays short
-  var DOWNLOAD_MS = 700;
-  var READ_MS = 500;
+  // The whole replay takes about 1.5 seconds, however many documents there are: nothing in a demonstration should make the
+  // audience wait more than about two seconds. The documents share INGEST_MS (a download and a read step each) and the
+  // requirement counter shares EXTRACT_MS.
+  var INGEST_MS = 700;
+  var EXTRACT_MS = 800;
   var EXTRACT_TICKS = 8;
-  var EXTRACT_TICK_MS = 900;
+  var EXTRACT_TICK_MS = EXTRACT_MS / EXTRACT_TICKS;
 
   var EXTRACT_MESSAGE = 'Reading the notice with the language model to extract its requirements…';
 
-  /** True only for an opportunity that is really prepared: replaying a job that never ran would show something untrue. */
+  /**
+   * True only for an opportunity that is really prepared: replaying a job that never ran would show something untrue.
+   * Demo mode does not change this: its recorded results mark those opportunities prepared too, so the setting is honored
+   * there as well (demo mode's own scripted prepare is only for an opportunity that is not prepared).
+   */
   function applies(item, options) {
     var o = options || {};
-    return !!(o.enabled && !o.demoModeOn && item && item.readyToAssess === true);
+    return !!(o.enabled && item && item.readyToAssess === true);
   }
 
   function shorten(text) {
@@ -62,24 +69,24 @@
     var total = totalRequirements(item);
 
     if (n === 0) {
-      steps.push({ state: { status: 'ingesting', message: 'Downloading the official documents from Simpler.Grants.gov and reading them…' }, holdMs: 3000 });
+      steps.push({ state: { status: 'ingesting', message: 'Downloading the official documents from Simpler.Grants.gov and reading them…' }, holdMs: INGEST_MS });
     } else {
       docs.forEach(function (doc, i) {
         steps.push({
           state: { status: 'ingesting', message: 'Downloading document ' + (i + 1) + ' of ' + n + ': ' + shorten(doc.title) },
-          holdMs: DOWNLOAD_MS
+          holdMs: INGEST_MS / (2 * n)
         });
       });
       docs.forEach(function (doc, i) {
         steps.push({
           state: { status: 'ingesting', message: 'Reading document ' + (i + 1) + ' of ' + n + ': ' + shorten(doc.title) + pagesText(doc) },
-          holdMs: READ_MS
+          holdMs: INGEST_MS / (2 * n)
         });
       });
     }
 
     if (total === null) {
-      steps.push({ state: { status: 'extracting', message: EXTRACT_MESSAGE }, holdMs: EXTRACT_TICKS * EXTRACT_TICK_MS / 2 });
+      steps.push({ state: { status: 'extracting', message: EXTRACT_MESSAGE }, holdMs: EXTRACT_MS });
     } else {
       // The counter climbs to the real number of requirements on file, never past it.
       for (var t = 1; t <= EXTRACT_TICKS; t++) {

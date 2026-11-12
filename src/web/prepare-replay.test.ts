@@ -10,7 +10,7 @@ vm.runInNewContext(readFileSync(join(process.cwd(), 'public/js/prepare-replay.js
 
 interface Step { state: { status: string; message: string; requirements?: number | null }; holdMs: number }
 const replay = sandbox.PrepareReplay as {
-  applies(item: unknown, options: { enabled?: boolean; demoModeOn?: boolean }): boolean;
+  applies(item: unknown, options: { enabled?: boolean }): boolean;
   plan(item: unknown): Step[];
 };
 
@@ -27,10 +27,9 @@ const item = {
 };
 
 describe('PrepareReplay.applies', () => {
-  it('needs the setting on, an opportunity that is really prepared, and demo mode off', () => {
+  it('needs the setting on and an opportunity that is really prepared (demo mode forces the setting on in discover.js, so it does not change this check)', () => {
     expect(replay.applies(item, { enabled: true })).toBe(true);
     expect(replay.applies(item, { enabled: false })).toBe(false);
-    expect(replay.applies(item, { enabled: true, demoModeOn: true })).toBe(false);
     // Never replays a job that did not run: an unprepared opportunity gets the real flow.
     expect(replay.applies({ ...item, readyToAssess: false }, { enabled: true })).toBe(false);
     expect(replay.applies({ downloaded: item.downloaded }, { enabled: true })).toBe(false);
@@ -83,6 +82,14 @@ describe('PrepareReplay.plan', () => {
     const steps = replay.plan({ readyToAssess: true, downloaded: { documents: many } });
     expect(steps.filter((s) => s.state.status === 'ingesting')).toHaveLength(24);
     for (const s of steps) expect(s.state.message.length).toBeLessThan(160);
+  });
+
+  it('takes under two seconds in all, however many documents there are', () => {
+    const many = Array.from({ length: 40 }, (_, i) => ({ title: `Document ${i}`, pages: 3 }));
+    for (const it2 of [item, { readyToAssess: true, downloaded: { documents: many, requirements: { total: 50 } } }, { readyToAssess: true }]) {
+      const total = replay.plan(it2).reduce((sum, s) => sum + s.holdMs, 0);
+      expect(total).toBeLessThanOrEqual(2000);
+    }
   });
 
   it('only the final step has no wait, and every wait is bounded', () => {

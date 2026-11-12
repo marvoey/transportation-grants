@@ -20,6 +20,7 @@
     var toggle = document.getElementById('findNoticeToggle');
     var simulateToggle = document.getElementById('simulatePrepareToggle');
     var assessToggle = document.getElementById('assessNoticeToggle');
+    var simulateHint = document.getElementById('simulatePrepareDemoHint');
     var status = document.getElementById('settingsStatus');
     if (!K || !S || !drawer || !tab || !panel || !close || !toggle || !simulateToggle || !assessToggle || !status) return;
 
@@ -27,7 +28,12 @@
 
     function show() {
       toggle.checked = S.showFindNotice();
-      simulateToggle.checked = S.simulatePrepare();
+      // Demo mode always simulates preparing (discover.js), so the switch shows on and is locked there. The saved choice is kept
+      // and applies again when demo mode is off.
+      var demoOn = !!window.DemoMode && window.DemoMode.isOn();
+      simulateToggle.checked = demoOn || S.simulatePrepare();
+      simulateToggle.disabled = demoOn;
+      if (simulateHint) simulateHint.hidden = !demoOn;
       assessToggle.checked = S.hideAssessNotice();
     }
     show();

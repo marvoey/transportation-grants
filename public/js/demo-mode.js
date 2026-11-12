@@ -23,6 +23,7 @@
   var KEY = 'grantflow.demoMode';
   var RECORDING_URL = '/demo/demo-run.json';
   var GAP_CAP_MS = 2500;
+  var TURN_BUDGET_MS = 1800; // a whole recorded turn replays in about this long, however long the real run took
   var SESSION_KEY = 'grantflow.demoCapture';
 
   var flag = U.parseFlag(window.location.search);
@@ -126,7 +127,7 @@
       if (!turn) return refuse('Demo mode has no recorded ' + kind + ' step.', 'DEMO_MISSING');
       calls[kind] += 1;
       if (!wantsStream) return json(200, { success: true, data: lastResult(turn) });
-      var schedule = U.scheduleLines(turn.lines, GAP_CAP_MS, speed);
+      var schedule = U.scheduleLines(turn.lines, GAP_CAP_MS, speed, TURN_BUDGET_MS);
       var encoder = new TextEncoder();
       var cancelled = false;
       var body = new ReadableStream({

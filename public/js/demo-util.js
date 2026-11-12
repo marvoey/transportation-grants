@@ -13,8 +13,10 @@
   var LINE_TYPES = ['progress', 'console', 'result', 'error'];
 
   // How long the scripted "prepare" job takes on screen, per stage.
-  var INGEST_MS = 5000;
-  var EXTRACT_MS = 7000;
+  // The scripted prepare is short on purpose: nothing in demo mode should make the audience wait more than about two seconds.
+  // (discover.js polls every 250 ms in demo mode, so it is seen finishing within about 1.75 s of the click.)
+  var INGEST_MS = 700;
+  var EXTRACT_MS = 800;
 
   function isObject(value) {
     return !!value && typeof value === 'object' && !Array.isArray(value);
@@ -66,17 +68,22 @@
   /**
    * Turns a recorded turn into a replay schedule: [{ delay, line }], where `delay` is the wait in ms before this line
    * is sent. Each gap between recorded lines is capped at `capMs` and divided by `speed`, so a slow real run replays
-   * briskly but still visibly step by step.
+   * briskly but still visibly step by step. When `budgetMs` is given and the delays still add up to more than that, every
+   * delay is scaled down by the same factor so the whole replay takes `budgetMs` (the shape of the run is kept).
    */
-  function scheduleLines(lines, capMs, speed) {
+  function scheduleLines(lines, capMs, speed, budgetMs) {
     var cap = Number(capMs) > 0 ? Number(capMs) : 2500;
     var factor = Number(speed) > 0 ? Number(speed) : 1;
     var previous = 0;
-    return (lines || []).map(function (entry) {
+    var schedule = (lines || []).map(function (entry) {
       var gap = Math.min(Math.max(0, entry.t - previous), cap);
       previous = entry.t;
-      return { delay: Math.round(gap / factor), line: entry.line };
+      return { delay: gap / factor, line: entry.line };
     });
+    var budget = Number(budgetMs);
+    var total = schedule.reduce(function (sum, s) { return sum + s.delay; }, 0);
+    var scale = budget > 0 && total > budget ? budget / total : 1;
+    return schedule.map(function (s) { return { delay: Math.round(s.delay * scale), line: s.line }; });
   }
 
   /** One NDJSON line, as the server writes it. */

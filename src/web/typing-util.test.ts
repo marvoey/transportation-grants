@@ -40,12 +40,12 @@ describe('TypingUtil.schedule', () => {
     expect(Math.max(...windows) / Math.min(...windows)).toBeGreaterThan(1.2);
   });
 
-  it('uses the three seconds for a typical answer rather than finishing in a blink', () => {
+  it('uses the 1.5 seconds for a typical answer rather than finishing in a blink', () => {
     const answer = 'We would request about $180,000 for the 33-month project, with no matching funds.';
     for (const seed of [3, 4, 5, 6, 7]) {
       const total = T.schedule(answer, seeded(seed)).reduce((a, b) => a + b, 0);
-      expect(total).toBeGreaterThan(1500);
-      expect(total).toBeLessThanOrEqual(3000);
+      expect(total).toBeGreaterThan(1400);
+      expect(total).toBeLessThanOrEqual(1500);
     }
   });
 
@@ -71,12 +71,12 @@ describe('TypingUtil.schedule', () => {
     expect(d[7]).toBeLessThan(150);
   });
 
-  it('is within three seconds for any length, up to the longest text the question box accepts (4,000 characters)', () => {
-    expect(T.MAX_TOTAL_MS).toBe(3000);
+  it('is within 1.5 seconds for any length, up to the longest text the question box accepts (4,000 characters)', () => {
+    expect(T.MAX_TOTAL_MS).toBe(1500);
     for (const length of [50, 700, 4000]) {
       const long = sentence.repeat(40).slice(0, length);
       const total = T.schedule(long, seeded(6)).reduce((a, b) => a + b, 0);
-      expect(total).toBeLessThanOrEqual(3000 + length * 0.005); // only the rounding to hundredths of a millisecond
+      expect(total).toBeLessThanOrEqual(1500 + length * 0.005); // only the rounding to hundredths of a millisecond
     }
   });
 

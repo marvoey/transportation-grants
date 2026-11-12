@@ -483,6 +483,7 @@
   // ---------------------------------------------------------------------------
 
   var POLL_MS = 3000;
+  var DEMO_POLL_MS = 250; // demo mode's scripted prepare is over in about 1.5 s, so it is read often
 
   /**
    * Opens the Assess tab on this opportunity, with the first message pre-filled: a project description the language
@@ -592,6 +593,10 @@
     if (simulated) append(box, el('p', 'nofo-meta', 'Simulated: this opportunity\'s documents are already downloaded and read on this server, so nothing is being downloaded and the language model is not being called. The documents and counts shown are the real ones.'));
   }
 
+  function pollMs() {
+    return window.DemoMode && window.DemoMode.isOn() ? DEMO_POLL_MS : POLL_MS;
+  }
+
   /** Polls the server until the job finishes. Stops quietly if the card has been replaced by a new search. */
   function trackPrepare(item, box, state) {
     var startedAt = state.startedAt ? Date.parse(state.startedAt) || Date.now() : Date.now();
@@ -619,9 +624,9 @@
       } catch (e) {
         // A hiccup while polling is not a failed job: keep trying.
       }
-      timer = setTimeout(poll, POLL_MS);
+      timer = setTimeout(poll, pollMs());
     }
-    timer = setTimeout(poll, POLL_MS);
+    timer = setTimeout(poll, pollMs());
   }
 
   async function startPrepare(item, box, button) {
@@ -653,11 +658,10 @@
     }
   }
 
-  /** Settings: "Simulate preparing" is on, this opportunity is already prepared, and demo mode (its own replay) is not. */
+  /** This opportunity is already prepared and "Simulate preparing" is on in Settings. Demo mode always counts as on, whatever the saved setting. */
   function replaysPrepare(item) {
     return !!window.PrepareReplay && window.PrepareReplay.applies(item, {
-      enabled: !!window.AppSettings && window.AppSettings.simulatePrepare(),
-      demoModeOn: !!window.DemoMode && window.DemoMode.isOn()
+      enabled: (!!window.DemoMode && window.DemoMode.isOn()) || (!!window.AppSettings && window.AppSettings.simulatePrepare())
     }) && !!window.NofoApp;
   }
 

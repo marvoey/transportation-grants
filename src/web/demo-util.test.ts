@@ -69,8 +69,23 @@ describe('scheduleLines', () => {
   it('divides each gap by the speed', () => {
     expect(U.scheduleLines(lines, 2500, 2).map((s: any) => s.delay)).toEqual([0, 200, 1250]);
   });
+  it('scales every delay down so the whole replay fits a time budget, keeping its shape', () => {
+    const slow = [{ t: 0, line: 'a' }, { t: 2000, line: 'b' }, { t: 4000, line: 'c' }, { t: 6000, line: 'd' }];
+    const delays = U.scheduleLines(slow, 2500, 1, 1500).map((s: any) => s.delay);
+    expect(delays.reduce((a: number, b: number) => a + b, 0)).toBeLessThanOrEqual(1500);
+    expect(delays[0]).toBe(0);
+    expect(delays[1]).toBe(delays[2]);
+    // A run already inside the budget is left alone.
+    expect(U.scheduleLines(lines, 2500, 1, 10000).map((s: any) => s.delay)).toEqual([0, 400, 2500]);
+  });
   it('ignores a nonsense cap or speed', () => {
     expect(U.scheduleLines(lines, -1, 0).map((s: any) => s.delay)).toEqual([0, 400, 2500]);
+  });
+});
+
+describe('the scripted prepare', () => {
+  it('is over in under two seconds', () => {
+    expect(U.INGEST_MS + U.EXTRACT_MS).toBeLessThanOrEqual(2000);
   });
 });
 

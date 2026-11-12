@@ -4,7 +4,7 @@
  *
  *   TypingUtil.schedule(text, random)  -> number[]   one delay in ms before each character, same length as `text`
  *
- * The delays add up to at most MAX_TOTAL_MS (3 seconds), whatever the length of the text. A long text therefore has delays
+ * The delays add up to at most MAX_TOTAL_MS (1.5 seconds), whatever the length of the text. A long text therefore has delays
  * of only a millisecond or so per character, far below what a timer can fire at, so the player (drawer-kit.js) works from
  * the running total and shows every character that is due at each tick, rather than waiting one timer per character.
  *
@@ -33,7 +33,7 @@
   var LINE_PAUSE = [320, 720];
   var HESITATE = { chance: 0.012, ms: [380, 900] };
   var HARD_KEY_MS = 14;            // extra for a capital, digit or symbol
-  var MAX_TOTAL_MS = 3000;
+  var MAX_TOTAL_MS = 1500;
 
   function between(random, range) {
     return range[0] + random() * (range[1] - range[0]);
