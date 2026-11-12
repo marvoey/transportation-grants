@@ -73,6 +73,12 @@
     }
   }
 
+  // A separate window with the demo script and the messages to paste, to keep beside the app. Offered in every mode
+  // (demo on, off or recording) and on every page that has this menu.
+  addAction('Open the demo script window', function () {
+    window.open('/demo-script.html', 'grantflowDemoScript', 'popup=yes,width=560,height=900,left=40,top=40');
+  });
+
   function setOpen(open, returnFocus) {
     menu.hidden = !open;
     button.setAttribute('aria-expanded', String(open));

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>GrantFlow demo script</title>
+  <link rel="stylesheet" href="/css/demo-script.css">
+</head>
+<body data-tab="script">
+  <header class="ds-head">
+    <h1 id="dsTitle">Demo script</h1>
+    <p class="ds-sub">Presenter window. Keep it beside the app; it is not part of the recording.</p>
+  </header>
+
+  <div class="ds-tabs" role="tablist" aria-label="Presenter window sections">
+    <button type="button" role="tab" id="dsTabScript" class="ds-tab ds-tab-active" aria-selected="true" aria-controls="dsPanelScript" data-tab="script">Script</button>
+    <button type="button" role="tab" id="dsTabSamples" class="ds-tab" aria-selected="false" aria-controls="dsPanelSamples" tabindex="-1" data-tab="samples">Samples</button>
+    <button type="button" role="tab" id="dsTabAnswers" class="ds-tab" aria-selected="false" aria-controls="dsPanelAnswers" tabindex="-1" data-tab="answers">Answers<span id="dsNews" class="ds-news" hidden aria-label="new suggestions"></span></button>
+  </div>
+
+  <main class="ds-main">
+    <div id="dsPanelScript" role="tabpanel" aria-labelledby="dsTabScript" class="ds-panel">
+      <details class="ds-card ds-setup">
+        <summary>Before recording</summary>
+        <ol id="dsSetup"></ol>
+      </details>
+
+      <nav class="ds-nav" aria-label="Scenes">
+        <button type="button" id="dsPrev" class="ds-btn">&larr; Back</button>
+        <span id="dsPosition" class="ds-position" aria-live="polite"></span>
+        <button type="button" id="dsNext" class="ds-btn ds-btn-primary">Next &rarr;</button>
+      </nav>
+      <div id="dsChips" class="ds-chips" aria-label="Jump to a scene"></div>
+
+      <article id="dsScene" class="ds-card ds-scene" aria-live="polite"></article>
+      <p id="dsError" class="ds-error" role="alert" hidden></p>
+    </div>
+
+    <div id="dsPanelSamples" role="tabpanel" aria-labelledby="dsTabSamples" class="ds-panel" hidden>
+      <section class="ds-card">
+        <h2>Sample project descriptions</h2>
+        <p class="ds-hint">Copy types the description into the app's question box and copies it too. Made-up projects for trying the app out.</p>
+        <label class="ds-search"><span class="ds-label">Filter</span><input type="search" id="dsSampleFilter" placeholder="Search titles and text" autocomplete="off"></label>
+      </section>
+      <div id="dsSamples"></div>
+    </div>
+
+    <div id="dsPanelAnswers" role="tabpanel" aria-labelledby="dsTabAnswers" class="ds-panel" hidden>
+      <section class="ds-card">
+        <h2>Suggested answers</h2>
+        <p class="ds-hint">Made-up example answers for the questions the app last asked, for the tab the app has open. Copy types the reply into the app's question box and copies it too.</p>
+        <p id="dsAnswersFor" class="ds-label"></p>
+      </section>
+      <div id="dsAnswers"></div>
+    </div>
+  </main>
+
+  <p id="dsCopyStatus" class="ds-toast" role="status" aria-live="polite"></p>
+
+  <script src="/js/sample-projects.js"></script>
+  <script src="/js/answer-suggestions.js"></script>
+  <script src="/js/demo-script.js"></script>
+  <script src="/js/demo-script-tabs.js"></script>
+</body>
+</html>

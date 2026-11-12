@@ -22,7 +22,8 @@
     "nofo:find": "tsx src/nofo/discovery/cli.ts",
     "nofo:stages": "tsx src/nofo/assessment/stages-cli.ts",
     "nofo:stats": "tsx src/nofo/stats-cli.ts",
-    "presentation:vendor": "node scripts/copy-reveal.mjs"
+    "presentation:vendor": "node scripts/copy-reveal.mjs",
+    "demo:script": "node scripts/build-demo-script.mjs"
   },
   "keywords": [
     "mcp",
