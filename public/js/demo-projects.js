@@ -12,12 +12,8 @@
 
   var kit = window.PresenterKit;
   var S = window.AnswerSuggestions;
-  // The demo project goes first in this window: "Short: speeding and drunk driving" (sample-14). The rest keep their order.
-  var PINNED_FIRST = ['sample-14'];
-  var all = window.SampleProjects || [];
-  var projects = all.filter(function (p) { return PINNED_FIRST.indexOf(p.id) >= 0; })
-    .sort(function (a, b) { return PINNED_FIRST.indexOf(a.id) - PINNED_FIRST.indexOf(b.id); })
-    .concat(all.filter(function (p) { return PINNED_FIRST.indexOf(p.id) < 0; }));
+  // The same list, in the same order, as the Samples tray on the app page (sample-projects.js is the one place that sets the order).
+  var projects = window.SampleProjects || [];
   var latest = { find: null, nofo: null };
   var mode = null; // the tab the app has open: 'find', 'nofo' or something else
   var connected = false;

@@ -3,8 +3,9 @@
  * (samples-drawer.js). The text is the same as docs/NOFO_TEST_PROJECTS.md, which is the place to edit it; a test
  * (src/web/sample-projects.test.ts) fails if the two drift apart. Every place, number and fact is invented.
  *
- * The tray shows them in array order. First come six short, vague ones (one per program, and one generic with no
- * project type). Then ten "Stress test" projects, two per program (the two Crash Causal Factors ones first), written to
+ * The tray and the projects and answers window (demo-projects.js) both show them in array order. First come six short,
+ * vague ones (one per program, and one generic with no project type); the demo project, "Short: speeding and drunk
+ * driving" (sample-14), is first. Then ten "Stress test" projects, two per program (the two Crash Causal Factors ones first), written to
  * produce as many finding cards as possible on the Assess tab: each runs into many rules in its notice (an ineligible applicant,
  * an amount outside the range, banned costs, a duplicate application). Each problem is phrased as something the
  * project "would include", because the fact-reading step picks those phrases up and drops passing remarks.
@@ -14,6 +15,12 @@
  * missing one thing, and one that is missing two. The program facts come from docs/NOFO_FACT_SHEETS.md.
  */
 window.SampleProjects = [
+  {
+    "id": "sample-14",
+    "title": "Short: speeding and drunk driving",
+    "note": "A local law enforcement applicant (a police department) and an enforcement program, nothing else. Written for the ITSE Grant Program.",
+    "text": "Our police department wants money to try a new traffic safety enforcement program to cut speeding and drunk driving."
+  },
   {
     "id": "sample-11",
     "title": "Short: deer on our highway",
@@ -31,12 +38,6 @@ window.SampleProjects = [
     "title": "Short: recall notices at registration",
     "note": "A state vehicle-registration agency and a recall notification process, phrased as a question. Written for the State Process for Informing Consumers of Recalls Program.",
     "text": "Our state motor vehicle agency wants to inform owners of open safety recalls at vehicle registration. Is there funding for a notification process?"
-  },
-  {
-    "id": "sample-14",
-    "title": "Short: speeding and drunk driving",
-    "note": "A local law enforcement applicant (a police department) and an enforcement program, nothing else. Written for the ITSE Grant Program.",
-    "text": "Our police department wants money to try a new traffic safety enforcement program to cut speeding and drunk driving."
   },
   {
     "id": "sample-15",
