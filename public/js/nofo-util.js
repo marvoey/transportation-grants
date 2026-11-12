@@ -22,7 +22,9 @@
     projectDescription: 'Project description',
     activities: 'Activities',
     designStatus: 'Design status',
-    environmentalStatus: 'Environmental review status'
+    environmentalStatus: 'Environmental review status',
+    onNoticeList: 'Named in the notice',
+    statedGaps: 'What you said you lack'
   };
 
   var APPLICANT_LABELS = {

@@ -60,17 +60,30 @@
     return card;
   }
 
-  function renderQuestion(item) {
-    var card = el('article', 'answers-question');
-    card.appendChild(el('p', 'answers-asked', item.question));
-    item.variants.forEach(function (variant) {
-      var box = el('div', 'answers-variant');
-      box.appendChild(el('span', 'answers-variant-label', variant.label));
-      box.appendChild(el('p', 'samples-text', variant.text));
-      box.appendChild(copyButton(variant.text, 'Copy', 'Copy the suggested answer (' + variant.label.toLowerCase() + ') to: ' + item.question, 'append'));
-      card.appendChild(box);
+  var CATEGORY_NAMES = { eligibility: 'Eligibility', funding: 'Funding', readiness: 'Readiness', application: 'Application checklist' };
+
+  /**
+   * Every other requirement that can still be answered (not being asked in the conversation) as complete replies, one per
+   * choice, each answering all of them in one message, kept closed until opened. Pasting one is read as an answer to each
+   * requirement it names. The requirements are listed under a second, closed heading so you can see what a reply covers.
+   */
+  function renderOpenRequirements(listed, facts) {
+    var built = S.buildOpen(listed, facts);
+    if (built.total === 0) return null;
+    var box = el('details', 'answers-open');
+    box.appendChild(el('summary', null, 'All other open requirements (' + built.total + ')'));
+    box.appendChild(el('p', 'nofo-meta', 'Every requirement from the notice that is still unevaluated, answered in one reply. Copy one to put it in your message; each sentence names its requirement.'));
+    built.replies.forEach(function (reply) { box.appendChild(renderReply(reply)); });
+    var covered = el('details', 'answers-covered');
+    covered.appendChild(el('summary', null, 'The ' + built.total + ' requirements these replies cover'));
+    var ul = el('ul', 'nofo-reply-list');
+    built.items.forEach(function (item) {
+      var name = CATEGORY_NAMES[item.category];
+      ul.appendChild(el('li', null, (name ? name + ': ' : '') + item.question));
     });
-    return card;
+    covered.appendChild(ul);
+    box.appendChild(covered);
+    return box;
   }
 
   /** Rebuilds the tray from the latest assessment (null = there is none right now). */
@@ -81,15 +94,29 @@
       return;
     }
     var suggestions = S.build(detail.questions, detail.facts);
+    var open = renderOpenRequirements(detail.detailQuestions || [], detail.facts);
     if (suggestions.items.length === 0) {
       els.list.appendChild(el('p', 'nofo-meta', 'There are no follow-up questions right now, so there is nothing to answer.'));
+      if (open) els.list.appendChild(open);
       return;
     }
     var heading = el('h3', 'answers-section', 'Answer everything at once');
     els.list.appendChild(heading);
-    suggestions.replies.forEach(function (reply) { els.list.appendChild(renderReply(reply)); });
-    els.list.appendChild(el('h3', 'answers-section', 'Or one question at a time'));
-    suggestions.items.forEach(function (item) { els.list.appendChild(renderQuestion(item)); });
+    // One complete reply, for a project that is well advanced. When the language model could write one it reads like a person
+    // typing; otherwise the template reply built from the questions is offered instead.
+    var written = detail.suggestedReply && detail.suggestedReply.text ? detail.suggestedReply : null;
+    if (written) {
+      els.list.appendChild(renderReply({ stage: 'advanced', label: 'Complete reply', text: written.text }));
+      els.list.appendChild(el('p', 'nofo-meta', 'An example written by the language model. It is made up for trying the app out and says nothing true about your project.'));
+    } else {
+      suggestions.replies.filter(function (reply) { return reply.stage === 'advanced'; }).forEach(function (reply) {
+        els.list.appendChild(renderReply({ stage: reply.stage, label: 'Complete reply', text: reply.text }));
+      });
+    }
+    // The drawer offers only complete replies (each answers every question being asked), never one answer at a time; a second
+    // set, closed, covers the other open requirements (Assess).
+    els.list.appendChild(el('p', 'nofo-meta', 'Each reply answers all the questions being asked. Copy one to put it in your message.'));
+    if (open) els.list.appendChild(open);
     // A small dot on the tab says there is something new inside (cleared when the tray is opened).
     if (!tray.isOpen()) els.tab.classList.add('has-news');
   }

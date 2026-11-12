@@ -205,3 +205,92 @@ describe('the suggested-answers tray in chat.html', () => {
     expect(read('public/css/style.css')).toContain('body.tray-open .tray:not(.is-open) .tray-tab');
   });
 });
+
+describe('detail questions (made from the notice\'s requirements)', () => {
+  const detail = { group: 'detail:req-0000a001', text: 'Are all costs in your application part of an approved project plan?' };
+
+  it('suggests a yes, a no and a not-sure answer, each naming its question so several can be pasted together', () => {
+    const { items } = S.build([detail], {});
+    expect(items).toHaveLength(1);
+    expect(items[0].detail).toBe(true);
+    expect(items[0].variants.map((v: any) => v.label)).toEqual(['Yes, we meet this', 'No, not yet', 'Not sure yet']);
+    expect(items[0].variants[0].text).toBe('For "Are all costs in your application part of an approved project plan": yes, we do.');
+    expect(items[0].variants[1].text).toContain(': no, not yet.');
+  });
+
+  it('uses yes in the well-advanced complete reply and no in the early one, alongside the fixed questions', () => {
+    const { replies } = S.build([q('request'), detail], {});
+    expect(replies[0].text).toContain('yes, we do.');
+    expect(replies[1].text).toContain('no, not yet.');
+  });
+
+  it('strips quotes out of the question so the suggestion stays one clean sentence', () => {
+    const { items } = S.build([{ group: 'detail:req-0000a002', text: 'Does "Form A" apply?' }], {});
+    expect(items[0].variants[0].text).toBe("For \"Does 'Form A' apply\": yes, we do.");
+  });
+});
+
+describe('listed requirements keep their category', () => {
+  it('passes the category through so the drawer can group the suggestions', () => {
+    const { items } = S.build([{ group: 'detail:req-0000a003', text: 'Does it?', category: 'funding' }, { group: 'detail:req-0000a004', text: 'Does it too?' }], {});
+    expect(items.map((i: any) => i.category)).toEqual(['funding', '']);
+  });
+});
+
+describe('buildOpen (one complete reply for every other open requirement)', () => {
+  const listed = (n: number, text = 'Does your project meet this requirement?') =>
+    Array.from({ length: n }, (_, i) => ({ group: `detail:req-${String(i).padStart(8, '0')}`, text: `${text} (${i})`, category: 'funding' }));
+
+  it('gives a yes, a no and a not-sure reply, each with one sentence per requirement, in order', () => {
+    const out = S.buildOpen(listed(3), {});
+    expect(out.total).toBe(3);
+    expect(out.replies.map((r: any) => r.stage)).toEqual(['yes', 'no', 'unsure']);
+    expect(out.replies[0].label).toBe('Complete reply: yes to all (3)');
+    expect(out.replies[0].text.match(/yes, we do\./g)).toHaveLength(3);
+    expect(out.replies[1].text.match(/no, not yet\./g)).toHaveLength(3);
+    expect(out.replies[2].text.match(/we are not sure yet\./g)).toHaveLength(3);
+    expect(out.replies[0].text.indexOf('(0)')).toBeLessThan(out.replies[0].text.indexOf('(2)'));
+  });
+
+  it('keeps each reply within one message and says how many requirements it holds when not all fit', () => {
+    const out = S.buildOpen(listed(70, 'Does your application meet these notice requirements with a deliberately long wording that takes room?'), {});
+    for (const reply of out.replies) expect(reply.text.length).toBeLessThanOrEqual(3800);
+    expect(out.replies[0].included).toBeLessThan(70);
+    expect(out.replies[0].label).toMatch(/^Complete reply: yes to all \(the first \d+ of 70\)$/);
+  });
+
+  it('is empty when there is nothing listed, and ignores questions that are not detail questions', () => {
+    expect(S.buildOpen([], {})).toMatchObject({ total: 0, replies: [] });
+    expect(S.buildOpen([q('request')], {}).total).toBe(0);
+  });
+});
+
+describe('suggestions by kind of detail question', () => {
+  const base = { group: 'detail:req-0000a050', category: 'eligibility' };
+  const labels = (item: any) => item.variants.map((v: any) => v.label);
+
+  it('a choice gets one suggestion per option, plus not sure, each naming its question', () => {
+    const spec = { type: 'choice', options: [{ label: 'A State DOT', outcome: 'meets' }, { label: 'A local agency', outcome: 'does_not_meet' }] };
+    const { items, replies } = S.build([{ ...base, text: 'Who is applying? A) A State DOT; B) A local agency.', spec }], {});
+    expect(labels(items[0])).toEqual(['A State DOT', 'A local agency', 'Not sure yet']);
+    expect(items[0].variants[1].text).toBe('For "Who is applying? A) A State DOT; B) A local agency.": A local agency.');
+    expect(replies[0].text).toContain(': A State DOT.');
+    expect(replies[1].text).toContain(': A local agency.');
+  });
+
+  it('a number gets a figure that meets the limit and one that does not, with the unit', () => {
+    const atMost = { type: 'number', comparison: { op: 'at_most', value: 4, unit: 'projects' } };
+    const atLeast = { type: 'number', comparison: { op: 'at_least', value: 20 } };
+    const a = S.build([{ ...base, text: 'How many projects?', spec: atMost }], {}).items[0];
+    expect(a.variants.map((v: any) => v.text)).toEqual(['For "How many projects": 4 projects.', 'For "How many projects": 5 projects.', 'For "How many projects": we are not sure yet.']);
+    const b = S.build([{ ...base, text: 'What percent match?', spec: atLeast }], {}).items[0];
+    expect(b.variants.slice(0, 2).map((v: any) => v.text)).toEqual(['For "What percent match": 20.', 'For "What percent match": 19.']);
+  });
+
+  it('a description gets a short description and a still-planning one; a yes/no is as before', () => {
+    expect(labels(S.build([{ ...base, text: 'Describe your staffing.', spec: { type: 'describe' } }], {}).items[0])).toEqual(['A short description', 'Still being planned', 'Not sure yet']);
+    expect(labels(S.build([{ ...base, text: 'Do you?', spec: { type: 'yes_no' } }], {}).items[0])).toEqual(['Yes, we meet this', 'No, not yet', 'Not sure yet']);
+    expect(labels(S.build([{ ...base, text: 'Do you?' }], {}).items[0])).toEqual(['Yes, we meet this', 'No, not yet', 'Not sure yet']);
+  });
+});
+

@@ -21,6 +21,14 @@
     messages: [], // { role, content }
     windowStart: 0, // messages before this index are not sent (after a fact was removed)
     facts: {},
+    skipFacts: [], // facts the applicant said they do not know yet: no question is asked about them
+    answers: {}, // yes/no answers to detail questions (questions made from the notice's requirements), by requirement id
+    askedDetails: [], // the detail questions shown with the last result: { id, covers, question }
+    skipDetails: [], // detail questions the applicant said they do not know yet
+    lastStatuses: {}, // each finding's status at the last result, sent back so the next message can say what changed
+    questionRound: 0, // how many rounds of questions the applicant has been asked (the app asks at most three)
+    answersOpen: null, // whether the answers section is open (null = decide by how many there are)
+    undoAnswers: null, // the answers cleared by "Clear all answers", so they can be restored
     result: null,
     busy: false
   };
@@ -102,6 +110,11 @@
     else div.textContent = content;
     els.messages.appendChild(div);
     els.messages.scrollTop = els.messages.scrollHeight;
+    // The conversation grows with the page, so bring the start of a new reply into view.
+    if (role === 'assistant' && !(extra && extra.pending) && div.scrollIntoView) {
+      var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      div.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    }
     return div;
   }
 
@@ -128,9 +141,22 @@
     for (var i = 0; i < removeButtons.length; i++) removeButtons[i].disabled = busy;
   }
 
+  /**
+   * When nothing is left to ask (every question answered or set aside), the box and the Send button go away, because there
+   * is nothing more to send. "Start over" stays. Any new result, a removed answer or a reset brings them back.
+   */
+  function setComposerDone(done) {
+    var label = els.form.querySelector('label[for="nofoInput"]');
+    els.input.hidden = done;
+    els.send.hidden = done;
+    if (label) label.hidden = done;
+    if (els.doneNote) els.doneNote.hidden = !done;
+    if (done) els.draftNote.hidden = true;
+  }
+
   /** Tells the rest of the page (the suggested-answers tray) what the latest assessment asked; null when there is none. */
   function announceResult(data) {
-    document.dispatchEvent(new CustomEvent('assessresult', { detail: data ? { questions: data.questions || [], facts: data.facts || {} } : null }));
+    document.dispatchEvent(new CustomEvent('assessresult', { detail: data ? { questions: data.questions || [], detailQuestions: data.openDetails || [], facts: data.facts || {}, suggestedReply: data.suggestedReply || null } : null }));
   }
 
   function lastUserMessageIndex() {
@@ -154,6 +180,14 @@
     }
     var body = { opportunityId: state.opportunityId, messages: sent };
     if (Object.keys(state.facts).length > 0) body.facts = state.facts;
+    if (state.skipFacts.length > 0) body.skipFacts = state.skipFacts.slice();
+    // The detail questions are carried like the facts: the answers so far, the ones just shown (so this message is read as
+    // their answer), and the ones set aside.
+    if (Object.keys(state.answers).length > 0) body.answers = state.answers;
+    if (readMessage && state.askedDetails.length > 0) body.asked = state.askedDetails;
+    if (state.skipDetails.length > 0) body.skipDetails = state.skipDetails.slice();
+    if (state.questionRound > 0) body.round = state.questionRound;
+    if (readMessage && Object.keys(state.lastStatuses).length > 0) body.previous = state.lastStatuses;
     if (!readMessage) body.readMessage = false;
     // The server reports each step as it really happens; fall back to a plain request if the panel is unavailable.
     if (panel && P) return P.stream(API + '/assess?stream=1', body, panel.push);
@@ -162,9 +196,17 @@
 
   async function runTurn(options) {
     if (state.busy || !state.opportunityId) return;
+    if (!options || options.readMessage !== false) state.undoAnswers = null; // a new message ends the chance to undo a clear
     setBusy(true);
     var pending = null;
-    if (panel) panel.start();
+    if (panel) {
+      // The progress shows in the conversation, right under the message just sent: the panel moves to the end of the
+      // messages each turn, hides when the turn is done, and the reply is added after it.
+      var progressRoot = document.getElementById('nofoProgress');
+      if (progressRoot) els.messages.appendChild(progressRoot);
+      panel.start();
+      els.messages.scrollTop = els.messages.scrollHeight;
+    }
     else pending = addMessage('assistant', 'Reading your message and checking it against the requirements… this can take up to a minute.', { pending: true });
     try {
       var data = await assess(options);
@@ -172,22 +214,48 @@
       removePending();
       if (!data) return;
       state.facts = data.facts || {};
+      state.answers = data.answers || {};
+      if (data.questionRound && typeof data.questionRound.round === 'number') state.questionRound = data.questionRound.round;
+      state.lastStatuses = {};
+      (data.findings || []).forEach(function (f) { state.lastStatuses[f.requirementId] = f.status; });
+      // The detail questions asked now, plus the other open requirements listed in the Answers drawer (shown: false), so a
+      // reply that answers any of them is read as an answer.
+      var asked = function (q, shown) {
+        var item = { id: String(q.group).replace(/^detail:/, ''), covers: q.requirementIds || [], question: q.text };
+        if (q.spec) item.spec = q.spec; // how the question was asked, so the reply is read and counted the same way
+        if (!shown) item.shown = false;
+        return item;
+      };
+      state.askedDetails = (data.questions || []).filter(function (q) { return q.kind === 'detail'; }).map(function (q) { return asked(q, true); })
+        .concat((data.openDetails || []).map(function (q) { return asked(q, false); }));
       state.result = data;
       renderResults(data);
       announceResult(data);
+      setComposerDone(!!data.questionRound && data.questionRound.open === 0 && (data.questions || []).length === 0);
       if (!options || options.readMessage !== false) {
         var reply = el('div');
-        append(reply, el('p', null, data.advisory.headline));
-        if (data.questions.length > 0) {
-          append(reply, el('p', 'nofo-reply-label', 'To sharpen this, tell me:'));
-          var list = el('ul', 'nofo-reply-list');
-          data.questions.forEach(function (q) { list.appendChild(el('li', null, q.text)); });
-          reply.appendChild(list);
+        // The model-written (or template) reply leads the chat message; the code-written findings stay in the panel below.
+        var spoken = data.reply && typeof data.reply.text === 'string' && data.reply.text ? data.reply : null;
+        if (spoken) {
+          spoken.text.split('\n\n').forEach(function (paragraph) { append(reply, el('p', null, paragraph)); });
+          append(reply, el('p', 'nofo-meta nofo-reply-source', spoken.source === 'model'
+            ? 'Written by the language model from the checked findings below, and checked by code. Preliminary.'
+            : 'Written from a template using the checked findings below. Preliminary.'));
+        } else {
+          append(reply, el('p', null, data.advisory.headline));
         }
+        var asking = questionsBlock(data.questions, data.questionRound);
+        if (asking) reply.appendChild(asking);
+        else if (lastRoundNote(data.questionRound)) reply.appendChild(lastRoundNote(data.questionRound));
         addMessage('assistant', '', { node: reply });
-        state.messages.push({ role: 'assistant', content: U.assistantTurnText(data.advisory.headline, data.questions) });
+        state.messages.push({ role: 'assistant', content: U.assistantTurnText(spoken ? spoken.text : data.advisory.headline, data.questions) });
       } else {
-        addMessage('assistant', 'Updated. ' + data.advisory.headline);
+        var updated = el('div');
+        append(updated, el('p', null, 'Updated. ' + (data.reply && data.reply.text ? data.reply.text.split('\n\n')[0] : data.advisory.headline)));
+        var stillAsking = questionsBlock(data.questions, data.questionRound);
+        if (stillAsking) updated.appendChild(stillAsking);
+        else if (lastRoundNote(data.questionRound)) updated.appendChild(lastRoundNote(data.questionRound));
+        addMessage('assistant', '', { node: updated });
       }
     } catch (e) {
       if (panel) panel.stop();
@@ -224,13 +292,127 @@
     runTurn({ readMessage: false });
   }
 
+  function removeAnswer(id) {
+    if (state.busy) return;
+    delete state.answers[id];
+    state.undoAnswers = null;
+    runTurn({ readMessage: false });
+  }
+
+  /** One click clears every answer (kept for "Undo"), for example after a complete reply was pasted by mistake. */
+  function clearAnswers() {
+    if (state.busy || Object.keys(state.answers).length === 0) return;
+    state.undoAnswers = state.answers;
+    state.answers = {};
+    runTurn({ readMessage: false });
+  }
+
+  function restoreAnswers() {
+    if (state.busy || !state.undoAnswers) return;
+    state.answers = state.undoAnswers;
+    state.undoAnswers = null;
+    runTurn({ readMessage: false });
+  }
+
+  var CATEGORY_NAMES = { eligibility: 'Eligibility', funding: 'Funding', readiness: 'Readiness', application: 'Application checklist' };
+
+  /** The short badge for one answer: Yes, No, the option chosen, the number given, Described, or Not sure. */
+  function answerBadge(a) {
+    var kind = a.answer === 'yes' ? 'yes' : a.answer === 'no' ? 'no' : a.answer === 'unsure' ? 'unsure' : 'other';
+    if (a.kind === 'choice' && a.spec && a.spec.options && a.option !== undefined && a.spec.options[a.option]) {
+      var outcome = a.spec.options[a.option].outcome;
+      kind = outcome === 'meets' ? 'yes' : outcome === 'does_not_meet' ? 'no' : 'other';
+    }
+    return { text: answerValue(a), kind: kind };
+  }
+
+  /**
+   * Your answers to the notice's questions, as a closed section with a one-line summary: a compact row for each (a badge, the
+   * requirement's own title, Remove), grouped by category. The full question and your own words open in the modal. "Clear all
+   * answers" undoes a pasted complete reply in one click, and can itself be undone.
+   */
+  function answersPanel(data) {
+    var ids = Object.keys(data.answers || {});
+    if (ids.length === 0 && !state.undoAnswers) return null;
+    var byReq = {};
+    (data.findings || []).forEach(function (f) { byReq[f.requirementId] = f; });
+    var section = el('section', 'card nofo-answers');
+    if (ids.length === 0) {
+      // Everything was just cleared: say so, with the way back.
+      append(section, el('p', 'nofo-meta', 'All your answers to the notice\'s questions were cleared.'));
+      append(section, button('Undo: restore ' + Object.keys(state.undoAnswers).length + ' cleared answer' + (Object.keys(state.undoAnswers).length === 1 ? '' : 's'), 'nofo-secondary find-small', restoreAnswers));
+      return section;
+    }
+    var details = el('details', 'nofo-answers-details');
+
+    var counts = { yes: 0, no: 0, other: 0, unsure: 0 };
+    var rows = ids.map(function (id) {
+      var a = data.answers[id];
+      var badge = answerBadge(a);
+      counts[badge.kind] += 1;
+      var finding = byReq[id] || byReq[(a.covers || [])[0]];
+      return { id: id, a: a, badge: badge, title: (finding && finding.title) || a.question || id, category: (finding && finding.category) || '' };
+    });
+    var parts = [];
+    if (counts.yes) parts.push(counts.yes + ' yes');
+    if (counts.no) parts.push(counts.no + ' no');
+    if (counts.other) parts.push(counts.other + ' other');
+    if (counts.unsure) parts.push(counts.unsure + ' not sure');
+
+    var summary = el('summary', null, 'Your answers to the notice\'s questions (' + ids.length + ')' + (parts.length ? ' · ' + parts.join(' · ') : ''));
+    details.appendChild(summary);
+    append(details, el('p', 'nofo-meta', 'These are your own statements and have not been checked against the notice. Click a row for the full question and your words.'));
+
+    CATEGORY_ORDER.concat(['']).forEach(function (cat) {
+      var group = rows.filter(function (r) { return (CATEGORY_NAMES[r.category] ? r.category : '') === cat; });
+      if (group.length === 0) return;
+      details.appendChild(el('h4', 'nofo-answers-group', (cat ? CATEGORY_NAMES[cat] : 'Other') + ' (' + group.length + ')'));
+      var ul = el('ul', 'nofo-answer-rows');
+      group.forEach(function (r) {
+        var li = el('li', 'nofo-answer-row');
+        var open = el('button', 'nofo-answer-open');
+        open.type = 'button';
+        append(open, el('span', 'nofo-answer-badge is-' + r.badge.kind, r.badge.text), el('span', 'nofo-answer-title', r.title + ((r.a.covers || []).length > 1 ? ' (+' + (r.a.covers.length - 1) + ' related)' : '')));
+        open.setAttribute('aria-label', 'Show the question and your words: ' + r.title);
+        open.addEventListener('click', function () {
+          if (window.ChipModal) window.ChipModal.open({ label: 'Your answer: ' + r.badge.text, value: r.a.question || r.title, quote: r.a.quote || '' });
+        });
+        var remove = button('Remove', 'nofo-link-button', function () { removeAnswer(r.id); });
+        remove.setAttribute('aria-label', 'Remove your answer to: ' + r.title);
+        append(li, open, remove);
+        ul.appendChild(li);
+      });
+      details.appendChild(ul);
+    });
+
+    var actions = el('div', 'nofo-answers-actions');
+    if (ids.length > 0) append(actions, button('Clear all answers', 'nofo-secondary find-small', clearAnswers));
+    if (state.undoAnswers) append(actions, button('Undo: restore ' + Object.keys(state.undoAnswers).length + ' cleared answer' + (Object.keys(state.undoAnswers).length === 1 ? '' : 's'), 'nofo-secondary find-small', restoreAnswers));
+    if (actions.childNodes.length > 0) details.appendChild(actions);
+    section.appendChild(details);
+    // Open only when there are few of them, and stay as the person left it when the results are redrawn.
+    details.open = state.answersOpen === null ? ids.length <= 3 : state.answersOpen;
+    details.addEventListener('toggle', function () { state.answersOpen = details.open; });
+    return section;
+  }
+
+  var CATEGORY_ORDER = ['eligibility', 'funding', 'readiness', 'application'];
+
   function startOver() {
     if (state.busy) return;
     state.messages = [];
     state.windowStart = 0;
     state.facts = {};
+    state.skipFacts = [];
+    state.answers = {};
+    state.undoAnswers = null;
+    state.askedDetails = [];
+    state.skipDetails = [];
+    state.questionRound = 0;
+    state.lastStatuses = {};
     state.result = null;
     announceResult(null);
+    setComposerDone(false);
     clear(els.messages);
     clear(els.results);
     showIntroMessage();
@@ -298,7 +480,15 @@
     syncUrl();
     if (!changed || (options && options.silent)) return;
     state.result = null;
+    state.skipFacts = [];
+    state.answers = {};
+    state.undoAnswers = null;
+    state.askedDetails = [];
+    state.skipDetails = [];
+    state.questionRound = 0;
+    state.lastStatuses = {};
     announceResult(null);
+    setComposerDone(false);
     clear(els.results);
     // Same project, different notice: re-check the facts already given, without reading anything again.
     if (state.opportunityId && lastUserMessageIndex() >= 0) {
@@ -421,9 +611,16 @@
       });
       section.appendChild(list);
     }
-    (data.rejectedFacts || []).forEach(function (r) {
-      append(section, el('p', 'nofo-meta', 'Not recorded: ' + U.factLabel(r.key) + ' (' + r.reason + ').'));
-    });
+    // Statements that could not be matched to the applicant's own words are one quiet, closed note, not a line each.
+    var rejected = data.rejectedFacts || [];
+    if (rejected.length > 0) {
+      var note = el('details', 'nofo-rejected');
+      note.appendChild(el('summary', null, rejected.length + (rejected.length === 1 ? ' statement' : ' statements') + ' could not be matched to your words, so ' + (rejected.length === 1 ? 'it was' : 'they were') + ' not used'));
+      var rl = el('ul', 'nofo-simple-list');
+      rejected.forEach(function (r) { rl.appendChild(el('li', 'nofo-meta', U.factLabel(r.key) + ' (' + r.reason + ')')); });
+      note.appendChild(rl);
+      section.appendChild(note);
+    }
     return section;
   }
 
@@ -462,6 +659,88 @@
     return details;
   }
 
+  var TYPE_LABELS = { yes_no: 'a yes or no question', choice: 'a multiple-choice question', number: 'a question for a number', describe: 'a question to describe' };
+
+  /** A detail question says what kind of question it is and why (the model's reason), so the person can see how it was chosen. */
+  function typeLine(q) {
+    if (!q || q.kind !== 'detail' || !q.answerType || !TYPE_LABELS[q.answerType]) return '';
+    return 'Asked as ' + TYPE_LABELS[q.answerType] + (q.reason ? ': ' + q.reason : '.');
+  }
+
+  /** What an answer says, for its card: yes or no, the option chosen, the number given, or that it was described. */
+  function answerValue(a) {
+    if (a.answer === 'unsure') return 'Not sure yet';
+    if (a.kind === 'choice' && a.spec && a.spec.options && a.option !== undefined && a.spec.options[a.option]) return a.spec.options[a.option].label;
+    if (a.kind === 'number' && a.number !== undefined) return a.number.toLocaleString('en-US') + (a.spec && a.spec.comparison && a.spec.comparison.unit ? ' ' + a.spec.comparison.unit : '');
+    if (a.kind === 'describe') return 'Described';
+    return a.answer === 'yes' ? 'Yes' : a.answer === 'no' ? 'No' : 'Answered';
+  }
+
+  /**
+   * "I don't know yet": sets the facts behind the questions on screen aside, so they are not asked about again, and
+   * re-checks without reading a message. The requirements waiting on them stay unknown (never a pass or a fail), and any
+   * other open question is still asked. There is always a way out of being asked.
+   */
+  function skipButton(questions) {
+    var keys = [];
+    var details = [];
+    (questions || []).forEach(function (q) {
+      (q.factKeys || []).forEach(function (k) { if (keys.indexOf(k) < 0) keys.push(k); });
+      if (q.kind === 'detail') details.push(String(q.group).replace(/^detail:/, ''));
+    });
+    var plural = (questions || []).length === 1;
+    var button = el('button', 'nofo-secondary find-small', plural ? 'I don\'t know this yet' : 'I don\'t know these yet');
+    button.type = 'button';
+    button.addEventListener('click', function () {
+      if (state.busy) return;
+      keys.forEach(function (k) { if (state.skipFacts.indexOf(k) < 0) state.skipFacts.push(k); });
+      details.forEach(function (id) { if (state.skipDetails.indexOf(id) < 0) state.skipDetails.push(id); });
+      runTurn({ readMessage: false });
+    });
+    return button;
+  }
+
+  /**
+   * The follow-up questions, as part of the assistant's message in the conversation: each question, what kind of question it is
+   * and why, and why it matters with a link to its source. This is the one place they are listed (not repeated in the results
+   * below or in the next steps). Null when nothing is being asked.
+   */
+  function questionsBlock(questions, info) {
+    if (!questions || questions.length === 0) return null;
+    var box = el('div', 'nofo-chat-questions');
+    var stage = info && info.stage ? info.stage : null;
+    append(box, el('p', 'nofo-reply-label', stage ? 'Step ' + stage.index + ' of ' + info.of + ': ' + stage.title : 'To sharpen this, tell me:'));
+    if (stage) append(box, el('p', 'nofo-meta', stage.why));
+    var ol = el('ol', 'nofo-questions');
+    questions.forEach(function (q) {
+      var li = el('li');
+      append(li, el('strong', null, q.text));
+      var kindLine = typeLine(q);
+      if (kindLine) append(li, el('p', 'nofo-meta', kindLine));
+      (q.because || []).slice(0, 2).forEach(function (b) {
+        var why = el('p', 'nofo-meta', 'Why it matters: ' + b.title);
+        if (b.source) why.appendChild(sourceButton(b.source, 'View source'));
+        li.appendChild(why);
+      });
+      ol.appendChild(li);
+    });
+    box.appendChild(ol);
+    var later = info && info.later > 0 ? info.later : 0;
+    append(box, el('p', 'nofo-meta', (later ? 'There ' + (later === 1 ? 'is' : 'are') + ' ' + later + ' more to come in the next ' + (later === 1 ? 'step' : 'steps') + '. ' : '') + 'If you do not know yet, you can set these aside.'));
+    box.appendChild(skipButton(questions));
+    return box;
+  }
+
+  /**
+   * After the last round nothing more is asked. What is still open stays unknown (never a pass or a fail) and can be answered
+   * at any time from the Answers drawer, so say so once instead of going quiet.
+   */
+  function lastRoundNote(info) {
+    if (!info || !(info.round >= 1) || !(info.open > 0)) return null;
+    return el('p', 'nofo-meta', 'That was the last of my questions. ' + info.open + ' requirement' + (info.open === 1 ? ' is' : 's are') +
+      ' still unevaluated and stay unknown (not a pass or a fail). You can answer them any time from the Answers drawer, under "All other open requirements".');
+  }
+
   function renderResults(data) {
     clear(els.results);
     var findingsById = {};
@@ -469,8 +748,20 @@
 
     // Summary
     var summary = el('section', 'card nofo-summary');
-    append(summary, el('p', 'nofo-label', data.advisory.label));
-    append(summary, el('h3', null, data.advisory.headline));
+    var standing = data.advisory.standing;
+    append(summary, el('p', 'nofo-label', standing ? 'Where you stand · ' + data.advisory.label : data.advisory.label));
+    append(summary, el('h3', null, standing ? standing.line : data.advisory.headline));
+    if (standing) {
+      var tiles = el('div', 'nofo-standing');
+      [['workable', standing.workable, 'Looks workable'], ['attention', standing.attention, 'Needs attention'], ['unknown', standing.unknown, 'Can\'t tell yet']].forEach(function (t) {
+        var tile = el('div', 'nofo-standing-tile is-' + t[0]);
+        append(tile, el('strong', null, String(t[1])), el('span', null, t[2]));
+        tiles.appendChild(tile);
+      });
+      summary.appendChild(tiles);
+    }
+    if (data.changes && data.changes.line) append(summary, el('p', 'nofo-changes', data.changes.line));
+    append(summary, el('p', 'nofo-meta', 'These findings are written by code from the notice\'s extracted requirements and what you stated; each one links to its source. The reply in the conversation is written by the language model from them.'));
     var meta = data.opportunity ? (data.opportunity.title || 'Selected opportunity') : 'Selected opportunity';
     append(summary, el('p', 'nofo-meta', meta + ' · ' + data.requirements.total + ' requirements (' + data.requirements.needsReview + ' flagged for review, ' + data.requirements.verified + ' verified by a person), extraction ' + data.requirements.status));
     var arith = arithmeticLine(data);
@@ -479,6 +770,8 @@
     els.results.appendChild(summary);
 
     els.results.appendChild(factsPanel(data));
+    var answered = answersPanel(data);
+    if (answered) els.results.appendChild(answered);
 
     // Key findings
     if (data.advisory.keyFindings.length > 0) {
@@ -490,24 +783,7 @@
       els.results.appendChild(key);
     }
 
-    // Questions
-    if (data.questions.length > 0) {
-      var qs = el('section', 'card');
-      append(qs, el('h3', null, 'Questions that would sharpen this'));
-      var ql = el('ol', 'nofo-questions');
-      data.questions.forEach(function (q) {
-        var li = el('li');
-        append(li, el('strong', null, q.text));
-        (q.because || []).slice(0, 2).forEach(function (b) {
-          var why = el('p', 'nofo-meta', 'Why it matters: ' + b.title);
-          if (b.source) why.appendChild(sourceButton(b.source, 'View source'));
-          li.appendChild(why);
-        });
-        ql.appendChild(li);
-      });
-      qs.appendChild(ql);
-      els.results.appendChild(qs);
-    }
+    // The questions are in the conversation, under the reply (questionsBlock), with their sources; they are not repeated here.
 
     // Next steps
     if (data.advisory.nextSteps.length > 0) {
@@ -752,6 +1028,7 @@
     els.form = document.getElementById('nofoForm');
     els.input = document.getElementById('nofoInput');
     els.draftNote = document.getElementById('nofoDraftNote');
+    els.doneNote = document.getElementById('nofoDoneNote');
     els.send = document.getElementById('nofoSend');
     els.reset = document.getElementById('nofoReset');
     els.results = document.getElementById('nofoResults');
