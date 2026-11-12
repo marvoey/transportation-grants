@@ -43,10 +43,10 @@ describe('buildAdvisory', () => {
     expect(conflict.text).toMatch(/exceeds the \$25,000,000 maximum/);
   });
 
-  it('next steps include the follow-up questions and always end with confirming with the program office', async () => {
+  it('next steps do not repeat the follow-up questions (they are listed once, in the conversation) and always end with confirming with the program office', async () => {
     const { advisory, questions } = await advise(facts({ applicantType: 'state' }));
     expect(questions.length).toBeGreaterThan(0);
-    for (const q of questions) expect(advisory.nextSteps).toContain(`Tell us: ${q.text}`);
+    expect(advisory.nextSteps.some((step) => step.startsWith('Tell us:'))).toBe(false);
     expect(advisory.nextSteps[advisory.nextSteps.length - 1]).toMatch(/Confirm the final requirements and any amendments/);
   });
 
@@ -64,3 +64,15 @@ describe('buildAdvisory', () => {
     expect(advisory.headline).toMatch(/0 conditions that look supported/);
   });
 });
+
+describe('where you stand', () => {
+  it('gives a plain bottom line and three counts that match the findings', async () => {
+    const { advisory } = await advise(facts({ applicantType: 'state' }));
+    expect(advisory.standing.workable).toBe(advisory.counts.supported);
+    expect(advisory.standing.unknown).toBe(advisory.counts.unknown);
+    expect(advisory.standing.line.length).toBeGreaterThan(20);
+    if (advisory.standing.attention > 0) expect(advisory.standing.line).toContain(advisory.keyFindings[0].title);
+    expect(advisory.standing.line).not.toMatch(/requirements considered/);
+  });
+});
+

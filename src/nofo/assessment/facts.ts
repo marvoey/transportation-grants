@@ -11,7 +11,7 @@ import {
   type ProjectFacts,
 } from './schemas.js';
 
-export const FACTS_PROMPT_VERSION = '1';
+export const FACTS_PROMPT_VERSION = '2';
 
 /** Validates facts handed back by a client. Strict: unknown keys, wrong types and out-of-range values are rejected. */
 export function parseIncomingFacts(input: unknown): ProjectFacts {
@@ -66,6 +66,8 @@ export const FACTS_JSON_SCHEMA: Record<string, unknown> = {
     activities: wireFact({ type: 'array', items: { type: 'string' } }),
     designStatus: wireFact({ type: 'string' }),
     environmentalStatus: wireFact({ type: 'string' }),
+    onNoticeList: wireFact({ type: 'boolean' }),
+    statedGaps: wireFact({ type: 'array', items: { type: 'string' } }),
   },
 };
 
@@ -90,6 +92,8 @@ RULES
 9. matchCommitted: true only if they say the non-federal money is committed or secured; false if they say it is not committed or only anticipated.
 10. bcaCompleted: whether a benefit-cost analysis has been completed (true or false), only if they say so.
 11. projectDescription: a one- or two-sentence summary in the applicant's own words. activities: short phrases for what the project includes. designStatus and environmentalStatus: how far design and environmental review are, in their words.
+12. onNoticeList: true only if the applicant says its organization or state is one of the specific states or agencies the funding notice names, lists, selects or invites (for example "we are on the list" or "we were selected"); false only if they say it is not. Never infer it from the kind of organization or from a place name.
+13. statedGaps: short phrases for things the applicant says it does NOT have or has NOT done that a funder might require (records, certifications, approvals, plans, staff, training). Only what the applicant says it lacks, in their words; leave it out if they did not say.
 
 Respond with JSON that matches the provided schema and nothing else.`;
 

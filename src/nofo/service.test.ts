@@ -3,7 +3,7 @@ import { AssessmentError, assessTurn } from './service.js';
 import { createInterpretCache } from './assessment/interpret.js';
 import { FactsError } from './assessment/facts.js';
 import { PackageStore } from './store.js';
-import { RULEBOOK, facts, isFactsCall, isInterpretCall, modelStandIn, reqFile } from './__fixtures__/assessment.js';
+import { RULEBOOK, facts, isFactsCall, isDetailCall, isInterpretCall, isReplyCall, modelStandIn, reqFile } from './__fixtures__/assessment.js';
 import { OPP_A, makeOpportunity, tmpStore } from './__fixtures__/helpers.js';
 
 const cleanups: Array<() => Promise<void>> = [];
@@ -82,7 +82,7 @@ describe('assessTurn: one stateless conversational turn', () => {
     const llm = modelStandIn();
     const r = await turn(store, llm, { messages: [{ role: 'user', content: 'Hello.' }] });
     expect(r.findings.length).toBeGreaterThan(0);
-    expect(llm.calls.every((c) => isFactsCall(c) || isInterpretCall(c))).toBe(true);
+    expect(llm.calls.every((c) => isFactsCall(c) || isInterpretCall(c) || isReplyCall(c) || isDetailCall(c))).toBe(true);
   });
 
   it('degrades with warnings, not a crash, when the model is unavailable for reading facts', async () => {

@@ -20,6 +20,7 @@
     "nofo:eval": "tsx src/nofo/eval/run-eval.ts",
     "nofo:assess": "tsx src/nofo/assessment/cli.ts",
     "nofo:find": "tsx src/nofo/discovery/cli.ts",
+    "nofo:stages": "tsx src/nofo/assessment/stages-cli.ts",
     "nofo:stats": "tsx src/nofo/stats-cli.ts",
     "presentation:vendor": "node scripts/copy-reveal.mjs"
   },

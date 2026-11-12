@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { deriveArithmetic } from './arithmetic.js';
-import { evaluateCheck, situationFor } from './checks.js';
+import { evaluateCheck, evaluateClosedList, situationFor } from './checks.js';
 import {
   applicantTypes, bca, facts, matchMin, maxRequest, req, ruralMin, shareCapPlain, shareCapUrban, urbanMin,
 } from '../__fixtures__/assessment.js';
@@ -143,5 +143,46 @@ describe('situationFor', () => {
   it('reports what is missing without deciding', () => {
     expect(situationFor({ area: 'urban', category: 'capital' }, facts({}))).toMatchObject({ result: 'undetermined', missing: ['areaType', 'grantCategory'] });
     expect(situationFor({ area: 'any', category: 'any' }, facts({}))).toMatchObject({ result: 'applies', missing: [] });
+  });
+});
+
+describe('rules about organizations the notice names (a closed list)', () => {
+  const participating = req({
+    id: 'req-0000c101', category: 'eligibility', topic: 'applicant_type', title: 'Applicant must be located in a participating state',
+    description: 'Applicants must be located within a participating sample or alternate State.',
+    check: { kind: 'applicant_type_in', values: ['Participating State', 'Alternate State'] },
+  });
+  const preSelected = req({
+    id: 'req-0000c102', category: 'eligibility', topic: 'applicant_type', title: 'Only pre-selected States may apply',
+    description: 'Only the pre-selected States listed in the notice are eligible.', appliesWhen: ['Applicant is a State government'],
+  });
+  const localOnly = req({
+    id: 'req-0000c103', category: 'eligibility', topic: 'applicant_type', title: 'Local agency applications limited to identified agencies',
+    description: 'Local agencies must be among the identified agencies.', appliesWhen: ['applicant is a local agency'],
+    check: { kind: 'applicant_type_in', values: ['Hillsborough PD', 'Miami-Dade PD'] },
+  });
+
+  it('a state applicant is never a pass on its type alone: it is unknown, and the question is about the list', () => {
+    for (const r of [participating, preSelected]) {
+      const o = run(r, facts({ applicantType: 'state', stateName: 'Colorado' }));
+      expect(o).toMatchObject({ applicability: 'applies', status: 'unknown', gap: false, missingFacts: ['onNoticeList'] });
+    }
+  });
+
+  it('follows what the applicant says about being on the list: yes is supported (as their own statement), no is a conflict', () => {
+    const yes = run(participating, facts({ applicantType: 'state', onNoticeList: true }));
+    expect(yes).toMatchObject({ status: 'supported', factsUsed: ['onNoticeList'] });
+    expect(yes.explanation).toMatch(/your statement/i);
+    expect(run(participating, facts({ applicantType: 'state', onNoticeList: false })).status).toBe('conflict');
+  });
+
+  it('a rule about one kind of applicant does not concern an applicant of another kind', () => {
+    expect(run(localOnly, facts({ applicantType: 'state' })).applicability).toBe('not_applicable');
+    expect(run(localOnly, facts({ applicantType: 'city' }))).toMatchObject({ applicability: 'applies', status: 'unknown', missingFacts: ['onNoticeList'] });
+  });
+
+  it('leaves an ordinary applicant-type rule alone', () => {
+    expect(evaluateClosedList(applicantTypes, facts({ applicantType: 'state' }))).toBeNull();
+    expect(run(applicantTypes, facts({ applicantType: 'state' })).status).toBe('supported');
   });
 });

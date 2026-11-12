@@ -14,6 +14,10 @@ import { LlmError } from '../llm.js';
 import { PackageCorruptError } from '../store.js';
 import { parseExtractArgs } from './args.js';
 import { ExtractionError, extractRequirements } from './extract.js';
+import { createAnthropicLlm } from '../llm.js';
+import { printStagePlan } from '../assessment/stages-cli.js';
+import { planStages, requirementsHash } from '../assessment/stages.js';
+import { PackageStore } from '../store.js';
 
 const USAGE = 'Usage: npm run nofo:extract -- <opportunity-uuid> [--refresh] [--include-guidance] [--passes N]';
 
@@ -59,6 +63,26 @@ async function main(argv: string[]): Promise<number> {
     if (file.rejections.length > 0) {
       console.log(`\n  rejected candidates (${file.rejections.length}):`);
       for (const r of file.rejections.slice(0, 15)) console.log(`    - [${r.reason}] ${r.title}`);
+    }
+    // The question stages for this grant are planned once, right after its requirements (best effort: extraction does not fail
+    // if this does), so a newly prepared grant is ready to assess with its own stages.
+    try {
+      const store = PackageStore.fromConfig();
+      const saved = await store.readStages(file.opportunityId);
+      if (!saved || saved.requirementsHash !== requirementsHash(file) || args.refresh) {
+        let llm;
+        try {
+          llm = createAnthropicLlm();
+        } catch {
+          llm = null;
+        }
+        const planned = await planStages(file, llm);
+        await store.writeStages(file.opportunityId, planned.plan);
+        console.log('');
+        printStagePlan(planned.plan);
+      }
+    } catch {
+      console.log('\n  (the question stages could not be planned; the default stages will be used. Run: npm run nofo:stages -- <uuid>)');
     }
     return file.status === 'partial' ? 3 : 0;
   } catch (error) {

@@ -13,7 +13,7 @@ import type { FactKey, FindingStatus, ProjectFacts } from './schemas.js';
  * "supported" or "conflict" is accepted only if the model names facts it used.
  */
 
-export const INTERPRET_PROMPT_VERSION = '1';
+export const INTERPRET_PROMPT_VERSION = '2';
 
 /** The facts the model may see. Money amounts and yes/no deliverables are handled by code and are excluded. */
 export const MODEL_VISIBLE_FACTS: readonly FactKey[] = [
@@ -25,6 +25,7 @@ export const MODEL_VISIBLE_FACTS: readonly FactKey[] = [
   'activities',
   'designStatus',
   'environmentalStatus',
+  'statedGaps',
 ];
 
 export function visibleFacts(facts: ProjectFacts): Record<string, unknown> {
@@ -81,7 +82,9 @@ RULES
 4. A requirement with conditions ("appliesWhen") applies only in those situations. If the facts do not show whether the situation applies, say "unknown".
 5. Do not mix concepts: eligibility, application completeness, project readiness and competitiveness are different questions.
 6. explanation: one plain sentence (at most 250 characters) saying why, in terms of the stated facts. No legal conclusions, no predictions of an award.
-7. Return exactly one assessment for each requirement id you were given, and no others.
+7. Some requirements describe something the applicant must DO or PREPARE (prorate a cost, submit a form, certify, obtain an approval). If the facts show that such a requirement applies but nothing shows it is met, the status is "unknown" and the explanation says that it applies and what has still to be shown. Never use "supported" just because the situation applies.
+8. statedGaps lists things the applicant says it does NOT have or has NOT done. If one clearly contradicts a mandatory requirement that applies to the stated activities (for example a required certification the applicant says it lacks), the status is "conflict"; name statedGaps in factsUsed.
+9. Return exactly one assessment for each requirement id you were given, and no others.
 
 Respond with JSON that matches the provided schema and nothing else.`;
 

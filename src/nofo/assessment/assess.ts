@@ -5,7 +5,7 @@ import type { Requirement, RequirementsFile } from '../extraction/schemas.js';
 import { deriveArithmetic, type Derived } from './arithmetic.js';
 import { evaluateCheck } from './checks.js';
 import { interpretBatch, visibleFacts, type InterpretCache, type Interpretation } from './interpret.js';
-import type { FactKey, Finding, FindingSource, FindingStatus, NotApplicable, ProjectFacts } from './schemas.js';
+import type { DetailAnswers, FactKey, Finding, FindingSource, FindingStatus, NotApplicable, ProjectFacts } from './schemas.js';
 
 /**
  * Compare stated project facts with the extracted requirements. Reads only
@@ -32,6 +32,10 @@ export interface AssessOptions {
   maxInterpreted?: number;
   /** Called as each stage really starts and finishes, so a screen can say what is happening. */
   onProgress?: ProgressFn;
+  /** The applicant's yes/no answers to detail questions (questions made from requirements): their own statements. */
+  answers?: DetailAnswers;
+  /** The wording of an answered detail question, by the id the answer is kept under, so a finding can quote it. */
+  answerQuestion?: (leadId: string) => string | undefined;
 }
 
 export interface AssessmentResult {
@@ -53,7 +57,79 @@ const TOPIC_FACTS: Record<string, FactKey[]> = {
 };
 /** Of those, the topics a model can interpret once the fact exists. The rest need documents a conversation cannot supply. */
 const MODEL_TOPICS = new Set(['applicant_type', 'design_status', 'environmental_nepa']);
-const READINESS_MODEL_TOPICS = new Set(['design_status', 'environmental_nepa', 'right_of_way', 'schedule', 'planning_consistency', 'project_location']);
+const READINESS_MODEL_TOPICS = new Set(['design_status', 'environmental_nepa', 'right_of_way', 'schedule', 'planning_consistency', 'project_location', 'applicant_capacity']);
+
+/**
+ * A requirement that says there is NO match or cost sharing to provide ("No matching share required"). It must not be
+ * treated as a rule waiting for match facts: nothing is owed, so no question about match should be asked because of it.
+ */
+const MATCH_WORD = '(?:match|matching|cost[- ]?shar\\w*)';
+const NO_MATCH_PATTERNS = [
+  new RegExp(`^\\s*no\\b[^.;]{0,40}\\b${MATCH_WORD}`, 'i'), // a title that begins "No matching share ..."
+  new RegExp(`\\bno\\b[^.;]{0,30}\\b${MATCH_WORD}\\b[^.;]{0,30}\\b(?:required|needed)\\b`, 'i'), // "no match is required"
+  new RegExp(`\\b${MATCH_WORD}\\b[^.;]{0,30}\\b(?:is|are)? ?(?:not required|not needed|waived)\\b`, 'i'), // "cost sharing is not required"
+];
+
+export function statesNoMatchRequired(requirement: Requirement): boolean {
+  if (requirement.topic !== 'non_federal_match' || requirement.check) return false;
+  return NO_MATCH_PATTERNS.some((pattern) => pattern.test(`${requirement.title}. ${requirement.description}`));
+}
+
+/**
+ * Applies the applicant's answers to the requirements still unknown. Only an unknown finding is changed: a code check or a
+ * model reading is never overridden by a yes or no. "Yes" means the applicant says they meet what the requirement asks
+ * (supported); "no" is a possible conflict, or a preparation gap for readiness and checklist items. "Unsure" changes nothing.
+ * Every result is provisional and says it is the applicant's own statement.
+ */
+export function applyAnswers(findings: Finding[], answers: DetailAnswers, questionFor: (leadId: string) => string | undefined = () => undefined): Finding[] {
+  const covered = new Map<string, { lead: string; answer: DetailAnswers[string] }>();
+  for (const [lead, a] of Object.entries(answers)) for (const id of a.covers) if (!covered.has(id)) covered.set(id, { lead, answer: a });
+  if (covered.size === 0) return findings;
+  return findings.map((f) => {
+    const hit = covered.get(f.requirementId);
+    if (!hit || hit.answer.answer === 'unsure' || f.status !== 'unknown' || f.method === 'deterministic') return f;
+    const a = hit.answer;
+    const question = (a.question ?? questionFor(hit.lead) ?? `the question about "${f.title}"`).replace(/"/g, "'");
+    const gap = f.category === 'readiness' || f.category === 'application';
+    const note = 'That is your own statement; it has not been checked against the notice.';
+    const decided = (status: 'supported' | 'conflict' | 'needs_specialist_review', explanation: string): Finding => ({
+      ...f,
+      status,
+      gap: status === 'conflict' ? gap : false,
+      method: 'answer' as const,
+      provisional: true,
+      explanation,
+      factsUsed: [],
+      missingFacts: [],
+    });
+    const kind = a.kind ?? 'yes_no';
+
+    if (kind === 'yes_no') {
+      if (a.answer === 'yes') return decided('supported', `You answered yes to: "${question}" ${note}`);
+      if (a.answer === 'no') return decided('conflict', `You answered no to: "${question}" ${note}`);
+      return f;
+    }
+    if (kind === 'choice') {
+      const option = a.option !== undefined ? a.spec?.options?.[a.option] : undefined;
+      if (!option) return f;
+      const said = `You chose "${option.label}" for: "${question}"`;
+      if (option.outcome === 'meets') return decided('supported', `${said} ${note}`);
+      if (option.outcome === 'does_not_meet') return decided('conflict', `${said} ${note}`);
+      return decided('needs_specialist_review', `${said} Whether that meets the requirement needs a person to judge. ${note}`);
+    }
+    if (kind === 'number') {
+      const c = a.spec?.comparison;
+      if (!c || a.number === undefined) return f;
+      const unit = c.unit ? ` ${c.unit}` : '';
+      const ok = c.op === 'at_most' ? a.number <= c.value : c.op === 'at_least' ? a.number >= c.value : a.number === c.value;
+      const rule = c.op === 'at_most' ? `at most ${c.value}${unit}` : c.op === 'at_least' ? `at least ${c.value}${unit}` : `exactly ${c.value}${unit}`;
+      return decided(ok ? 'supported' : 'conflict', `You said ${a.number}${unit}; the notice sets ${rule}. ${ok ? 'That is within it' : 'That is outside it'} (from "${question}"). ${note}`);
+    }
+    // A description: recorded in the applicant's own words and left to a person to judge.
+    const words = (a.text ?? a.quote ?? '').replace(/\s+/g, ' ').trim().slice(0, 300).replace(/"/g, "'");
+    return decided('needs_specialist_review', `You described: "${words}" in answer to: "${question}" Whether that meets the requirement needs a person to judge. ${note}`);
+  });
+}
 
 const STATUS_ORDER: Record<FindingStatus, number> = { conflict: 0, needs_specialist_review: 1, unknown: 2, supported: 3 };
 
@@ -115,6 +191,11 @@ export async function assess(options: AssessOptions): Promise<AssessmentResult> 
     const variant = requirement.programVariant;
     if (variant && variant !== 'both' && category && category !== variant) {
       notApplicable.push({ requirementId: requirement.id, title: requirement.title, reason: `applies to ${variant} projects; this is a ${category} project` });
+      continue;
+    }
+
+    if (statesNoMatchRequired(requirement)) {
+      skipped.push({ requirementId: requirement.id, title: requirement.title, reason: 'the notice states that nothing is required here, so nothing is asked' });
       continue;
     }
 
@@ -248,6 +329,13 @@ export async function assess(options: AssessOptions): Promise<AssessmentResult> 
         })
       );
     }
+  }
+
+  const answered = applyAnswers(findings, options.answers ?? {}, options.answerQuestion);
+  // applyAnswers hands back the same array when there is nothing to apply; only replace the contents when it made a new one.
+  if (answered !== findings) {
+    findings.length = 0;
+    findings.push(...answered);
   }
 
   findings.sort((a, b) => {

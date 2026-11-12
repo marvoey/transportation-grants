@@ -18,7 +18,7 @@ import { AssessmentError, assessTurn } from '../service.js';
 import { FactsError } from './facts.js';
 import { parseAssessArgs } from './args.js';
 
-const USAGE = 'Usage: npm run nofo:assess -- <opportunity-uuid> --say "<what the applicant says>" [--say "..."] [--facts-file path]';
+const USAGE = 'Usage: npm run nofo:assess -- <opportunity-uuid> --say "<what the applicant says>" [--say "..."] [--facts-file path] [--state-file path]';
 
 async function main(argv: string[]): Promise<number> {
   const args = parseAssessArgs(argv);
@@ -35,17 +35,46 @@ async function main(argv: string[]): Promise<number> {
         if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw new FactsError('The facts file could not be read.');
       }
     }
+    // --state-file keeps what a page would carry between turns: the facts, the answers to detail questions and which detail
+    // questions were shown last, so an answer can be given from the terminal.
+    let state: { facts?: unknown; answers?: unknown; asked?: unknown; round?: unknown; previous?: unknown } = {};
+    if (args.stateFile) {
+      try {
+        state = JSON.parse(await fs.readFile(resolve(args.stateFile), 'utf-8'));
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw new FactsError('The state file could not be read.');
+      }
+    }
     const result = await assessTurn({
       opportunityId: args.positional[0],
       messages: args.say.map((content) => ({ role: 'user' as const, content })),
-      facts: priorFacts,
+      facts: args.stateFile ? state.facts : priorFacts,
+      ...(state.answers ? { answers: state.answers } : {}),
+      ...(state.asked ? { asked: state.asked } : {}),
+      ...(typeof state.round === 'number' ? { round: state.round } : {}),
+      ...(state.previous ? { previous: state.previous } : {}),
     });
     if (args.factsFile) await fs.writeFile(resolve(args.factsFile), JSON.stringify(result.facts, null, 2) + '\n');
+    if (args.stateFile) {
+      const asked = [
+        ...result.questions.filter((q) => q.kind === 'detail').map((q) => ({ id: q.group.slice('detail:'.length), covers: q.requirementIds ?? [], question: q.text, ...(q.spec ? { spec: q.spec } : {}) })),
+        ...result.openDetails.map((q) => ({ id: q.group.slice('detail:'.length), covers: q.requirementIds ?? [], question: q.text, shown: false })),
+      ];
+      await fs.writeFile(resolve(args.stateFile), JSON.stringify({ facts: result.facts, answers: result.answers, asked, round: result.questionRound.round, previous: Object.fromEntries(result.findings.map((f) => [f.requirementId, f.status])) }, null, 2) + '\n');
+    }
 
     const line = (s = ''): void => console.log(s);
     line(`${result.opportunity?.title ?? result.opportunityId}  (${result.opportunity?.opportunityNumber ?? 'no number'})`);
     line(`PRELIMINARY, not an eligibility determination.   requirements: ${result.requirements.total} (${result.requirements.needsReview} need review, ${result.requirements.verified} human-verified), extraction ${result.requirements.status}`);
     line('');
+    line(`REPLY (written by ${result.reply.source === 'model' ? 'the language model, checked by code' : `a template; model text not used: ${result.reply.fallbackReason ?? 'unknown'}`}; preliminary)`);
+    for (const paragraph of result.reply.text.split('\n\n')) line(`  ${paragraph}`);
+    line('');
+    if (result.suggestedReply) {
+      line(result.suggestedReply.text ? 'EXAMPLE REPLY (made up, written by the language model; this is what the Answers drawer offers)' : `EXAMPLE REPLY: none (${result.suggestedReply.fallbackReason ?? 'unknown'}); the page uses its template`);
+      if (result.suggestedReply.text) for (const paragraph of result.suggestedReply.text.split('\n\n')) line(`  ${paragraph}`);
+      line('');
+    }
     line('FACTS I AM USING (from your words)');
     for (const [key, fact] of Object.entries(result.facts)) {
       const f = fact as { value: unknown; quote?: string };
@@ -54,10 +83,20 @@ async function main(argv: string[]): Promise<number> {
     if (Object.keys(result.facts).length === 0) line('  (none yet)');
     for (const r of result.rejectedFacts) line(`  (ignored ${r.key}: ${r.reason})`);
     line('');
+    if (Object.keys(result.answers).length > 0) {
+      line('ANSWERS TO DETAIL QUESTIONS (your own statements, not checked against the notice)');
+      for (const [id, a] of Object.entries(result.answers)) {
+        const what = a.kind === 'choice' && a.option !== undefined ? `option ${a.option}` : a.kind === 'number' && a.number !== undefined ? `number ${a.number}` : a.answer;
+        line(`  ${id}  ${String(what).padEnd(10)} <- "${a.quote ?? ''}"`);
+      }
+      line('');
+    }
     line('ARITHMETIC');
     line(`  federal share: ${result.derived.federalSharePct ?? 'n/a'}%   ${result.derived.consistency.message}`);
     for (const a of result.derived.assumptions) line(`  assumption: ${a}`);
     line('');
+    line(`WHERE YOU STAND: ${result.advisory.standing.line}  [workable ${result.advisory.standing.workable} · needs attention ${result.advisory.standing.attention} · cannot tell yet ${result.advisory.standing.unknown}]`);
+    if (result.changes) line(`CHANGES: ${result.changes.line}`);
     line(result.advisory.headline);
     const show = (title: string, items: typeof result.findings): void => {
       if (items.length === 0) return;
@@ -75,9 +114,10 @@ async function main(argv: string[]): Promise<number> {
     const unknown = result.findings.filter((f) => f.status === 'unknown');
     line(`\nNOT YET EVALUATED (${unknown.length}); ${unknown.filter((f) => f.missingFacts.length > 0).length} are waiting for a fact you have not given`);
     line(`NOT APPLICABLE to this project: ${result.notApplicable.length}   (optional/permissive items skipped: ${result.skippedCount})`);
-    line('\nQUESTIONS');
+    line(`\nQUESTIONS (${result.questionRound.stage ? `step ${result.questionRound.stage.index} of ${result.questionRound.of}: ${result.questionRound.stage.title}` : 'none this turn'}; ${result.questionRound.open} requirements could still be asked about, ${result.questionRound.later} in later steps)`);
     for (const q of result.questions) {
       line(`  ? ${q.text}`);
+      if (q.kind === 'detail' && q.answerType) line(`      type: ${q.answerType.replace('_', '/')}${q.reason ? ` — ${q.reason}` : ''}`);
       for (const b of q.because.slice(0, 2)) line(`      because: ${b.title}${b.source ? ` [p${b.source.page ?? b.source.section ?? '?'}]` : ''}`);
     }
     if (result.questions.length === 0) line('  (no further questions)');

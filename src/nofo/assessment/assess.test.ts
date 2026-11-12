@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { assess } from './assess.js';
+import { applyAnswers, assess } from './assess.js';
 import { createInterpretCache } from './interpret.js';
 import { buildQuestions } from './questions.js';
 import type { Finding, ProjectFacts } from './schemas.js';
 import {
   DEMO_FACTS, RULEBOOK, bca, bcaDuplicate, designStatus, facts, form, isInterpretCall, matchRule, maxRequest, modelStandIn,
-  nepa, optionalItem, planningOnly, projectTypes, reqFile, ruralMin, urbanMin,
+  nepa, optionalItem, planningOnly, projectTypes, req, reqFile, ruralMin, urbanMin,
 } from '../__fixtures__/assessment.js';
 
 const run = (f: ProjectFacts, llm = modelStandIn(), extra: Partial<Parameters<typeof assess>[0]> = {}) =>
@@ -231,3 +231,119 @@ describe('routing rules', () => {
     expect(r.warnings.join(' ')).toMatch(/per-assessment limit/);
   });
 });
+
+describe('a notice that says there is nothing to provide, and a notice that names who may apply', () => {
+  const noMatch = req({ id: 'req-0000d001', category: 'funding', topic: 'non_federal_match', title: 'No matching share required', description: 'The program requires no match or cost sharing.' });
+  const participating = req({
+    id: 'req-0000d002', category: 'eligibility', topic: 'applicant_type', title: 'Applicant must be located in a participating state',
+    description: 'Applicants must be located within a participating sample State.',
+    check: { kind: 'applicant_type_in', values: ['Participating State'] },
+  });
+  const runRules = (rules: Parameters<typeof reqFile>[0], f: ProjectFacts) => assess({ requirements: reqFile(rules), facts: f, llm: modelStandIn(), cache: createInterpretCache() });
+
+  it('a "no match required" rule is set aside and no question about match is asked because of it', async () => {
+    const r = await runRules([noMatch], facts({ applicantType: 'state', requestedFederalUsd: 400_000 }));
+    expect(r.findings).toEqual([]);
+    expect(r.skipped.map((x) => x.requirementId)).toEqual([noMatch.id]);
+    expect(buildQuestions(r.findings)).toEqual([]);
+  });
+
+  it('a state applicant does not pass a "participating state" rule; the first question is whether it is on the notice\'s list', async () => {
+    const r = await runRules([participating, maxRequest], facts({ applicantType: 'state', stateName: 'Colorado' }));
+    expect(byId(r.findings, participating.id)).toMatchObject({ status: 'unknown', missingFacts: ['onNoticeList'] });
+    const questions = buildQuestions(r.findings);
+    expect(questions[0]).toMatchObject({ group: 'listed', factKeys: ['onNoticeList'] });
+    expect(questions[0].because[0].requirementId).toBe(participating.id);
+  });
+
+  it('says so plainly once the applicant states it is not on the list', async () => {
+    const r = await runRules([participating], facts({ applicantType: 'state', onNoticeList: false }));
+    expect(byId(r.findings, participating.id)).toMatchObject({ status: 'conflict', method: 'deterministic', provisional: true });
+  });
+});
+
+describe('applyAnswers (the applicant\'s yes or no to a detail question)', () => {
+  const unknown = (id: string, over: Partial<Finding> = {}): Finding => ({
+    requirementId: id, title: `Rule ${id}`, category: 'eligibility', topic: 't', mandatory: true, status: 'unknown', gap: false, method: 'none', provisional: true,
+    explanation: 'not evaluated', factsUsed: [], missingFacts: [], sources: [], requirementReviewStatus: 'unreviewed', ...over,
+  });
+  const ask = 'Does your application include the consultation documentation?';
+
+  it('"yes" supports an unknown requirement as the applicant\'s own statement, naming the question', () => {
+    const [f] = applyAnswers([unknown('req-0000b001')], { 'req-0000b001': { answer: 'yes', covers: ['req-0000b001'], question: ask } });
+    expect(f).toMatchObject({ status: 'supported', method: 'answer', provisional: true, gap: false, missingFacts: [] });
+    expect(f.explanation).toContain('You answered yes to');
+    expect(f.explanation).toContain(ask);
+    expect(f.explanation).toMatch(/your own statement; it has not been checked against the notice/);
+  });
+
+  it('"no" is a possible conflict for eligibility and funding, and a preparation gap for readiness and checklist items', () => {
+    const answers = { 'req-0000b001': { answer: 'no' as const, covers: ['req-0000b001', 'req-0000b002', 'req-0000b003'] } };
+    const out = applyAnswers([unknown('req-0000b001'), unknown('req-0000b002', { category: 'readiness' }), unknown('req-0000b003', { category: 'application' })], answers);
+    expect(out.map((f) => [f.status, f.gap])).toEqual([['conflict', false], ['conflict', true], ['conflict', true]]);
+  });
+
+  it('"not sure" changes nothing, and an answer never overrides a code check, a model reading or a decided finding', () => {
+    const answers = { 'req-0000b001': { answer: 'yes' as const, covers: ['req-0000b001', 'req-0000b002', 'req-0000b003'] }, 'req-0000b009': { answer: 'unsure' as const, covers: ['req-0000b009'] } };
+    const input = [
+      unknown('req-0000b001', { status: 'conflict', method: 'deterministic' }),
+      unknown('req-0000b002', { status: 'conflict', method: 'llm' }),
+      unknown('req-0000b003', { method: 'deterministic' }),
+      unknown('req-0000b009'),
+    ];
+    expect(applyAnswers(input, answers)).toEqual(input);
+    expect(applyAnswers(input, {})).toBe(input);
+  });
+
+  it('flows through assess(): an unknown requirement answered "yes" is supported, and the rest are untouched', async () => {
+    const rule = req({ id: 'req-0000c0de', category: 'eligibility', topic: 'other', title: 'A rule with no fixed fact' });
+    const r = await assess({ requirements: reqFile([rule]), facts: facts({ applicantType: 'state' }), llm: modelStandIn(), cache: createInterpretCache(), answers: { [rule.id]: { answer: 'yes', covers: [rule.id], question: ask } } });
+    expect(byId(r.findings, rule.id)).toMatchObject({ status: 'supported', method: 'answer' });
+  });
+});
+
+describe('applyAnswers by kind of question', () => {
+  const unknown = (id: string, over: Partial<Finding> = {}): Finding => ({
+    requirementId: id, title: `Rule ${id}`, category: 'eligibility', topic: 't', mandatory: true, status: 'unknown', gap: false, method: 'none', provisional: true,
+    explanation: 'not evaluated', factsUsed: [], missingFacts: [], sources: [], requirementReviewStatus: 'unreviewed', ...over,
+  });
+  const number = { type: 'number' as const, comparison: { op: 'at_most' as const, value: 4, unit: 'projects' } };
+  const apply = (answer: Parameters<typeof applyAnswers>[1][string], f = unknown('req-0000d001')) => applyAnswers([f], { 'req-0000d001': answer })[0];
+
+  it('a number is compared by code with the figure in the requirement', () => {
+    const within = apply({ answer: 'answered', kind: 'number', number: 4, spec: number, covers: ['req-0000d001'], question: 'How many projects?' });
+    expect(within).toMatchObject({ status: 'supported', method: 'answer', provisional: true });
+    expect(within.explanation).toContain('You said 4 projects; the notice sets at most 4 projects.');
+    const over = apply({ answer: 'answered', kind: 'number', number: 5, spec: number, covers: ['req-0000d001'], question: 'How many projects?' });
+    expect(over.status).toBe('conflict');
+    expect(over.explanation).toContain('You said 5 projects');
+    const atLeast = { type: 'number' as const, comparison: { op: 'at_least' as const, value: 20 } };
+    expect(apply({ answer: 'answered', kind: 'number', number: 20, spec: atLeast, covers: ['req-0000d001'] }).status).toBe('supported');
+    expect(apply({ answer: 'answered', kind: 'number', number: 19, spec: atLeast, covers: ['req-0000d001'] }).status).toBe('conflict');
+    expect(apply({ answer: 'answered', kind: 'number', number: 20, spec: { type: 'number', comparison: { op: 'exactly', value: 21 } }, covers: ['req-0000d001'] }).status).toBe('conflict');
+  });
+
+  it('a choice counts as its option was marked: meets, does not meet, or a person must judge', () => {
+    const spec = { type: 'choice' as const, options: [{ label: 'A State DOT', outcome: 'meets' as const }, { label: 'A local agency', outcome: 'does_not_meet' as const }, { label: 'Another body', outcome: 'unclear' as const }] };
+    const pick = (option: number) => apply({ answer: 'answered', kind: 'choice', option, spec, covers: ['req-0000d001'], question: 'Who is applying?' });
+    expect(pick(0).status).toBe('supported');
+    expect(pick(1).status).toBe('conflict');
+    expect(pick(2).status).toBe('needs_specialist_review');
+    expect(pick(0).explanation).toContain('You chose "A State DOT"');
+    expect(apply({ answer: 'answered', kind: 'choice', option: 7, spec, covers: ['req-0000d001'] }).status).toBe('unknown');
+  });
+
+  it('a description is quoted and left to a person; "no" on a checklist number is a preparation gap', () => {
+    const described = apply({ answer: 'answered', kind: 'describe', text: 'We have six troopers.', quote: 'We have six troopers.', covers: ['req-0000d001'], question: 'Describe your staffing.' });
+    expect(described).toMatchObject({ status: 'needs_specialist_review', gap: false, method: 'answer' });
+    expect(described.explanation).toContain('You described: "We have six troopers."');
+    const gap = apply({ answer: 'answered', kind: 'number', number: 9, spec: number, covers: ['req-0000d001'] }, unknown('req-0000d001', { category: 'readiness' }));
+    expect(gap).toMatchObject({ status: 'conflict', gap: true });
+  });
+
+  it('never overrides a code check, whatever the kind', () => {
+    const decided = unknown('req-0000d001', { status: 'supported', method: 'deterministic' });
+    expect(apply({ answer: 'answered', kind: 'number', number: 9, spec: number, covers: ['req-0000d001'] }, decided)).toEqual(decided);
+  });
+});
+

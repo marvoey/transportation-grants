@@ -23,8 +23,20 @@ export interface AdvisoryItem {
   source: FindingSource | null;
 }
 
+/** Where the applicant stands, in one line and three counts (written by code from the findings). */
+export interface Standing {
+  line: string;
+  /** Requirements that look consistent with what the applicant said. */
+  workable: number;
+  /** Distinct issues that may stand in the way or need a specialist's judgment. */
+  attention: number;
+  /** Requirements that cannot be checked until more is known. */
+  unknown: number;
+}
+
 export interface Advisory {
   label: 'Preliminary assessment';
+  standing: Standing;
   headline: string;
   counts: { assessed: number; supported: number; conflicts: number; gaps: number; needsSpecialistReview: number; unknown: number; notApplicable: number };
   /** The findings a person should look at first, each with its evidence. */
@@ -104,10 +116,22 @@ export function buildAdvisory(result: AssessmentResult, questions: Question[]): 
   for (const g of conflictGroups.slice(0, 3)) nextSteps.push(`Resolve with the program office or adjust the project: ${g.lead.title}${more(g)}. ${g.lead.explanation}`);
   for (const g of gapGroups.slice(0, 3)) nextSteps.push(`Prepare: ${g.lead.title}${more(g)}. ${g.lead.explanation}`);
   for (const g of specialistGroups.slice(0, 3)) nextSteps.push(`Get a specialist or the program office to confirm: ${g.lead.title}${more(g)}.`);
-  for (const q of questions) nextSteps.push(`Tell us: ${q.text}`);
   const checklist = unknown.filter((x) => x.method === 'none' && x.missingFacts.length === 0 && x.category === 'application').length;
   if (checklist > 0) nextSteps.push(`Work through the application checklist: ${plural(checklist, 'application item has', 'application items have')} not been evidenced yet.`);
   nextSteps.push('Confirm the final requirements and any amendments with the program office before relying on this screening.');
 
-  return { label: 'Preliminary assessment', headline, counts, keyFindings, nextSteps, disclaimer: DISCLAIMER };
+  // "Where you stand": a plain bottom line and three numbers, instead of leading with a count of requirements.
+  const issues = conflictGroups.length + gapGroups.length + specialistGroups.length;
+  const first = keyFindings[0]?.title;
+  const line =
+    issues > 0
+      ? issues === 1
+        ? `One thing may stand in the way or needs a specialist's eye: "${first}".`
+        : `${issues} things may stand in the way or need a specialist's eye. The most important is "${first}".`
+      : unknown.length > 0
+        ? `Nothing you have told me stands in the way so far, but ${plural(unknown.length, 'requirement', 'requirements')} cannot be checked until I know more.`
+        : 'Everything checked so far looks consistent with what you have told me.';
+  const standing: Standing = { line, workable: supported.length, attention: issues, unknown: unknown.length };
+
+  return { label: 'Preliminary assessment', standing, headline, counts, keyFindings, nextSteps, disclaimer: DISCLAIMER };
 }

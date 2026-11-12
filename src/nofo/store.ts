@@ -13,6 +13,7 @@ import {
   type PackageManifest,
 } from './schemas.js';
 import { RequirementsFileSchema, type RequirementsFile } from './extraction/schemas.js';
+import { StagePlanSchema, type StagePlan } from './assessment/stages.js';
 
 /** Thrown when a package on disk cannot be read or does not match its schema. Fails closed. */
 export class PackageCorruptError extends Error {
@@ -110,6 +111,19 @@ export class PackageStore {
       );
     }
     return parsed.data;
+  }
+
+  /** The question stages planned for this grant (stages.json), or null when there is none or it is not valid (then the default stages are used). */
+  async readStages(opportunityId: string): Promise<StagePlan | null> {
+    const raw = await this.readJson(join(this.packageDir(opportunityId), 'stages.json')).catch(() => null);
+    if (raw === null) return null;
+    const parsed = StagePlanSchema.safeParse(raw);
+    return parsed.success && parsed.data.opportunityId === opportunityId ? parsed.data : null;
+  }
+
+  async writeStages(opportunityId: string, plan: StagePlan): Promise<void> {
+    const valid = StagePlanSchema.parse(plan);
+    await this.writeAtomic(join(this.packageDir(opportunityId), 'stages.json'), JSON.stringify(valid, null, 2) + '\n');
   }
 
   async writeRequirements(opportunityId: string, file: RequirementsFile): Promise<void> {

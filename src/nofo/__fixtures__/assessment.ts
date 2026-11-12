@@ -2,6 +2,9 @@ import type { LlmCall, LlmResult } from '../llm.js';
 import type { Check, Requirement, RequirementsFile } from '../extraction/schemas.js';
 import { FACTS_SYSTEM_PROMPT } from '../assessment/facts.js';
 import { INTERPRET_SYSTEM_PROMPT } from '../assessment/interpret.js';
+import { REPLY_SYSTEM_PROMPT } from '../assessment/reply.js';
+import { DETAIL_SYSTEM_PROMPT } from '../assessment/detail-questions.js';
+import { ANSWERS_SYSTEM_PROMPT } from '../assessment/answers.js';
 import type { FactKey, ProjectFacts } from '../assessment/schemas.js';
 import { DOC_ID, llmResult, scriptedLlm, type ScriptedLlm } from './extraction.js';
 import { OPP_A } from './helpers.js';
@@ -132,7 +135,7 @@ export function modelStandIn(options: {
     if (call.system === FACTS_SYSTEM_PROMPT) {
       const given = typeof options.facts === 'function' ? options.facts(call) : (options.facts ?? {});
       const wire: Record<string, unknown> = {};
-      for (const key of ['applicantType', 'stateName', 'grantCategory', 'areaType', 'totalProjectCostUsd', 'requestedFederalUsd', 'otherFederalFundsUsd', 'nonFederalMatchUsd', 'matchCommitted', 'bcaCompleted', 'projectDescription', 'activities', 'designStatus', 'environmentalStatus']) {
+      for (const key of ['applicantType', 'stateName', 'grantCategory', 'areaType', 'totalProjectCostUsd', 'requestedFederalUsd', 'otherFederalFundsUsd', 'nonFederalMatchUsd', 'matchCommitted', 'bcaCompleted', 'projectDescription', 'activities', 'designStatus', 'environmentalStatus', 'onNoticeList', 'statedGaps']) {
         const g = given[key];
         wire[key] = g
           ? { present: true, value: g.value, quote: g.quote }
@@ -154,3 +157,6 @@ export function modelStandIn(options: {
 
 export const isInterpretCall = (call: LlmCall): boolean => call.system === INTERPRET_SYSTEM_PROMPT;
 export const isFactsCall = (call: LlmCall): boolean => call.system === FACTS_SYSTEM_PROMPT;
+export const isReplyCall = (call: LlmCall): boolean => call.system === REPLY_SYSTEM_PROMPT;
+export const isDetailCall = (call: LlmCall): boolean => call.system === DETAIL_SYSTEM_PROMPT;
+export const isAnswersCall = (call: LlmCall): boolean => call.system === ANSWERS_SYSTEM_PROMPT;

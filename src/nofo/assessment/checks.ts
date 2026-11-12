@@ -70,14 +70,70 @@ const EXCEPTION_WORDS = /\b(unless|except|exception|designat)/i;
 // Which stated applicant type matches which wording a notice might use. These are general terms, not program names.
 const APPLICANT_WORDING: Record<string, RegExp> = {
   state: /\bstates?\b/i,
-  city: /(local government|municipal|\bcity\b|\bcities\b|\btown)/i,
-  county: /(\bcount(y|ies)\b|local government)/i,
+  city: /(local (government|agenc)|municipal|\bcity\b|\bcities\b|\btown)/i,
+  county: /(\bcount(y|ies)\b|local (government|agenc))/i,
   tribal: /\btrib(e|es|al)\b/i,
   mpo: /(metropolitan planning|\bmpo\b)/i,
   transit_agency: /\btransit\b/i,
 };
 
+/**
+ * Wording that makes an eligibility rule about WHO is on a closed list the notice itself provides (specific states or
+ * agencies that were selected, are participating or are named), rather than about what KIND of organization may apply.
+ * General terms, not program names.
+ */
+const CLOSED_LIST_WORDING = /\b(pre-?selected|participating|sample design|named (in|by)|listed (in|below|above)|identified (agenc|state|entit|applicant|local))/i;
+
+/**
+ * "Only organizations the notice names may apply." The kind of organization (a state, a city) can never settle that: a
+ * state applicant is not necessarily one of the states the notice names. So the answer waits for the applicant's own
+ * statement of whether it is on the notice's list; with none it is unknown, never a pass, and the question is asked.
+ * Returns null when the requirement is not of this kind.
+ */
+export function evaluateClosedList(requirement: Requirement, facts: ProjectFacts): CheckOutcome | null {
+  if (requirement.topic !== 'applicant_type' || requirement.category !== 'eligibility' || requirement.mandatory === false) return null;
+  const values = requirement.check?.kind === 'applicant_type_in' ? requirement.check.values.join(' ') : '';
+  if (!CLOSED_LIST_WORDING.test(`${requirement.title} ${requirement.description} ${values}`)) return null;
+
+  // A rule about one kind of applicant (for example local agencies) does not concern an applicant of another kind.
+  const type = facts.applicantType?.value;
+  if (type && requirement.appliesWhen.length > 0) {
+    const wording = APPLICANT_WORDING[type];
+    if (!requirement.appliesWhen.some((w) => wording?.test(w))) {
+      return {
+        applicability: 'not_applicable',
+        status: 'unknown',
+        gap: false,
+        explanation: `covers: ${requirement.appliesWhen.join('; ')}; this applicant is ${type === 'other' ? 'another kind of organization' : `a ${type.replace('_', ' ')}`}`,
+        factsUsed: ['applicantType'],
+        missingFacts: [],
+      };
+    }
+  }
+
+  const named = facts.onNoticeList?.value;
+  if (named === undefined) {
+    return unknown(
+      'The notice limits who may apply to specific organizations it names, and the kind of organization is not enough to tell. Whether yours is one of them has not been stated.',
+      ['onNoticeList'],
+      type ? ['applicantType'] : []
+    );
+  }
+  return {
+    applicability: 'applies',
+    status: named ? 'supported' : 'conflict',
+    gap: false,
+    explanation: named
+      ? "You stated that your organization is one of those the notice names. That is your statement; it has not been checked against the notice's list."
+      : 'You stated that your organization is not one of those the notice names.',
+    factsUsed: ['onNoticeList'],
+    missingFacts: [],
+  };
+}
+
 export function evaluateCheck(requirement: Requirement, facts: ProjectFacts, derived: Derived): CheckOutcome | null {
+  const closed = evaluateClosedList(requirement, facts);
+  if (closed) return closed;
   const check: Check | undefined = requirement.check;
   if (!check) return null;
 
