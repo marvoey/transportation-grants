@@ -15,6 +15,8 @@
   'use strict';
 
   var MILLION = 1e6;
+  // A federal request the suggestions make up (the applicant did not state one) stays under $20 million.
+  var MAX_SUGGESTED_REQUEST = 19 * MILLION;
 
   function roundToMillion(n) {
     return Math.max(MILLION, Math.round(n / MILLION) * MILLION);
@@ -54,7 +56,7 @@
     } else if (request !== undefined && match !== undefined) {
       total = request + match;
     } else if (total !== undefined) {
-      request = roundToMillion(total * 0.6);
+      request = Math.min(roundToMillion(total * 0.6), MAX_SUGGESTED_REQUEST);
       if (request >= total) request = total / 2;
       match = total - request;
     } else if (request !== undefined) {
@@ -65,10 +67,14 @@
       total = roundToMillion(match / 0.4);
       if (total <= match) total = match * 2;
       request = total - match;
+      if (request > MAX_SUGGESTED_REQUEST) {
+        request = MAX_SUGGESTED_REQUEST;
+        total = request + match;
+      }
     } else {
-      total = 40 * MILLION;
-      request = 25 * MILLION;
-      match = 15 * MILLION;
+      total = 24 * MILLION;
+      request = 15 * MILLION;
+      match = 9 * MILLION;
     }
     return { total: total, request: request, match: match };
   }

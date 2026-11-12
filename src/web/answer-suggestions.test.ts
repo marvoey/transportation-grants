@@ -20,7 +20,7 @@ describe('amounts: total = federal request + match, and never contradicting what
   const consistent = (a: { total: number; request: number; match: number }) => Math.abs(a.total - a.request - a.match) < 1 && a.request > 0 && a.match > 0;
 
   it('uses a coherent default scenario when nothing is known', () => {
-    expect(S.amounts({})).toEqual({ total: 40e6, request: 25e6, match: 15e6 });
+    expect(S.amounts({})).toEqual({ total: 24e6, request: 15e6, match: 9e6 });
   });
 
   it('keeps what the applicant already said and derives the rest', () => {
@@ -50,8 +50,14 @@ describe('amounts: total = federal request + match, and never contradicting what
     }
   });
 
+  it('keeps a request it makes up under $20 million, but never changes one the applicant stated', () => {
+    expect(S.amounts({ totalProjectCostUsd: fact(60e6) }).request).toBeLessThan(20e6);
+    expect(S.amounts({ nonFederalMatchUsd: fact(30e6) }).request).toBeLessThan(20e6);
+    expect(S.amounts({ requestedFederalUsd: fact(25e6) }).request).toBe(25e6);
+  });
+
   it('ignores nonsense values rather than using them', () => {
-    expect(S.amounts({ totalProjectCostUsd: fact(-5), requestedFederalUsd: fact('lots') })).toEqual({ total: 40e6, request: 25e6, match: 15e6 });
+    expect(S.amounts({ totalProjectCostUsd: fact(-5), requestedFederalUsd: fact('lots') })).toEqual({ total: 24e6, request: 15e6, match: 9e6 });
   });
 });
 
@@ -74,9 +80,9 @@ describe('build: suggestions for the questions the assessment asked', () => {
   it('keeps the money consistent inside the answer, and says "request" for the request and "total" for the total', () => {
     const { items } = S.build([q('costMatch')], {});
     const text = items[0].variants[0].text as string;
-    expect(text).toContain('The total project cost is $40 million');
-    expect(text).toContain('We would request $25 million in federal funds');
-    expect(text).toContain('remaining $15 million is non-federal match');
+    expect(text).toContain('The total project cost is $24 million');
+    expect(text).toContain('We would request $15 million in federal funds');
+    expect(text).toContain('remaining $9 million is non-federal match');
     const [total, request, match] = nums(text);
     expect(total).toBe(request + match);
   });

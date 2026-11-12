@@ -223,7 +223,7 @@
     if (els.historical.parentNode) els.historical.parentNode.hidden = finished;
     els.limit.hidden = left > 0;
     if (!started) {
-      els.input.placeholder = 'For example: We are a state DOT and want to replace a structurally deficient bridge on a rural route. The project costs about $40 million and we would request $25 million in federal funds. Design is complete.';
+      els.input.placeholder = 'For example: We are a state DOT and want to replace a structurally deficient bridge on a rural route. The project costs about $24 million and we would request $15 million in federal funds. Design is complete.';
     } else if (state.stage === 'ask') {
       els.input.placeholder = 'Answer the questions above in your own words…';
     } else {
