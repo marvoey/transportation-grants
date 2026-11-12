@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "source": "simpler.grants.gov",
+  "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+  "opportunityNumber": "FHWA-WCPP-26-002",
+  "legacyOpportunityId": 364009,
+  "title": "Fiscal Year 2026 Wildlife Crossings Pilot Program",
+  "status": "posted",
+  "category": "discretionary",
+  "agency": {
+    "code": "DOT-FHWA",
+    "name": "DOT Federal Highway Administration ",
+    "topLevelCode": "DOT",
+    "topLevelName": "Department of Transportation"
+  },
+  "summary": {
+    "awardCeiling": 80000000,
+    "awardFloor": 0,
+    "estimatedTotalProgramFunding": null,
+    "expectedNumberOfAwards": 8,
+    "postDate": "2026-09-30",
+    "closeDate": "2026-11-16",
+    "archiveDate": "2026-12-16",
+    "fiscalYear": null,
+    "isCostSharing": true,
+    "applicantTypes": [
+      "city_or_township_governments",
+      "other",
+      "county_governments",
+      "state_governments",
+      "federally_recognized_native_american_tribal_governments",
+      "special_district_governments"
+    ],
+    "additionalInfoUrl": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=128831",
+    "applicantEligibilityDescription": "The purpose of the WCPP is to provide funding to eligible entities for projects seeking to improve safety of the traveling public by reducing the number of wildlife-vehicle collisions (WVC) and, in doing so, improve habitat connectivity for terrestrial and aquatic species.\n\nEligible applicants under the WCPP are:\n•\tState Department of Transportation (State DOT);\n•\tMetropolitan planning organization (MPO); \n•\tUnits of local government ;\n•\tA regional transportation authority; \n•\tA special purpose district or public authority with a transportation function; \n•\tIndian Tribes ;\n•\tA Federal Land Management Agency (FLMA); or\n•\tA group of any of the above entities.  \n\nProjects eligible for funding include both construction and non-construction projects. However, DOT may prioritize awards to construction projects.\n\nWCPP requires a non-Federal cost share of 20 percent from all recipients unless an exception applies (see B.3, below). Applicants who do not provide the required non-Federal cost share will be classified as ineligible. FLMAs and Tribes can use other Federal funds for their match, such as those allowable under 23 United States Code (U.S.C.) 120(k).\nA minimum of 60 percent of funds each fiscal year must be awarded to rural areas (23 U.S.C. 171(g))."
+  },
+  "sourceUpdatedAt": "2026-09-30T19:11:26+00:00",
+  "responseSha256": "bd8eae2fa996d766a675bad3b3dbe0d9f916c7b357a60ec54a398b39d17516e4",
+  "retrievedAt": "2026-11-11T21:14:30.114Z"
+}

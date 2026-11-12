@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+  "retrievedAt": "2026-11-11T21:22:56.561Z",
+  "lastCheckedAt": "2026-11-11T21:22:56.561Z",
+  "coverage": {
+    "status": "api_listed_processed",
+    "reasons": [],
+    "completenessNote": "Completeness against the full official package cannot be verified: only the attachments Simpler.Grants.gov lists (plus any curated supplemental sources) were processed. Agencies may publish FAQs, checklists or amendments elsewhere."
+  },
+  "documents": [
+    {
+      "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+      "origin": "simpler_attachment",
+      "title": "FY 2027 Crash Causal Factors Program (CCFP) Notice of Funding Opportunity (NOFO)",
+      "fileName": "FY_2027_CCFP_NOFO.pdf",
+      "declaredMimeType": "application/pdf",
+      "detectedType": "pdf",
+      "sizeBytes": 890799,
+      "sha256": "6ad83c3fd1dbab6f63259bb6f3a33aba5f3b1eac367911e9b006d72261c48a7c",
+      "sourceAttachmentId": "9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+      "sourceUpdatedAt": "2026-10-29T11:40:16+00:00",
+      "sourceSizeBytes": 890799,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/63e23729-3766-4dc9-91dc-d1d656541c2d/attachments/9c751ce2-dfa9-4acd-b278-050bc5b28ab3/FY_2027_CCFP_NOFO.pdf",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T21:22:55.213Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3/original.pdf",
+      "normalizedFile": "documents/sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3/normalized.json",
+      "authority": "controlling",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: matched \"nofo\" (candidate controlling document; confirm)",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "pdfjs-text",
+        "processorVersion": "1",
+        "pages": 48
+      },
+      "notes": []
+    },
+    {
+      "documentId": "sg-2185b190-63ff-47f7-9101-a1cbc96dcf1a",
+      "origin": "simpler_attachment",
+      "title": "FY 2027 FMCSA Title VI Program Assurance",
+      "fileName": "FMCSA_Title_VI_Program_Assurance3.docx",
+      "declaredMimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "detectedType": "zip",
+      "sizeBytes": 36589,
+      "sha256": "2eb97e2a53e61d6fba413380fa7aa01c5d254dc995e0d76947b4c161ee1f9de3",
+      "sourceAttachmentId": "2185b190-63ff-47f7-9101-a1cbc96dcf1a",
+      "sourceUpdatedAt": "2026-10-29T11:35:25+00:00",
+      "sourceSizeBytes": 36589,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/63e23729-3766-4dc9-91dc-d1d656541c2d/attachments/2185b190-63ff-47f7-9101-a1cbc96dcf1a/FMCSA_Title_VI_Program_Assurance3.docx",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T21:22:55.102Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-2185b190-63ff-47f7-9101-a1cbc96dcf1a/original.docx",
+      "normalizedFile": "documents/sg-2185b190-63ff-47f7-9101-a1cbc96dcf1a/normalized.json",
+      "authority": "unclassified",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: no recognizable NOFO, amendment or guidance pattern",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "mammoth-docx",
+        "processorVersion": "1",
+        "sections": 1
+      },
+      "notes": []
+    },
+    {
+      "documentId": "sg-15372eb2-d682-431e-803d-47e1a14645a0",
+      "origin": "simpler_attachment",
+      "title": "FY 2027 FMCSA Applicant Title VI Program Compliance Plan Checklist",
+      "fileName": "Updated_FY_2027_FMCSA_APPLICANT_TITLE_VI_PROGRAM_COMPLIANCE_PLAN_CHECKLIST.docx",
+      "declaredMimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "detectedType": "zip",
+      "sizeBytes": 31531,
+      "sha256": "a1a2c1650fcacfcb632064dc872a1074e206676f9df97afc2af5de7e848fb2cb",
+      "sourceAttachmentId": "15372eb2-d682-431e-803d-47e1a14645a0",
+      "sourceUpdatedAt": "2026-10-29T11:36:18+00:00",
+      "sourceSizeBytes": 31531,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/63e23729-3766-4dc9-91dc-d1d656541c2d/attachments/15372eb2-d682-431e-803d-47e1a14645a0/Updated_FY_2027_FMCSA_APPLICANT_TITLE_VI_PROGRAM_COMPLIANCE_PLAN_CHECKLIST.docx",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T21:22:55.829Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-15372eb2-d682-431e-803d-47e1a14645a0/original.docx",
+      "normalizedFile": "documents/sg-15372eb2-d682-431e-803d-47e1a14645a0/normalized.json",
+      "authority": "official_guidance",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: matched \"checklist\" (derivative or supporting document)",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "mammoth-docx",
+        "processorVersion": "1",
+        "sections": 1
+      },
+      "notes": []
+    },
+    {
+      "documentId": "sg-995a20a5-0c70-4d49-951a-95331d322963",
+      "origin": "simpler_attachment",
+      "title": "Budget Narrative Template",
+      "fileName": "FY_2027_Budget_Narrative_Template.docx",
+      "declaredMimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "detectedType": "zip",
+      "sizeBytes": 38301,
+      "sha256": "f57e77dc176c86840b2721f6994b6ec4d48c58bc73b2a9205d0e7a481c828360",
+      "sourceAttachmentId": "995a20a5-0c70-4d49-951a-95331d322963",
+      "sourceUpdatedAt": "2026-10-29T11:36:48+00:00",
+      "sourceSizeBytes": 38301,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/63e23729-3766-4dc9-91dc-d1d656541c2d/attachments/995a20a5-0c70-4d49-951a-95331d322963/FY_2027_Budget_Narrative_Template.docx",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T21:22:56.034Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-995a20a5-0c70-4d49-951a-95331d322963/original.docx",
+      "normalizedFile": "documents/sg-995a20a5-0c70-4d49-951a-95331d322963/normalized.json",
+      "authority": "official_guidance",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: matched \"template\" (derivative or supporting document)",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "mammoth-docx",
+        "processorVersion": "1",
+        "sections": 4
+      },
+      "notes": []
+    },
+    {
+      "documentId": "sg-8352293f-5853-4bfb-995e-dd787e4895a8",
+      "origin": "simpler_attachment",
+      "title": "FY 2027 Crash Causal Factors Program (CCFP) Funding Webinar & Office Hours",
+      "fileName": "CCFP_NOFO_Additional_Resources.pdf",
+      "declaredMimeType": "application/pdf",
+      "detectedType": "pdf",
+      "sizeBytes": 114066,
+      "sha256": "7fdbd176d507cf442eb00382147cb4ca30b1050e37b881fed5dabb6036348801",
+      "sourceAttachmentId": "8352293f-5853-4bfb-995e-dd787e4895a8",
+      "sourceUpdatedAt": "2026-10-29T11:40:02+00:00",
+      "sourceSizeBytes": 114066,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/63e23729-3766-4dc9-91dc-d1d656541c2d/attachments/8352293f-5853-4bfb-995e-dd787e4895a8/CCFP_NOFO_Additional_Resources.pdf",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T21:22:56.345Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-8352293f-5853-4bfb-995e-dd787e4895a8/original.pdf",
+      "normalizedFile": "documents/sg-8352293f-5853-4bfb-995e-dd787e4895a8/normalized.json",
+      "authority": "official_guidance",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: matched \"webinar\" (derivative or supporting document)",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "pdfjs-text",
+        "processorVersion": "1",
+        "pages": 1
+      },
+      "notes": []
+    }
+  ],
+  "potentialMissingSources": [
+    {
+      "kind": "additional_info_url",
+      "description": "The opportunity lists an additional-information page. It is not retrieved automatically; review it for FAQs, checklists or amendments.",
+      "url": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=129231"
+    },
+    {
+      "kind": "amendments_not_listed",
+      "description": "Simpler.Grants.gov does not expose a separate list of amendments. Confirm on the agency site that no amendment supersedes the attached documents."
+    }
+  ]
+}

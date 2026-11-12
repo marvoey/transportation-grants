@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "opportunityId": "aa81e9f0-a4bb-47d5-aa09-d26f0c2734fe",
+  "retrievedAt": "2026-11-11T22:02:49.756Z",
+  "lastCheckedAt": "2026-11-11T22:02:49.756Z",
+  "coverage": {
+    "status": "api_listed_processed",
+    "reasons": [],
+    "completenessNote": "Completeness against the full official package cannot be verified: only the attachments Simpler.Grants.gov lists (plus any curated supplemental sources) were processed. Agencies may publish FAQs, checklists or amendments elsewhere."
+  },
+  "documents": [
+    {
+      "documentId": "sg-eb256267-cfdc-4de1-8275-4c45ea860d2d",
+      "origin": "simpler_attachment",
+      "title": "State Process for Informing Consumers of Recalls Program NOFO",
+      "fileName": "State_Process_for_Informing_Consumers_of_Recalls_Program_NOFO_Final_11.4.2026_-_695JJ927R000007.pdf",
+      "declaredMimeType": "application/pdf",
+      "detectedType": "pdf",
+      "sizeBytes": 4290143,
+      "sha256": "730a15575d453cb1545ca93e8d87136cb3e7beb46f7f9a5336de873bffbea10c",
+      "sourceAttachmentId": "eb256267-cfdc-4de1-8275-4c45ea860d2d",
+      "sourceUpdatedAt": "2026-11-05T16:28:35+00:00",
+      "sourceSizeBytes": 4290143,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/aa81e9f0-a4bb-47d5-aa09-d26f0c2734fe/attachments/eb256267-cfdc-4de1-8275-4c45ea860d2d/State_Process_for_Informing_Consumers_of_Recalls_Program_NOFO_Final_11.4.2026_-_695JJ927R000007.pdf",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T22:02:48.847Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-eb256267-cfdc-4de1-8275-4c45ea860d2d/original.pdf",
+      "normalizedFile": "documents/sg-eb256267-cfdc-4de1-8275-4c45ea860d2d/normalized.json",
+      "authority": "controlling",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: matched \"nofo\" (candidate controlling document; confirm)",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "pdfjs-text",
+        "processorVersion": "1",
+        "pages": 29
+      },
+      "notes": []
+    }
+  ],
+  "potentialMissingSources": [
+    {
+      "kind": "official_guidance_not_attached",
+      "description": "No FAQ, Q&A, checklist or webinar material is attached through Simpler.Grants.gov. Agencies often publish these on their own sites; they can be added later as curated supplemental sources."
+    },
+    {
+      "kind": "amendments_not_listed",
+      "description": "Simpler.Grants.gov does not expose a separate list of amendments. Confirm on the agency site that no amendment supersedes the attached documents."
+    }
+  ]
+}

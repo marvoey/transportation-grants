@@ -81,6 +81,16 @@ Set in `.env` (see `.env.example` for all of them and their defaults):
 
 Applicants should not enter confidential information: the text of a conversation is sent to the model provider for each turn, though the server does not store it or log message text.
 
+## Deploying on Vercel
+
+Vercel runs code as serverless functions, so there is no start command and `npm run start:web` is not used there. Instead `api/index.js` exports the Express app as one function and `vercel.json` sets it up. Vercel runs `npm run build` (the TypeScript compile into `dist/`), serves `public/` as static files, and sends `/api/*` and `/docs` to the function.
+
+- **Branch:** deploy a branch whose `package-lock.json` resolves from the public npm registry (`nofo` does). A lock file that points at a private registry makes Vercel's `npm install` fail with a 401.
+- **Environment variables** (Project Settings → Environment Variables): `ANTHROPIC_API_KEY`, `SIMPLER_GRANTS_API_KEY`, and `CACHE_DIR=/tmp/.cache` (the deployed filesystem is read-only except `/tmp`). Optionally `DATA_SOURCE`, `CORS_ORIGINS` and the rate-limit settings from `.env.example`.
+- **Prepared opportunities:** `data/opportunities/` is git-ignored, so a deployment only has the packages that were committed on purpose with `git add -f data/opportunities/<uuid>`. Five are committed (ITSE, Wildlife Crossings, Crash Causal Factors, Recalls and FAA research, about 12 MB); add another the same way. Without any, the Assess selector is empty; demo mode and Find grants still work.
+- **What does not work there:** the real **Prepare this opportunity** (it runs the ingest and extract commands as child processes and writes to disk); turn on "Simulate preparing" in Settings for opportunities that are already committed. The rate limiters and caches live in memory, so they reset between function instances. A function call is capped at 60 seconds (`maxDuration` in `vercel.json`).
+- For anything that needs a long-running server or a writable disk, use a host that runs `npm run build` then `npm run start:web` (set `WEB_PORT` to the port it gives you).
+
 ## Project layout
 
 ```

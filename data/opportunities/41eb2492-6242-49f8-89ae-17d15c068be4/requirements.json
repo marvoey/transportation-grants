@@ -1,0 +1,1008 @@
+{
+  "schemaVersion": 1,
+  "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+  "generatedAt": "2026-11-11T21:15:17.092Z",
+  "model": "claude-sonnet-5",
+  "promptVersion": "4",
+  "sourceManifestHash": "f11e4af3e30b1efa6bf56932eee0172ee43a5932acc459c6e683fb8611c5203b",
+  "passes": 1,
+  "status": "complete",
+  "documents": [
+    {
+      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+      "title": "Final FY 26 WCPP NOFO",
+      "authority": "controlling",
+      "sha256": "564e65f180b60b036a8bdf148a280c5edd3696b52ae35dd1014f6472611db05f",
+      "units": 24
+    }
+  ],
+  "batches": {
+    "total": 5,
+    "succeeded": 5,
+    "split": 0,
+    "failed": []
+  },
+  "usage": {
+    "inputTokens": 36919,
+    "outputTokens": 15866
+  },
+  "stats": {
+    "candidates": 38,
+    "rejected": 0,
+    "merged": 5,
+    "kept": 33,
+    "sourcesRejected": 0,
+    "locationsCorrected": 0,
+    "checksDropped": 0
+  },
+  "rejections": [],
+  "requirements": [
+    {
+      "id": "req-4a8ebf3e",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "eligibility",
+      "topic": "applicant_type",
+      "title": "Eligible Applicant Types",
+      "description": "Only specific types of entities may apply for WCPP funding, including State DOTs, MPOs, units of local government, regional transportation authorities, special purpose districts/public authorities with transportation functions, Indian Tribes, FLMAs, or groups of these entities.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Applicant organization type documentation"
+      ],
+      "check": {
+        "kind": "applicant_type_in",
+        "values": [
+          "State DOT",
+          "MPO",
+          "unit of local government",
+          "regional transportation authority",
+          "special purpose district or public authority with a transportation function",
+          "Indian Tribe",
+          "Federal Land Management Agency",
+          "group of any of the above"
+        ]
+      },
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 3,
+          "section": null,
+          "quote": "Eligible applicants under the WCPP are:\n State Department of Transportation (State DOT);\n Metropolitan planning organization (MPO);\n Units of local government2;\n A regional transportation authority;",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-bc1c2785",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "funding",
+      "topic": "non_federal_match",
+      "title": "Minimum 20 Percent Non-Federal Cost Share",
+      "description": "WCPP requires a non-Federal cost share of 20 percent from all recipients unless an exception applies; applicants who do not provide the required match will be classified as ineligible.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Unless an exception applies, such as 100 percent federal share for certain safety projects or sliding scale adjustments"
+      ],
+      "evidenceNeeded": [
+        "Non-federal cost share commitment documentation",
+        "Budget showing match funds",
+        "Budget showing non-Federal match of at least 20% of total project cost"
+      ],
+      "check": {
+        "kind": "match_min_pct",
+        "pct": 20,
+        "appliesTo": {
+          "areaType": "any",
+          "grantCategory": "any"
+        }
+      },
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 4,
+          "section": null,
+          "quote": "WCPP requires a non-Federal cost share of 20 percent from all recipients unless an exception applies (see B.3, below). Applicants who do not provide the required non-Federal cost share will be classified as ineligible.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 6,
+          "section": null,
+          "quote": "WCPP requires a non-Federal cost share of 20 percent.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-0a6c7cc4",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "funding",
+      "topic": "non_federal_match",
+      "title": "FLMA and Tribe Match Using Other Federal Funds",
+      "description": "FLMAs and Tribes may use other allowable Federal funds, such as those under 23 U.S.C. 120(k), to satisfy the non-Federal match requirement.",
+      "mandatory": false,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant is a Federal Land Management Agency or Indian Tribe"
+      ],
+      "evidenceNeeded": [
+        "Documentation of source of matching funds under 23 U.S.C. 120(k) or similar authority"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 4,
+          "section": null,
+          "quote": "FLMAs and Tribes can use other Federal funds for their match, such as those allowable under 23 United States Code (U.S.C.) 120(k).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-25160b5b",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "funding",
+      "topic": "non_federal_match",
+      "title": "Previously Incurred Costs Not Counted Toward Match",
+      "description": "DOT will not consider previously incurred costs or previously expended or encumbered funds toward the matching requirements for any project.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Documentation showing match funds are not previously incurred or expended costs",
+        "Confirmation that match funds are not previously incurred or encumbered costs"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 6,
+          "section": null,
+          "quote": "DOT will not consider previously incurred costs or previously expended or encumbered funds toward the matching requirements for any project.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-8f220b5d",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Joint Application Lead Applicant and Roles Description",
+      "description": "Multiple entities submitting a joint application should identify a lead applicant as the primary point of contact and recipient, and should include a description of each applicant's roles and responsibilities, signed by each applicant.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [
+        "Application is submitted jointly by multiple entities"
+      ],
+      "evidenceNeeded": [
+        "Joint application document identifying lead applicant",
+        "Description of roles and responsibilities",
+        "Signatures from each applicant"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 5,
+          "section": null,
+          "quote": "Multiple entities submitting a joint application should identify a lead applicant as the primary point of contact (POC) and recipient for purposes of financial administration of the project. Joint applications should include a description of the roles and responsibilities of each applicant and should be signed by each applicant.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: Text uses 'should' rather than 'must', making mandatory status unclear despite practical importance.; mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-1ed549ad",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "eligibility",
+      "topic": "application_content",
+      "title": "State Highway Agency Consultation Documentation Required",
+      "description": "If an application is submitted by an eligible entity other than a State DOT or FLMA, the application must include documentation that the State highway agency (or equivalent) was consulted during development of the application; failure to provide sufficient documentation makes the application ineligible.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant is not a State DOT or FLMA",
+        "For Tribes, only required for projects not located on Tribal lands"
+      ],
+      "evidenceNeeded": [
+        "Documentation of consultation with State highway agency or equivalent"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "state_highway_agency_consultation_documentation"
+      },
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 5,
+          "section": null,
+          "quote": "If an application is submitted by an eligible entity other than a State DOT or an FLMA, the application shall include documentation that the State highway agency, or an equivalent of that agency, of the State in which the eligible entity is located, was consulted during the development of the application (23 U.S.C. 171(d)(2)). For Tribes, such consultation shall be required only for projects not located on Tribal lands. DOT will not review applications that fail to provide sufficient documentation of consultation, and such applications will not be eligible for funding.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-9b579a9a",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Description of Applicant Role with Partners",
+      "description": "Applicants are asked to describe their role with expected partners and other applicants in their applications.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [
+        "Application involves eligible partners or multiple applicants"
+      ],
+      "evidenceNeeded": [
+        "Narrative describing applicant's role relative to partners and other applicants"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 5,
+          "section": null,
+          "quote": "Applicants are asked to describe their role with expected partners and other applicants in their applications.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: Text says applicants are 'asked to describe', which is weaker than a mandatory requirement.; mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-ae74c5e5",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "deadline",
+      "title": "Application Closing Date and Deadline Time",
+      "description": "Applications are due by the stated deadline date and time; applications determined to be late will not be reviewed.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Timestamp of application submission"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 3,
+          "section": null,
+          "quote": "Application Due Date: 11/16/2026 [45 day application\nperiod] at 11:59 PM EST.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 6,
+          "section": null,
+          "quote": "Applications determined to be late, duplicates of applications submitted for the same round of applications, or incomplete will not be reviewed under this funding opportunity.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-36ed3ae9",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "application_content",
+      "title": "No Duplicate or Incomplete Applications",
+      "description": "Applications determined to be duplicates of applications submitted for the same round, or incomplete, will not be reviewed under this funding opportunity.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Single complete application submission per project"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 6,
+          "section": null,
+          "quote": "Applications determined to be late, duplicates of applications submitted for the same round of applications, or incomplete will not be reviewed under this funding opportunity.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f1e4e6fd",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "readiness",
+      "topic": "applicant_capacity",
+      "title": "State DOT Administration Requirement for Non-FLMA/Tribe Recipients",
+      "description": "If the grant recipient is any eligible entity other than an Indian Tribe or an FLMA, the State DOT of the State in which the project is located must administer the grant, either directly or as a pass-through entity; these recipients may not request FHWA to administer the grant directly, and FHWA cannot award if the State DOT does not agree.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Grant recipient is not an Indian Tribe or FLMA"
+      ],
+      "evidenceNeeded": [
+        "Documentation or agreement showing State DOT will administer or oversee the grant"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 6,
+          "section": null,
+          "quote": "If the grant recipient is any eligible entity other than an Indian Tribe or an FLMA, then, pursuant to 23 U.S.C. 171(f)(2)(A)(ii), the State DOT of the State in which the project is located must administer the grant. For these recipients, the State DOT must directly administer the project on behalf of the recipient or administer and oversee the project by serving as a pass-through entity for the recipient (23 U.S.C. 171(f)(2)(A)(ii)). These recipients may not request FHWA to administer the grant directly. FHWA cannot award a grant to these recipients if the State DOT does not agree to administer the grant.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-d253fe25",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Mandatory Application Template",
+      "description": "The NOFO changed the use of the application template from optional to mandatory for applicants.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed application using the required template"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "application_template"
+      },
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 4,
+          "section": null,
+          "quote": "Changed the use of the application template from optional to mandatory.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-4ef477ae",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "eligibility",
+      "topic": "other",
+      "title": "Applications must meet minimum cost share to be eligible",
+      "description": "Per the program, applications not providing at least the required minimum non-Federal cost share will be determined ineligible.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Documentation of non-Federal cost share amount in application budget"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 6,
+          "section": null,
+          "quote": "Per Section A, applications not providing at least the required minimum non-Federal cost share will be determined ineligible.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-ed6bb110",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "eligibility",
+      "topic": "other",
+      "title": "Late, duplicate, or incomplete applications will not be reviewed",
+      "description": "Applications determined to be late, duplicates of applications submitted for the same round of applications, or incomplete will not be reviewed under this funding opportunity.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Proof of timely, unique, complete submission"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 6,
+          "section": null,
+          "quote": "Applications determined to be late, duplicates of applications submitted for the same round of applications, or incomplete will not be reviewed under this funding opportunity.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-6b5a30b0",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "eligibility",
+      "topic": "application_limit",
+      "title": "No limit on number of applications per applicant",
+      "description": "There is no limit on the number of applications an applicant may submit; applicants submitting more than one must indicate funding priority on the cover page.",
+      "mandatory": false,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Application cover page indicating funding priority if multiple applications submitted"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 7,
+          "section": null,
+          "quote": "There is no limit on the number of applications an applicant may submit. If submitting more than one application, indicate the funding priority of each application on the application cover page.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-2dc09710",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "funding",
+      "topic": "minimum_request",
+      "title": "No minimum or maximum award amount",
+      "description": "There is no minimum or maximum award amount for WCPP awards.",
+      "mandatory": false,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 8,
+          "section": null,
+          "quote": "There is no minimum or maximum award amount for WCPP awards.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-1e40a4ec",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "submission_method",
+      "title": "Applications must be submitted electronically through Grants.gov",
+      "description": "All applications must be submitted electronically through www.grants.gov; DOT does not accept applications via mail, fax, email, or other means.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Confirmation of electronic submission through Grants.gov",
+        "Grants.gov submission confirmation"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 9,
+          "section": null,
+          "quote": "All applications must be submitted electronically through www.grants.gov.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 11,
+          "section": null,
+          "quote": "All applications must be submitted electronically through Grants.gov. DOT does not accept applications via mail, fax, email, or other means.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-29069f76",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Application formatting requirements",
+      "description": "Application files should be single-spaced, 12-point standard font with 1-inch margins, and in PDF unless otherwise specified.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Formatted application files meeting font, spacing, margin, and file type requirements"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 9,
+          "section": null,
+          "quote": "Application files should be single-spaced, 12-point standard font (e.g., Times New Roman), with 1-inch margins. Files should be in PDF unless otherwise specified (e.g., Excel based forms and location files such as Shapefile or KML/KMZ).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: Wording uses 'should' rather than 'must', making it unclear whether this is mandatory.; mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-bb9f9fc6",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Required application package forms",
+      "description": "The application package must consist of SF-424 and related forms (Lobbying Form, and non-construction or construction specific budget/assurance forms), plus the WCPP Application Template as an attachment to item 15 of the SF-424.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Non-construction projects require SF-424A and SF-424B",
+        "Construction projects require SF-424C and SF-424D"
+      ],
+      "evidenceNeeded": [
+        "Completed SF-424 family forms",
+        "Completed WCPP Application Template attached to SF-424 item 15"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "sf424_family_and_wcpp_template"
+      },
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 9,
+          "section": null,
+          "quote": "The WCPP Application Template (see Section D.2) must be added as an attachment to item 15 of the SF-424.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f64a4d21",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Applicants must complete the WCPP Application Template",
+      "description": "Applicants must complete the WCPP Template and include it as an attachment to Item 15 of their SF-424, providing all information necessary to determine eligibility and evaluate merit criteria.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed WCPP Application Template"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "wcpp_application_template"
+      },
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 9,
+          "section": null,
+          "quote": "Applicants must complete the WCPP Template and include it as an attachment to Item 15 of their SF-424.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-786395f8",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "funding",
+      "topic": "budget",
+      "title": "Application must include project budget with Federal and non-Federal funding breakdown",
+      "description": "The application must provide a budget listing the amount and percentage of both the Federal funding requested and any additional non-Federal funds to be used to pay for the project.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Budget document or attachment showing Federal and non-Federal funding amounts and percentages"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "project_budget"
+      },
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 10,
+          "section": null,
+          "quote": "The budget must list the amount and percentage of both the Federal funding requested and any additional non-Federal funds, if any, to be used to pay for the project.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-4216687b",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "registration",
+      "title": "Applicant must be registered in SAM.gov before submitting application",
+      "description": "Each applicant must be registered in System for Award Management (SAM) at SAM.gov before submitting its application.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Active SAM.gov registration record"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 10,
+          "section": null,
+          "quote": "Be registered in System for Award Management (SAM) at SAM.gov before submitting its application;",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-a605c2db",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "registration",
+      "title": "Applicant must provide a valid Unique Entity Identifier",
+      "description": "Each applicant must provide a valid Unique Entity Identifier in its application.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Unique Entity Identifier (UEI) included in application"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 10,
+          "section": null,
+          "quote": "Provide a valid Unique Entity Identifier in its application; and",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-fd50ac9f",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "registration",
+      "title": "Applicant must maintain active SAM.gov registration during application consideration",
+      "description": "Each applicant must continue to maintain an active registration in SAM.gov with current information at all times during which it has an active Federal award or an application under consideration by a Federal Agency.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Continuous active SAM.gov registration during application review period",
+        "Active SAM.gov registration"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 11,
+          "section": null,
+          "quote": "Continue to maintain an active registration in SAM.gov with current information at all times during which it has an active Federal award or an application under consideration by a Federal Agency.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-061fe090",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "deadline",
+      "title": "Application submission deadline of November 16, 2026",
+      "description": "FY 2026 WCPP applications must be submitted through Grants.gov by 11:59 PM EST on November 16, 2026.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Grants.gov timestamp confirming submission before deadline",
+        "Timestamped Grants.gov submission on or before deadline"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 11,
+          "section": null,
+          "quote": "FY 2026 WCPP applications must be submitted through Grants.gov by 11:59 PM EST on November 16, 2026.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-dbc9de81",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "eligibility",
+      "topic": "deadline",
+      "title": "Only on-time, valid electronic submissions eligible for evaluation",
+      "description": "Only applicants who comply with all submission deadlines and electronically submit valid, on-time applications through Grants.gov will be eligible for evaluation and possible selection for award.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Proof of valid, on-time electronic submission through Grants.gov"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 11,
+          "section": null,
+          "quote": "Only applicants who comply with all submission deadlines described in this notice and electronically submit valid, on-time applications through Grants.gov will be eligible for evaluation and possible selection for award.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-7fa409b5",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "deadline",
+      "title": "Compliance with Submission Deadlines Required for Consideration",
+      "description": "Only applicants who comply with all submission deadlines and electronically submit valid, on-time applications through Grants.gov will be eligible for evaluation and possible selection for award.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Valid, on-time electronic submission through Grants.gov"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 11,
+          "section": null,
+          "quote": "Only applicants who comply with all submission deadlines described in this notice and\nelectronically submit valid, on-time applications through Grants.gov will be eligible for\nevaluation and possible selection for award.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-cccd8a76",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Provide Verifiable Supporting Data and Documentation",
+      "description": "To the extent practicable, applicants should provide supporting data and documentation in a form directly verifiable by DOT.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Supporting data and documentation verifiable by DOT"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 11,
+          "section": null,
+          "quote": "To the extent practicable, applicants should provide supporting data and documentation in a form\ndirectly verifiable by DOT.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: Uses 'should' and 'to the extent practicable', indicating a non-mandatory expectation rather than a strict requirement.; mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-a414771e",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "readiness",
+      "topic": "applicant_capacity",
+      "title": "Demonstrate Technical and Staffing Resources to Deliver Project",
+      "description": "The Technical Assessment evaluates whether the applicant has the technical and staffing resources to deliver the project and demonstrates technical feasibility, as described in the application.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applications rated Medium or High on merit criteria proceed to readiness assessment"
+      ],
+      "evidenceNeeded": [
+        "Description of applicant's technical and staffing resources",
+        "Demonstration of technical feasibility"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 16,
+          "section": null,
+          "quote": "A. The applicant has the\ntechnical and staffing\nresources to deliver the\nproject.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-6bc9ea27",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "readiness",
+      "topic": "schedule",
+      "title": "Demonstrate Commitment to Timely Project Delivery via Schedule Information",
+      "description": "The applicant must demonstrate a commitment for timely project delivery as shown by the schedule information included in the application, as part of the Technical Assessment.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applications rated Medium or High on merit criteria proceed to readiness assessment"
+      ],
+      "evidenceNeeded": [
+        "Project schedule information"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 16,
+          "section": null,
+          "quote": "C. The applicant demonstrates a\ncommitment for timely\nproject delivery as\ndemonstrated by the schedule\ninformation in the\napplication.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-9a9fab64",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "readiness",
+      "topic": "budget",
+      "title": "Demonstrate Availability of Matching Funds and Complete Funding Package",
+      "description": "The Financial Completeness Assessment evaluates the availability of matching funds and whether the applicant presented a complete funding package.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applications rated Medium or High on merit criteria proceed to readiness assessment"
+      ],
+      "evidenceNeeded": [
+        "Documentation of matching funds availability",
+        "Complete funding package description"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 16,
+          "section": null,
+          "quote": "The Financial Completeness Assessment evaluates the availability of matching funds and\nwhether the applicant presented a complete funding package and will receive a rating of\nComplete (3), Partially Complete (2), or Incomplete (1), as defined in the table below.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-87ef0e84",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "readiness",
+      "topic": "risk",
+      "title": "Disclosure of litigation or public controversy",
+      "description": "The applicant must disclose whether there is open litigation concerning the project, or known and difficult to resolve public controversy or agency opposition to the project on environmental grounds, as part of the Permitting Risk Assessment information.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Statement disclosing open litigation status",
+        "Statement disclosing known public controversy or agency opposition on environmental grounds"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 17,
+          "section": null,
+          "quote": "The applicant must disclose if there is open litigation concerning the project; or, if there is known, and difficult to resolve, public controversy, or agency opposition to the project on environmental grounds.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-36af9171",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "funding",
+      "topic": "pre_award_costs",
+      "title": "Costs incurred prior to award are ineligible",
+      "description": "Unless authorized by DOT in writing after announcement of FY 2026 WCPP grant selections, any costs incurred prior to DOT's obligation of funds for a project are ineligible for reimbursement and are ineligible cost-share requirements.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Written DOT authorization if claiming pre-award costs"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 22,
+          "section": null,
+          "quote": "Unless authorized by DOT in writing after announcement of FY 2026 WCPP grant selections, any costs incurred prior to DOT’s obligation of funds for a project are ineligible for reimbursement and are ineligible cost-share requirements.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-d5dff48b",
+      "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+      "category": "readiness",
+      "topic": "risk",
+      "title": "Demonstrate consideration of physical and cyber security risks prior to grant agreement signing",
+      "description": "Each applicant selected for Federal funding must demonstrate, prior to the signing of the grant agreement, effort to consider and address physical and cyber security risks relevant to the transportation mode and type and scale of the project.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant selected for Federal funding"
+      ],
+      "evidenceNeeded": [
+        "Documentation of physical and cyber security risk consideration for the project"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+          "page": 23,
+          "section": null,
+          "quote": "Each applicant selected for Federal funding must demonstrate, prior to the signing of the grant agreement, effort to consider and address physical and cyber security risks relevant to the transportation mode and type and scale of the project.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    }
+  ]
+}

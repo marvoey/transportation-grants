@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "source": "simpler.grants.gov",
+  "opportunityId": "aa81e9f0-a4bb-47d5-aa09-d26f0c2734fe",
+  "opportunityNumber": "NHTSA-693JJ927R000007-FY27",
+  "legacyOpportunityId": 364212,
+  "title": "State Process for Informing Consumers of Recalls Program",
+  "status": "posted",
+  "category": "discretionary",
+  "agency": {
+    "code": "DOT-NHTSA",
+    "name": "National Highway Traffic Safety Administration",
+    "topLevelCode": "DOT",
+    "topLevelName": "Department of Transportation"
+  },
+  "summary": {
+    "awardCeiling": 1500000,
+    "awardFloor": 300000,
+    "estimatedTotalProgramFunding": 1500000,
+    "expectedNumberOfAwards": 5,
+    "postDate": "2026-11-04",
+    "closeDate": "2027-02-04",
+    "archiveDate": "2027-03-06",
+    "fiscalYear": null,
+    "isCostSharing": false,
+    "applicantTypes": [
+      "other",
+      "state_governments"
+    ],
+    "additionalInfoUrl": null,
+    "applicantEligibilityDescription": "An eligible applicant is a State agency that has the authority to register motor vehicles for use on public roads that demonstrates it has the infrastructure in place, as well as the necessary staff and support, to carry out the responsibilities of administering, coordinating, and implementing the activities of this NOFO."
+  },
+  "sourceUpdatedAt": "2026-11-04T18:08:19+00:00",
+  "responseSha256": "4fceeedbea21ffd149105fa7c0f3486684fd82794aabbe0ba38ee4db31c0b421",
+  "retrievedAt": "2026-11-11T22:02:48.522Z"
+}

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "source": "simpler.grants.gov",
+  "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+  "opportunityNumber": "NHTSA-693JJ926R000024-FY26",
+  "legacyOpportunityId": 363446,
+  "title": "Innovative Traffic Safety Enforcement (ITSE) Grant Program",
+  "status": "posted",
+  "category": "discretionary",
+  "agency": {
+    "code": "DOT-NHTSA",
+    "name": "National Highway Traffic Safety Administration",
+    "topLevelCode": "DOT",
+    "topLevelName": "Department of Transportation"
+  },
+  "summary": {
+    "awardCeiling": 20000000,
+    "awardFloor": 300000,
+    "estimatedTotalProgramFunding": 20000000,
+    "expectedNumberOfAwards": 10,
+    "postDate": "2026-08-03",
+    "closeDate": "2027-09-01",
+    "archiveDate": "2027-10-01",
+    "fiscalYear": null,
+    "isCostSharing": false,
+    "applicantTypes": [
+      "other",
+      "special_district_governments",
+      "state_governments",
+      "public_and_state_institutions_of_higher_education",
+      "city_or_township_governments",
+      "county_governments",
+      "nonprofits_non_higher_education_without_501c3",
+      "federally_recognized_native_american_tribal_governments",
+      "other_native_american_tribal_organizations",
+      "nonprofits_non_higher_education_with_501c3",
+      "private_institutions_of_higher_education"
+    ],
+    "additionalInfoUrl": null,
+    "applicantEligibilityDescription": "Applicants eligible for an award include a State or local agency, authority, association, educational institution, or nonprofit organization that demonstrates that it has organizational capacity and experience to carry out the responsibilities of administering, coordinating, and implementing the activities of this NOFO, as explained in Section III ‘Program Description’, and based upon the documentation submitted by the applicant as required in Section IV ‘Application Contents and Format’. Only organizations capable of fulfilling the criteria listed within this NOFO will be considered for an award."
+  },
+  "sourceUpdatedAt": "2026-08-12T15:02:26+00:00",
+  "responseSha256": "7b88060cb762510433543ad3821638c61df67f865815c5d95be46a692ca49859",
+  "retrievedAt": "2026-11-11T22:01:38.956Z"
+}

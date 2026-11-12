@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+  "retrievedAt": "2026-11-11T21:14:31.636Z",
+  "lastCheckedAt": "2026-11-11T21:14:31.636Z",
+  "coverage": {
+    "status": "api_listed_processed",
+    "reasons": [],
+    "completenessNote": "Completeness against the full official package cannot be verified: only the attachments Simpler.Grants.gov lists (plus any curated supplemental sources) were processed. Agencies may publish FAQs, checklists or amendments elsewhere."
+  },
+  "documents": [
+    {
+      "documentId": "sg-7b1fd534-6009-4779-ba15-13b0e8b3a734",
+      "origin": "simpler_attachment",
+      "title": "FY 26 WCPP Application Template",
+      "fileName": "9.29.26_-_Final_Draft_WCPP_Application_Template.docx",
+      "declaredMimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "detectedType": "zip",
+      "sizeBytes": 241189,
+      "sha256": "ab9239b2ca71434384db6629a338b949df9b80ea2451e5927ea321d2bc5d3bfa",
+      "sourceAttachmentId": "7b1fd534-6009-4779-ba15-13b0e8b3a734",
+      "sourceUpdatedAt": "2026-09-30T19:05:45+00:00",
+      "sourceSizeBytes": 241189,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/41eb2492-6242-49f8-89ae-17d15c068be4/attachments/7b1fd534-6009-4779-ba15-13b0e8b3a734/9.29.26_-_Final_Draft_WCPP_Application_Template.docx",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T21:14:30.394Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-7b1fd534-6009-4779-ba15-13b0e8b3a734/original.docx",
+      "normalizedFile": "documents/sg-7b1fd534-6009-4779-ba15-13b0e8b3a734/normalized.json",
+      "authority": "official_guidance",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: matched \"template\" (derivative or supporting document)",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "mammoth-docx",
+        "processorVersion": "1",
+        "sections": 1
+      },
+      "notes": []
+    },
+    {
+      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+      "origin": "simpler_attachment",
+      "title": "Final FY 26 WCPP NOFO",
+      "fileName": "Final_WCPP_NOFO_HAD-260512-001.pdf",
+      "declaredMimeType": "application/pdf",
+      "detectedType": "pdf",
+      "sizeBytes": 796869,
+      "sha256": "564e65f180b60b036a8bdf148a280c5edd3696b52ae35dd1014f6472611db05f",
+      "sourceAttachmentId": "700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+      "sourceUpdatedAt": "2026-09-30T19:05:19+00:00",
+      "sourceSizeBytes": 796869,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/41eb2492-6242-49f8-89ae-17d15c068be4/attachments/700e33fa-537c-4ce9-ad26-e8aaf6313c7d/Final_WCPP_NOFO_HAD-260512-001.pdf",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T21:14:30.414Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d/original.pdf",
+      "normalizedFile": "documents/sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d/normalized.json",
+      "authority": "controlling",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: matched \"nofo\" (candidate controlling document; confirm)",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "pdfjs-text",
+        "processorVersion": "1",
+        "pages": 24
+      },
+      "notes": []
+    }
+  ],
+  "potentialMissingSources": [
+    {
+      "kind": "additional_info_url",
+      "description": "The opportunity lists an additional-information page. It is not retrieved automatically; review it for FAQs, checklists or amendments.",
+      "url": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=128831"
+    },
+    {
+      "kind": "amendments_not_listed",
+      "description": "Simpler.Grants.gov does not expose a separate list of amendments. Confirm on the agency site that no amendment supersedes the attached documents."
+    }
+  ]
+}

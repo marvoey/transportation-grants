@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+  "retrievedAt": "2026-11-11T22:01:40.250Z",
+  "lastCheckedAt": "2026-11-11T22:01:40.250Z",
+  "coverage": {
+    "status": "api_listed_processed",
+    "reasons": [],
+    "completenessNote": "Completeness against the full official package cannot be verified: only the attachments Simpler.Grants.gov lists (plus any curated supplemental sources) were processed. Agencies may publish FAQs, checklists or amendments elsewhere."
+  },
+  "documents": [
+    {
+      "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+      "origin": "simpler_attachment",
+      "title": "Innovative Traffic Safety Enforcement (ITSE) Grant Program NOFO",
+      "fileName": "NHTSA_ITSE_NOFO_8.3.2026.pdf",
+      "declaredMimeType": "application/pdf",
+      "detectedType": "pdf",
+      "sizeBytes": 624057,
+      "sha256": "de1fc960841b6064d9e8bcf05fbfd99fcc341251964ceee6e45a32413c033212",
+      "sourceAttachmentId": "7939f3db-c26a-4822-9561-83927bfa56b5",
+      "sourceUpdatedAt": "2026-08-03T14:10:52+00:00",
+      "sourceSizeBytes": 624057,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/5269870b-a071-47ba-a076-d3fbc1955077/attachments/7939f3db-c26a-4822-9561-83927bfa56b5/NHTSA_ITSE_NOFO_8.3.2026.pdf",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T22:01:39.201Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-7939f3db-c26a-4822-9561-83927bfa56b5/original.pdf",
+      "normalizedFile": "documents/sg-7939f3db-c26a-4822-9561-83927bfa56b5/normalized.json",
+      "authority": "controlling",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: matched \"nofo\" (candidate controlling document; confirm)",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "pdfjs-text",
+        "processorVersion": "1",
+        "pages": 32
+      },
+      "notes": []
+    },
+    {
+      "documentId": "sg-4d3e4743-bcb9-424f-89ff-8ebd14387880",
+      "origin": "simpler_attachment",
+      "title": "ITSE Live Webinar Information",
+      "fileName": "ITSE_Pre-Applicant_Webinar_8.7.2026.pdf",
+      "declaredMimeType": "application/pdf",
+      "detectedType": "pdf",
+      "sizeBytes": 755868,
+      "sha256": "4dda02a1c282f4c67b457167c845942d721755a37ccbfecf2f59cdff7389029b",
+      "sourceAttachmentId": "4d3e4743-bcb9-424f-89ff-8ebd14387880",
+      "sourceUpdatedAt": "2026-08-07T16:21:52+00:00",
+      "sourceSizeBytes": 755868,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/5269870b-a071-47ba-a076-d3fbc1955077/attachments/4d3e4743-bcb9-424f-89ff-8ebd14387880/ITSE_Pre-Applicant_Webinar_8.7.2026.pdf",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T22:01:39.216Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-4d3e4743-bcb9-424f-89ff-8ebd14387880/original.pdf",
+      "normalizedFile": "documents/sg-4d3e4743-bcb9-424f-89ff-8ebd14387880/normalized.json",
+      "authority": "official_guidance",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: matched \"webinar\" (derivative or supporting document)",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "pdfjs-text",
+        "processorVersion": "1",
+        "pages": 36
+      },
+      "notes": []
+    },
+    {
+      "documentId": "sg-95a6fb2d-f8df-4f77-9ca3-0db119ecceb8",
+      "origin": "simpler_attachment",
+      "title": "NHTSA ITSE NOFO Questions and Answers 8.20.2026",
+      "fileName": "NHTSA_ITSE_NOFO_Questions_and_Answers_8.20.2026.pdf",
+      "declaredMimeType": "application/pdf",
+      "detectedType": "pdf",
+      "sizeBytes": 302460,
+      "sha256": "d163d43aefb6fcf3167c3306d3ad45e013907df1d5142e5dfea29eee929b84d6",
+      "sourceAttachmentId": "95a6fb2d-f8df-4f77-9ca3-0db119ecceb8",
+      "sourceUpdatedAt": "2026-08-20T21:03:07+00:00",
+      "sourceSizeBytes": 302460,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/5269870b-a071-47ba-a076-d3fbc1955077/attachments/95a6fb2d-f8df-4f77-9ca3-0db119ecceb8/NHTSA_ITSE_NOFO_Questions_and_Answers_8.20.2026.pdf",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T22:01:40.007Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-95a6fb2d-f8df-4f77-9ca3-0db119ecceb8/original.pdf",
+      "normalizedFile": "documents/sg-95a6fb2d-f8df-4f77-9ca3-0db119ecceb8/normalized.json",
+      "authority": "official_guidance",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: matched \"questions and answers\" (derivative or supporting document)",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "pdfjs-text",
+        "processorVersion": "1",
+        "pages": 13
+      },
+      "notes": []
+    },
+    {
+      "documentId": "sg-5acd66f9-92f5-4052-941e-e1e1f7514cfa",
+      "origin": "simpler_attachment",
+      "title": "NHTSA ITSE NOFO Questions and Answers vII. 8.26.2026",
+      "fileName": "NHTSA_ITSE_NOFO_Questions_and_Answers_vII._8.26.2026.pdf",
+      "declaredMimeType": "application/pdf",
+      "detectedType": "pdf",
+      "sizeBytes": 182063,
+      "sha256": "6649af7d7402d120554ec76661c178798242377f659091184a5f188a7cb08ce2",
+      "sourceAttachmentId": "5acd66f9-92f5-4052-941e-e1e1f7514cfa",
+      "sourceUpdatedAt": "2026-08-26T21:34:07+00:00",
+      "sourceSizeBytes": 182063,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/5269870b-a071-47ba-a076-d3fbc1955077/attachments/5acd66f9-92f5-4052-941e-e1e1f7514cfa/NHTSA_ITSE_NOFO_Questions_and_Answers_vII._8.26.2026.pdf",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T22:01:40.103Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-5acd66f9-92f5-4052-941e-e1e1f7514cfa/original.pdf",
+      "normalizedFile": "documents/sg-5acd66f9-92f5-4052-941e-e1e1f7514cfa/normalized.json",
+      "authority": "official_guidance",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: matched \"questions and answers\" (derivative or supporting document)",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "pdfjs-text",
+        "processorVersion": "1",
+        "pages": 3
+      },
+      "notes": []
+    }
+  ],
+  "potentialMissingSources": [
+    {
+      "kind": "amendments_not_listed",
+      "description": "Simpler.Grants.gov does not expose a separate list of amendments. Confirm on the agency site that no amendment supersedes the attached documents."
+    }
+  ]
+}

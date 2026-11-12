@@ -1,0 +1,1297 @@
+{
+  "schemaVersion": 1,
+  "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+  "generatedAt": "2026-11-11T22:02:42.308Z",
+  "model": "claude-sonnet-5",
+  "promptVersion": "4",
+  "sourceManifestHash": "54ea761e8dddec66cf0c2be89fea8d26c834db69d098edfeab1190ac4394204f",
+  "passes": 1,
+  "status": "complete",
+  "documents": [
+    {
+      "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+      "title": "Innovative Traffic Safety Enforcement (ITSE) Grant Program NOFO",
+      "authority": "controlling",
+      "sha256": "de1fc960841b6064d9e8bcf05fbfd99fcc341251964ceee6e45a32413c033212",
+      "units": 32
+    }
+  ],
+  "batches": {
+    "total": 7,
+    "succeeded": 7,
+    "split": 0,
+    "failed": []
+  },
+  "usage": {
+    "inputTokens": 52562,
+    "outputTokens": 22947
+  },
+  "stats": {
+    "candidates": 54,
+    "rejected": 1,
+    "merged": 9,
+    "kept": 44,
+    "sourcesRejected": 1,
+    "locationsCorrected": 0,
+    "checksDropped": 0
+  },
+  "rejections": [
+    {
+      "title": "Use appropriate methodology (e.g., SMART) for goals and objectives",
+      "reason": "no_verified_source",
+      "detail": "quote_not_found: The quote does not appear in the cited document."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "req-2dc2724a",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "eligibility",
+      "topic": "applicant_type",
+      "title": "Eligible applicant types",
+      "description": "Applicants must be a State or local agency, authority, association, educational institution, or nonprofit organization with organizational capacity and experience to administer, coordinate, and implement the NOFO activities.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Documentation demonstrating organizational capacity and experience",
+        "Proof of applicant organization type"
+      ],
+      "check": {
+        "kind": "applicant_type_in",
+        "values": [
+          "State agency",
+          "local agency",
+          "authority",
+          "association",
+          "educational institution",
+          "nonprofit organization"
+        ]
+      },
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 6,
+          "section": null,
+          "quote": "Applicants eligible for an award include a State or local agency, authority, association, educational institution, or nonprofit organization that demonstrates that it has organizational capacity and experience to carry out the responsibilities of administering, coordinating, and implementing the activities of this NOFO",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-9ab519ee",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "eligibility",
+      "topic": "application_limit",
+      "title": "One application per phase",
+      "description": "NHTSA will only accept one application per eligible applicant during each application phase.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 1,
+          "section": null,
+          "quote": "NHTSA will only accept one (1) application per eligible applicant during each application phase.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-0cc418df",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "deadline",
+      "title": "Phase one application deadline",
+      "description": "Applications for phase one must be submitted no later than 9/3/2026 by 5pm EST.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant seeking phase one evaluation"
+      ],
+      "evidenceNeeded": [
+        "Timestamp of submission"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 1,
+          "section": null,
+          "quote": "Phase one (1): NHTSA will evaluate applications submitted no later than 9/3/2026.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-4c0832e8",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "deadline",
+      "title": "Phase two application deadline",
+      "description": "Applications for phase two must be submitted no later than 3/1/2027 by 5pm EST.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant seeking phase two evaluation"
+      ],
+      "evidenceNeeded": [
+        "Timestamp of submission"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 1,
+          "section": null,
+          "quote": "Phase two (2): NHTSA will evaluate applications submitted no later than 3/1/2027.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-79396191",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "deadline",
+      "title": "Phase three application deadline",
+      "description": "Applications for phase three must be submitted no later than 9/1/2027 by 5pm EST.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant seeking phase three evaluation"
+      ],
+      "evidenceNeeded": [
+        "Timestamp of submission"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 1,
+          "section": null,
+          "quote": "Phase three (3): NHTSA will evaluate applications submitted no later than 9/1/2027.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-6dcf4359",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "funding",
+      "topic": "non_federal_match",
+      "title": "Cost sharing not mandatory",
+      "description": "Cost-sharing or matching requirements are not required under this NOFO, though applicants are encouraged to seek additional funds from other sources.",
+      "mandatory": false,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 6,
+          "section": null,
+          "quote": "Cost-sharing or matching requirements are not required under this NOFO. While not mandatory, applicants are encouraged to seek funds from other Federal, State, local, and private sources to augment those Federal funds available under this NOFO.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-806a6de4",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "funding",
+      "topic": "budget",
+      "title": "Disclosure of non-federal funds in budget plan",
+      "description": "If an applicant intends to use funds from other sources to augment the project, it must specify in its budget plan the amount and percent of both the total Federal funding requested and any additional non-Federal funds that will be used to pay for the project.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant intends to use non-federal funds to augment the project"
+      ],
+      "evidenceNeeded": [
+        "Budget plan showing amount and percent of Federal and non-Federal funding",
+        "Budget showing federal and non-federal funding amounts and percentages"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 6,
+          "section": null,
+          "quote": "If an applicant intends to use funds from other sources to augment this project, the applicant must specify in its budget plan required by Section IV.A.2.b.3. the amount and percent of both the total Federal funding requested and any additional non-Federal funds, if any, that will be used to pay for the project.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 15,
+          "section": null,
+          "quote": "This budget must list the amount and percent of both the total Federal funding requested and any additional non-Federal funds, if any, that will be used to pay for the project.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-402b0fb3",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "readiness",
+      "topic": "applicant_capacity",
+      "title": "Demonstrate organizational capacity and experience",
+      "description": "Applicant must demonstrate it has organizational capacity and experience to carry out the activities of the NOFO, supported by documentation required in Section IV.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Documentation of organizational capacity and experience per Section IV"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 6,
+          "section": null,
+          "quote": "that demonstrates that it has organizational capacity and experience to carry out the responsibilities of administering, coordinating, and implementing the activities of this NOFO, as explained in Section III 'Program Description', and based upon the documentation submitted by the applicant as required in Section IV 'Application Contents and Format'.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-62eab109",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "budget",
+      "title": "Specify non-Federal funding amounts in budget plan if used",
+      "description": "If an applicant intends to use funds from other sources to augment the project, it must specify in its budget plan the amount and percent of total Federal funding requested and any additional non-Federal funds to be used.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant intends to use other funding sources to augment project"
+      ],
+      "evidenceNeeded": [
+        "Budget plan specifying Federal and non-Federal funding amounts/percentages"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 6,
+          "section": null,
+          "quote": "If an applicant intends to use funds from other sources to augment this project, the applicant must specify in its budget plan required by Section IV.A.2.b.3. the amount and percent of both the total Federal funding requested and any additional non-Federal funds, if any, that will be used to pay for the project.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-107e6874",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "eligibility",
+      "topic": "project_type",
+      "title": "Identify specific focus area for proposed project",
+      "description": "Applicants must identify the specific focus area (from a list of risky driving behavior categories) that the proposed project will address.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Statement of selected focus area(s)"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 8,
+          "section": null,
+          "quote": "Applicants must identify the specific focus area that the proposed project will apply.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-8b3c2cd1",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Include description of data collection and analysis for evaluation",
+      "description": "Applicants must include a description of how data will be collected and analyzed to evaluate the traffic safety countermeasure's effectiveness and allow for future replication.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Data collection and analysis plan in application"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 8,
+          "section": null,
+          "quote": "Finally, applicants must include a description of how data will be collected and analyzed to evaluate the traffic safety countermeasure's effectiveness and to allow for future replication.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-c3fb71e3",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Include performance metrics in application",
+      "description": "Applications must include performance metrics using science-based evaluation designs appropriate to the project and established performance metrics.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Performance metrics section of application"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 9,
+          "section": null,
+          "quote": "Applications must include performance metrics to substantiate project efforts. Performance measures must use science-based evaluation designs that incorporate methodologies that are appropriate to the project and the established performance metrics",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-2548c42c",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "readiness",
+      "topic": "schedule",
+      "title": "Project period of performance limit of 60 months",
+      "description": "NHTSA anticipates that all efforts performed under the ITSE Grant Program shall be completed no later than 60 months from the date of each award.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Project schedule showing completion within 60 months"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 11,
+          "section": null,
+          "quote": "NHTSA anticipates that all efforts performed under the ITSE Grant Program shall be completed no later than 60 months from the date of each award.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-c911f859",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Prohibition on use of funds for lobbying",
+      "description": "Funds awarded under the ITSE Grant Program cannot be used for any activity intended to or designed to lobby Congress or a State legislative body.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 11,
+          "section": null,
+          "quote": "Funds awarded under the ITSE Grant Program cannot be used for any activity intended to or designed to lobby Congress or a State legislative body, or to urge a U.S., State, or local legislator to favor or oppose the adoption of any specific legislative proposal pending before any State or local legislative body.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-09f82ee0",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Buy America requirement",
+      "description": "Funds awarded under the ITSE Grant Program are subject to Buy America, prohibiting use of government funds to purchase steel, iron, and manufactured products unless produced in the United States.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 11,
+          "section": null,
+          "quote": "Funds awarded under the ITSE Grant Program are subject to 23 U.S.C. § 313, Buy America, which prohibits the use of the Government's funds to purchase steel, iron, and manufactured products, unless they are produced in the United States.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-129734f6",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Prohibition on sub-awards with covered technology entities",
+      "description": "Consistent with 2 C.F.R. § 200.216, the Recipient is prohibited from using government funds to enter into sub-awards or contracts with entities that use covered technology.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 11,
+          "section": null,
+          "quote": "Consistent with 2 C.F.R. § 200.216, the Recipient is prohibited from using government funds to enter into sub-awards or contracts (or extend or renew sub-awards or contracts) with entities that use covered technology.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-94ee21c7",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Required application components",
+      "description": "The application must include a cover page, an application narrative and required submissions.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Cover page",
+        "Application narrative",
+        "Required submissions"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 11,
+          "section": null,
+          "quote": "The application must include a cover page, an application narrative and required submissions.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-29149159",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "eligibility",
+      "topic": "application_limit",
+      "title": "One application per applicant per fiscal year",
+      "description": "NHTSA will accept only one application per applicant per fiscal year.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 11,
+          "section": null,
+          "quote": "NHTSA will accept one application per applicant per FY.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-2bab7983",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Cover Page Required",
+      "description": "Each application shall include a 1-page cover page that includes the applicant's name, NOFO number, and submission date.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Cover page with applicant name, NOFO number, submission date"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 12,
+          "section": null,
+          "quote": "Each application shall include a cover page that includes the applicant’s name, NOFO number 693JJ926R000024, and submission date.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-8bead4a8",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Application Narrative Page Limit",
+      "description": "The application narrative shall not exceed 20 pages, not including resumes, appendices, or other required submissions.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 13,
+          "section": null,
+          "quote": "The application shall not exceed 20 pages (not including resumes, appendices, or other requirements noted in Section IV.A.3 ‘Required Submissions’).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-c67c8512",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Application Formatting Requirements",
+      "description": "All applications must be in English, prepared using a common commercial software application, and with standard formatting preferences such as Times New Roman 12-point font, single spaced, one-inch margins.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 13,
+          "section": null,
+          "quote": "All applications must be in English be prepared using a common commercial software application (e.g., MS Office or Google Workspace formats) and with standard formatting preferences (e.g. Times New Roman 12-point font, single spaced, one-inch margins).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-c8030d7e",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "budget",
+      "title": "Cost Information Excluded from Project Plan",
+      "description": "The applicant shall not include cost information in its project plan; all cost information shall be contained in the applicant's budget plan.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 13,
+          "section": null,
+          "quote": "The applicant shall not include Cost information in its project plan. All cost information shall be contained in the applicant’s budget plan.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-18f5d7e7",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "readiness",
+      "topic": "applicant_capacity",
+      "title": "Applicant Background Must Address Eligibility and Capacity",
+      "description": "The applicant background section must directly address eligibility requirements, demonstrate ability to conduct the activities through past performance, and identify a Project Manager to serve as liaison.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Organizational history and qualifications",
+        "Past performance description",
+        "Project Manager identification"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 13,
+          "section": null,
+          "quote": "The applicant shall demonstrate its ability to conduct the activities described in Section III.B ‘Program Goals and Objectives’ and Section III.C ‘Performance Measurement Information'. by identifying its prior organizational experience through the description of past performance with similar efforts.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 14,
+          "section": null,
+          "quote": "The applicant shall identify a Project Manager to serve as a liaison to coordinate and manage all aspects of the project.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f46c4ad6",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "readiness",
+      "topic": "schedule",
+      "title": "Project Plan Must Include Milestones and Schedule",
+      "description": "The project plan must include a detailed work breakdown structure, a description of how each activity will be implemented in a Gantt chart or similar format, key milestones, performance targets and timeline, staffing plan, quality control plan, and risk mitigation strategy.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Work breakdown structure",
+        "Gantt chart or similar schedule",
+        "Staffing plan",
+        "Risk mitigation strategy"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 14,
+          "section": null,
+          "quote": "It should include a detailed work breakdown structure (WBS) that is aligned to the performance objectives described in Section III.C ‘Performance Measurement Information', including detailed step-by-step approach to meeting those activities.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 14,
+          "section": null,
+          "quote": "e. A risk mitigation strategy to identify risks and methods to address, mitigate or eliminate problems;",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-ab39d8d4",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "funding",
+      "topic": "budget",
+      "title": "Detailed Cost Breakdown and Justification Required",
+      "description": "The applicant must provide a detailed breakdown of proposed costs and in-kind costs by year, with cost categories and sub-categories, and must justify each proposed cost explaining how it was calculated and determined to be fair and reasonable.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Itemized cost breakdown by year and category",
+        "Cost justification narrative"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 15,
+          "section": null,
+          "quote": "In addition, the Applicant must provide a detailed breakdown of the proposed costs, as well as any in-kind costs, by year.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 15,
+          "section": null,
+          "quote": "The Applicant must also justify each proposed cost by explaining how each cost was calculated and determined to be fair and reasonable.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-254e6f01",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Cost Data Must Be Submitted in Excel or Google Sheets",
+      "description": "Cost data shall be provided in current Microsoft supported version of Microsoft Excel or Google Sheets, without hidden cells, and be comprehensive and easy to interpret.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Cost data file in Excel or Google Sheets format"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 15,
+          "section": null,
+          "quote": "Cost data shall be provided in current Microsoft supported version of Microsoft EXCEL or Google Sheets, without hidden cells, and be comprehensive and easy to interpret.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-11c74ec9",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "SF-424 Standard Forms Required",
+      "description": "The application shall include the Standard Forms for Federal assistance: SF-424, 424A, and 424B, completed and with certified assurances signed.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed SF-424",
+        "Completed SF-424A",
+        "Completed SF-424B"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "sf424_forms"
+      },
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 15,
+          "section": null,
+          "quote": "The application shall include the Standard Forms for Federal assistance. These shall include the 424 “Application for Federal Assistance,” 424A “Budget Information for Non-Construction Programs,” and 424B “Assurances for Non-Construction Programs”.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f3e1a0c0",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Part 32 Certified Statement Required",
+      "description": "The applicant shall provide with its application a certified statement that it agrees to comply with the requirements in 49 CFR Part 32, Governmentwide Requirements for Drug-Free Workplace.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Certified Part 32 statement"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "part_32_certified_statement"
+      },
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 16,
+          "section": null,
+          "quote": "The applicant shall provide with its application a certified statement that it agrees to comply with the requirements in 49 CFR Part 32, Governmentwide Requirements for Drug-Free Workplace (Financial Assistance), Subpart B.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-799f5f8d",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Part 20 Certified Statement and SF-LLL Required",
+      "description": "The applicant shall provide with its application a certified statement consistent with Appendix A to 49 CFR Part 20 regarding lobbying restrictions, and a SF-LLL Disclosure of Lobbying Activities form if a disclosure is required.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Certified Part 20 statement",
+        "SF-LLL form if applicable"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "part_20_certified_statement"
+      },
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 16,
+          "section": null,
+          "quote": "The applicant shall provide with its application a certified statement consistent with the requirements in Appendix A to 49 CFR Part 20, U.S. Department of Transportation New Restrictions on Lobbying, and a SF-LLL Disclosure of Lobbying Activities form, if a disclosure is required by Part 20.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-d5c237e2",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "registration",
+      "title": "SAM Registration Required Before Submission",
+      "description": "Each applicant must be registered in the System for Award Management (SAM) before submitting its application.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Active SAM registration"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 16,
+          "section": null,
+          "quote": "Be registered in SAM before submitting its application;",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f3e1a0c0-2",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Certify compliance with Drug-Free Workplace requirements",
+      "description": "The applicant must provide a certified statement agreeing to comply with Drug-Free Workplace requirements under 49 CFR Part 32, Subpart B.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Certified statement of compliance with 49 CFR Part 32"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "drug_free_workplace_certification"
+      },
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 16,
+          "section": null,
+          "quote": "The applicant shall provide with its application a certified statement that it agrees to comply with the requirements in 49 CFR Part 32, Governmentwide Requirements for Drug-Free Workplace (Financial Assistance), Subpart B.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-799f5f8d-2",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Certify compliance with lobbying restrictions and submit SF-LLL if required",
+      "description": "The applicant must provide a certified statement consistent with lobbying restriction requirements in Appendix A to 49 CFR Part 20, and submit an SF-LLL Disclosure of Lobbying Activities form if a disclosure is required, and acknowledge in writing that no award funds will be used for lobbying.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "if a lobbying disclosure is required by Part 20"
+      ],
+      "evidenceNeeded": [
+        "Certified lobbying statement",
+        "SF-LLL form if applicable",
+        "Written acknowledgment regarding lobbying funds"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "sf_lll_lobbying_disclosure"
+      },
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 16,
+          "section": null,
+          "quote": "The applicant shall provide with its application a certified statement consistent with the requirements in Appendix A to 49 CFR Part 20, U.S. Department of Transportation New Restrictions on Lobbying, and a SF-LLL Disclosure of Lobbying Activities form, if a disclosure is required by Part 20.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-2af4b220",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "eligibility",
+      "topic": "registration",
+      "title": "Be registered in SAM before submitting application",
+      "description": "Each applicant must be registered in the System for Award Management (SAM) before submitting its application.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Active SAM registration record"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "sam_registration"
+      },
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 16,
+          "section": null,
+          "quote": "Be registered in SAM before submitting its application;",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-e1518a5b",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "eligibility",
+      "topic": "registration",
+      "title": "Provide a valid Unique Entity Identifier (UEI)",
+      "description": "Each applicant must provide a valid UEI in its application.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "UEI number included in application"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "unique_entity_identifier"
+      },
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 17,
+          "section": null,
+          "quote": "Provide a valid UEI in its application; and",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-2c00d82e",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "eligibility",
+      "topic": "registration",
+      "title": "Maintain active SAM registration throughout award consideration",
+      "description": "The applicant must continue to maintain an active SAM registration with current information, including information on immediate and highest-level owners, subsidiaries, and predecessors awarded a Federal contract or grant within the last 3 years, at all times while an application or award is under consideration.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Updated SAM registration records showing ownership/subsidiary information"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 17,
+          "section": null,
+          "quote": "Continue to maintain an active SAM registration with current information, including information on a recipient's immediate and highest-level owner and subsidiaries, as well as on all predecessors that have been awarded a Federal contract or grant within the last 3 years, if applicable, at all times during which it has an active Federal award or an application or plan under consideration by a Federal awarding agency.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-55dc72bf",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "submission_method",
+      "title": "Submit application electronically via Grants.gov",
+      "description": "Applications must be submitted electronically through www.Grants.gov; applications sent by email or other means will not be accepted.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Grants.gov submission confirmation"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 17,
+          "section": null,
+          "quote": "Applications must be submitted electronically to www.Grants.gov. Only applications received in the designated submission mailbox by the stated deadline will be considered.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-d8d1b8e7",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "deadline",
+      "title": "Phase one application deadline of 9/3/2026",
+      "description": "Phase one applications must be submitted to Grants.gov no later than 5:00 PM Eastern Time on 9/3/2026; applications not submitted by this date will be evaluated in phase two.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Phase one applicants"
+      ],
+      "evidenceNeeded": [
+        "Timestamped Grants.gov submission record"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 17,
+          "section": null,
+          "quote": "Phase one applications must be submitted to Grants.gov no later than 5:00 PM Eastern Time on the application deadline 9/3/2026.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-dde49dd9",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Email attachments must not be ZIP files",
+      "description": "Email messages containing ZIP attachments will not be received due to DOT security restrictions; attachments should be submitted in PDF, Microsoft Office, or Google Workspace formats.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Communications involving email attachments, such as questions submissions"
+      ],
+      "evidenceNeeded": [
+        "Attachments submitted in approved file formats"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 18,
+          "section": null,
+          "quote": "Email messages containing ZIP attachments will not be received due to DOT security restrictions. Attachments should be submitted in PDF, Microsoft Office, or Google Workspace formats.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: This restriction appears under the questions submission section and is unclear whether it applies to the application package itself or only to email correspondence such as questions."
+    },
+    {
+      "id": "req-2a060f1f",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "readiness",
+      "topic": "applicant_capacity",
+      "title": "Civil Rights and Title VI Compliance Plan",
+      "description": "Applicants should demonstrate that the recipient has a plan for compliance with civil rights obligations and nondiscrimination laws, including Title VI, ADA, and Section 504 of the Rehabilitation Act, as a condition of award.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Title VI compliance plan",
+        "Community Participation Plan",
+        "ADA compliance plan for legacy infrastructure"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 25,
+          "section": null,
+          "quote": "As a condition of an award, applicants should demonstrate that the recipient has a plan for compliance with civil rights obligations and nondiscrimination laws, including Title VI of the Civil Rights Act of 1964 and implementing regulations (49 C.F.R. § 21).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: Uses 'should demonstrate' rather than 'must', making the mandatory status unclear despite being described as a condition of award.; mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-44b739f7",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "readiness",
+      "topic": "applicant_capacity",
+      "title": "Reporting Systems for Sub-awards and Executive Compensation",
+      "description": "Applicants must have the necessary processes and systems in place to comply with the reporting requirements of 2 C.F.R. Part 170 regarding reporting sub-awards and executive compensation information in order to receive Federal funding, unless exempted.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant seeks Federal financial assistance under this NOFO"
+      ],
+      "evidenceNeeded": [
+        "Demonstration of processes/systems for 2 C.F.R. Part 170 reporting compliance",
+        "Description or certification of applicant's processes/systems for 2 C.F.R. Part 170 compliance"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 26,
+          "section": null,
+          "quote": "Each applicant that applies for Federal financial assistance must have the necessary processes and systems in place to comply with the reporting requirements of 2 C.F.R. Part 170 Reporting Sub-wards and Executive Compensation Information to receive Federal funding.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-016aceac",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Statement disclosing conflicts of interest with DOT-regulated organizations",
+      "description": "The applicant must include in its application a statement describing all past, present, or planned organizational, financial, contractual, or other interests with an organization regulated by DOT, or whose interests may be substantially affected by Departmental activities, related to the work under this notice, covering the applicant, affiliates, proposed consultants, subcontractors, and key personnel.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant, its affiliates, proposed consultants, subcontractors, or key personnel have related interests with DOT-regulated or affected organizations"
+      ],
+      "evidenceNeeded": [
+        "Conflict of interest disclosure statement included in application",
+        "Conflict of interest disclosure statement describing relevant interests of applicant, affiliates, consultants, subcontractors, and key personnel"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "conflict_of_interest_statement"
+      },
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 30,
+          "section": null,
+          "quote": "The applicant shall provide a statement in its application which describes in a concise manner all past, present or planned organizational, financial, contractual or other interest(s) with an organization regulated by DOT, or with an organization whose interests may be affected substantially by Departmental activities, and which is related to the work under this notice.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-7423b547",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Explanation of Impartiality Despite Identified Interests",
+      "description": "If relevant interests are identified, the applicant must describe in detail why it believes the proposed ITSE Grant Program can be accomplished in an impartial and objective manner despite those interests.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant has identified relevant organizational, financial, or other interests under the conflict of interest disclosure"
+      ],
+      "evidenceNeeded": [
+        "Written explanation of impartiality in light of identified interests"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 31,
+          "section": null,
+          "quote": "The applicant shall describe in detail why it believes, in light of the interest(s) identified in (a) above, that performance of the proposed ITSE Grant Program can be accomplished in an impartial and objective manner.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-437b3663",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Certification of No Conflict of Interest When None Exists",
+      "description": "If no relevant interest exists, the applicant must submit a statement in its application certifying that to its best knowledge and belief no affiliation exists relevant to possible conflicts of interest, and must obtain the same information from potential subcontractors prior to any subcontract award.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant has no relevant interests to disclose"
+      ],
+      "evidenceNeeded": [
+        "Certification statement of no conflict of interest"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 31,
+          "section": null,
+          "quote": "In the absence of any relevant interest identified in (a) above, the applicant shall submit in its application a statement certifying that to its best knowledge and belief no affiliation exists relevant to possible conflicts of interest.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-880aaff4",
+      "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+      "category": "eligibility",
+      "topic": "other",
+      "title": "Disqualification for Refusal to Disclose Conflict of Interest Information",
+      "description": "Refusal to provide the required conflict of interest disclosure or representation, or any additional information required, may result in disqualification of the applicant for award.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Confirmation that all required conflict of interest disclosures and additional requested information have been submitted"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-7939f3db-c26a-4822-9561-83927bfa56b5",
+          "page": 31,
+          "section": null,
+          "quote": "The refusal to provide the disclosure or representation, or any additional information required, may result in disqualification of the applicant for award.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    }
+  ]
+}

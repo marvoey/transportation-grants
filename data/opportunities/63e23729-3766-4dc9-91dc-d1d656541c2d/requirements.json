@@ -1,0 +1,2350 @@
+{
+  "schemaVersion": 1,
+  "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+  "generatedAt": "2026-11-11T21:24:42.042Z",
+  "model": "claude-sonnet-5",
+  "promptVersion": "4",
+  "sourceManifestHash": "3b3f9ffcada95f8e2d4450a2ac78a68cdaab5939432e701721dd14042c111a27",
+  "passes": 1,
+  "status": "complete",
+  "documents": [
+    {
+      "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+      "title": "FY 2027 Crash Causal Factors Program (CCFP) Notice of Funding Opportunity (NOFO)",
+      "authority": "controlling",
+      "sha256": "6ad83c3fd1dbab6f63259bb6f3a33aba5f3b1eac367911e9b006d72261c48a7c",
+      "units": 48
+    }
+  ],
+  "batches": {
+    "total": 10,
+    "succeeded": 10,
+    "split": 0,
+    "failed": []
+  },
+  "usage": {
+    "inputTokens": 71765,
+    "outputTokens": 39237
+  },
+  "stats": {
+    "candidates": 99,
+    "rejected": 4,
+    "merged": 21,
+    "kept": 74,
+    "sourcesRejected": 4,
+    "locationsCorrected": 4,
+    "checksDropped": 1
+  },
+  "rejections": [
+    {
+      "title": "Only advanced CMV-specific equipment is eligible for funding",
+      "reason": "no_verified_source",
+      "detail": "quote_not_found: The quote does not appear in the cited document."
+    },
+    {
+      "title": "Maintain Active SAM Registration",
+      "reason": "no_verified_source",
+      "detail": "quote_not_found: The quote does not appear in the cited document."
+    },
+    {
+      "title": "FMCSA Title VI Program Compliance Plan",
+      "reason": "no_verified_source",
+      "detail": "quote_not_found: The quote does not appear in the cited document."
+    },
+    {
+      "title": "Personnel costs limited to organization's own employees",
+      "reason": "no_verified_source",
+      "detail": "quote_not_found: The quote does not appear in the cited document."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "req-ee47461d",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "eligibility",
+      "topic": "applicant_type",
+      "title": "Applicant must be located in a participating or alternate state",
+      "description": "Applicants eligible for CCFP funding must be located within a participating Heavy-Duty Truck Study sample or alternate State.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Proof of location within participating or alternate state"
+      ],
+      "check": {
+        "kind": "applicant_type_in",
+        "values": [
+          "Participating State",
+          "Alternate State",
+          "Listed Local Entity"
+        ]
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 4,
+          "section": null,
+          "quote": "Applicants eligible for CCFP funding must be located within a participating sample or alternate State.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-40f59b90",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "eligibility",
+      "topic": "applicant_type",
+      "title": "Local agency applications limited to identified agencies",
+      "description": "Local agency applications will be limited to those agencies identified in the eligibility list.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant is a local agency"
+      ],
+      "evidenceNeeded": [
+        "Confirmation applicant is on the list of eligible local entities"
+      ],
+      "check": {
+        "kind": "applicant_type_in",
+        "values": [
+          "CPD Hillsborough",
+          "CPD Miami-Dade",
+          "CPD Palm Beach",
+          "CPD Polk",
+          "Indianapolis Metro PD",
+          "Louisville PD",
+          "Kansas City PD",
+          "St. Louis PD",
+          "New York City PD",
+          "Columbus PD",
+          "Austin PD",
+          "El Paso PD",
+          "Fort Worth PD",
+          "Houston PD",
+          "San Antonio PD"
+        ]
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 4,
+          "section": null,
+          "quote": "Local agency applications will be limited to those agencies identified below.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-ce68e365",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "eligibility",
+      "topic": "applicant_type",
+      "title": "For-profit organizations and individuals are ineligible",
+      "description": "For profit organizations and individuals are NOT eligible recipients of CCFP funding.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Statement of applicant organization type"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 4,
+          "section": null,
+          "quote": "For profit organizations and individuals are NOT eligible recipients.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-9a373aee",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "eligibility",
+      "topic": "applicant_capacity",
+      "title": "Review of applicant compatibility to participate in CCFP",
+      "description": "All applicants are subject to a review of their compatibility to participate in the CCFP, intended to verify jurisdictions' ability to complete the requisite tasks for inclusion in the study sample.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Information demonstrating capacity to complete study tasks"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 4,
+          "section": null,
+          "quote": "All applicants are subject to a review of their compatibility to participate in the CCFP. The review is intended to verify jurisdictions' ability to complete the requisite tasks for inclusion in the study sample.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-7dc95c1e",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Direct applicant certification statement required for local entities",
+      "description": "Any entity applying directly to FMCSA for CCFP funding must provide a statement in the project narrative introduction certifying that the applicant meets six conditions from 49 CFR § 350.405, including legal authority, designating a responsible individual, and agreeing to submit required reports and use required forms.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant is a local law enforcement agency or other local entity applying directly to FMCSA"
+      ],
+      "evidenceNeeded": [
+        "Certification statement in project narrative addressing six conditions"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "certification_statement_49cfr350_405"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 5,
+          "section": null,
+          "quote": "Any entity applying directly to FMCSA for CCFP funding must provide a statement in the project narrative introduction (see Section D 1.2(a)) within the application certifying that the applicant meets the six conditions below from 49 CFR § 350.405.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f684109b",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "non_federal_match",
+      "title": "No matching share required",
+      "description": "FMCSA will not require a matching share for this cooperative agreement program.",
+      "mandatory": false,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 5,
+          "section": null,
+          "quote": "FMCSA will not require a matching share for this cooperative agreement program.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-24f8ae3c",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "deadline",
+      "title": "Application must be submitted by the deadline",
+      "description": "To be considered a complete application, the applicant must ensure the application was submitted by the deadline.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Timestamp of submission"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 5,
+          "section": null,
+          "quote": "The application was submitted by the deadline.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-4f1eba60",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "eligibility",
+      "topic": "applicant_type",
+      "title": "Application must be submitted by an eligible applicant",
+      "description": "To be considered a complete application, the applicant must ensure the application was submitted by an eligible applicant, as described in Section B(1).",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Proof of eligible applicant status"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 5,
+          "section": null,
+          "quote": "The application was submitted by an eligible applicant, as described in Section B(1).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-76089445",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Completed SF-424 Federal Assistance Form required",
+      "description": "Applicants must submit the SF-424, the standard application form required for all requests for federal assistance, including contact information for the Lead Principal Investigator/Program Director and the Authorized Representative.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed SF-424 form",
+        "Completed SF-424 form submitted via Grants.gov"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "sf_424"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 5,
+          "section": null,
+          "quote": "The application has a completed Federal Assistance (SF-424) Form.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 22,
+          "section": null,
+          "quote": "Was the Application for Federal Assistance (SF-424) completed?",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 31,
+          "section": null,
+          "quote": "Required standard application form for all\nrequests for federal assistance.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-7eb510e6",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Completed SF-424A Budget Information Form required",
+      "description": "To be considered a complete application, the applicant must ensure the application has a completed Budget Information for Non-Construction Form (SF-424A).",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed SF-424A form",
+        "Completed SF-424A form submitted via Grants.gov"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "sf_424a"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 5,
+          "section": null,
+          "quote": "The application has a completed Budget Information for Non-Construction Form (SF-424A).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 22,
+          "section": null,
+          "quote": "Was the Budget Information for Non-Construction Form (SF-424A) completed?",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 31,
+          "section": null,
+          "quote": "Required standard budget form for requests for federal assistance. Available in the Grants.gov application package.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-09f3d6d7",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Completed SF-424B Assurances Form required",
+      "description": "Applicants must submit the SF-424B Assurances for Non-Construction Programs form, indicating substantial compliance with applicable programs, regulations, and federal laws.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed SF-424B form",
+        "Completed SF-424B form submitted via Grants.gov"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "sf_424b"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 5,
+          "section": null,
+          "quote": "The application has a completed Assurances for Non-Construction Form (SF-424B).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": true,
+          "note": "model cited page 6; found on page 5"
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 22,
+          "section": null,
+          "quote": "Was the Assurances for Non-Construction Form (SF-424B) completed?",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 32,
+          "section": null,
+          "quote": "Required standard assurances form associated with accepting federal assistance funds. This document indicates that the organization is in substantial compliance with various programs, regulations, and federal laws for a non-construction program.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "a cited location was corrected by code"
+    },
+    {
+      "id": "req-bd4e14b9",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Completed Grants.gov Certification Regarding Lobbying required",
+      "description": "To be considered a complete application, the applicant must ensure the application has a completed Grants.gov Certification Regarding Lobbying Form.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed lobbying certification form"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "grants_gov_lobbying_certification"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 5,
+          "section": null,
+          "quote": "The application has a completed Grants.gov Certification Regarding Lobbying Form.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": true,
+          "note": "model cited page 6; found on page 5"
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "a cited location was corrected by code"
+    },
+    {
+      "id": "req-bb75a418",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "SF-LLL Lobbying Activities Form required if applicable",
+      "description": "To be considered a complete application, the applicant must ensure the application has a completed Lobbying Activities (SF-LLL) Form, if applicable.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant has reportable lobbying activities",
+        "applicant engages in lobbying activities"
+      ],
+      "evidenceNeeded": [
+        "Completed SF-LLL form, if applicable",
+        "Completed SF-LLL form",
+        "Completed SF-LLL form submitted via Grants.gov, if applicable"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "sf_lll"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 5,
+          "section": null,
+          "quote": "The application has a completed Lobbying Activities (SF-LLL) Form, if applicable.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": true,
+          "note": "model cited page 6; found on page 5"
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 22,
+          "section": null,
+          "quote": "Was the Disclosure of Lobbying Activities Form (SF-LLL) completed?",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 32,
+          "section": null,
+          "quote": "Standard form to report their lobbying activities if applicable. Available in the Grants.gov application package.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: Marked 'if applicable' so it is unclear whether all applicants must submit this form.; flagged ambiguous by the model: Listed as 'if applicable' so it is unclear whether it is mandatory for all applicants.; mandatory status unclear (guidance wording or ambiguous); a cited location was corrected by code"
+    },
+    {
+      "id": "req-5c0eaf7b",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "budget",
+      "title": "Complete Budget Narrative required",
+      "description": "Applicants must submit a Budget Narrative describing, by budget category (object class), the costs necessary to complete the proposed project.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Budget Narrative document",
+        "Budget Narrative document submitted via Grants.gov"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "budget_narrative"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 6,
+          "section": null,
+          "quote": "The application includes a complete Budget Narrative.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 31,
+          "section": null,
+          "quote": "A budget narrative is a description, by budget\ncategory (object class), that details the costs\nnecessary to complete the proposed\nprojects.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-9435b55e",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Complete Project Narrative required",
+      "description": "Applicants must submit a Project Narrative including a Brief Introduction, Problem Statement(s), Performance Objective, Performance Activity Plan, Performance Measurement Plan, and Monitoring Plan.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Project Narrative document",
+        "Project Narrative for each proposed project",
+        "Project Narrative document submitted via Grants.gov"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "project_narrative"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 6,
+          "section": null,
+          "quote": "The application includes a complete Project Narrative.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 22,
+          "section": null,
+          "quote": "For each project, does the application include a complete Project Narrative? If not, specify the project(s).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 31,
+          "section": null,
+          "quote": "Project narrative must include Brief\nIntroduction; Problem Statement(s);\nPerformance Objective; Performance Activity\nPlan; Performance Measurement Plan, and\nMonitoring Plan.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-9a19d346",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "eligibility",
+      "topic": "project_type",
+      "title": "Projects must support the purpose of the CCFP program",
+      "description": "To be considered a complete application, the applicant must ensure the application's projects support the purpose of the CCFP Cooperative Agreement Program.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Project description demonstrating alignment with CCFP purpose"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 6,
+          "section": null,
+          "quote": "The application's projects support the purpose of the CCFP Cooperative Agreement Program.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-13a7186e",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "maximum_request",
+      "title": "Award ceiling of $500,000 per award",
+      "description": "FMCSA anticipates awarding approximately $7,000,000 to entities identified in the NOFO, with an award ceiling of up to $500,000 per award.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Funding request amount within award ceiling",
+        "Requested federal funding amount in budget",
+        "Application budget request not exceeding $500,000"
+      ],
+      "check": {
+        "kind": "amount_max",
+        "amountUsd": 500000,
+        "appliesTo": {
+          "areaType": "any",
+          "grantCategory": "any"
+        }
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 7,
+          "section": null,
+          "quote": "For FY 2027, FMCSA anticipates awarding up to $7,000,000 to entities identified further in this document, with an award ceiling of up to $500,000 per award.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 18,
+          "section": null,
+          "quote": "The FMCSA will limit federal funding to a total amount of up to $500,000 per award.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 45,
+          "section": null,
+          "quote": "For FY 2027, FMCSA anticipates awarding approximately $7,000,000 to entities identified further in this document, with an award ceiling of up to $500,000.00 per award.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-a73d6267",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Complete Budget Narrative required",
+      "description": "For each project, the application must include a complete Budget Narrative.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Budget Narrative document",
+        "Budget Narrative for each proposed project"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "budget_narrative"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 6,
+          "section": null,
+          "quote": "The application includes a complete Budget Narrative.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 22,
+          "section": null,
+          "quote": "For each project, does the application include a complete Budget Narrative? If not, specify the project(s).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-bcabfcb6",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "New reconstruction/investigation teams not fundable",
+      "description": "The program will not fund the creation of new CMV crash reconstruction or post-crash investigation teams.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Crash Response Efforts activity"
+      ],
+      "evidenceNeeded": [
+        "Description showing existing (not new) reconstruction/investigation capability"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 10,
+          "section": null,
+          "quote": "NOTE: The creation of new reconstruction and/or post-crash investigation teams will not be funded under this program.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-099fbd3b",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "eligibility",
+      "topic": "project_type",
+      "title": "Fatal crash investigations must include NAS Part A/B certified inspections",
+      "description": "All CMV fatal crash reconstruction and investigation activities funded under this program must include CMV post-crash inspections completed by NAS Part A/B certified officers.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Post Crash Inspection and Data Collection Activities"
+      ],
+      "evidenceNeeded": [
+        "Description of certified officer involvement in post-crash inspections"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 10,
+          "section": null,
+          "quote": "All CMV fatal crash reconstruction and investigation activities funded under this program must include CMV post-crash inspections completed by North American Standard (NAS) Part A/B certified officers.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-2debc26c",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "budget",
+      "title": "Equipment with mixed-use must be pro-rated in funding requests",
+      "description": "Funding requests for equipment with both CMV and non-CMV investigative/reconstruction applications should be pro-rated.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [
+        "Equipment serves both CMV and non-CMV purposes"
+      ],
+      "evidenceNeeded": [
+        "Pro-rated budget calculation for mixed-use equipment"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 11,
+          "section": null,
+          "quote": "Funding requests should be pro-rated for equipment purchased that has both CMV and non-CMV investigative and/or reconstruction applications.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: Uses 'should' rather than 'must', so it is unclear whether pro-rating is strictly mandatory.; mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-a653e3a8",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "eligibility",
+      "topic": "applicant_capacity",
+      "title": "States must demonstrate necessity beyond MCSAP allocation to request equipment",
+      "description": "States requesting equipment and related expenses to supplement CCFP projects must clearly demonstrate a necessity beyond their current MCSAP allocation.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant is a State requesting equipment funding"
+      ],
+      "evidenceNeeded": [
+        "Demonstration of necessity beyond MCSAP allocation"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 11,
+          "section": null,
+          "quote": "However, States are eligible to request equipment and related expenses to supplement their support of CCFP projects if they can clearly demonstrate a necessity beyond their current MCSAP allocation.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-d3821dc1",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "readiness",
+      "topic": "applicant_capacity",
+      "title": "Applicant must describe staffing, equipment, training and ability for data collection",
+      "description": "Applicants must provide a description of how they determined they have the staffing, equipment, training, and ability to participate in CCFP data collection, including current CMV reconstruction capabilities and experience duration.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Crash Response Efforts activity"
+      ],
+      "evidenceNeeded": [
+        "Narrative describing staffing, equipment, training, and experience"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 10,
+          "section": null,
+          "quote": "Provide a description of how the applicant determined they have the staffing, equipment, training, and ability to participate in the CCFP data collection.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f21d82e6",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "readiness",
+      "topic": "other",
+      "title": "Applicant should identify personnel notification policies and response protocols",
+      "description": "The applicant should identify their personnel notification policies and response protocols for CMV crash reconstruction and post-crash investigations to ensure accurate data collection.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [
+        "Crash Response Efforts activity"
+      ],
+      "evidenceNeeded": [
+        "Description of personnel notification policies and response protocols"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 10,
+          "section": null,
+          "quote": "The applicant should identify their personnel notification policies and response protocols for CMV crash reconstruction and post-crash investigations to ensure accurate data collection.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": true,
+          "note": "model cited page 9; found on page 10"
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: Uses 'should' which typically indicates an unclear or encouraged requirement rather than mandatory.; mandatory status unclear (guidance wording or ambiguous); a cited location was corrected by code"
+    },
+    {
+      "id": "req-70a15a1a",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "budget",
+      "title": "Applicants should provide historical basis for estimated overtime costs",
+      "description": "Applicants should provide a historical basis for estimated overtime costs claimed in the budget for crash response and post-crash inspection activities.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [
+        "Overtime costs included in budget request"
+      ],
+      "evidenceNeeded": [
+        "Historical cost data supporting overtime estimates"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 10,
+          "section": null,
+          "quote": "Applicants should provide a historical basis for estimated overtime costs.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 10,
+          "section": null,
+          "quote": "Considering the additional data collection activities required for this program, reimbursements for overtime costs are authorized.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: Uses 'should' rather than 'must'; unclear if strictly mandatory for budget approval.; mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-01ff6685",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Routine MCSAP expenses generally not covered",
+      "description": "Routine expenses such as vehicles and operational expenses should be supported under a State's MCSAP formula grant and generally will not be considered under CCFP.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "State applicants requesting routine equipment/operational expenses"
+      ],
+      "evidenceNeeded": [
+        "Justification demonstrating necessity beyond current MCSAP allocation"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 11,
+          "section": null,
+          "quote": "Routine expenses, such as vehicles and operational expenses, should be supported under a\nState’s MCSAP formula grant awarded to a MCSAP lead agency and generally will not be\nconsidered under the CCFP program.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-b674ca8a",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "States must demonstrate necessity beyond MCSAP allocation for equipment requests",
+      "description": "States are eligible to request equipment and related expenses to supplement CCFP projects only if they can clearly demonstrate a necessity beyond their current MCSAP allocation.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "State applicants requesting equipment and related expenses"
+      ],
+      "evidenceNeeded": [
+        "Written justification of necessity beyond MCSAP allocation"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 11,
+          "section": null,
+          "quote": "However, States are eligible to request equipment and\nrelated expenses to supplement their support of CCFP projects if they can clearly demonstrate\na necessity beyond their current MCSAP allocation.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-008163a4",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Application format requirements",
+      "description": "Applications must be prepared on 8.5 x 11 format with margins no smaller than 1 inch, Times New Roman 12 pt font, and must be submitted in a format readable by MS Word, Excel, or text-searchable PDF.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Formatted application document meeting page size, margin, font, and file format requirements"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 12,
+          "section": null,
+          "quote": "a. Application must be prepared on 8 1/2 x 11-inch format.\nb. Margins (top, bottom, right and left) no smaller than 1” on all pages.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 12,
+          "section": null,
+          "quote": "c. Times New Roman 12 pt. font must be used for all text, including tables and graphs.\nd. Applications must be submitted in a format readable by Microsoft (MS) Word, Excel, or in\ntext-searchable PDF formats (as applicable).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-0a8a785f",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Application narrative page limit of 35 pages",
+      "description": "The application narrative is limited to 35 total pages, inclusive of introduction, problem statement(s), performance objective(s), project/performance activity(s), performance measurement(s) plan, monitoring and reporting plan, and budget narrative. Materials beyond this limit will not be read or considered.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Application narrative document of no more than 35 pages"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 12,
+          "section": null,
+          "quote": "e. The application narrative is limited to 35 total pages. The FMCSA will not read or consider\nany materials beyond the specified page limit in the application review process.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-e68754ef",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "eligibility",
+      "topic": "application_limit",
+      "title": "Maximum four projects per application",
+      "description": "The application may not include more than four projects.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Application listing no more than four distinct projects"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 12,
+          "section": null,
+          "quote": "g. The application may not include more than four projects.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: The quote expresses a limit on number of projects, not a dollar amount; amount_max check kind is used loosely here since the schema lacks a dedicated count check.; numeric check dropped: the number is not in the verified quote"
+    },
+    {
+      "id": "req-40ff7fb5",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Required narrative sections in consecutive order",
+      "description": "The application must include specified sections in consecutive order for each proposed project: Introduction, Problem Statement, Performance Objective, Performance Activity Plan, Performance Measurement Plan, Monitoring and Timeline/Milestone Plan, and Budget Narrative.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Application narrative containing all required sections in order"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 12,
+          "section": null,
+          "quote": "The application must include the following sections in consecutive order for each of the\nproposed projects:",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-7c299ab6",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "readiness",
+      "topic": "other",
+      "title": "Problem statement must include 3-year crash data trend analysis",
+      "description": "Applicants must include an objective data source, source date, and trend analysis of fatal crashes involving Class 7/8 large trucks that occurred in their jurisdiction over the past 3 years.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Data source citation, source date, and 3-year trend analysis of fatal Class 7/8 truck crashes"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 13,
+          "section": null,
+          "quote": "Applicants must include an objective data source, source date, and trend analysis of fatal crashes involving Class 7/8 large trucks that occurred in\ntheir jurisdiction over the past 3 years.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f5227845",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Performance Activity Plan must include personnel, level of effort, and timeline information",
+      "description": "Information must include a personnel summary, level of effort summary, and a project timeline including dates, tasks, milestones, and project end-date.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Personnel summary, level of effort summary, and project timeline with milestones and end-date"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 13,
+          "section": null,
+          "quote": "Information must include: (1) Personnel summary inclusive of the number of personnel\nassigned to the project, their percentage of time dedicated to the project and total number\nof hours needed to complete the project; (2) Level of effort summary inclusive of the\nnumber and frequency of activities and number of enforcement details; and (3) A project\ntimeline including dates, tasks, milestones, and project end-date associated with meeting\nthe performance objectives.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-48502937",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "budget",
+      "title": "Each project must have its own budget narrative matching SF-424A categories",
+      "description": "Each project must have its own budget narrative that matches the SF-424A Budget Categories Columns for each project; cents must not be included for federal costs on SF-424, SF-424A, and budget narrative, rounding all costs to whole dollars.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Per-project budget narrative matching SF-424A categories with whole-dollar figures"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 14,
+          "section": null,
+          "quote": "Each project must have its own budget narrative that matches the SF-424A Budget\nCategories Columns for each project. DO NOT include cents for federal costs on the\nSF-424, SF-424A, and budget narrative.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-823a5e21",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "non_federal_match",
+      "title": "No match/cost sharing required; SF-424 entry (b) must be zero",
+      "description": "SF-424, Item (18) Entry (a) must reflect the total estimated federal funding requested; as no match/cost sharing is required, applicants must enter '0' in Entry (b).",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed SF-424 with Entry (b) equal to zero"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 14,
+          "section": null,
+          "quote": "SF-424, Item (18) – Entry (a) – Must reflect the total estimated federal funding requested to\ncomplete the project plan. As no match/cost sharing is required, enter “0” in Entry (b).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-56de1307",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "SF-424A Section A and B completion requirements",
+      "description": "SF-424A, Section A must reflect the federal share in column (e) and total cost per project in column (g), reconciling with SF-424 field 18; Section B must be completed capturing total amount per object class category, with all costs rounded to the nearest whole dollar.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed SF-424A Sections A and B with reconciled totals"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 15,
+          "section": null,
+          "quote": "SF-424A, Section A - Budget Summary – Must reflect the federal share in column (e), and the\ntotal cost per project in column (g).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 15,
+          "section": null,
+          "quote": "Section B must be completed. All costs must be\nrounded to the nearest whole dollar amount.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-4b582e2c",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "registration",
+      "title": "Applicant must register in SAM.gov prior to submission",
+      "description": "The applicant must register in the System for Award Management (SAM) prior to submitting an application, obtain and use a unique entity identifier (UEI), and accept required financial assistance certifications during the SAM.gov registration process.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Active SAM.gov registration",
+        "Unique entity identifier (UEI)",
+        "UEI number from SAM.gov"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 16,
+          "section": null,
+          "quote": "The applicant must:\ni. Register in the System for Award Management (SAM) https://sam.gov/ prior to\nsubmitting an application;\nii. Obtain and use a unique entity identifier (UEI) created in SAM.gov; and",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f01b5083",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "registration",
+      "title": "Applicant must maintain active SAM registration",
+      "description": "The applicant must always maintain an active SAM registration with current information.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Continuously active SAM.gov registration"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 16,
+          "section": null,
+          "quote": "The applicant must always maintain an active SAM registration with current information during",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-9025ed17",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "registration",
+      "title": "Acceptance of Financial Assistance Certifications",
+      "description": "Applicant must accept the financial assistance certifications and representations required for non-federal entities during SAM.gov registration or renewal.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Confirmation of acceptance of certifications in SAM.gov"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 16,
+          "section": null,
+          "quote": "Accept the financial assistance certifications and representations required for (non-\nfederal entities) during the SAM.gov registration and/or renewal process per 2 CFR\n§ 200.209.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-2b628765",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "deadline",
+      "title": "Application Submission Deadline",
+      "description": "Full and complete applications for CCFP Financial Assistance are due on December 28, 2026 by 5:00 pm EST.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Timestamp of submission through Grants.gov"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 17,
+          "section": null,
+          "quote": "FULL AND COMPLETE APPLICATIONS FOR CCFP Financial Assistance ARE DUE ON\nDECEMBER 28, 2026 by 5:00 pm EST.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-2be80532",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "submission_method",
+      "title": "Electronic Submission via Grants.gov Required for Consideration",
+      "description": "Only applicants who comply with all submission deadline requirements and electronically submit valid applications through Grants.gov will be eligible for consideration of award.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Grants.gov submission confirmation"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 17,
+          "section": null,
+          "quote": "Only applicants who comply with all submission deadline requirements described in this NOFO\nand electronically submit valid applications through Grants.gov will be eligible for consideration\nof award.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-b5d2a996",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "deadline",
+      "title": "Late Applications Generally Not Considered",
+      "description": "FMCSA will not consider a late application except under extraordinary circumstances such as a large-scale natural disaster or a Grants.gov system issue; applicant organization computer problems or failure to follow instructions or complete registrations are not considered system issues.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Documentation of extraordinary circumstance if claiming late submission exception"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 17,
+          "section": null,
+          "quote": "FMCSA will not consider a late application except under extraordinary circumstances. A late\napplication will only be accepted if there is a large-scale natural disaster or a Grants.gov\nsystem issue that threatens the timely submission of a grant application.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-8422211f",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "pre_award_costs",
+      "title": "Pre-Award Costs Not Eligible for Reimbursement",
+      "description": "Costs incurred outside the award period of performance are not obligated for approval by FMCSA; these costs are incurred at the sole risk of the applicant, and pre-award costs are not eligible for reimbursement.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Budget narrative confirming no pre-award costs requested"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 20,
+          "section": null,
+          "quote": "The FMCSA is not obligated to approve costs incurred outside the award period of performance.\nThese costs are incurred at the sole risk of the applicant and impose no obligation on FMCSA\nto make an award or to increase the amount of the approved budget. Pre-award costs are not\neligible for reimbursement.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-5e42b247",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Cost Eligibility Standards for All Cost Elements",
+      "description": "All cost elements of an application must be necessary, reasonable, allocable, and allowable to accomplish the objective(s) of the project, per 2 CFR part 200 and the CCFP Cooperative Agreement Cost Eligibility Document.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Budget justification demonstrating cost eligibility"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 20,
+          "section": null,
+          "quote": "All cost elements of an application must be necessary, reasonable, allocable, and allowable to\naccomplish the objective(s) of the project.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-b7c24cba",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "budget",
+      "title": "Proration of Equipment Costs for Non-CMV Use",
+      "description": "If an applicant is planning to request funding for equipment that can be used for non-CMV crash investigation, the cost must be prorated to the applicant's historical response rate to CMV crashes.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Requesting funding for equipment usable for non-CMV crash investigation"
+      ],
+      "evidenceNeeded": [
+        "Historical response rate data",
+        "Prorated cost calculation in budget"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 20,
+          "section": null,
+          "quote": "If an applicant is planning to request funding for equipment that can be used for non-CMV crash\ninvestigation, the cost must be prorated to the applicant’s historical response rate to CMV\ncrashes.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-3530cada",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "submission_method",
+      "title": "Grants.gov Account Setup Requirements",
+      "description": "To apply through Grants.gov, applicants must create a username and password, establish an E-Business POC, and establish at least one Authorized Organization Representative (AOR).",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Grants.gov account credentials",
+        "AOR designation documentation"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 20,
+          "section": null,
+          "quote": "Create a username and password;\nii. Establish an E-Business POC in order to respond to the registration emails, and;\niii. Establish at least one Authorized Organization Representative (AOR).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-63ee8534",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "submission_method",
+      "title": "Electronic Submission Required",
+      "description": "Applications must be submitted electronically via https://www.grants.gov as described in the NOFO.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Grants.gov submission record"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 20,
+          "section": null,
+          "quote": "Applications must be submitted electronically via https://www.grants.gov as described above in\nthis section.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-b9faa054",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Grants.gov Lobbying Certification Form",
+      "description": "Applicants must complete the grants.gov Certification Regarding Lobbying Form.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed Certification Regarding Lobbying form"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "lobbying_certification"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 22,
+          "section": null,
+          "quote": "Was the grants.gov Certification Regarding Lobbying Form completed?",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-d723a750",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Key Contact Forms with PI/PD and ADO information",
+      "description": "Applicants must include Key Contact Forms that identify the Principal Investigator/Project Director (PI/PD) and Authorized Organizational Representative/ADO contact information.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Key Contact Forms with PI/PD and ADO contact details"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "key_contact_forms"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 22,
+          "section": null,
+          "quote": "Do the Key Contact Forms include PI/PD and ADO contact information?",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-cfbc3210",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Indirect Cost Rate Agreement, if applicable",
+      "description": "If applicable, applicants must include a current Indirect Cost Rate Agreement with the application.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant has an indirect cost rate agreement"
+      ],
+      "evidenceNeeded": [
+        "Current Indirect Cost Rate Agreement"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "indirect_cost_rate_agreement"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 22,
+          "section": null,
+          "quote": "If applicable, was a current Indirect Cost Rate Agreement included in the application?",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: Conditioned on 'if applicable' without defining when it applies.; mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-d0d459cd",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Title VI Program Compliance Plan",
+      "description": "The application should include a Title VI Program Compliance Plan, including FMCSA Title VI Program Assurance, reviewed and approved by the FMCSA Office of Civil Rights for the current Federal Fiscal Year; absence of this document will not delay intake review.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Title VI Program Compliance Plan with FMCSA Office of Civil Rights approval"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "title_vi_compliance_plan"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 22,
+          "section": null,
+          "quote": "Does the application include a Title VI Program Compliance Plan (including FMCSA Title VI Program Assurance) reviewed and approved by the FMCSA Office of Civil Rights for the current Federal Fiscal Year?",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: Listed as an eligibility criterion question but the text explicitly states its absence will not delay review, creating uncertainty about whether it is mandatory.; mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-7b4c2d87",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "eligibility",
+      "topic": "other",
+      "title": "No duplicate submissions",
+      "description": "FMCSA will check whether the application is a duplicate submission, as confirmed by the applicant, as part of the eligibility screening.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Confirmation that application is not a duplicate submission"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 22,
+          "section": null,
+          "quote": "Is this application a duplicate submission as confirmed by the applicant?",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: The text does not clarify the consequence of a duplicate submission or how it is confirmed by the applicant.; mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-11ac5f7a",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "other",
+      "title": "Demonstrate necessity beyond current MCSAP allocation",
+      "description": "Where applicable, applicants must demonstrate a necessity for CCFP funding beyond their current MCSAP allocation.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant also receives MCSAP allocation"
+      ],
+      "evidenceNeeded": [
+        "Justification of need beyond current MCSAP allocation"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 22,
+          "section": null,
+          "quote": "Have you demonstrated a necessity beyond your current MCSAP allocation, if applicable?",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: Phrased as a conditional eligibility criterion ('if applicable') without specifying what counts as sufficient demonstration.; mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-b07db0c8",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Administrative Capability Self-Certification Form Required for Risk Assessment",
+      "description": "As part of the pre-award risk assessment, applicants must provide an administrative capability self-certification form, which is reviewed alongside SAM records as part of a suspension and debarment review.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Administrative capability self-certification form"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "administrative_capability_self_certification"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 26,
+          "section": null,
+          "quote": "A suspension and debarment review that includes a review of the applicant’s\nadministrative capability self-certification form and a check against the records in SAM\n(currently the Federal Awardee Performance and Integrity Information System).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-1454b9fa",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Possible Requirement to Submit Updated Forms if Partially Funded",
+      "description": "If being considered for a partial or modified grant recommendation, applicants may be required to submit an updated SF-424, SF-424A, supplemental budget, or project narrative.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant is being considered for a partial or modified grant recommendation"
+      ],
+      "evidenceNeeded": [
+        "Updated SF-424",
+        "Updated SF-424A",
+        "Supplemental budget",
+        "Updated project narrative"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 27,
+          "section": null,
+          "quote": "If being considered for funding, applicants may be\nrequired to submit an updated SF-424, SF-424A, supplemental budget, or project narrative\nbased on a partial or modified grant recommendation.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: The text uses 'may be required', making it unclear whether this is mandatory or conditional upon FMCSA's discretion.; mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-c011b945",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "readiness",
+      "topic": "risk",
+      "title": "Demonstration of Physical and Cyber Security Risk Consideration",
+      "description": "Each applicant selected for federal funding must demonstrate, prior to signing the grant agreement, that it has made an effort to consider and address physical and cyber security risks relevant to the transportation mode and scale of the project.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant has been selected for federal funding"
+      ],
+      "evidenceNeeded": [
+        "Evidence of consideration of physical and cyber security risks in project planning, design, and oversight"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 28,
+          "section": null,
+          "quote": "Each applicant selected for federal funding under this notice must demonstrate, prior to\nthe signing of the grant agreement, effort to consider and address physical and cyber security\nrisks relevant to the transportation mode and type and scale of the project.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-8f575b77",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "budget",
+      "title": "SF-424A Budget Information for Non-Construction Programs Required",
+      "description": "Applicants must submit the SF-424A, the standard budget form required for requests for federal assistance.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed SF-424A form"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "sf_424a"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 31,
+          "section": null,
+          "quote": "Required standard budget form for requests\nfor federal assistance.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-87c2e399",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Grants.gov Lobbying Form required",
+      "description": "Applicants must submit the Grants.gov Lobbying Form indicating whether they engage in lobbying activities.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed Lobbying Form submitted via Grants.gov"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "lobbying_form"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 32,
+          "section": null,
+          "quote": "Required form that allows organizations to indicate that they do not engage in lobbying activities. Available in the Grants.gov application package.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-c877b00a",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Key Contacts Form required",
+      "description": "Applicants must submit the Key Contacts Form for additional contacts not already listed on the SF-424, including designation of a primary individual if more than one person is designated in the same role.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed Key Contacts Form submitted via Grants.gov"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "key_contacts_form"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 32,
+          "section": null,
+          "quote": "NOTE: If more than one individual is designated in the same role, one individual must be identified as primary. Review the instructions in the Grants.gov application package.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-7d45f03f",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Attachments must be referenced in narrative",
+      "description": "Supplemental attachments are allowed in Grants.gov, but the project and budget narratives must include all required information and must indicate when a supplemental attachment is referenced.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Attachments submitted via Grants.gov with reference in project/budget narrative"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 32,
+          "section": null,
+          "quote": "While supplemental attachments are allowed, the application’s project and budget narratives must include all required information. The narrative must indicate when a supplemental attachment needs to be referenced.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-aa636ac9",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "budget",
+      "title": "Budget narrative must match SF-424A and be rounded to whole dollars",
+      "description": "Budget narrative totals must match the SF-424A budget categories by project, and all requested federal funds and match must be rounded to the nearest whole dollar.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Budget narrative with totals matching SF-424A"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 34,
+          "section": null,
+          "quote": "Be sure to round all requested federal funds and match to the nearest whole dollar. Please ensure the budget narrative totals match the SF-424A budget categories by project that is being requested.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-c7f5d9ff",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Fringe benefits reimbursed only for grant-related personnel time",
+      "description": "FMCSA will reimburse fringe costs only for personnel performing grant-related duties and only for the percentage of time they devote to the project; fringe benefit costs must not be combined with direct salaries and wages in the personnel category.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "fringe benefits budget category"
+      ],
+      "evidenceNeeded": [
+        "Budget narrative showing fringe benefit calculation separate from personnel costs"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 36,
+          "section": null,
+          "quote": "FMCSA will reimburse fringe costs only for the personnel performing grant-related duties and only for the percentage of time they devote to the project.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 36,
+          "section": null,
+          "quote": "Do not combine the fringe benefit cost with direct salaries and wages in the personnel category.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-04c4270d",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "budget",
+      "title": "Subrecipients must obtain and maintain UEI and active SAM registration",
+      "description": "All sub-recipients must obtain and maintain a unique entity identifier (UEI) number and continue to maintain an active SAM registration at all times during an active federal award.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant intends to provide funding to another organization as a sub-award"
+      ],
+      "evidenceNeeded": [
+        "Sub-recipient UEI number",
+        "Active SAM registration confirmation"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "subrecipient_sam_registration"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 40,
+          "section": null,
+          "quote": "Federal regulations require that all sub-recipients obtain and maintain a unique entity identifier (UEI) number and continue to maintain an active System for Award Management (SAM) registration at all times during an active federal award.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-10f34b16",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "budget",
+      "title": "Separate budget narrative and line item budget required for each sub-recipient",
+      "description": "If the applicant intends to provide funding to another organization as a sub-award, a new object class budget narrative and line item budget must be provided for each sub-recipient organization.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant proposes sub-awards to other organizations"
+      ],
+      "evidenceNeeded": [
+        "Object class budget narrative per sub-recipient",
+        "Line item budget per sub-recipient"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "subrecipient_budget_narrative"
+      },
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 41,
+          "section": null,
+          "quote": "If you intend to provide funding to another organization as a sub-award, provide a new object class budget narrative and line item budget for each sub-recipient organization.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-9c686ef6",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "application",
+      "topic": "budget",
+      "title": "Procurements must comply with 2 CFR procurement standards",
+      "description": "When procuring property and services under a federal award, the organization must follow the procurement standards at 2 CFR §§ 200.317–200.326 and its own policies and procedures used for non-federal procurements.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant proposes contractual costs involving procurement"
+      ],
+      "evidenceNeeded": [
+        "Procurement policy documentation",
+        "Contractual budget narrative"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 40,
+          "section": null,
+          "quote": "When procuring property and services under a federal award, an organization must follow the procurement standards at 2 CFR §§ 200.317 – 200.326 and the same policies and procedures it uses for procurements using non-federal funds.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-3aa4672d",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "eligibility",
+      "topic": "applicant_type",
+      "title": "Only pre-selected States may apply",
+      "description": "FMCSA cannot accept grant applications from States that are not included in the study sample design; only the 30 pre-selected States listed in the NOFO are eligible.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant is a State government"
+      ],
+      "evidenceNeeded": [
+        "Confirmation applicant State is among the 30 pre-selected States"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 45,
+          "section": null,
+          "quote": "funding under this Cooperative Agreement Program is limited and FMCSA cannot accept grant applications from States that are not included in the study sample design.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-56ff0201",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Costs must be included in an approved project plan",
+      "description": "Eligibility of all costs is dependent upon the cost being included in an approved project plan.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Approved project plan listing all proposed costs"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 42,
+          "section": null,
+          "quote": "Eligibility of all costs is dependent upon the cost being included in an approved project plan.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-8639f616",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Costs must comply with 2 CFR 200 and be prorated",
+      "description": "All costs must be in compliance with 2 CFR part 200 subject to any limitations reflected by law or regulation, and grantees must prorate costs appropriately based upon percentage of time dedicated to the CCFP and eligible CMV activities.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Cost allocation/proration documentation"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 42,
+          "section": null,
+          "quote": "All costs must be in compliance with 2 CFR part 200 subject to any limitations reflected by law or regulation. Grantees must prorate costs appropriately based upon percentage of time dedicated to the CCFP and eligible CMV activities.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-e34c26ee",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Reimbursable costs limited to fatal/serious crashes involving Class 7 and 8 CMVs",
+      "description": "Reimbursable costs will be limited to those activities for fatal and serious crashes involving Class 7 and 8 CMVs (i.e., those over 26K lbs).",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Description of crash activities showing Class 7/8 CMV involvement"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 42,
+          "section": null,
+          "quote": "Reimbursable costs will be limited to those activities for fatal and serious crashes involving Class 7 and 8 CMVs (i.e., those over 26K lbs).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-e8c320c6",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "readiness",
+      "topic": "applicant_capacity",
+      "title": "Crash investigation personnel must be NAS A/B certified",
+      "description": "Investigating officers/personnel must be NAS A/B certified for crash investigation activities funded under CCFP.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant proposes crash investigation activities"
+      ],
+      "evidenceNeeded": [
+        "NAS A/B certification records for investigating personnel"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 42,
+          "section": null,
+          "quote": "Note: Investigating officers/personnel must be NAS A/B certified.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-8625fdfb",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "readiness",
+      "topic": "applicant_capacity",
+      "title": "Crash reconstructions must include NAS A/B certified personnel",
+      "description": "Crash reconstructions must include NAS A/B certified personnel as part of the analysis.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant proposes crash reconstruction activities"
+      ],
+      "evidenceNeeded": [
+        "NAS A/B certification records for reconstruction personnel"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 42,
+          "section": null,
+          "quote": "Note: Crash reconstructions must include NAS A/B certified personnel as part of the analysis.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-59b7ce63",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Crash investigation analysis tools must be prorated for CCFP use",
+      "description": "Crash investigation analysis tools purchased must be prorated in relation to their use for the CCFP.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant proposes purchase of crash investigation analysis tools"
+      ],
+      "evidenceNeeded": [
+        "Proration calculation for equipment/software use"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 42,
+          "section": null,
+          "quote": "Note: Crash investigation analysis tools purchased must be prorated in relation to their use for the CCFP.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-7e886372",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Supplies must be prorated for CCFP use",
+      "description": "Supplies purchased must be prorated in relation to their use for the CCFP participation.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant proposes supply costs"
+      ],
+      "evidenceNeeded": [
+        "Proration calculation for supply costs"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 43,
+          "section": null,
+          "quote": "Note: Supplies purchased must be prorated in relation to their use for the CCFP participation.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-212e3700",
+      "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Travel expenses must comply with State or Federal travel regulations",
+      "description": "Travel expenses in direct support of the CCFP participation must be consistent with either State travel policies or the Federal travel regulations (e.g., airfare on US flag carrier, baggage fees, fixed per diem amounts, lodging, meals, parking, public transportation, rental car, taxi, tips).",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant proposes travel costs"
+      ],
+      "evidenceNeeded": [
+        "Travel cost budget narrative referencing applicable travel policy"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-9c751ce2-dfa9-4acd-b278-050bc5b28ab3",
+          "page": 43,
+          "section": null,
+          "quote": "Travel expenses in direct support of the CCFP participation and consistent with either State travel policies or the Federal travel regulations (e.g., airfare on US flag carrier, baggage fees, fixed per diem amounts, lodging, meals, parking, public transportation, rental car, taxi, tips).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    }
+  ]
+}

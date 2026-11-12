@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+  "retrievedAt": "2026-11-11T22:03:58.558Z",
+  "lastCheckedAt": "2026-11-11T22:03:58.558Z",
+  "coverage": {
+    "status": "api_listed_processed",
+    "reasons": [],
+    "completenessNote": "Completeness against the full official package cannot be verified: only the attachments Simpler.Grants.gov lists (plus any curated supplemental sources) were processed. Agencies may publish FAQs, checklists or amendments elsewhere."
+  },
+  "documents": [
+    {
+      "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+      "origin": "simpler_attachment",
+      "title": "Revised NOFO 20-01",
+      "fileName": "NOFO_20-01.myb.pdf",
+      "declaredMimeType": "application/pdf",
+      "detectedType": "pdf",
+      "sizeBytes": 1413638,
+      "sha256": "43252b5345243a8d695d032ba904679ce1f0b3fef90a8d3d0fb4e5b6d6b9e689",
+      "sourceAttachmentId": "531b324b-c0d1-4d8a-a463-0197df918a68",
+      "sourceUpdatedAt": "2024-12-11T12:49:28+00:00",
+      "sourceSizeBytes": 1413638,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/721d5c2c-af72-4c33-8ce6-013b1e8ad59b/attachments/531b324b-c0d1-4d8a-a463-0197df918a68/NOFO_20-01.myb.pdf",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T22:03:57.476Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-531b324b-c0d1-4d8a-a463-0197df918a68/original.pdf",
+      "normalizedFile": "documents/sg-531b324b-c0d1-4d8a-a463-0197df918a68/normalized.json",
+      "authority": "controlling",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: matched \"nofo\" (candidate controlling document; confirm)",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "pdfjs-text",
+        "processorVersion": "1",
+        "pages": 36
+      },
+      "notes": []
+    },
+    {
+      "documentId": "sg-718d3a84-91d3-409e-a9f5-2c059ff8f324",
+      "origin": "simpler_attachment",
+      "title": "FAA Non-Discrimination Assurances",
+      "fileName": "FAA_Non-Discrimination_Assurances_V1.1.pdf",
+      "declaredMimeType": "application/pdf",
+      "detectedType": "pdf",
+      "sizeBytes": 1513365,
+      "sha256": "bd1c973954a3301c4580ab3a0a632cc8abb41ef79319c0a615505ae58701343a",
+      "sourceAttachmentId": "718d3a84-91d3-409e-a9f5-2c059ff8f324",
+      "sourceUpdatedAt": "2022-06-21T16:52:42+00:00",
+      "sourceSizeBytes": 1513365,
+      "originalUrl": "https://files.simpler.grants.gov/opportunities/721d5c2c-af72-4c33-8ce6-013b1e8ad59b/attachments/718d3a84-91d3-409e-a9f5-2c059ff8f324/FAA_Non-Discrimination_Assurances_V1.1.pdf",
+      "urlKind": "absolute",
+      "retrievedAt": "2026-11-11T22:03:57.826Z",
+      "retrievalMethod": "api_download",
+      "storedFile": "documents/sg-718d3a84-91d3-409e-a9f5-2c059ff8f324/original.pdf",
+      "normalizedFile": "documents/sg-718d3a84-91d3-409e-a9f5-2c059ff8f324/normalized.json",
+      "authority": "unclassified",
+      "authorityMethod": "heuristic",
+      "authorityReason": "heuristic: no recognizable NOFO, amendment or guidance pattern",
+      "retrieval": {
+        "status": "downloaded"
+      },
+      "processing": {
+        "status": "parsed",
+        "processorId": "pdfjs-text",
+        "processorVersion": "1",
+        "pages": 4
+      },
+      "notes": []
+    }
+  ],
+  "potentialMissingSources": [
+    {
+      "kind": "official_guidance_not_attached",
+      "description": "No FAQ, Q&A, checklist or webinar material is attached through Simpler.Grants.gov. Agencies often publish these on their own sites; they can be added later as curated supplemental sources."
+    },
+    {
+      "kind": "amendments_not_listed",
+      "description": "Simpler.Grants.gov does not expose a separate list of amendments. Confirm on the agency site that no amendment supersedes the attached documents."
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "source": "simpler.grants.gov",
+  "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+  "opportunityNumber": "20-01",
+  "legacyOpportunityId": 328902,
+  "title": "FAA Aviation Research Grants Program",
+  "status": "posted",
+  "category": "discretionary",
+  "agency": {
+    "code": "DOT-FAA-FAA ARG",
+    "name": "DOT - FAA Aviation Research Grants",
+    "topLevelCode": "DOT",
+    "topLevelName": "Department of Transportation"
+  },
+  "summary": {
+    "awardCeiling": 6000000,
+    "awardFloor": 0,
+    "estimatedTotalProgramFunding": null,
+    "expectedNumberOfAwards": null,
+    "postDate": "2020-09-08",
+    "closeDate": "2027-09-07",
+    "archiveDate": null,
+    "fiscalYear": null,
+    "isCostSharing": false,
+    "applicantTypes": [
+      "public_and_state_institutions_of_higher_education",
+      "nonprofits_non_higher_education_with_501c3",
+      "private_institutions_of_higher_education"
+    ],
+    "additionalInfoUrl": null,
+    "applicantEligibilityDescription": ""
+  },
+  "sourceUpdatedAt": "2026-05-13T17:06:48.162712+00:00",
+  "responseSha256": "ce9fbbb60fc7b5ce676f70612bb94e0296d0eb46bbaeb582c7093eb79d3aef49",
+  "retrievedAt": "2026-11-11T22:03:57.225Z"
+}

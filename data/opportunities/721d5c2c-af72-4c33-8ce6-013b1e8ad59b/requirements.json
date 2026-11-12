@@ -1,0 +1,1573 @@
+{
+  "schemaVersion": 1,
+  "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+  "generatedAt": "2026-11-11T22:05:11.943Z",
+  "model": "claude-sonnet-5",
+  "promptVersion": "4",
+  "sourceManifestHash": "16705c0a33f6439932ec82d5f94e177a451c4de1cb60d30d2b30278a32569f3d",
+  "passes": 1,
+  "status": "complete",
+  "documents": [
+    {
+      "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+      "title": "Revised NOFO 20-01",
+      "authority": "controlling",
+      "sha256": "43252b5345243a8d695d032ba904679ce1f0b3fef90a8d3d0fb4e5b6d6b9e689",
+      "units": 36
+    }
+  ],
+  "batches": {
+    "total": 8,
+    "succeeded": 8,
+    "split": 0,
+    "failed": []
+  },
+  "usage": {
+    "inputTokens": 57698,
+    "outputTokens": 26816
+  },
+  "stats": {
+    "candidates": 69,
+    "rejected": 1,
+    "merged": 14,
+    "kept": 54,
+    "sourcesRejected": 1,
+    "locationsCorrected": 3,
+    "checksDropped": 0
+  },
+  "rejections": [
+    {
+      "title": "Eligible applicant organizations",
+      "reason": "no_verified_source",
+      "detail": "quote_not_found: The quote does not appear in the cited document."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "req-c29c92aa",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "eligibility",
+      "topic": "applicant_type",
+      "title": "Eligible applicant organizations",
+      "description": "Only colleges, universities, and other nonprofit research institutions eligible under 26 U.S.C. 501(c)(3) may apply for an aviation research grant.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Proof of 501(c)(3) nonprofit status or public college/university status"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 11,
+          "section": null,
+          "quote": "In general, colleges, universities, and other non-profit research institutions eligible under 26 U.S.C. (501(c)(3)) are eligible to qualify for an aviation research grant.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": true,
+          "note": "model cited page 10; found on page 11"
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "a cited location was corrected by code"
+    },
+    {
+      "id": "req-9e62fe99",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "eligibility",
+      "topic": "applicant_type",
+      "title": "Individuals are not eligible applicants",
+      "description": "The FAA will not award a grant to an individual applicant.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 11,
+          "section": null,
+          "quote": "The FAA will not provide an individual with the award of a grant.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": true,
+          "note": "model cited page 10; found on page 11"
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "a cited location was corrected by code"
+    },
+    {
+      "id": "req-ebe3f492",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Cost accounting and audit compliance for grantee institutions",
+      "description": "Institutions receiving a grant are subject to a DCAA audit of their Cost Accounting System and to AMS T3.3.2 Contract Cost Principles, and the FAA will not provide profit with the award.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Cost accounting system documentation",
+        "Evidence of compliance with contract cost principles"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 11,
+          "section": null,
+          "quote": "The FAA will not provide a profit with the award of a grant to institutions that are subject to the following requirements: 1. A Defense Contract Audit Agency (DCAA) audit of their Cost Accounting System. 2. AMS T3.3.2 - Contract Cost Principles.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": true,
+          "note": "model cited page 10; found on page 11"
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "a cited location was corrected by code"
+    },
+    {
+      "id": "req-242d8ca8",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "eligibility",
+      "topic": "application_limit",
+      "title": "Continuing/continuation applications cannot compete with new award applications",
+      "description": "Applications for continuing grants or continuation of existing projects are not eligible to compete with applications for new Federal awards.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant is submitting a continuation or continuing grant application"
+      ],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 9,
+          "section": null,
+          "quote": "Applications for continuing grants or supplementation of existing projects are not eligible to compete with applications for new Federal awards.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 11,
+          "section": null,
+          "quote": "Applications for continuation of existing projects are not eligible to compete with applications for new Federal awards.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f7d96667",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "submission_method",
+      "title": "Continuation and continuing grant applications must be submitted via Grants.gov",
+      "description": "Applications for continuing grants or continuation of existing projects must be submitted through the www.grants.gov website and are subject to administrative and merit review.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant is submitting a continuation or continuing grant application"
+      ],
+      "evidenceNeeded": [
+        "Grants.gov submission confirmation"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 9,
+          "section": null,
+          "quote": "Applications for continuing grants or supplementation of existing projects require applications be submitted through the www.grants.gov website, and are subject to administrative and merit review.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 11,
+          "section": null,
+          "quote": "Applications for continuation of existing projects require applications to be submitted through the www.grants.gov website, and are subject to administrative and merit review.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-e1da5c48",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "deadline",
+      "title": "Late due dates shift to next business day",
+      "description": "Proposals for new and continuing grant awards may be submitted at any time during the open NOFO period; if the due date falls on a Saturday, Sunday, or Federal holiday, the package is due the next business day.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 10,
+          "section": null,
+          "quote": "If the due date falls on a Saturday, Sunday, or Federal holiday, the package is due the next business day.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-88cc613e",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "schedule",
+      "title": "Proposed period of performance must be 12 to 60 months",
+      "description": "The estimated period of performance for an award will range from a minimum of 12 months to a maximum of 60 months, so applicants must propose a project duration within this range.",
+      "mandatory": null,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Proposed project schedule/period of performance"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 10,
+          "section": null,
+          "quote": "The estimated period of performance for an award will range from a minimum of 12 months to a maximum of 60 months.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "needs_review",
+      "reviewNote": "flagged ambiguous by the model: Text describes anticipated award duration range but does not explicitly state applicants must propose within it, so it is unclear whether this is a hard requirement on the applicant's proposed period of performance.; mandatory status unclear (guidance wording or ambiguous)"
+    },
+    {
+      "id": "req-cc25e6b9",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Must submit application as 'new' under specified circumstances",
+      "description": "An application must be submitted as 'new' when applying for a new research award not previously funded, for continued research with a significant change in the fundamental nature of the research, or for continued research at a new applicant institution.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant falls into one of the new-application circumstances"
+      ],
+      "evidenceNeeded": [
+        "Application type designation (new vs. continuation)"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 10,
+          "section": null,
+          "quote": "An application must be submitted as “new” in the following circumstances:",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-aa48beed",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Continuation applications must meet specific continuity and development criteria",
+      "description": "A continuation application must be submitted as a continuation when there is no change in the recipient/applicant institution or the fundamental nature of the award, must be developed as fully as a first-time application, must be submitted by the same sponsoring institution holding the current award, and the proposed research must be a logical scientific extension of the current award's research.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant is submitting a continuation application"
+      ],
+      "evidenceNeeded": [
+        "Full application materials",
+        "Description of research continuity with current award"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 11,
+          "section": null,
+          "quote": "Continuation applications compete for funds with all other peer-reviewed applications and must be developed as fully as though the applicant is applying for the first time. Continuation applications must be submitted by the same sponsoring institution as that holding the current grant award for which renewal funding is requested, and the proposed research topic must be logical scientific extensions of the research that has been performed in the current award.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-c548e7c0",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "eligibility",
+      "topic": "applicant_type",
+      "title": "Eligible applicant types",
+      "description": "Colleges, universities, and other nonprofit research institutions eligible under 501(c)(3) may apply, including specific categories listed.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "proof of nonprofit/educational institution status"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 11,
+          "section": null,
+          "quote": "a. Colleges and universities desiring to conduct research in any of the program areas described in this NOFO, and b. Other nonprofit organizations such as independent museums; observatories; research laboratories; hospitals; consortia; professional, scientific and educational associations or societies; and similar organizations.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-ad1a0bfc",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "eligibility",
+      "topic": "application_limit",
+      "title": "Continuation applications must be submitted by same institution and be logical extensions",
+      "description": "Continuation applications for existing projects must be submitted by the same sponsoring institution holding the current award, and the proposed research must be a logical scientific extension of the current award's research.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant is submitting a continuation application for an existing project"
+      ],
+      "evidenceNeeded": [
+        "identification of current grant award",
+        "description of research continuity"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 11,
+          "section": null,
+          "quote": "Continuation applications must be submitted by the same sponsoring institution as that holding the current grant award for which renewal funding is requested, and the proposed research topic must be logical scientific extensions of the research that has been performed in the current award.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-6584b82d",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "eligibility",
+      "topic": "registration",
+      "title": "SAM.gov registration required",
+      "description": "All applicants must be registered in the System for Award Management (SAM) prior to submitting an application, provide a unique entity identifier, and maintain currency of registration while the award is active.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "SAM registration confirmation",
+        "unique entity identifier"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "sam_registration"
+      },
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 12,
+          "section": null,
+          "quote": "All applicants submitting proposals in response to this NOFO must be registered in the System for Award Management (SAM) at www.sam.gov prior to submitting an application, provide a unique entity identifier in the application, and maintain currency on the registration while the Federal award is active.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-d1972c1d",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "eligibility",
+      "topic": "applicant_capacity",
+      "title": "Failure to meet eligibility criteria results in return without review",
+      "description": "Failure to meet any of the specified applicant eligibility criteria will result in the FAA returning the application without further review.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 12,
+          "section": null,
+          "quote": "Failure to meet any of the specified applicant eligibility criteria described above will result in the FAA returning the application without further review.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-dfd76023",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "funding",
+      "topic": "non_federal_match",
+      "title": "Cost sharing is not required as eligibility criterion",
+      "description": "Cost sharing is not required and is not an eligibility criterion, though the FAA expects recipients may share costs and this may factor into funding decisions.",
+      "mandatory": false,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 12,
+          "section": null,
+          "quote": "Cost sharing is not required, and is not an eligibility criterion.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-d55248b8",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "funding",
+      "topic": "non_federal_match",
+      "title": "Criteria for what counts as allowable cost sharing or matching contributions",
+      "description": "Shared costs or matching funds, including cash and third-party in-kind contributions, will be accepted as cost sharing only when they meet seven listed criteria (verifiable, not claimed elsewhere, necessary/reasonable, allowable, not federally funded elsewhere, in approved budget, and conforming to other provisions).",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant offers cost sharing or matching funds",
+        "Applicant proposes cost sharing or matching funds"
+      ],
+      "evidenceNeeded": [
+        "documentation of cost share sources and verification",
+        "Documentation showing contributions are verifiable, allowable, and not duplicative of other Federal awards"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 12,
+          "section": null,
+          "quote": "Any shared costs or matching funds and all contributions, including cash and third party in-kind contributions, will be accepted as part of the applicant’s cost sharing or matching when such contributions meet all of the following criteria:",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 23,
+          "section": null,
+          "quote": "Any shared costs or matching funds and all contributions, including cash and third party in-kind contributions, will be accepted as part of the applicant’s cost sharing or matching when such contributions meet all of the following criteria: Are verifiable from the non-Federal entity's records;",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-96f7ac86",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "submission_method",
+      "title": "Applications must be submitted electronically through Grants.gov",
+      "description": "Applications must be submitted electronically through Grants.gov; otherwise they will not be accepted.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Grants.gov submission confirmation"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 13,
+          "section": null,
+          "quote": "Applications must be submitted electronically through Grants.gov, otherwise they will not be accepted.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-39a8ec37",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "White paper/pre-application is optional with page limit if submitted",
+      "description": "A white paper (pre-application) is recommended but optional; absence will not negatively affect evaluation. If submitted, it should be no more than three pages and include specified content.",
+      "mandatory": false,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant chooses to submit a white paper/pre-application"
+      ],
+      "evidenceNeeded": [
+        "white paper document meeting content and length requirements"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 14,
+          "section": null,
+          "quote": "A white paper (also called a pre-application) is recommended, but optional. Absence of a white paper will not negatively affect a thorough evaluation of a responsive full application with proposal package submitted in a timely fashion.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 14,
+          "section": null,
+          "quote": "The white paper should be no more than three (3) pages, and include: (1) a technical summary of the proposed research, (2) a list of proposed collaborators/co-investigators/consultants with their institutions, (3) brief biographical information of the Principal Investigator (PI), (4) an estimate of the proposed total project cost.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-ecba3e2b",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "White paper file format, naming, and submission requirements",
+      "description": "The white paper must be a single file with extension .pdf, .docx, or .doc, filename not exceeding 50 characters, submitted via email to a specified FAA contact, and must include specified header information.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "applicant chooses to submit a white paper/pre-application"
+      ],
+      "evidenceNeeded": [
+        "white paper file in correct format and with required header information"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 14,
+          "section": null,
+          "quote": "It is important that the white paper be a single file with extension .pdf, .docx, or .doc. The filename must not exceed 50 characters. The white paper must be submitted via email to Monica Butler at monica.y.butler@faa.gov.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-08d9b6ac",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "eligibility",
+      "topic": "project_type",
+      "title": "Ineligible project types: education, training, specific airport development",
+      "description": "Proposals for education, training, or specific airport development are not supported under this program.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 14,
+          "section": null,
+          "quote": "Proposals for education, training, or specific airport development are not supported under this program.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f477b010",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "eligibility",
+      "topic": "project_type",
+      "title": "Must determine appropriate award mechanism; contract proposals not accepted here",
+      "description": "Applicants must determine whether their proposal is appropriate as a research grant, cooperative agreement, or contract; if the principal purpose is a procurement for direct FAA use (contract), it must not be submitted to this office for consideration.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 14,
+          "section": null,
+          "quote": "A contract award is used when the principal purpose is to make procurements for direct use by the FAA. In this case, the method of funding will be a procurement contract and must not be submitted to this office for consideration.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-c446c762",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "submission_method",
+      "title": "Required use of Grants.gov compatible Adobe Reader and online/downloaded forms",
+      "description": "Applicants must submit the application through Grants.gov using either online web forms or downloaded forms, and must use a compatible version of Adobe Reader to complete the application package.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "confirmation of compatible Adobe Reader version",
+        "Grants.gov submission confirmation",
+        "Confirmation of Adobe Reader version used"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 15,
+          "section": null,
+          "quote": "You must submit the application through Grants.gov at https://www.Grants.gov/, using either the online web forms or downloaded forms.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 15,
+          "section": null,
+          "quote": "You are required to use the compatible version of Adobe Reader software to complete a Grants.gov Adobe application package.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-3409fa98",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Mandatory and optional forms must be completed per instructions",
+      "description": "Applicants must complete the mandatory forms and any applicable optional forms (e.g., Disclosure of Lobbying Activities SF-LLL) in accordance with the instructions on the forms.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "completed mandatory forms",
+        "Completed mandatory and optional forms"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 15,
+          "section": null,
+          "quote": "You must complete the mandatory forms and any applicable optional forms (e.g., Disclosure of Lobbying Activities (SF-LLL)) in accordance with the instructions on the forms and the additional instructions below.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-32ac1d69",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "SF 424 R&R application form required",
+      "description": "The SF 424 R&R, Application for Federal Assistance, is a required form including applicant information, project information, funding estimate and duration, and electronic signature certifying statements are true and complete.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "completed SF 424 R&R form"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "sf424_rr"
+      },
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 15,
+          "section": null,
+          "quote": "SF 424 R&R - This is the Application for Federal Assistance. It includes specific applicant information, proposed project information, estimate of project funding and duration, and an electronic signature by the Authorizing Organizational Representative certifying that all statements are true and complete.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f862e2d7",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Attached files must be plain PDF format",
+      "description": "Files attached to forms must be in PDF format, must be plain files without editable fields, signatures, passwords, redactions, or advanced features, and must not be PDF portfolios or binders.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "PDF attachments meeting format requirements"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 15,
+          "section": null,
+          "quote": "Files that are attached to the forms must be in Portable Document File (PDF) format unless otherwise specified in this NOFO. Attached PDF files must be plain files consisting of text, numbers, and images without editable fields, signatures, passwords, redactions, or other advanced features available in some PDF compatible software.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-2ce8a29c",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Attachment file naming restrictions",
+      "description": "Attachment file names must be limited to 50 or fewer characters, must be unique, and may only use a specified set of characters; non-compliant file names may cause the application to be rejected.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "attachment file names compliant with naming rules",
+        "File names meeting character and length restrictions"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 15,
+          "section": null,
+          "quote": "Please limit file names to 50 or fewer characters. Do not attach any documents with the same name. All attachments must have a unique name.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-083e8618",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "budget",
+      "title": "Research and Related Budget form required with narrative",
+      "description": "Applicants must itemize proposed budget including senior/key person and other personnel, direct and indirect costs, and attach a budget narrative; cost sharing intent must not appear on budget forms but must be in the narrative.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed budget form and budget narrative"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "budget_narrative"
+      },
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 16,
+          "section": null,
+          "quote": "A budget narrative that explains and clarifies items included on the budget forms (i.e., travel, equipment, personnel costs, tuition remission, etc.) must be attached. Cost sharing intent must not be reflected on the budget forms. Please include cost sharing information in the attached budget narrative.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f07f43fb",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Senior/Key Person Profile with biographical sketch required",
+      "description": "Applicants must provide biographical information and a short biographical sketch of senior personnel and a list of principal publications during the past five years.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Senior/Key Person Profile form with biographical sketch",
+        "Completed Research & Related Senior/Key Person Profile form"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "senior_key_person_profile"
+      },
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 16,
+          "section": null,
+          "quote": "Use this form to provide biographical information about the Principal Investigator (PI) and Co-Investigator(s). A short biographical sketch of senior personnel and a list of their principal publications during the past five years, including those in pre-publication, must be provided.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        },
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 35,
+          "section": null,
+          "quote": "Research & Related Senior/Key Person Profile - This is a required form in the proposal that requests specific information pertaining to the principal investigator assigned to the work and/or the co-investigators.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-ecfd0a3b",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Disclosure of all current and pending project support",
+      "description": "Applicants must identify all current project support from whatever source(s) for the PI and all senior personnel, including person-months/percentage of effort, and similar information for proposals under consideration elsewhere.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "List of current and pending support"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 16,
+          "section": null,
+          "quote": "Applicants must identify all current project support from whatever source(s) (i.e., Federal, State, or local Government agencies, private foundations, industrial or other commercial organizations).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-ad37bc57",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Project summary of 200-300 words required",
+      "description": "The proposal must contain a 200-300 word summary of the proposed activity suitable for publication, including a self-contained description of the activity.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "200-300 word project summary"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 16,
+          "section": null,
+          "quote": "The proposal must contain a 200-300 word summary of the proposed activity suitable for publication, and must include a self-contained description of the activity that would result if the FAA were to fund the proposal.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-49e09142",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Detailed description of work required elements",
+      "description": "The proposal must contain a detailed description of work including objectives, relation to longer-term goals, and relation to present state of knowledge.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Detailed project description addressing required elements"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 17,
+          "section": null,
+          "quote": "The proposal must contain a detailed description of the work and must include: (1) Objectives for the period of the proposed work and expected significance; (2) Relation to the longer term goals of the investigator's project; and (3) Relation to the present state of knowledge in the field, to work in progress by the investigator under other support, and to work in progress elsewhere.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-84d79944",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Project description page and font limit",
+      "description": "The project description shall not exceed 15 single spaced pages using Times New Roman 12 point font, and appended information may not be used to circumvent the page limit.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Project description document meeting page/font limits"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 17,
+          "section": null,
+          "quote": "Brevity will assist reviewers and the FAA staff in dealing effectively with proposals; therefore, the project description shall not exceed 15 single spaced pages. The font must be Times New Roman 12 point. Appended information may not be used to circumvent the page limit on the length of the proposal's project description.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-e2cad0de",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Non-Discrimination Assurances form required",
+      "description": "The Non-Discrimination Assurances form is required for non-discrimination compliance, located in the Related Documents section of the opportunity on grants.gov.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed Non-Discrimination Assurances form"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "non_discrimination_assurances"
+      },
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 17,
+          "section": null,
+          "quote": "Non-Discrimination Assurances - This form is required for non-discrimination compliance (located in the Related Documents section of the opportunity on grants.gov).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-17133ac8",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Indirect Cost Agreement copy required",
+      "description": "A copy of the latest institutional Negotiated Indirect Cost Rate Agreement currently in force must be attached, and applicants must assure costs are allowable and consistent with Federal cost principles and organizational policies.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Current Negotiated Indirect Cost Rate Agreement"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "indirect_cost_agreement"
+      },
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 17,
+          "section": null,
+          "quote": "Indirect Cost Agreement - A copy of the latest institutional Negotiated Indirect Cost Rate Agreement, negotiated with the institution's cognizant Federal audit agency (i.e., Health and Human Services, Department of Defense or other) currently in force must be attached.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-4c6aaf77",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "eligibility",
+      "topic": "project_type",
+      "title": "No proposals solely for equipment purchase or facility construction",
+      "description": "The FAA does not entertain proposals that are submitted solely for the purchase of equipment or construction of facilities.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Proposal narrative demonstrating purpose beyond equipment/construction"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 18,
+          "section": null,
+          "quote": "The FAA does not entertain proposals that are submitted solely for the purchase of equipment or construction of facilities.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-47604527",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Equipment purchases must specify manufacturer and part/model number",
+      "description": "If the purchase of equipment is part of the proposed costs, the proposal must specify the name of the manufacturer and the part/model number.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "proposal includes equipment purchase costs"
+      ],
+      "evidenceNeeded": [
+        "Equipment specification with manufacturer and model number"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 18,
+          "section": null,
+          "quote": "If the purchase of equipment is part of the proposed costs, the proposal must specify the name of the manufacturer, and the part/model number.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-53c64c4e",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Use of metric system required",
+      "description": "Proposals for grants and cooperative agreements submitted to the FAA are required to use the metric system of weights and measures.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Proposal using metric units"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 18,
+          "section": null,
+          "quote": "Proposals for grants and cooperative agreements submitted to the FAA are required to use the metric system of weights and measures.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-ec1f9ce6",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "registration",
+      "title": "SAM registration required prior to submission",
+      "description": "SAM registrations must be completed prior to submitting a proposal, and an active SAM registration must be maintained for the duration of any active Federal award.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Active SAM.gov registration"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 18,
+          "section": null,
+          "quote": "SAM registrations must be completed prior to submitting a proposal in response to this NOFO. An active SAM registration must be maintained for the duration of any active Federal award.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-4da81ae3",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "deadline",
+      "title": "White papers and applications must follow strict submission schedule",
+      "description": "White Papers/Pre-Applications and Applications for new grant awards may be submitted at any time during the open NOFO period but with strict adherence to the published submission schedule.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Submission timestamp matching schedule"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 19,
+          "section": null,
+          "quote": "White Papers/Pre-Applications, and Applications for new grant awards may be submitted at any time, 24/7, during the open NOFO period, with strict adherence to the submission schedule shown below.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-30118bce",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "deadline",
+      "title": "Late submissions not considered",
+      "description": "Proposals submitted after the NOFO expiration date will not be considered; applicants are responsible for beginning submission in sufficient time.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Timely submission before NOFO expiration",
+        "Proof of timely submission before NOFO expiration date"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 20,
+          "section": null,
+          "quote": "Proposals submitted after the NOFO expiration date will not be considered. Applicants are responsible for beginning the submission process in sufficient time to accommodate reasonably foreseeable incidents, contingencies, and disruptions.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-a6ddaa1b",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "funding",
+      "topic": "funding_restriction",
+      "title": "Costs must be allowable, allocable, and reasonable",
+      "description": "Costs must be allowable, allocable and reasonable in accordance with applicable Federal cost principles referenced in 2 CFR 200.400-200.411.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Budget narrative demonstrating cost allowability"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 20,
+          "section": null,
+          "quote": "Costs must be allowable, allocable and reasonable in accordance with the applicable Federal cost principles referenced in 2 CFR § 200.400 - 200.411.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-91611205",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "funding",
+      "topic": "pre_award_costs",
+      "title": "Applicant responsible for pre-award costs",
+      "description": "All costs incurred before the FAA makes the award are the responsibility of the applicant, and FAA is not obligated to reimburse them unless prior written approval is given.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [
+        "Applicant incurs costs prior to award"
+      ],
+      "evidenceNeeded": [
+        "Written FAA approval for pre-award costs, if applicable"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 21,
+          "section": null,
+          "quote": "In general, all costs incurred before the FAA makes the award are the responsibility of the applicant. The FAA is under no obligation to reimburse such costs if for any reason the applicant does not receive a Federal award, or if the Federal award is less than anticipated and inadequate to cover such costs.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-a0f1d523",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "registration",
+      "title": "SAM.gov registration required",
+      "description": "Applicants must complete registration in the System for Award Management (SAM) before applying for an FAA grant.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Active SAM.gov registration"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 21,
+          "section": null,
+          "quote": "Applicants must complete a series of registrations and enrollments to submit applications in response to this NOFO. Before you apply for an FAA grant, you must complete two registrations: 1. Systems for Award Management (SAM) - https://www.sam.gov.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-1670d040",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "registration",
+      "title": "Grants.gov registration required",
+      "description": "Applicants must register and create an institutional profile at Grants.gov before submitting proposals.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Grants.gov institutional profile"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 21,
+          "section": null,
+          "quote": "Prior to using Grants.gov for the first time, each organization must register and create an institutional profile at the Grants.gov Website.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-197ee924",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "registration",
+      "title": "Active Unique Entity Identifier (UEI) required at time of application",
+      "description": "Applicants must have an active Unique Entity Identifier (UEI) at the time of application.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Active UEI number"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 21,
+          "section": null,
+          "quote": "Applicants must have an active Unique Entity Identifier (UEI) at the time of application.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-f70cb001",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "registration",
+      "title": "Taxpayer Identification Number (TIN) required for SAM registration",
+      "description": "Applicants must provide a Taxpayer Identification Number (TIN), which is their EIN as assigned by the IRS, to complete SAM.gov registration.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "TIN/EIN provided in SAM.gov profile"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 21,
+          "section": null,
+          "quote": "Applicants must provide a Taxpayer Identification Number (TIN) to complete their registration in httys://www.SAM.gov. An applicant’s TIN is an EIN as assigned by the Internal Revenue Service (IRS).",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-bcebadb6",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "submission_method",
+      "title": "Electronic submission via Grants.gov required",
+      "description": "Proposals must be submitted electronically through Grants.gov, locating the opportunity by Opportunity Number 20-01.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Submission confirmation from Grants.gov"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 21,
+          "section": null,
+          "quote": "Proposals must be submitted electronically through http://www.Grants.gov. The FAA NOFO mentioned above can be located by entering Opportunity Number 20-01 under the “SEARCH GRANTS” section of the Grants.gov home page.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-d82eb8f3",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Proposals must follow NOFO and FAA Order 9550.7B guidance",
+      "description": "Proposals submitted via Grants.gov must be prepared and submitted in accordance with the guidance contained in the NOFO and FAA Order 9550.7B.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Proposal formatted per NOFO and FAA Order 9550.7B"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 22,
+          "section": null,
+          "quote": "Proposals submitted in response to the FAA via Grants.gov must be prepared and submitted in accordance with the guidance contained in this NOFO and FAA Order 9550.7B, located at http://www.tc.faa.gov/logistics/grants.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-c57c0fc2",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "funding",
+      "topic": "non_federal_match",
+      "title": "Cost sharing not required",
+      "description": "Cost sharing is not required and is not a weighted criterion or eligibility criterion for the grant, though FAA expects recipients to share in costs reflecting their interest in the research.",
+      "mandatory": false,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 23,
+          "section": null,
+          "quote": "Cost sharing is not required, and is not a weighted criteria, or an eligibility criterion; however, the FAA expects that grant recipients will share in the costs at a level that reflects their interest in the research, the potential benefits they may derive, and their ability to share in the cost of the project.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-cea4212e",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "SF-424 Research & Related form required",
+      "description": "Proposers must submit the SF-424 Research & Related form as the initial application for Federal assistance, electronically signed by the Authorizing Organizational Representative.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed SF-424 Research & Related form",
+        "Completed and electronically signed SF-424 Research & Related form"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "sf424_research_related"
+      },
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 35,
+          "section": null,
+          "quote": "SF-424 Research & Related - This is a required form in the proposal that acts as the initial application for Federal assistance.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-a43d70e3",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "budget",
+      "title": "Research & Related Budget form required",
+      "description": "Applicants must submit the Research & Related Budget form describing direct and indirect costs associated with the project.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed Research & Related Budget form"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "research_related_budget"
+      },
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 35,
+          "section": null,
+          "quote": "Research & Related Budget - This is a required form in the proposal that describes both the direct and indirect costs associated with a particular project.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-3a84729b",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Research & Related Project/Performance Site Location form required",
+      "description": "Proposers must submit the Research & Related Project/Performance Site Location form providing information on specific sites where the work will be performed.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed Research & Related Project/Performance Site Location form"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "project_performance_site_location"
+      },
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 35,
+          "section": null,
+          "quote": "Research & Related Project/Performance Site Location - This is a required form in the proposal that requests information concerning specific sites where the work will be performed.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-2b412e69",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Research & Related Other Project Information form required",
+      "description": "Applicants must submit the Research & Related Other Project Information form containing information about human subjects, vertebrate animals, project summary, project description, and bibliography.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed Research & Related Other Project Information form"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "other_project_information"
+      },
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 35,
+          "section": null,
+          "quote": "Research & Related Other Project Information - This is a required form in the proposal that contains information about human subjects, vertebrate animals, etc.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-741a27ab",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Research & Related Personal Data form is voluntary",
+      "description": "Applicants are not required to submit the Research & Related Personal Data form; it is voluntary and used only to identify and address inequities based on gender, race, etc.",
+      "mandatory": false,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Research & Related Personal Data form, if submitted"
+      ],
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 35,
+          "section": null,
+          "quote": "Research & Related Personal Data - This is a voluntary form in the proposal.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    },
+    {
+      "id": "req-4a332d32",
+      "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+      "category": "application",
+      "topic": "application_content",
+      "title": "Submit Research & Related Budget form",
+      "description": "Proposers must submit the Research & Related Budget form describing direct and indirect costs associated with the project.",
+      "mandatory": true,
+      "programVariant": null,
+      "appliesWhen": [],
+      "evidenceNeeded": [
+        "Completed Research & Related Budget form"
+      ],
+      "check": {
+        "kind": "document_required",
+        "documentKey": "research_related_budget"
+      },
+      "sources": [
+        {
+          "documentId": "sg-531b324b-c0d1-4d8a-a463-0197df918a68",
+          "page": 35,
+          "section": null,
+          "quote": "Research & Related Budget - This is a required form in the proposal that describes both the direct and indirect costs associated with a particular project.",
+          "authority": "controlling",
+          "verified": true,
+          "locationCorrected": false
+        }
+      ],
+      "reviewStatus": "unreviewed"
+    }
+  ]
+}

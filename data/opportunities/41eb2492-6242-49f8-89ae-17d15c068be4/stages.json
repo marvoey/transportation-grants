@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+  "generatedAt": "2026-11-12T07:25:01.644Z",
+  "model": "claude-sonnet-5",
+  "promptVersion": "1",
+  "requirementsHash": "5b9fe83969801606046ee7b79b6d82da0cf5b7a57e3f4adf7234d3f602dbe0f5",
+  "source": "model",
+  "reviewStatus": "unreviewed",
+  "stages": [
+    {
+      "index": 1,
+      "title": "Confirm who can apply",
+      "why": "I want to be sure the notice applies to you before we talk about money or paperwork.",
+      "requirementIds": [
+        "req-4a8ebf3e",
+        "req-1ed549ad",
+        "req-f1e4e6fd",
+        "req-6b5a30b0",
+        "req-ed6bb110",
+        "req-dbc9de81",
+        "req-4ef477ae"
+      ],
+      "questionGroups": [
+        "listed",
+        "applicant",
+        "area",
+        "category",
+        "description"
+      ]
+    },
+    {
+      "index": 2,
+      "title": "Application, funding, and submission requirements",
+      "why": "Once we know the notice fits you, let's cover how to prepare, fund, and submit the application correctly.",
+      "requirementIds": [
+        "req-bc1c2785",
+        "req-0a6c7cc4",
+        "req-25160b5b",
+        "req-8f220b5d",
+        "req-9b579a9a",
+        "req-ae74c5e5",
+        "req-36ed3ae9",
+        "req-d253fe25",
+        "req-2dc09710",
+        "req-1e40a4ec",
+        "req-29069f76",
+        "req-bb9f9fc6",
+        "req-f64a4d21",
+        "req-786395f8",
+        "req-4216687b",
+        "req-a605c2db",
+        "req-fd50ac9f",
+        "req-061fe090",
+        "req-7fa409b5",
+        "req-36af9171"
+      ],
+      "questionGroups": [
+        "request",
+        "costMatch",
+        "bca"
+      ]
+    },
+    {
+      "index": 3,
+      "title": "Readiness and risk factors",
+      "why": "Finally, let's check how ready the project is and what risks need to be addressed before or after selection.",
+      "requirementIds": [
+        "req-cccd8a76",
+        "req-a414771e",
+        "req-6bc9ea27",
+        "req-9a9fab64",
+        "req-87ef0e84",
+        "req-d5dff48b"
+      ],
+      "questionGroups": [
+        "design",
+        "environmental"
+      ]
+    }
+  ]
+}

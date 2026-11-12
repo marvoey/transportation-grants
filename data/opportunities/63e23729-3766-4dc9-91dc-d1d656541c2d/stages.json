@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+  "generatedAt": "2026-11-12T07:24:51.398Z",
+  "model": "claude-sonnet-5",
+  "promptVersion": "1",
+  "requirementsHash": "423ff54429b3a34c71cb7f7a53127a75f9a3094cba1c82a28b80b40a8482cec0",
+  "source": "model",
+  "reviewStatus": "unreviewed",
+  "stages": [
+    {
+      "index": 1,
+      "title": "Confirm the Notice Applies to You",
+      "why": "I want to make sure your organization and project qualify before we get into paperwork or funding details.",
+      "requirementIds": [
+        "req-ee47461d",
+        "req-40f59b90",
+        "req-ce68e365",
+        "req-9a373aee",
+        "req-4f1eba60",
+        "req-9a19d346",
+        "req-e68754ef",
+        "req-7b4c2d87",
+        "req-3aa4672d",
+        "req-a653e3a8",
+        "req-099fbd3b"
+      ],
+      "questionGroups": [
+        "listed",
+        "applicant",
+        "description"
+      ]
+    },
+    {
+      "index": 2,
+      "title": "Prepare the Application Package",
+      "why": "Once we know this notice applies to you, I want to walk through everything the application itself must include.",
+      "requirementIds": [
+        "req-7dc95c1e",
+        "req-76089445",
+        "req-7eb510e6",
+        "req-09f3d6d7",
+        "req-bd4e14b9",
+        "req-bb75a418",
+        "req-9435b55e",
+        "req-008163a4",
+        "req-0a8a785f",
+        "req-40ff7fb5",
+        "req-7c299ab6",
+        "req-f5227845",
+        "req-48502937",
+        "req-56de1307",
+        "req-4b582e2c",
+        "req-f01b5083",
+        "req-9025ed17",
+        "req-2b628765",
+        "req-2be80532",
+        "req-b5d2a996",
+        "req-3530cada",
+        "req-63ee8534",
+        "req-b9faa054",
+        "req-d723a750",
+        "req-cfbc3210",
+        "req-d0d459cd",
+        "req-b07db0c8",
+        "req-1454b9fa",
+        "req-24f8ae3c",
+        "req-8f575b77",
+        "req-87c2e399",
+        "req-c877b00a",
+        "req-7d45f03f",
+        "req-aa636ac9",
+        "req-04c4270d",
+        "req-10f34b16",
+        "req-9c686ef6",
+        "req-5c0eaf7b",
+        "req-a73d6267"
+      ],
+      "questionGroups": [
+        "category",
+        "area",
+        "design",
+        "environmental"
+      ]
+    },
+    {
+      "index": 3,
+      "title": "Work Out the Funding and Cost Rules",
+      "why": "Now that your application plan is clear, let's confirm how much you can request and what costs are allowed.",
+      "requirementIds": [
+        "req-f684109b",
+        "req-13a7186e",
+        "req-bcabfcb6",
+        "req-2debc26c",
+        "req-d3821dc1",
+        "req-f21d82e6",
+        "req-70a15a1a",
+        "req-01ff6685",
+        "req-b674ca8a",
+        "req-823a5e21",
+        "req-8422211f",
+        "req-5e42b247",
+        "req-b7c24cba",
+        "req-c011b945",
+        "req-c7f5d9ff",
+        "req-56ff0201",
+        "req-8639f616",
+        "req-e34c26ee",
+        "req-e8c320c6",
+        "req-8625fdfb",
+        "req-59b7ce63",
+        "req-7e886372",
+        "req-212e3700",
+        "req-11ac5f7a"
+      ],
+      "questionGroups": [
+        "request",
+        "costMatch",
+        "bca"
+      ]
+    }
+  ]
+}

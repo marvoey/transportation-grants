@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "source": "simpler.grants.gov",
+  "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+  "opportunityNumber": "FM-CCFP-27-001",
+  "legacyOpportunityId": 364171,
+  "title": "FY 2027 Crash Causal Factors Program",
+  "status": "posted",
+  "category": "discretionary",
+  "agency": {
+    "code": "DOT-FMCSA",
+    "name": "DOT-Federal Motor Carrier Safety Administration",
+    "topLevelCode": "DOT",
+    "topLevelName": "Department of Transportation"
+  },
+  "summary": {
+    "awardCeiling": 500000,
+    "awardFloor": 25000,
+    "estimatedTotalProgramFunding": 7000000,
+    "expectedNumberOfAwards": 30,
+    "postDate": "2026-10-29",
+    "closeDate": "2026-12-28",
+    "archiveDate": "2027-01-27",
+    "fiscalYear": null,
+    "isCostSharing": false,
+    "applicantTypes": [
+      "special_district_governments",
+      "state_governments",
+      "city_or_township_governments",
+      "county_governments"
+    ],
+    "additionalInfoUrl": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=129231",
+    "applicantEligibilityDescription": null
+  },
+  "sourceUpdatedAt": "2026-10-29T12:31:36+00:00",
+  "responseSha256": "c34b660f8e8b3f7a442572836265b6aeaaab1dcfbdf5068a7693efe738cd31f6",
+  "retrievedAt": "2026-11-11T21:22:54.911Z"
+}
