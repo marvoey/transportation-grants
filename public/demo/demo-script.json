@@ -48,7 +48,7 @@
       "sub": []
     },
     {
-      "text": "From the floating menu (bottom-left) open the **demo script window**, which shows this script scene by scene, and the **projects and answers window**, whose Projects and Answers tabs have Copy buttons that type into the app's question box. Keep both beside the app. The small round toggle at the bottom-right hides the drawer tabs for a clean screen. After editing this file, run `npm run demo:script` to rebuild what the window shows.",
+      "text": "From the floating menu (top-right) open the **demo script window**, which shows this script scene by scene, and the **projects and answers window**, whose Projects and Answers tabs have Copy buttons that type into the app's question box. Keep both beside the app. The small round toggle at the bottom-right hides the drawer tabs for a clean screen. After editing this file, run `npm run demo:script` to rebuild what the window shows.",
       "sub": []
     }
   ],

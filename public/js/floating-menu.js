@@ -1,5 +1,5 @@
 /**
- * Floating menu button. Adds a round button in the bottom-left corner that opens a small menu of links.
+ * Floating menu button. Adds a round button in the top-right corner that opens a small menu of links.
  *
  * To add a menu entry, add an item to ITEMS. The list is fixed in code and rendered with
  * textContent/setAttribute only, so nothing here is ever built from user input or HTML strings.
@@ -11,14 +11,59 @@
 (function () {
   'use strict';
 
+  // Every entry has an icon name from ICONS below. Icons are decorative (aria-hidden): the text is the label.
   var ITEMS = [
-    { label: 'Big Build presentation companion', href: '/big-build-v2.html' },
-    { label: 'Documentation', href: '/docs' },
+    { label: 'Big Build presentation companion', href: '/big-build-v2.html', icon: 'slides' },
+    { label: 'Documentation', href: '/docs', icon: 'book' },
     // Demo mode entry points (see /js/demo-mode.js and docs/NOFO_DEMO.md).
-    { label: 'Open the app in demo mode', href: '/?demo=1' },
-    { label: 'Open the app live (demo mode off)', href: '/?demo=0' },
-    { label: 'Record a demo run', href: '/chat.html?demo=record' },
+    { label: 'Open the app in demo mode', href: '/?demo=1', icon: 'play' },
+    { label: 'Open the app live (demo mode off)', href: '/?demo=0', icon: 'bolt' },
+    { label: 'Record a demo run', href: '/chat.html?demo=record', icon: 'record' },
   ];
+
+  // Fixed 24x24 outline icons (stroke only). Each value is a list of SVG path "d" strings, built with createElementNS,
+  // never from an HTML string.
+  var ICONS = {
+    slides: ['M3 4h18v12H3z', 'M12 16v4', 'M8 20h8'],
+    book: ['M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z', 'M4 21V5', 'M9 7h6'],
+    play: ['M8 5v14l11-7z'],
+    bolt: ['M13 2 4 14h7l-1 8 9-12h-7z'],
+    record: ['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z', 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z'],
+    download: ['M12 3v12', 'M7 11l5 5 5-5', 'M4 21h16'],
+    toggle: ['M7 7h10a5 5 0 0 1 0 10H7A5 5 0 0 1 7 7z', 'M7 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4z'],
+    restart: ['M3 12a9 9 0 1 0 3-6.7', 'M3 4v5h5'],
+    script: ['M6 3h9l4 4v14H6z', 'M14 3v5h5', 'M9 13h7', 'M9 17h7'],
+    projects: ['M3 7h7l2 2h9v11H3z', 'M3 7V5h7l2 2']
+  };
+
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+
+  function makeIcon(name) {
+    var svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('class', 'fab-icon');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '2');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('focusable', 'false');
+    (ICONS[name] || []).forEach(function (d) {
+      var path = document.createElementNS(SVG_NS, 'path');
+      path.setAttribute('d', d);
+      svg.appendChild(path);
+    });
+    return svg;
+  }
+
+  // Fills a link or button: the icon, then the text (in its own span so it can wrap beside the icon).
+  function fillEntry(el, icon, label) {
+    el.appendChild(makeIcon(icon));
+    var text = document.createElement('span');
+    text.textContent = label;
+    el.appendChild(text);
+  }
 
   var MENU_ID = 'fabMenu';
 
@@ -46,18 +91,18 @@
     a.href = item.href;
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
-    a.textContent = item.label;
+    fillEntry(a, item.icon, item.label);
     li.appendChild(a);
     menu.appendChild(li);
   });
 
   // Demo-mode actions (see /js/demo-mode.js). These are buttons, not links, so they open nothing new.
-  function addAction(label, run) {
+  function addAction(label, icon, run) {
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
     b.className = 'fab-link fab-action';
-    b.textContent = label;
+    fillEntry(b, icon, label);
     b.addEventListener('click', run);
     li.appendChild(b);
     menu.appendChild(li);
@@ -66,19 +111,19 @@
   var demo = window.DemoMode;
   if (demo) {
     if (demo.isRecording()) {
-      addAction('Download recording', function () { demo.download(); });
+      addAction('Download recording', 'download', function () { demo.download(); });
     } else {
-      addAction(demo.isOn() ? 'Demo mode: On (turn off)' : 'Demo mode: Off (turn on)', function () { demo.toggle(); });
-      if (demo.isOn()) addAction('Restart demo', function () { demo.reset(); window.location.reload(); });
+      addAction(demo.isOn() ? 'Demo mode: On (turn off)' : 'Demo mode: Off (turn on)', 'toggle', function () { demo.toggle(); });
+      if (demo.isOn()) addAction('Restart demo', 'restart', function () { demo.reset(); window.location.reload(); });
     }
   }
 
   // Two separate windows to keep beside the app: the demo script, and the sample projects with suggested answers. Offered in
   // every mode (demo on, off or recording) and on every page that has this menu. Each reuses its window if it is open.
-  addAction('Open the demo script window', function () {
+  addAction('Open the demo script window', 'script', function () {
     window.open('/demo-script.html', 'grantflowDemoScript', 'popup=yes,width=560,height=900,left=40,top=40');
   });
-  addAction('Open the projects and answers window', function () {
+  addAction('Open the projects and answers window', 'projects', function () {
     window.open('/demo-projects.html', 'grantflowDemoProjects', 'popup=yes,width=560,height=900,left=640,top=40');
   });
 
