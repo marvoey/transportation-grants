@@ -1,0 +1,3581 @@
+{
+  "version": 1,
+  "recordedAt": "2026-11-11T21:16:30.507Z",
+  "note": "Recorded from a real run with the fictional sample project. No real client data.",
+  "discover": [
+    {
+      "lines": [
+        {
+          "t": 29,
+          "line": {
+            "type": "progress",
+            "id": "read",
+            "status": "running",
+            "message": "Sending your description to the language model to pick out the project facts…"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "progress",
+            "id": "read",
+            "status": "done",
+            "message": "The language model has read your description."
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "progress",
+            "id": "understood",
+            "status": "done",
+            "message": "Understood: Wildlife crossing / connectivity + Roadway / highway · County government · request $11 million"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "# project profile so far (each value is backed by a quote from what you wrote)"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "profile.projectTypes     = [\"wildlife_connectivity\",\"roadway\"]"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "profile.applicantType    = \"county\""
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "profile.phase            = \"planning\""
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "profile.federalAsk       = $11 million"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "profile.totalCost        = $14 million"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "profile.searchWords      = [\"wildlife overpass\",\"wildlife fencing\",\"elk and mule deer\",\"corridor study\",\"wildlife crossing\",\"highway\"]"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "progress",
+            "id": "plan",
+            "status": "running",
+            "message": "Building the search from your project…"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "progress",
+            "id": "plan",
+            "status": "done",
+            "message": "Built 2 searches: All open U.S. DOT opportunities; U.S. DOT opportunities matching: wildlife overpass, wildlife fencing, elk and mule deer, corridor study",
+            "detail": "Search words: wildlife overpass, wildlife fencing, elk and mule deer, corridor study, wildlife crossing, highway"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "cmd",
+            "text": "$ build search \"open_all\""
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "# All open U.S. DOT opportunities"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "+ filters.top_level_agency = {\"one_of\":[\"DOT\"]}   # hard filter: the agency field is reliable"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "+ filters.opportunity_status = {\"one_of\":[\"posted\",\"forecasted\"]}   # hard filter: open, or closed when history is included"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "# no query: this is a broad pull of every listing that passes the filters"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "+ pagination = page 1, 50 per page, ordered by close_date ascending"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "# not filtered, only scored afterwards: applicant type, award size, cost sharing (the listings often leave them blank)"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "cmd",
+            "text": "$ build search \"keywords\""
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "# U.S. DOT opportunities matching: wildlife overpass, wildlife fencing, elk and mule deer, corridor study"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "+ filters.top_level_agency = {\"one_of\":[\"DOT\"]}   # hard filter: the agency field is reliable"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "+ filters.opportunity_status = {\"one_of\":[\"posted\",\"forecasted\"]}   # hard filter: open, or closed when history is included"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "+ query = \"\\\"wildlife overpass\\\" \\\"wildlife fencing\\\" \\\"elk and mule deer\\\" \\\"corridor study\\\" \\\"wildlife crossing\\\"\"   # your project words (100 characters at most)"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "+ query_operator = \"OR\"   # a listing matching any word counts"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "+ pagination = page 1, 25 per page, ordered by relevancy descending"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "# not filtered, only scored afterwards: applicant type, award size, cost sharing (the listings often leave them blank)"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "http",
+            "text": "→ [open_all] POST https://api.simpler.grants.gov/v1/opportunities/search"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  X-API-Key: ••••••••   (added by the server, never shown)"
+          }
+        },
+        {
+          "t": 3277,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  Content-Type: application/json"
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "console",
+            "kind": "json",
+            "text": "{\n  \"filters\": {\n    \"top_level_agency\": {\n      \"one_of\": [\n        \"DOT\"\n      ]\n    },\n    \"opportunity_status\": {\n      \"one_of\": [\n        \"posted\",\n        \"forecasted\"\n      ]\n    }\n  },\n  \"pagination\": {\n    \"page_offset\": 1,\n    \"page_size\": 50,\n    \"sort_order\": [\n      {\n        \"order_by\": \"close_date\",\n        \"sort_direction\": \"ascending\"\n      }\n    ]\n  }\n}"
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "progress",
+            "id": "search:open_all",
+            "status": "running",
+            "message": "Sending a request to Simpler.Grants.gov: All open U.S. DOT opportunities"
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "console",
+            "kind": "http",
+            "text": "→ [keywords] POST https://api.simpler.grants.gov/v1/opportunities/search"
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  X-API-Key: ••••••••   (added by the server, never shown)"
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  Content-Type: application/json"
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "console",
+            "kind": "json",
+            "text": "{\n  \"query\": \"\\\"wildlife overpass\\\" \\\"wildlife fencing\\\" \\\"elk and mule deer\\\" \\\"corridor study\\\" \\\"wildlife crossing\\\"\",\n  \"query_operator\": \"OR\",\n  \"filters\": {\n    \"top_level_agency\": {\n      \"one_of\": [\n        \"DOT\"\n      ]\n    },\n    \"opportunity_status\": {\n      \"one_of\": [\n        \"posted\",\n        \"forecasted\"\n      ]\n    }\n  },\n  \"pagination\": {\n    \"page_offset\": 1,\n    \"page_size\": 25,\n    \"sort_order\": [\n      {\n        \"order_by\": \"relevancy\",\n        \"sort_direction\": \"descending\"\n      }\n    ]\n  }\n}"
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "progress",
+            "id": "search:keywords",
+            "status": "running",
+            "message": "Sending a request to Simpler.Grants.gov: U.S. DOT opportunities matching: wildlife overpass, wildlife fencing, elk and mule deer, corridor study",
+            "detail": "Search words: \"wildlife overpass\" \"wildlife fencing\" \"elk and mule deer\" \"corridor study\" \"wildlife crossing\""
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "console",
+            "kind": "ok",
+            "text": "← [open_all] no request sent: reused an identical search from the last few minutes"
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  total_records: 11 · returned: 11"
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  1. Fiscal Year 2026 Wildlife Crossings Pilot Program  [posted]"
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  2. FY27 Northeast Corridor Cooperative Agreement to the National Railroad Passenger Corporation  [posted]"
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  3. FY27 National Network Cooperative Agreement to the National Railroad Passenger Corporation  [posted]"
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  … and 8 more"
+          }
+        },
+        {
+          "t": 3302,
+          "line": {
+            "type": "progress",
+            "id": "search:open_all",
+            "status": "done",
+            "message": "Reused a recent result: 11 listings for All open U.S. DOT opportunities"
+          }
+        },
+        {
+          "t": 3559,
+          "line": {
+            "type": "console",
+            "kind": "ok",
+            "text": "← [keywords] 200 OK in 283 ms"
+          }
+        },
+        {
+          "t": 3559,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  total_records: 1 · returned: 1"
+          }
+        },
+        {
+          "t": 3559,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  1. Fiscal Year 2026 Wildlife Crossings Pilot Program  [posted]"
+          }
+        },
+        {
+          "t": 3559,
+          "line": {
+            "type": "progress",
+            "id": "search:keywords",
+            "status": "done",
+            "message": "Simpler.Grants.gov answered: 1 listing for U.S. DOT opportunities matching: wildlife overpass, wildlife fencing, elk and mule deer, corridor study"
+          }
+        },
+        {
+          "t": 3559,
+          "line": {
+            "type": "progress",
+            "id": "rank",
+            "status": "running",
+            "message": "Scoring 11 unique listings against your project (project words, applicant type, award size, timing)…"
+          }
+        },
+        {
+          "t": 3559,
+          "line": {
+            "type": "console",
+            "kind": "cmd",
+            "text": "$ build search \"beyond_dot\""
+          }
+        },
+        {
+          "t": 3559,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "# Transportation-tagged opportunities from any agency matching: wildlife overpass, wildlife fencing, elk and mule deer, corridor study"
+          }
+        },
+        {
+          "t": 3559,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "+ filters.opportunity_status = {\"one_of\":[\"posted\",\"forecasted\"]}   # hard filter: open, or closed when history is included"
+          }
+        },
+        {
+          "t": 3559,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "+ filters.funding_category = {\"one_of\":[\"transportation\",\"infrastructure_investment_and_jobs_act\"]}   # hard filter, only when widening beyond DOT"
+          }
+        },
+        {
+          "t": 3563,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "+ query = \"\\\"wildlife overpass\\\" \\\"wildlife fencing\\\" \\\"elk and mule deer\\\" \\\"corridor study\\\" \\\"wildlife crossing\\\"\"   # your project words (100 characters at most)"
+          }
+        },
+        {
+          "t": 3563,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "+ query_operator = \"OR\"   # a listing matching any word counts"
+          }
+        },
+        {
+          "t": 3563,
+          "line": {
+            "type": "console",
+            "kind": "add",
+            "text": "+ pagination = page 1, 25 per page, ordered by relevancy descending"
+          }
+        },
+        {
+          "t": 3563,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "# not filtered, only scored afterwards: applicant type, award size, cost sharing (the listings often leave them blank)"
+          }
+        },
+        {
+          "t": 3563,
+          "line": {
+            "type": "progress",
+            "id": "widen",
+            "status": "running",
+            "message": "Only 2 listings matched your words, so I am widening the search beyond DOT…"
+          }
+        },
+        {
+          "t": 3563,
+          "line": {
+            "type": "console",
+            "kind": "http",
+            "text": "→ [beyond_dot] POST https://api.simpler.grants.gov/v1/opportunities/search"
+          }
+        },
+        {
+          "t": 3563,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  X-API-Key: ••••••••   (added by the server, never shown)"
+          }
+        },
+        {
+          "t": 3563,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  Content-Type: application/json"
+          }
+        },
+        {
+          "t": 3563,
+          "line": {
+            "type": "console",
+            "kind": "json",
+            "text": "{\n  \"query\": \"\\\"wildlife overpass\\\" \\\"wildlife fencing\\\" \\\"elk and mule deer\\\" \\\"corridor study\\\" \\\"wildlife crossing\\\"\",\n  \"query_operator\": \"OR\",\n  \"filters\": {\n    \"opportunity_status\": {\n      \"one_of\": [\n        \"posted\",\n        \"forecasted\"\n      ]\n    },\n    \"funding_category\": {\n      \"one_of\": [\n        \"transportation\",\n        \"infrastructure_investment_and_jobs_act\"\n      ]\n    }\n  },\n  \"pagination\": {\n    \"page_offset\": 1,\n    \"page_size\": 25,\n    \"sort_order\": [\n      {\n        \"order_by\": \"relevancy\",\n        \"sort_direction\": \"descending\"\n      }\n    ]\n  }\n}"
+          }
+        },
+        {
+          "t": 3563,
+          "line": {
+            "type": "progress",
+            "id": "search:beyond_dot",
+            "status": "running",
+            "message": "Sending a request to Simpler.Grants.gov: Transportation-tagged opportunities from any agency matching: wildlife overpass, wildlife fencing, elk and mule deer, corridor study",
+            "detail": "Search words: \"wildlife overpass\" \"wildlife fencing\" \"elk and mule deer\" \"corridor study\" \"wildlife crossing\""
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "console",
+            "kind": "ok",
+            "text": "← [beyond_dot] 200 OK in 149 ms"
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  total_records: 1 · returned: 1"
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  1. Fiscal Year 2026 Wildlife Crossings Pilot Program  [posted]"
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "progress",
+            "id": "search:beyond_dot",
+            "status": "done",
+            "message": "Simpler.Grants.gov answered: 1 listing for Transportation-tagged opportunities from any agency matching: wildlife overpass, wildlife fencing, elk and mule deer, corridor study"
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "progress",
+            "id": "widen",
+            "status": "done",
+            "message": "The wider search is finished."
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "progress",
+            "id": "rank",
+            "status": "running",
+            "message": "Scoring 11 unique listings against your project…"
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "console",
+            "kind": "cmd",
+            "text": "$ rank 11 unique listings   # project words, applicant type, award size, timing"
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  1. Fiscal Year 2026 Wildlife Crossings Pilot Program  [likely]"
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  2. State Electronic Crash Data Collection  [likely]"
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  3. FY27 Northeast Corridor Cooperative Agreement to the National Railroad Passenger Corporation  [weaker]"
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "console",
+            "kind": "note",
+            "text": "  4. FY 2027 Crash Causal Factors Program  [weaker]"
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "progress",
+            "id": "rank",
+            "status": "done",
+            "message": "Scored 11 listings and chose 4 to show."
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "progress",
+            "id": "explain",
+            "status": "running",
+            "message": "Asking the language model to explain the search in plain language…"
+          }
+        },
+        {
+          "t": 3709,
+          "line": {
+            "type": "console",
+            "kind": "cmd",
+            "text": "$ explain search   # the language model writes this from your description, the requests above and the outcome"
+          }
+        },
+        {
+          "t": 8939,
+          "line": {
+            "type": "progress",
+            "id": "explain",
+            "status": "done",
+            "message": "The explanation was written from a template (the language model was not used or its text did not pass the checks)."
+          }
+        },
+        {
+          "t": 8939,
+          "line": {
+            "type": "console",
+            "kind": "ok",
+            "text": "← explanation ready (written by a template)"
+          }
+        },
+        {
+          "t": 8949,
+          "line": {
+            "type": "result",
+            "data": {
+              "preliminary": true,
+              "stage": "results",
+              "profile": {
+                "projectTypes": [
+                  {
+                    "value": "wildlife_connectivity",
+                    "quote": "build a wildlife overpass and about four miles of wildlife fencing"
+                  },
+                  {
+                    "value": "roadway",
+                    "quote": "along a two-lane highway"
+                  }
+                ],
+                "applicantType": {
+                  "value": "county",
+                  "quote": "Our county public works department"
+                },
+                "phase": {
+                  "value": "planning",
+                  "quote": "We have a completed corridor study"
+                },
+                "federalAskUsd": {
+                  "value": 11000000,
+                  "quote": "expect to request about $11 million in federal funds"
+                },
+                "totalCostUsd": {
+                  "value": 14000000,
+                  "quote": "estimate the total project cost at $14 million"
+                },
+                "stateName": {
+                  "value": "Montana",
+                  "quote": "southwestern Montana"
+                },
+                "terms": [
+                  "wildlife overpass",
+                  "wildlife fencing",
+                  "elk and mule deer",
+                  "corridor study",
+                  "wildlife crossing",
+                  "highway"
+                ]
+              },
+              "questions": [],
+              "shortlist": [
+                {
+                  "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+                  "opportunityNumber": "FHWA-WCPP-26-002",
+                  "title": "Fiscal Year 2026 Wildlife Crossings Pilot Program",
+                  "agency": "DOT Federal Highway Administration ",
+                  "status": "posted",
+                  "historical": false,
+                  "closeDate": "2026-11-16",
+                  "postDate": "2026-09-30",
+                  "awardCeiling": 80000000,
+                  "awardFloor": 0,
+                  "isCostSharing": true,
+                  "applicantTypes": [
+                    "city_or_township_governments",
+                    "other",
+                    "county_governments",
+                    "state_governments",
+                    "federally_recognized_native_american_tribal_governments",
+                    "special_district_governments"
+                  ],
+                  "match": "likely",
+                  "whyItMayFit": [
+                    "\"wildlife crossing\" appears in the title",
+                    "Tagged as a transportation program",
+                    "Lists county governments as eligible applicants",
+                    "Open for applications (posted)",
+                    "Maximum award ($80 million) covers your stated request ($11 million)"
+                  ],
+                  "watchOuts": [
+                    "Closes in 5 days (2026-11-16)",
+                    "The listing says cost sharing or matching funds are required"
+                  ],
+                  "otherEditions": 0,
+                  "additionalInfoUrl": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=128831",
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/41eb2492-6242-49f8-89ae-17d15c068be4",
+                  "readyToAssess": false
+                },
+                {
+                  "opportunityId": "17831514-d29d-4e00-8071-c319e7e79130",
+                  "opportunityNumber": "693JJ92023",
+                  "title": "State Electronic Crash Data Collection",
+                  "agency": "National Highway Traffic Safety Administration",
+                  "status": "forecasted",
+                  "historical": false,
+                  "closeDate": null,
+                  "postDate": "2023-02-02",
+                  "awardCeiling": null,
+                  "awardFloor": null,
+                  "isCostSharing": false,
+                  "applicantTypes": [
+                    "state_governments"
+                  ],
+                  "match": "likely",
+                  "whyItMayFit": [
+                    "Its description mentions \"highway\""
+                  ],
+                  "watchOuts": [
+                    "The listing's applicant types do not include county governments; check the notice",
+                    "Forecasted: not yet open, and details may change"
+                  ],
+                  "otherEditions": 0,
+                  "additionalInfoUrl": "The Guide to Updating State Crash Data Systems (DOT HS 813 217) was published to provide guidance and promote noteworthy practices to States. The Traffic Records Program Assessment Advisory, 2018 Edition (DOT HS 821 601) provides a description of the",
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/17831514-d29d-4e00-8071-c319e7e79130",
+                  "readyToAssess": false
+                },
+                {
+                  "opportunityId": "0ed6b1e2-041f-4c71-9020-91e96ea5c30b",
+                  "opportunityNumber": "FR-AMT-27-001",
+                  "title": "FY27 Northeast Corridor Cooperative Agreement to the National Railroad Passenger Corporation",
+                  "agency": "DOT - Federal Railroad Administration",
+                  "status": "posted",
+                  "historical": false,
+                  "closeDate": "2026-11-27",
+                  "postDate": "2026-10-28",
+                  "awardCeiling": 166866475,
+                  "awardFloor": 0,
+                  "isCostSharing": false,
+                  "applicantTypes": [
+                    "other"
+                  ],
+                  "match": "weaker",
+                  "whyItMayFit": [
+                    "Tagged as a transportation program",
+                    "Open for applications (posted)",
+                    "Maximum award ($166.9 million) covers your stated request ($11 million)",
+                    "No project keyword matched closely; shown because it is a transportation program"
+                  ],
+                  "watchOuts": [
+                    "Applicant types are listed only as \"other\", so check the notice to see whether county governments can apply",
+                    "Closes in 16 days (2026-11-27)"
+                  ],
+                  "otherEditions": 0,
+                  "additionalInfoUrl": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=129230",
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/0ed6b1e2-041f-4c71-9020-91e96ea5c30b",
+                  "readyToAssess": false
+                },
+                {
+                  "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+                  "opportunityNumber": "FM-CCFP-27-001",
+                  "title": "FY 2027 Crash Causal Factors Program",
+                  "agency": "DOT-Federal Motor Carrier Safety Administration",
+                  "status": "posted",
+                  "historical": false,
+                  "closeDate": "2026-12-28",
+                  "postDate": "2026-10-29",
+                  "awardCeiling": 500000,
+                  "awardFloor": 25000,
+                  "isCostSharing": false,
+                  "applicantTypes": [
+                    "special_district_governments",
+                    "state_governments",
+                    "city_or_township_governments",
+                    "county_governments"
+                  ],
+                  "match": "weaker",
+                  "whyItMayFit": [
+                    "Tagged as a transportation program",
+                    "Lists county governments as eligible applicants",
+                    "Open for applications (posted)",
+                    "No project keyword matched closely; shown because it is a transportation program"
+                  ],
+                  "watchOuts": [
+                    "Maximum award ($500K) is below your stated request ($11 million)"
+                  ],
+                  "otherEditions": 0,
+                  "additionalInfoUrl": "https://www.grantsolutions.gov/gs/preaward/previewPublicAnnouncement.do?id=129231",
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/63e23729-3766-4dc9-91dc-d1d656541c2d",
+                  "readyToAssess": false
+                }
+              ],
+              "searches": [
+                {
+                  "label": "All open U.S. DOT opportunities",
+                  "detail": "Agency: U.S. Department of Transportation. Status: posted or forecasted. Soonest deadline first.",
+                  "records": 11
+                },
+                {
+                  "label": "U.S. DOT opportunities matching: wildlife overpass, wildlife fencing, elk and mule deer, corridor study",
+                  "detail": "Agency: U.S. Department of Transportation. Status: posted or forecasted. Any of the words, best text match first.",
+                  "records": 1
+                },
+                {
+                  "label": "Transportation-tagged opportunities from any agency matching: wildlife overpass, wildlife fencing, elk and mule deer, corridor study",
+                  "detail": "Any agency. Category: transportation or infrastructure investment. Status: posted or forecasted. Any of the words, best text match first.",
+                  "records": 1
+                }
+              ],
+              "summary": "I checked 11 listings. 2 match your project's words; 2 are the closest other transportation programs, marked as weaker matches.",
+              "warnings": [],
+              "includeHistorical": false,
+              "disclaimer": "Preliminary starting point only. This list is built from public Simpler.Grants.gov listings and what you told us. It is not an eligibility determination, a recommendation, or a prediction of success. Check each notice of funding opportunity before deciding.",
+              "trace": {
+                "steps": [
+                  {
+                    "actor": "you",
+                    "title": "You described the project",
+                    "detail": "You sent 1 message (your description and any answers to the questions). Everything below starts from those words and from the two checkboxes you can tick."
+                  },
+                  {
+                    "actor": "model",
+                    "title": "The language model read your words and proposed a profile",
+                    "detail": "It proposed the project type or types, the applicant type, the stage, the amounts and up to four search words, and had to copy a quote from your own words for each one. It does not choose the filters, the address, the parameter names or any value in the request."
+                  },
+                  {
+                    "actor": "code",
+                    "title": "Code checked every proposal against your own words",
+                    "detail": "A fact is kept only if its quote really appears in what you wrote; a dollar amount is kept only if it appears in its quote, and your request and the total cost are never swapped. Anything that fails is discarded, never shown as a fact.",
+                    "items": [
+                      "Project type: Wildlife crossing / connectivity — your words: “build a wildlife overpass and about four miles of wildlife fencing”",
+                      "Project type: Roadway / highway — your words: “along a two-lane highway”",
+                      "Applicant type: county — your words: “Our county public works department”",
+                      "Stage: planning — your words: “We have a completed corridor study”",
+                      "Federal request: $11 million — your words: “expect to request about $11 million in federal funds”",
+                      "Total project cost: $14 million — your words: “estimate the total project cost at $14 million”",
+                      "State: Montana — your words: “southwestern Montana”"
+                    ]
+                  },
+                  {
+                    "actor": "code",
+                    "title": "Code decided the search words",
+                    "detail": "A search word is only used if it appears in your words or comes from code's own list for the project type (for example “infrastructure” for a bridge, because large general programs describe themselves that way and rarely name the bridge). Words are lower-cased, stripped of punctuation and search operators, and limited to six, so nothing you type can change how the search behaves.",
+                    "items": [
+                      "The model proposed: “wildlife overpass”, “wildlife fencing”, “elk and mule deer”, “corridor study”",
+                      "Kept, because they are in your words: “wildlife overpass”, “wildlife fencing”, “elk and mule deer”, “corridor study”",
+                      "Added by code from its word list for the project type (wildlife crossing / connectivity, roadway / highway): “wildlife crossing”, “highway”"
+                    ]
+                  },
+                  {
+                    "actor": "code",
+                    "title": "Code built the query string",
+                    "detail": "Phrases of several words are put in quotes, the words are joined with spaces, and the operator is OR, so a listing matches if it contains any of them. The API refuses a query longer than 100 characters, so code stops adding words before that.",
+                    "items": [
+                      "query = \"\\\"wildlife overpass\\\" \\\"wildlife fencing\\\" \\\"elk and mule deer\\\" \\\"corridor study\\\" \\\"wildlife crossing\\\"\"",
+                      "query_operator = \"OR\"",
+                      "Left out to stay under 100 characters: “highway”"
+                    ]
+                  },
+                  {
+                    "actor": "code",
+                    "title": "Code applied fixed rules for the filters",
+                    "detail": "These do not depend on the model or on how you worded things.",
+                    "items": [
+                      "Agency = DOT (U.S. Department of Transportation): the agency field is reliable in the data, and this keeps the search to transportation programs.",
+                      "Status = posted or forecasted: only listings that are open or about to open.",
+                      "Never filtered: applicant type, award size, cost sharing and funding category (except when widening). Many listings leave these blank or list “other”, so filtering on them would drop the right grant. They only affect the order, when the results are scored."
+                    ]
+                  },
+                  {
+                    "actor": "code",
+                    "title": "Code chose which searches to run",
+                    "detail": "Only 2 listings matched your words (fewer than 4), so code added a wider search across transportation-tagged programs from any agency.",
+                    "items": [
+                      "open_all: All open U.S. DOT opportunities",
+                      "keywords: U.S. DOT opportunities matching: wildlife overpass, wildlife fencing, elk and mule deer, corridor study",
+                      "beyond_dot: Transportation-tagged opportunities from any agency matching: wildlife overpass, wildlife fencing, elk and mule deer, corridor study"
+                    ]
+                  },
+                  {
+                    "actor": "code",
+                    "title": "Code sent the requests and scored the answers",
+                    "detail": "The server adds the API key itself; the language model never sees the key or the responses. Each listing returned is scored by points for your words, applicant type, timing and award size, and the best are shown. After that, the model is used twice more, and neither use changes a parameter: to write the plain-language explanation of the search, and, if you choose to assess a grant, to draft the project description."
+                  }
+                ],
+                "parameters": [
+                  {
+                    "call": "open_all",
+                    "parameter": "filters.top_level_agency",
+                    "value": "{\"one_of\":[\"DOT\"]}",
+                    "origin": "rule",
+                    "why": "Fixed rule: DOT only."
+                  },
+                  {
+                    "call": "open_all",
+                    "parameter": "filters.opportunity_status",
+                    "value": "{\"one_of\":[\"posted\",\"forecasted\"]}",
+                    "origin": "rule",
+                    "why": "Fixed rule: open listings only."
+                  },
+                  {
+                    "call": "open_all",
+                    "parameter": "pagination.page_size",
+                    "value": "50",
+                    "origin": "rule",
+                    "why": "Fixed rule: how many listings to ask for, set per kind of search."
+                  },
+                  {
+                    "call": "open_all",
+                    "parameter": "pagination.sort_order",
+                    "value": "[{\"order_by\":\"close_date\",\"sort_direction\":\"ascending\"}]",
+                    "origin": "rule",
+                    "why": "Fixed rule: soonest deadline first for the broad pull, best text match first for keyword searches."
+                  },
+                  {
+                    "call": "keywords",
+                    "parameter": "filters.top_level_agency",
+                    "value": "{\"one_of\":[\"DOT\"]}",
+                    "origin": "rule",
+                    "why": "Fixed rule: DOT only."
+                  },
+                  {
+                    "call": "keywords",
+                    "parameter": "filters.opportunity_status",
+                    "value": "{\"one_of\":[\"posted\",\"forecasted\"]}",
+                    "origin": "rule",
+                    "why": "Fixed rule: open listings only."
+                  },
+                  {
+                    "call": "keywords",
+                    "parameter": "query",
+                    "value": "\"\\\"wildlife overpass\\\" \\\"wildlife fencing\\\" \\\"elk and mule deer\\\" \\\"corridor study\\\" \\\"wildlife crossing\\\"\"",
+                    "origin": "words",
+                    "why": "Your words: proposed by the model, kept only if found in what you wrote (plus code's own words for the project type), then joined by code."
+                  },
+                  {
+                    "call": "keywords",
+                    "parameter": "query_operator",
+                    "value": "\"OR\"",
+                    "origin": "rule",
+                    "why": "Fixed rule: a listing counts if it matches any word."
+                  },
+                  {
+                    "call": "keywords",
+                    "parameter": "pagination.page_size",
+                    "value": "25",
+                    "origin": "rule",
+                    "why": "Fixed rule: how many listings to ask for, set per kind of search."
+                  },
+                  {
+                    "call": "keywords",
+                    "parameter": "pagination.sort_order",
+                    "value": "[{\"order_by\":\"relevancy\",\"sort_direction\":\"descending\"}]",
+                    "origin": "rule",
+                    "why": "Fixed rule: soonest deadline first for the broad pull, best text match first for keyword searches."
+                  },
+                  {
+                    "call": "beyond_dot",
+                    "parameter": "filters.opportunity_status",
+                    "value": "{\"one_of\":[\"posted\",\"forecasted\"]}",
+                    "origin": "rule",
+                    "why": "Fixed rule: open listings only."
+                  },
+                  {
+                    "call": "beyond_dot",
+                    "parameter": "filters.funding_category",
+                    "value": "{\"one_of\":[\"transportation\",\"infrastructure_investment_and_jobs_act\"]}",
+                    "origin": "rule",
+                    "why": "Fixed rule, used only to widen beyond DOT: transportation and infrastructure programs."
+                  },
+                  {
+                    "call": "beyond_dot",
+                    "parameter": "query",
+                    "value": "\"\\\"wildlife overpass\\\" \\\"wildlife fencing\\\" \\\"elk and mule deer\\\" \\\"corridor study\\\" \\\"wildlife crossing\\\"\"",
+                    "origin": "words",
+                    "why": "Your words: proposed by the model, kept only if found in what you wrote (plus code's own words for the project type), then joined by code."
+                  },
+                  {
+                    "call": "beyond_dot",
+                    "parameter": "query_operator",
+                    "value": "\"OR\"",
+                    "origin": "rule",
+                    "why": "Fixed rule: a listing counts if it matches any word."
+                  },
+                  {
+                    "call": "beyond_dot",
+                    "parameter": "pagination.page_size",
+                    "value": "25",
+                    "origin": "rule",
+                    "why": "Fixed rule: how many listings to ask for, set per kind of search."
+                  },
+                  {
+                    "call": "beyond_dot",
+                    "parameter": "pagination.sort_order",
+                    "value": "[{\"order_by\":\"relevancy\",\"sort_direction\":\"descending\"}]",
+                    "origin": "rule",
+                    "why": "Fixed rule: soonest deadline first for the broad pull, best text match first for keyword searches."
+                  }
+                ]
+              },
+              "scored": [
+                {
+                  "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+                  "opportunityNumber": "FHWA-WCPP-26-002",
+                  "title": "Fiscal Year 2026 Wildlife Crossings Pilot Program",
+                  "status": "posted",
+                  "historical": false,
+                  "score": 36,
+                  "match": "likely",
+                  "shown": true,
+                  "note": "Shown",
+                  "otherEditions": 0,
+                  "parts": [
+                    {
+                      "label": "“wildlife crossing” in the title",
+                      "points": 12
+                    },
+                    {
+                      "label": "Tagged as a transportation program",
+                      "points": 8
+                    },
+                    {
+                      "label": "Lists your applicant type",
+                      "points": 6
+                    },
+                    {
+                      "label": "Open for applications",
+                      "points": 6
+                    },
+                    {
+                      "label": "Maximum award covers your request",
+                      "points": 4
+                    }
+                  ],
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/41eb2492-6242-49f8-89ae-17d15c068be4"
+                },
+                {
+                  "opportunityId": "0ed6b1e2-041f-4c71-9020-91e96ea5c30b",
+                  "opportunityNumber": "FR-AMT-27-001",
+                  "title": "FY27 Northeast Corridor Cooperative Agreement to the National Railroad Passenger Corporation",
+                  "status": "posted",
+                  "historical": false,
+                  "score": 18,
+                  "match": "weaker",
+                  "shown": true,
+                  "note": "Shown as a weaker match to reach four",
+                  "otherEditions": 0,
+                  "parts": [
+                    {
+                      "label": "Tagged as a transportation program",
+                      "points": 8
+                    },
+                    {
+                      "label": "Open for applications",
+                      "points": 6
+                    },
+                    {
+                      "label": "Maximum award covers your request",
+                      "points": 4
+                    }
+                  ],
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/0ed6b1e2-041f-4c71-9020-91e96ea5c30b"
+                },
+                {
+                  "opportunityId": "63e23729-3766-4dc9-91dc-d1d656541c2d",
+                  "opportunityNumber": "FM-CCFP-27-001",
+                  "title": "FY 2027 Crash Causal Factors Program",
+                  "status": "posted",
+                  "historical": false,
+                  "score": 14,
+                  "match": "weaker",
+                  "shown": true,
+                  "note": "Shown as a weaker match to reach four",
+                  "otherEditions": 0,
+                  "parts": [
+                    {
+                      "label": "Tagged as a transportation program",
+                      "points": 8
+                    },
+                    {
+                      "label": "Lists your applicant type",
+                      "points": 6
+                    },
+                    {
+                      "label": "Open for applications",
+                      "points": 6
+                    },
+                    {
+                      "label": "Maximum award is below your request",
+                      "points": -6
+                    }
+                  ],
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/63e23729-3766-4dc9-91dc-d1d656541c2d"
+                },
+                {
+                  "opportunityId": "5269870b-a071-47ba-a076-d3fbc1955077",
+                  "opportunityNumber": "NHTSA-693JJ926R000024-FY26",
+                  "title": "Innovative Traffic Safety Enforcement (ITSE) Grant Program",
+                  "status": "posted",
+                  "historical": false,
+                  "score": 12,
+                  "match": "weaker",
+                  "shown": false,
+                  "note": "Left out: no project word matched and it is not tagged as a transportation program",
+                  "otherEditions": 0,
+                  "parts": [
+                    {
+                      "label": "Tagged for other categories only",
+                      "points": -4
+                    },
+                    {
+                      "label": "Lists your applicant type",
+                      "points": 6
+                    },
+                    {
+                      "label": "Open for applications",
+                      "points": 6
+                    },
+                    {
+                      "label": "Maximum award covers your request",
+                      "points": 4
+                    }
+                  ],
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/5269870b-a071-47ba-a076-d3fbc1955077"
+                },
+                {
+                  "opportunityId": "528f0601-d652-4708-bc74-3567f288f365",
+                  "opportunityNumber": "DOT-HASS-FY26-DIIG",
+                  "title": "FY26 US DOT Drone Infrastructure Inspection Grants (DIIG) Program",
+                  "status": "forecasted",
+                  "historical": false,
+                  "score": 10,
+                  "match": "weaker",
+                  "shown": false,
+                  "note": "Left out: enough likely matches were found",
+                  "otherEditions": 0,
+                  "parts": [
+                    {
+                      "label": "Tagged as a transportation program",
+                      "points": 8
+                    },
+                    {
+                      "label": "Lists your applicant type",
+                      "points": 6
+                    },
+                    {
+                      "label": "Forecasted, not yet open",
+                      "points": 2
+                    },
+                    {
+                      "label": "Maximum award is below your request",
+                      "points": -6
+                    }
+                  ],
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/528f0601-d652-4708-bc74-3567f288f365"
+                },
+                {
+                  "opportunityId": "8b77b132-7aac-4d20-b97e-5964e9878ad6",
+                  "opportunityNumber": "FR-AMT-27-002",
+                  "title": "FY27 National Network Cooperative Agreement to the National Railroad Passenger Corporation",
+                  "status": "posted",
+                  "historical": false,
+                  "score": 6,
+                  "match": "weaker",
+                  "shown": false,
+                  "note": "Left out: a different mode than your project",
+                  "otherEditions": 0,
+                  "parts": [
+                    {
+                      "label": "Program is for a different mode than your project",
+                      "points": -12
+                    },
+                    {
+                      "label": "Tagged as a transportation program",
+                      "points": 8
+                    },
+                    {
+                      "label": "Open for applications",
+                      "points": 6
+                    },
+                    {
+                      "label": "Maximum award covers your request",
+                      "points": 4
+                    }
+                  ],
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/8b77b132-7aac-4d20-b97e-5964e9878ad6"
+                },
+                {
+                  "opportunityId": "5cbcf015-ea67-4e2d-ba06-d129fcb90301",
+                  "opportunityNumber": "FAA-COE-JAMS",
+                  "title": "Joint Center of Excellence for Advanced Materials Research",
+                  "status": "posted",
+                  "historical": false,
+                  "score": 6,
+                  "match": "weaker",
+                  "shown": false,
+                  "note": "Left out: a different mode than your project",
+                  "otherEditions": 0,
+                  "parts": [
+                    {
+                      "label": "Program is for a different mode than your project",
+                      "points": -12
+                    },
+                    {
+                      "label": "Tagged as a transportation program",
+                      "points": 8
+                    },
+                    {
+                      "label": "Open for applications",
+                      "points": 6
+                    },
+                    {
+                      "label": "Maximum award covers your request",
+                      "points": 4
+                    }
+                  ],
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/5cbcf015-ea67-4e2d-ba06-d129fcb90301"
+                },
+                {
+                  "opportunityId": "17831514-d29d-4e00-8071-c319e7e79130",
+                  "opportunityNumber": "693JJ92023",
+                  "title": "State Electronic Crash Data Collection",
+                  "status": "forecasted",
+                  "historical": false,
+                  "score": -6,
+                  "match": "likely",
+                  "shown": true,
+                  "note": "Shown",
+                  "otherEditions": 0,
+                  "parts": [
+                    {
+                      "label": "“highway” in the description",
+                      "points": 6
+                    },
+                    {
+                      "label": "Tagged for other categories only",
+                      "points": -4
+                    },
+                    {
+                      "label": "Listed applicant types do not include yours",
+                      "points": -10
+                    },
+                    {
+                      "label": "Forecasted, not yet open",
+                      "points": 2
+                    }
+                  ],
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/17831514-d29d-4e00-8071-c319e7e79130"
+                },
+                {
+                  "opportunityId": "721d5c2c-af72-4c33-8ce6-013b1e8ad59b",
+                  "opportunityNumber": "20-01",
+                  "title": "FAA Aviation Research Grants Program",
+                  "status": "posted",
+                  "historical": false,
+                  "score": -14,
+                  "match": "weaker",
+                  "shown": false,
+                  "note": "Left out: a different mode than your project",
+                  "otherEditions": 0,
+                  "parts": [
+                    {
+                      "label": "Program is for a different mode than your project",
+                      "points": -12
+                    },
+                    {
+                      "label": "Tagged as a transportation program",
+                      "points": 8
+                    },
+                    {
+                      "label": "Listed applicant types do not include yours",
+                      "points": -10
+                    },
+                    {
+                      "label": "Open for applications",
+                      "points": 6
+                    },
+                    {
+                      "label": "Maximum award is below your request",
+                      "points": -6
+                    }
+                  ],
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/721d5c2c-af72-4c33-8ce6-013b1e8ad59b"
+                },
+                {
+                  "opportunityId": "aa81e9f0-a4bb-47d5-aa09-d26f0c2734fe",
+                  "opportunityNumber": "NHTSA-693JJ927R000007-FY27",
+                  "title": "State Process for Informing Consumers of Recalls Program",
+                  "status": "posted",
+                  "historical": false,
+                  "score": -14,
+                  "match": "weaker",
+                  "shown": false,
+                  "note": "Left out: no project word matched and it is not tagged as a transportation program",
+                  "otherEditions": 0,
+                  "parts": [
+                    {
+                      "label": "Tagged for other categories only",
+                      "points": -4
+                    },
+                    {
+                      "label": "Listed applicant types do not include yours",
+                      "points": -10
+                    },
+                    {
+                      "label": "Open for applications",
+                      "points": 6
+                    },
+                    {
+                      "label": "Maximum award is below your request",
+                      "points": -6
+                    }
+                  ],
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/aa81e9f0-a4bb-47d5-aa09-d26f0c2734fe"
+                },
+                {
+                  "opportunityId": "ca1829af-e8b7-4caa-8ab4-ae6f675492e5",
+                  "opportunityNumber": "FAA-COE-AJFE",
+                  "title": "Center of Excellence for Alternative Jet Fuels and Environment",
+                  "status": "posted",
+                  "historical": false,
+                  "score": -16,
+                  "match": "weaker",
+                  "shown": false,
+                  "note": "Left out: a different mode than your project",
+                  "otherEditions": 0,
+                  "parts": [
+                    {
+                      "label": "Program is for a different mode than your project",
+                      "points": -12
+                    },
+                    {
+                      "label": "Tagged for other categories only",
+                      "points": -4
+                    },
+                    {
+                      "label": "Listed applicant types do not include yours",
+                      "points": -10
+                    },
+                    {
+                      "label": "Open for applications",
+                      "points": 6
+                    },
+                    {
+                      "label": "Maximum award covers your request",
+                      "points": 4
+                    }
+                  ],
+                  "simplerUrl": "https://simpler.grants.gov/opportunity/ca1829af-e8b7-4caa-8ab4-ae6f675492e5"
+                }
+              ],
+              "apiCalls": [
+                {
+                  "planId": "open_all",
+                  "label": "All open U.S. DOT opportunities",
+                  "method": "POST",
+                  "url": "https://api.simpler.grants.gov/v1/opportunities/search",
+                  "headers": {
+                    "Content-Type": "application/json",
+                    "X-API-Key": "(your key, never shown)"
+                  },
+                  "body": {
+                    "filters": {
+                      "top_level_agency": {
+                        "one_of": [
+                          "DOT"
+                        ]
+                      },
+                      "opportunity_status": {
+                        "one_of": [
+                          "posted",
+                          "forecasted"
+                        ]
+                      }
+                    },
+                    "pagination": {
+                      "page_offset": 1,
+                      "page_size": 50,
+                      "sort_order": [
+                        {
+                          "order_by": "close_date",
+                          "sort_direction": "ascending"
+                        }
+                      ]
+                    }
+                  },
+                  "curl": "curl -X POST 'https://api.simpler.grants.gov/v1/opportunities/search' \\\n  -H 'Content-Type: application/json' \\\n  -H \"X-API-Key: $SIMPLER_GRANTS_API_KEY\" \\\n  -d '{\"filters\":{\"top_level_agency\":{\"one_of\":[\"DOT\"]},\"opportunity_status\":{\"one_of\":[\"posted\",\"forecasted\"]}},\"pagination\":{\"page_offset\":1,\"page_size\":50,\"sort_order\":[{\"order_by\":\"close_date\",\"sort_direction\":\"ascending\"}]}}'",
+                  "sent": false,
+                  "cached": true,
+                  "ok": true,
+                  "error": null,
+                  "returned": 11,
+                  "totalRecords": 11
+                },
+                {
+                  "planId": "keywords",
+                  "label": "U.S. DOT opportunities matching: wildlife overpass, wildlife fencing, elk and mule deer, corridor study",
+                  "method": "POST",
+                  "url": "https://api.simpler.grants.gov/v1/opportunities/search",
+                  "headers": {
+                    "Content-Type": "application/json",
+                    "X-API-Key": "(your key, never shown)"
+                  },
+                  "body": {
+                    "query": "\"wildlife overpass\" \"wildlife fencing\" \"elk and mule deer\" \"corridor study\" \"wildlife crossing\"",
+                    "query_operator": "OR",
+                    "filters": {
+                      "top_level_agency": {
+                        "one_of": [
+                          "DOT"
+                        ]
+                      },
+                      "opportunity_status": {
+                        "one_of": [
+                          "posted",
+                          "forecasted"
+                        ]
+                      }
+                    },
+                    "pagination": {
+                      "page_offset": 1,
+                      "page_size": 25,
+                      "sort_order": [
+                        {
+                          "order_by": "relevancy",
+                          "sort_direction": "descending"
+                        }
+                      ]
+                    }
+                  },
+                  "curl": "curl -X POST 'https://api.simpler.grants.gov/v1/opportunities/search' \\\n  -H 'Content-Type: application/json' \\\n  -H \"X-API-Key: $SIMPLER_GRANTS_API_KEY\" \\\n  -d '{\"query\":\"\\\"wildlife overpass\\\" \\\"wildlife fencing\\\" \\\"elk and mule deer\\\" \\\"corridor study\\\" \\\"wildlife crossing\\\"\",\"query_operator\":\"OR\",\"filters\":{\"top_level_agency\":{\"one_of\":[\"DOT\"]},\"opportunity_status\":{\"one_of\":[\"posted\",\"forecasted\"]}},\"pagination\":{\"page_offset\":1,\"page_size\":25,\"sort_order\":[{\"order_by\":\"relevancy\",\"sort_direction\":\"descending\"}]}}'",
+                  "sent": true,
+                  "cached": false,
+                  "ok": true,
+                  "error": null,
+                  "returned": 1,
+                  "totalRecords": 1
+                },
+                {
+                  "planId": "beyond_dot",
+                  "label": "Transportation-tagged opportunities from any agency matching: wildlife overpass, wildlife fencing, elk and mule deer, corridor study",
+                  "method": "POST",
+                  "url": "https://api.simpler.grants.gov/v1/opportunities/search",
+                  "headers": {
+                    "Content-Type": "application/json",
+                    "X-API-Key": "(your key, never shown)"
+                  },
+                  "body": {
+                    "query": "\"wildlife overpass\" \"wildlife fencing\" \"elk and mule deer\" \"corridor study\" \"wildlife crossing\"",
+                    "query_operator": "OR",
+                    "filters": {
+                      "opportunity_status": {
+                        "one_of": [
+                          "posted",
+                          "forecasted"
+                        ]
+                      },
+                      "funding_category": {
+                        "one_of": [
+                          "transportation",
+                          "infrastructure_investment_and_jobs_act"
+                        ]
+                      }
+                    },
+                    "pagination": {
+                      "page_offset": 1,
+                      "page_size": 25,
+                      "sort_order": [
+                        {
+                          "order_by": "relevancy",
+                          "sort_direction": "descending"
+                        }
+                      ]
+                    }
+                  },
+                  "curl": "curl -X POST 'https://api.simpler.grants.gov/v1/opportunities/search' \\\n  -H 'Content-Type: application/json' \\\n  -H \"X-API-Key: $SIMPLER_GRANTS_API_KEY\" \\\n  -d '{\"query\":\"\\\"wildlife overpass\\\" \\\"wildlife fencing\\\" \\\"elk and mule deer\\\" \\\"corridor study\\\" \\\"wildlife crossing\\\"\",\"query_operator\":\"OR\",\"filters\":{\"opportunity_status\":{\"one_of\":[\"posted\",\"forecasted\"]},\"funding_category\":{\"one_of\":[\"transportation\",\"infrastructure_investment_and_jobs_act\"]}},\"pagination\":{\"page_offset\":1,\"page_size\":25,\"sort_order\":[{\"order_by\":\"relevancy\",\"sort_direction\":\"descending\"}]}}'",
+                  "sent": true,
+                  "cached": false,
+                  "ok": true,
+                  "error": null,
+                  "returned": 1,
+                  "totalRecords": 1
+                }
+              ],
+              "explanation": {
+                "text": "I looked through open U.S. Department of Transportation opportunities on Simpler.Grants.gov, and then transportation-tagged opportunities from other agencies because few matched. For your wildlife crossing / connectivity and roadway / highway project, I searched for \"wildlife overpass\" \"wildlife fencing\" \"elk and mule deer\" \"corridor study\" \"wildlife crossing\" and kept a listing if it matched any of those words. Applicant type, award size and cost sharing were not used to exclude anything; they only affected the order. 11 listings were checked and 4 are shown.",
+                "source": "code"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "assess": [
+    {
+      "lines": [
+        {
+          "t": 30,
+          "line": {
+            "type": "progress",
+            "id": "load",
+            "status": "running",
+            "message": "Loading the extracted requirements for this opportunity…"
+          }
+        },
+        {
+          "t": 43,
+          "line": {
+            "type": "progress",
+            "id": "load",
+            "status": "done",
+            "message": "Loaded 33 requirements for Fiscal Year 2026 Wildlife Crossings Pilot Program."
+          }
+        },
+        {
+          "t": 43,
+          "line": {
+            "type": "progress",
+            "id": "read",
+            "status": "running",
+            "message": "Sending your message to the language model to read the facts you stated…"
+          }
+        },
+        {
+          "t": 8267,
+          "line": {
+            "type": "progress",
+            "id": "read",
+            "status": "done",
+            "message": "Read 9 new facts from your message."
+          }
+        },
+        {
+          "t": 8267,
+          "line": {
+            "type": "progress",
+            "id": "rules",
+            "status": "running",
+            "message": "Applying the notice's exact rules (amounts, match, required documents) to the facts you gave…"
+          }
+        },
+        {
+          "t": 8267,
+          "line": {
+            "type": "progress",
+            "id": "rules",
+            "status": "done",
+            "message": "Checked 33 requirements: 0 do not apply to this project, 3 are optional wording, 7 need the language model to interpret."
+          }
+        },
+        {
+          "t": 8267,
+          "line": {
+            "type": "progress",
+            "id": "interpret",
+            "status": "running",
+            "message": "Asking the language model to interpret 7 conditions in 1 batch…"
+          }
+        },
+        {
+          "t": 13070,
+          "line": {
+            "type": "progress",
+            "id": "interpret",
+            "status": "running",
+            "message": "Interpreting conditions with the language model: 1 of 1 batch done…"
+          }
+        },
+        {
+          "t": 13070,
+          "line": {
+            "type": "progress",
+            "id": "interpret",
+            "status": "done",
+            "message": "Interpreted 7 conditions (1 new model call, 0 reused from earlier)."
+          }
+        },
+        {
+          "t": 13070,
+          "line": {
+            "type": "progress",
+            "id": "summary",
+            "status": "running",
+            "message": "Building the findings, the follow-up questions and the summary…"
+          }
+        },
+        {
+          "t": 13070,
+          "line": {
+            "type": "progress",
+            "id": "summary",
+            "status": "done",
+            "message": "Built 30 findings and 1 follow-up question."
+          }
+        },
+        {
+          "t": 13072,
+          "line": {
+            "type": "result",
+            "data": {
+              "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+              "opportunity": {
+                "title": "Fiscal Year 2026 Wildlife Crossings Pilot Program",
+                "opportunityNumber": "FHWA-WCPP-26-002",
+                "status": "posted"
+              },
+              "facts": {
+                "applicantType": {
+                  "value": "county",
+                  "provenance": "user",
+                  "quote": "We are the county public works department"
+                },
+                "stateName": {
+                  "value": "Montana",
+                  "provenance": "user",
+                  "quote": "southwestern Montana"
+                },
+                "grantCategory": {
+                  "value": "capital",
+                  "provenance": "user",
+                  "quote": "construct a wildlife overpass along with about four miles of wildlife fencing"
+                },
+                "areaType": {
+                  "value": "rural",
+                  "provenance": "user",
+                  "quote": "two-lane rural highway"
+                },
+                "totalProjectCostUsd": {
+                  "value": 14000000,
+                  "provenance": "user",
+                  "quote": "$14 million"
+                },
+                "requestedFederalUsd": {
+                  "value": 11000000,
+                  "provenance": "user",
+                  "quote": "about $11 million in federal funds"
+                },
+                "projectDescription": {
+                  "value": "Construct a wildlife overpass and about four miles of wildlife fencing on a two-lane rural highway where elk and mule deer are regularly struck by vehicles, in a corridor connecting two large blocks of national forest known for wildlife-vehicle crashes.",
+                  "provenance": "user",
+                  "quote": "our project is to construct a wildlife overpass along with about four miles of wildlife fencing on a two-lane rural highway where elk and mule deer are regularly struck by vehicles"
+                },
+                "activities": {
+                  "value": [
+                    "construct a wildlife overpass",
+                    "install about four miles of wildlife fencing"
+                  ],
+                  "provenance": "user",
+                  "quote": "construct a wildlife overpass along with about four miles of wildlife fencing"
+                },
+                "designStatus": {
+                  "value": "Design work on the project has not yet started.",
+                  "provenance": "user",
+                  "quote": "Design work on the project has not yet started."
+                }
+              },
+              "newFacts": [
+                "applicantType",
+                "stateName",
+                "grantCategory",
+                "areaType",
+                "totalProjectCostUsd",
+                "requestedFederalUsd",
+                "projectDescription",
+                "activities",
+                "designStatus"
+              ],
+              "rejectedFacts": [],
+              "derived": {
+                "requestedFederalUsd": 11000000,
+                "otherFederalFundsUsd": null,
+                "nonFederalMatchUsd": null,
+                "totalProjectCostUsd": 14000000,
+                "impliedTotalUsd": null,
+                "totalUsedUsd": 14000000,
+                "totalSource": "stated",
+                "federalSharePct": 78.57,
+                "nonFederalSharePct": null,
+                "assumptions": [
+                  "Assumes no other federal funds, since none were stated."
+                ],
+                "consistency": {
+                  "status": "incomplete",
+                  "message": "Not enough amounts have been given to check that the numbers add up."
+                }
+              },
+              "findings": [
+                {
+                  "requirementId": "req-4216687b",
+                  "title": "Applicant must be registered in SAM.gov before submitting application",
+                  "category": "application",
+                  "topic": "registration",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 10,
+                      "section": null,
+                      "quote": "Be registered in System for Award Management (SAM) at SAM.gov before submitting its application;",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-fd50ac9f",
+                  "title": "Applicant must maintain active SAM.gov registration during application consideration",
+                  "category": "application",
+                  "topic": "registration",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 11,
+                      "section": null,
+                      "quote": "Continue to maintain an active registration in SAM.gov with current information at all times during which it has an active Federal award or an application under consideration by a Federal Agency.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-a605c2db",
+                  "title": "Applicant must provide a valid Unique Entity Identifier",
+                  "category": "application",
+                  "topic": "registration",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 10,
+                      "section": null,
+                      "quote": "Provide a valid Unique Entity Identifier in its application; and",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-f64a4d21",
+                  "title": "Applicants must complete the WCPP Application Template",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 9,
+                      "section": null,
+                      "quote": "Applicants must complete the WCPP Template and include it as an attachment to Item 15 of their SF-424.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-ae74c5e5",
+                  "title": "Application Closing Date and Deadline Time",
+                  "category": "application",
+                  "topic": "deadline",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 3,
+                      "section": null,
+                      "quote": "Application Due Date: 11/16/2026 [45 day application\nperiod] at 11:59 PM EST.",
+                      "authority": "controlling"
+                    },
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "Applications determined to be late, duplicates of applications submitted for the same round of applications, or incomplete will not be reviewed under this funding opportunity.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-786395f8",
+                  "title": "Application must include project budget with Federal and non-Federal funding breakdown",
+                  "category": "funding",
+                  "topic": "budget",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 10,
+                      "section": null,
+                      "quote": "The budget must list the amount and percentage of both the Federal funding requested and any additional non-Federal funds, if any, to be used to pay for the project.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "No budget information, Federal or non-Federal funding breakdown, is provided in the facts."
+                },
+                {
+                  "requirementId": "req-061fe090",
+                  "title": "Application submission deadline of November 16, 2026",
+                  "category": "application",
+                  "topic": "deadline",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 11,
+                      "section": null,
+                      "quote": "FY 2026 WCPP applications must be submitted through Grants.gov by 11:59 PM EST on November 16, 2026.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-1e40a4ec",
+                  "title": "Applications must be submitted electronically through Grants.gov",
+                  "category": "application",
+                  "topic": "submission_method",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 9,
+                      "section": null,
+                      "quote": "All applications must be submitted electronically through www.grants.gov.",
+                      "authority": "controlling"
+                    },
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 11,
+                      "section": null,
+                      "quote": "All applications must be submitted electronically through Grants.gov. DOT does not accept applications via mail, fax, email, or other means.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-4ef477ae",
+                  "title": "Applications must meet minimum cost share to be eligible",
+                  "category": "eligibility",
+                  "topic": "other",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "Per Section A, applications not providing at least the required minimum non-Federal cost share will be determined ineligible.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "No information about cost share amounts is provided, so compliance with minimum non-Federal cost share cannot be determined."
+                },
+                {
+                  "requirementId": "req-7fa409b5",
+                  "title": "Compliance with Submission Deadlines Required for Consideration",
+                  "category": "application",
+                  "topic": "deadline",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 11,
+                      "section": null,
+                      "quote": "Only applicants who comply with all submission deadlines described in this notice and\nelectronically submit valid, on-time applications through Grants.gov will be eligible for\nevaluation and possible selection for award.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-36af9171",
+                  "title": "Costs incurred prior to award are ineligible",
+                  "category": "funding",
+                  "topic": "pre_award_costs",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 22,
+                      "section": null,
+                      "quote": "Unless authorized by DOT in writing after announcement of FY 2026 WCPP grant selections, any costs incurred prior to DOT’s obligation of funds for a project are ineligible for reimbursement and are ineligible cost-share requirements.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "No information is given about whether any project costs have already been incurred prior to a potential award."
+                },
+                {
+                  "requirementId": "req-d5dff48b",
+                  "title": "Demonstrate consideration of physical and cyber security risks prior to grant agreement signing",
+                  "category": "readiness",
+                  "topic": "risk",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 23,
+                      "section": null,
+                      "quote": "Each applicant selected for Federal funding must demonstrate, prior to the signing of the grant agreement, effort to consider and address physical and cyber security risks relevant to the transportation mode and type and scale of the project.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-87ef0e84",
+                  "title": "Disclosure of litigation or public controversy",
+                  "category": "readiness",
+                  "topic": "risk",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 17,
+                      "section": null,
+                      "quote": "The applicant must disclose if there is open litigation concerning the project; or, if there is known, and difficult to resolve, public controversy, or agency opposition to the project on environmental grounds.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-ed6bb110",
+                  "title": "Late, duplicate, or incomplete applications will not be reviewed",
+                  "category": "eligibility",
+                  "topic": "other",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "Applications determined to be late, duplicates of applications submitted for the same round of applications, or incomplete will not be reviewed under this funding opportunity.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "No information is given about whether the application was timely, duplicate, or complete."
+                },
+                {
+                  "requirementId": "req-d253fe25",
+                  "title": "Mandatory Application Template",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 4,
+                      "section": null,
+                      "quote": "Changed the use of the application template from optional to mandatory.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-bc1c2785",
+                  "title": "Minimum 20 Percent Non-Federal Cost Share",
+                  "category": "funding",
+                  "topic": "non_federal_match",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [
+                    "nonFederalMatchUsd",
+                    "totalProjectCostUsd"
+                  ],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 4,
+                      "section": null,
+                      "quote": "WCPP requires a non-Federal cost share of 20 percent from all recipients unless an exception applies (see B.3, below). Applicants who do not provide the required non-Federal cost share will be classified as ineligible.",
+                      "authority": "controlling"
+                    },
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "WCPP requires a non-Federal cost share of 20 percent.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "deterministic",
+                  "explanation": "Need the non-federal match and the total project cost to check the 20% minimum match."
+                },
+                {
+                  "requirementId": "req-36ed3ae9",
+                  "title": "No Duplicate or Incomplete Applications",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "Applications determined to be late, duplicates of applications submitted for the same round of applications, or incomplete will not be reviewed under this funding opportunity.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-dbc9de81",
+                  "title": "Only on-time, valid electronic submissions eligible for evaluation",
+                  "category": "eligibility",
+                  "topic": "deadline",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 11,
+                      "section": null,
+                      "quote": "Only applicants who comply with all submission deadlines described in this notice and electronically submit valid, on-time applications through Grants.gov will be eligible for evaluation and possible selection for award.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "No information about submission method, deadline compliance, or Grants.gov use is provided."
+                },
+                {
+                  "requirementId": "req-25160b5b",
+                  "title": "Previously Incurred Costs Not Counted Toward Match",
+                  "category": "funding",
+                  "topic": "non_federal_match",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [
+                    "nonFederalMatchUsd",
+                    "matchCommitted"
+                  ],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "DOT will not consider previously incurred costs or previously expended or encumbered funds toward the matching requirements for any project.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Cannot be evaluated yet: the non-federal match amount and whether the match is committed is not stated."
+                },
+                {
+                  "requirementId": "req-bb9f9fc6",
+                  "title": "Required application package forms",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 9,
+                      "section": null,
+                      "quote": "The WCPP Application Template (see Section D.2) must be added as an attachment to item 15 of the SF-424.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-f1e4e6fd",
+                  "title": "State DOT Administration Requirement for Non-FLMA/Tribe Recipients",
+                  "category": "readiness",
+                  "topic": "applicant_capacity",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "If the grant recipient is any eligible entity other than an Indian Tribe or an FLMA, then, pursuant to 23 U.S.C. 171(f)(2)(A)(ii), the State DOT of the State in which the project is located must administer the grant. For these recipients, the State DOT must directly administer the project on behalf of the recipient or administer and oversee the project by serving as a pass-through entity for the recipient (23 U.S.C. 171(f)(2)(A)(ii)). These recipients may not request FHWA to administer the grant directly. FHWA cannot award a grant to these recipients if the State DOT does not agree to administer the grant.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-1ed549ad",
+                  "title": "State Highway Agency Consultation Documentation Required",
+                  "category": "eligibility",
+                  "topic": "application_content",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [
+                    "applicantType"
+                  ],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 5,
+                      "section": null,
+                      "quote": "If an application is submitted by an eligible entity other than a State DOT or an FLMA, the application shall include documentation that the State highway agency, or an equivalent of that agency, of the State in which the eligible entity is located, was consulted during the development of the application (23 U.S.C. 171(d)(2)). For Tribes, such consultation shall be required only for projects not located on Tribal lands. DOT will not review applications that fail to provide sufficient documentation of consultation, and such applications will not be eligible for funding.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "Applicant is a county, not a State DOT or FLMA, so consultation documentation would be required, but no information is given about whether such consultation occurred."
+                },
+                {
+                  "requirementId": "req-29069f76",
+                  "title": "Application formatting requirements",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 9,
+                      "section": null,
+                      "quote": "Application files should be single-spaced, 12-point standard font (e.g., Times New Roman), with 1-inch margins. Files should be in PDF unless otherwise specified (e.g., Excel based forms and location files such as Shapefile or KML/KMZ).",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-9a9fab64",
+                  "title": "Demonstrate Availability of Matching Funds and Complete Funding Package",
+                  "category": "readiness",
+                  "topic": "budget",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 16,
+                      "section": null,
+                      "quote": "The Financial Completeness Assessment evaluates the availability of matching funds and\nwhether the applicant presented a complete funding package and will receive a rating of\nComplete (3), Partially Complete (2), or Incomplete (1), as defined in the table below.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-6bc9ea27",
+                  "title": "Demonstrate Commitment to Timely Project Delivery via Schedule Information",
+                  "category": "readiness",
+                  "topic": "schedule",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [
+                    "designStatus"
+                  ],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 16,
+                      "section": null,
+                      "quote": "C. The applicant demonstrates a\ncommitment for timely\nproject delivery as\ndemonstrated by the schedule\ninformation in the\napplication.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "Design work has not yet started and no schedule information is provided, so timely delivery commitment cannot be assessed."
+                },
+                {
+                  "requirementId": "req-a414771e",
+                  "title": "Demonstrate Technical and Staffing Resources to Deliver Project",
+                  "category": "readiness",
+                  "topic": "applicant_capacity",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 16,
+                      "section": null,
+                      "quote": "A. The applicant has the\ntechnical and staffing\nresources to deliver the\nproject.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-9b579a9a",
+                  "title": "Description of Applicant Role with Partners",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 5,
+                      "section": null,
+                      "quote": "Applicants are asked to describe their role with expected partners and other applicants in their applications.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-8f220b5d",
+                  "title": "Joint Application Lead Applicant and Roles Description",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 5,
+                      "section": null,
+                      "quote": "Multiple entities submitting a joint application should identify a lead applicant as the primary point of contact (POC) and recipient for purposes of financial administration of the project. Joint applications should include a description of the roles and responsibilities of each applicant and should be signed by each applicant.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-cccd8a76",
+                  "title": "Provide Verifiable Supporting Data and Documentation",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 11,
+                      "section": null,
+                      "quote": "To the extent practicable, applicants should provide supporting data and documentation in a form\ndirectly verifiable by DOT.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-4a8ebf3e",
+                  "title": "Eligible Applicant Types",
+                  "category": "eligibility",
+                  "topic": "applicant_type",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [
+                    "applicantType"
+                  ],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 3,
+                      "section": null,
+                      "quote": "Eligible applicants under the WCPP are:\n State Department of Transportation (State DOT);\n Metropolitan planning organization (MPO);\n Units of local government2;\n A regional transportation authority;",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "supported",
+                  "method": "deterministic",
+                  "explanation": "A county applicant fits the eligible applicant \"unit of local government\"."
+                }
+              ],
+              "notApplicable": [],
+              "skippedCount": 3,
+              "questions": [
+                {
+                  "group": "costMatch",
+                  "factKeys": [
+                    "nonFederalMatchUsd",
+                    "totalProjectCostUsd",
+                    "matchCommitted"
+                  ],
+                  "text": "What is the total project cost, how much non-federal match funding is available (for example state or local funds), and is that match committed?",
+                  "because": [
+                    {
+                      "requirementId": "req-bc1c2785",
+                      "title": "Minimum 20 Percent Non-Federal Cost Share",
+                      "source": {
+                        "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                        "page": 4,
+                        "section": null,
+                        "quote": "WCPP requires a non-Federal cost share of 20 percent from all recipients unless an exception applies (see B.3, below). Applicants who do not provide the required non-Federal cost share will be classified as ineligible.",
+                        "authority": "controlling"
+                      }
+                    },
+                    {
+                      "requirementId": "req-25160b5b",
+                      "title": "Previously Incurred Costs Not Counted Toward Match",
+                      "source": {
+                        "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                        "page": 6,
+                        "section": null,
+                        "quote": "DOT will not consider previously incurred costs or previously expended or encumbered funds toward the matching requirements for any project.",
+                        "authority": "controlling"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "advisory": {
+                "label": "Preliminary assessment",
+                "headline": "Of 30 requirements considered: 1 condition that looks supported by what you stated, 29 not yet evaluated.",
+                "counts": {
+                  "assessed": 30,
+                  "supported": 1,
+                  "conflicts": 0,
+                  "gaps": 0,
+                  "needsSpecialistReview": 0,
+                  "unknown": 29,
+                  "notApplicable": 0
+                },
+                "keyFindings": [],
+                "nextSteps": [
+                  "Tell us: What is the total project cost, how much non-federal match funding is available (for example state or local funds), and is that match committed?",
+                  "Work through the application checklist: 15 application items have not been evidenced yet.",
+                  "Confirm the final requirements and any amendments with the program office before relying on this screening."
+                ],
+                "disclaimer": "Preliminary screening based only on what you have told us and on requirements extracted from the notice. It is not an official eligibility determination and does not predict an award. Confirm with the program office."
+              },
+              "requirements": {
+                "generatedAt": "2026-11-11T21:15:17.092Z",
+                "status": "complete",
+                "total": 33,
+                "needsReview": 7,
+                "verified": 0,
+                "model": "claude-sonnet-5"
+              },
+              "interpretation": {
+                "requirements": 7,
+                "modelCalls": 1,
+                "cacheHits": 0
+              },
+              "warnings": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "t": 323,
+          "line": {
+            "type": "progress",
+            "id": "load",
+            "status": "running",
+            "message": "Loading the extracted requirements for this opportunity…"
+          }
+        },
+        {
+          "t": 332,
+          "line": {
+            "type": "progress",
+            "id": "load",
+            "status": "done",
+            "message": "Loaded 33 requirements for Fiscal Year 2026 Wildlife Crossings Pilot Program."
+          }
+        },
+        {
+          "t": 332,
+          "line": {
+            "type": "progress",
+            "id": "read",
+            "status": "running",
+            "message": "Sending your message to the language model to read the facts you stated…"
+          }
+        },
+        {
+          "t": 6437,
+          "line": {
+            "type": "progress",
+            "id": "read",
+            "status": "done",
+            "message": "Read 12 new facts from your message."
+          }
+        },
+        {
+          "t": 6437,
+          "line": {
+            "type": "progress",
+            "id": "rules",
+            "status": "running",
+            "message": "Applying the notice's exact rules (amounts, match, required documents) to the facts you gave…"
+          }
+        },
+        {
+          "t": 6437,
+          "line": {
+            "type": "progress",
+            "id": "rules",
+            "status": "done",
+            "message": "Checked 33 requirements: 0 do not apply to this project, 3 are optional wording, 7 need the language model to interpret."
+          }
+        },
+        {
+          "t": 6437,
+          "line": {
+            "type": "progress",
+            "id": "interpret",
+            "status": "running",
+            "message": "Asking the language model to interpret 7 conditions in 1 batch…"
+          }
+        },
+        {
+          "t": 10822,
+          "line": {
+            "type": "progress",
+            "id": "interpret",
+            "status": "running",
+            "message": "Interpreting conditions with the language model: 1 of 1 batch done…"
+          }
+        },
+        {
+          "t": 10822,
+          "line": {
+            "type": "progress",
+            "id": "interpret",
+            "status": "done",
+            "message": "Interpreted 7 conditions (1 new model call, 0 reused from earlier)."
+          }
+        },
+        {
+          "t": 10822,
+          "line": {
+            "type": "progress",
+            "id": "summary",
+            "status": "running",
+            "message": "Building the findings, the follow-up questions and the summary…"
+          }
+        },
+        {
+          "t": 10822,
+          "line": {
+            "type": "progress",
+            "id": "summary",
+            "status": "done",
+            "message": "Built 30 findings and 0 follow-up questions."
+          }
+        },
+        {
+          "t": 10823,
+          "line": {
+            "type": "result",
+            "data": {
+              "opportunityId": "41eb2492-6242-49f8-89ae-17d15c068be4",
+              "opportunity": {
+                "title": "Fiscal Year 2026 Wildlife Crossings Pilot Program",
+                "opportunityNumber": "FHWA-WCPP-26-002",
+                "status": "posted"
+              },
+              "facts": {
+                "applicantType": {
+                  "value": "county",
+                  "provenance": "user",
+                  "quote": "we are the county public works department"
+                },
+                "stateName": {
+                  "value": "Montana",
+                  "provenance": "user",
+                  "quote": "southwestern Montana"
+                },
+                "grantCategory": {
+                  "value": "capital",
+                  "provenance": "user",
+                  "quote": "our project is to construct a wildlife overpass"
+                },
+                "areaType": {
+                  "value": "rural",
+                  "provenance": "user",
+                  "quote": "two-lane rural highway"
+                },
+                "totalProjectCostUsd": {
+                  "value": 14000000,
+                  "provenance": "user",
+                  "quote": "The total project cost is $14 million."
+                },
+                "requestedFederalUsd": {
+                  "value": 11000000,
+                  "provenance": "user",
+                  "quote": "We would request $11 million in federal funds"
+                },
+                "nonFederalMatchUsd": {
+                  "value": 3000000,
+                  "provenance": "user",
+                  "quote": "the remaining $3 million is non-federal match from state and local funds"
+                },
+                "matchCommitted": {
+                  "value": true,
+                  "provenance": "user",
+                  "quote": "That match is committed in our adopted budget."
+                },
+                "projectDescription": {
+                  "value": "Construction of a wildlife overpass along with about four miles of wildlife fencing on a two-lane rural highway where elk and mule deer are regularly struck by vehicles, connecting two large blocks of national forest.",
+                  "provenance": "user",
+                  "quote": "our project is to construct a wildlife overpass along with about four miles of wildlife fencing on a two-lane rural highway where elk and mule deer are regularly struck by vehicles"
+                },
+                "activities": {
+                  "value": [
+                    "construct wildlife overpass",
+                    "install four miles of wildlife fencing"
+                  ],
+                  "provenance": "user",
+                  "quote": "construct a wildlife overpass along with about four miles of wildlife fencing"
+                },
+                "designStatus": {
+                  "value": "Design work on the project has not yet started.",
+                  "provenance": "user",
+                  "quote": "Design work on the project has not yet started."
+                },
+                "environmentalStatus": {
+                  "value": "Completed a corridor study and secured a letter of support from the state wildlife agency.",
+                  "provenance": "user",
+                  "quote": "We have completed a corridor study and secured a letter of support from the state wildlife agency."
+                }
+              },
+              "newFacts": [
+                "applicantType",
+                "stateName",
+                "grantCategory",
+                "areaType",
+                "totalProjectCostUsd",
+                "requestedFederalUsd",
+                "nonFederalMatchUsd",
+                "matchCommitted",
+                "projectDescription",
+                "activities",
+                "designStatus",
+                "environmentalStatus"
+              ],
+              "rejectedFacts": [],
+              "derived": {
+                "requestedFederalUsd": 11000000,
+                "otherFederalFundsUsd": null,
+                "nonFederalMatchUsd": 3000000,
+                "totalProjectCostUsd": 14000000,
+                "impliedTotalUsd": 14000000,
+                "totalUsedUsd": 14000000,
+                "totalSource": "stated",
+                "federalSharePct": 78.57,
+                "nonFederalSharePct": 21.43,
+                "assumptions": [
+                  "Assumes no other federal funds, since none were stated."
+                ],
+                "consistency": {
+                  "status": "consistent",
+                  "message": "The amounts add up: $11,000,000 + $3,000,000 = $14,000,000, which matches the stated total project cost of $14,000,000."
+                }
+              },
+              "findings": [
+                {
+                  "requirementId": "req-4216687b",
+                  "title": "Applicant must be registered in SAM.gov before submitting application",
+                  "category": "application",
+                  "topic": "registration",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 10,
+                      "section": null,
+                      "quote": "Be registered in System for Award Management (SAM) at SAM.gov before submitting its application;",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-fd50ac9f",
+                  "title": "Applicant must maintain active SAM.gov registration during application consideration",
+                  "category": "application",
+                  "topic": "registration",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 11,
+                      "section": null,
+                      "quote": "Continue to maintain an active registration in SAM.gov with current information at all times during which it has an active Federal award or an application under consideration by a Federal Agency.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-a605c2db",
+                  "title": "Applicant must provide a valid Unique Entity Identifier",
+                  "category": "application",
+                  "topic": "registration",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 10,
+                      "section": null,
+                      "quote": "Provide a valid Unique Entity Identifier in its application; and",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-f64a4d21",
+                  "title": "Applicants must complete the WCPP Application Template",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 9,
+                      "section": null,
+                      "quote": "Applicants must complete the WCPP Template and include it as an attachment to Item 15 of their SF-424.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-ae74c5e5",
+                  "title": "Application Closing Date and Deadline Time",
+                  "category": "application",
+                  "topic": "deadline",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 3,
+                      "section": null,
+                      "quote": "Application Due Date: 11/16/2026 [45 day application\nperiod] at 11:59 PM EST.",
+                      "authority": "controlling"
+                    },
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "Applications determined to be late, duplicates of applications submitted for the same round of applications, or incomplete will not be reviewed under this funding opportunity.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-786395f8",
+                  "title": "Application must include project budget with Federal and non-Federal funding breakdown",
+                  "category": "funding",
+                  "topic": "budget",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 10,
+                      "section": null,
+                      "quote": "The budget must list the amount and percentage of both the Federal funding requested and any additional non-Federal funds, if any, to be used to pay for the project.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "No budget or funding breakdown information is included in the stated facts."
+                },
+                {
+                  "requirementId": "req-061fe090",
+                  "title": "Application submission deadline of November 16, 2026",
+                  "category": "application",
+                  "topic": "deadline",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 11,
+                      "section": null,
+                      "quote": "FY 2026 WCPP applications must be submitted through Grants.gov by 11:59 PM EST on November 16, 2026.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-1e40a4ec",
+                  "title": "Applications must be submitted electronically through Grants.gov",
+                  "category": "application",
+                  "topic": "submission_method",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 9,
+                      "section": null,
+                      "quote": "All applications must be submitted electronically through www.grants.gov.",
+                      "authority": "controlling"
+                    },
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 11,
+                      "section": null,
+                      "quote": "All applications must be submitted electronically through Grants.gov. DOT does not accept applications via mail, fax, email, or other means.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-4ef477ae",
+                  "title": "Applications must meet minimum cost share to be eligible",
+                  "category": "eligibility",
+                  "topic": "other",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "Per Section A, applications not providing at least the required minimum non-Federal cost share will be determined ineligible.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "No information on non-Federal cost share amount is provided in the facts."
+                },
+                {
+                  "requirementId": "req-7fa409b5",
+                  "title": "Compliance with Submission Deadlines Required for Consideration",
+                  "category": "application",
+                  "topic": "deadline",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 11,
+                      "section": null,
+                      "quote": "Only applicants who comply with all submission deadlines described in this notice and\nelectronically submit valid, on-time applications through Grants.gov will be eligible for\nevaluation and possible selection for award.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-36af9171",
+                  "title": "Costs incurred prior to award are ineligible",
+                  "category": "funding",
+                  "topic": "pre_award_costs",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 22,
+                      "section": null,
+                      "quote": "Unless authorized by DOT in writing after announcement of FY 2026 WCPP grant selections, any costs incurred prior to DOT’s obligation of funds for a project are ineligible for reimbursement and are ineligible cost-share requirements.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "No information on whether any costs have been incurred prior to award is provided."
+                },
+                {
+                  "requirementId": "req-d5dff48b",
+                  "title": "Demonstrate consideration of physical and cyber security risks prior to grant agreement signing",
+                  "category": "readiness",
+                  "topic": "risk",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 23,
+                      "section": null,
+                      "quote": "Each applicant selected for Federal funding must demonstrate, prior to the signing of the grant agreement, effort to consider and address physical and cyber security risks relevant to the transportation mode and type and scale of the project.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-87ef0e84",
+                  "title": "Disclosure of litigation or public controversy",
+                  "category": "readiness",
+                  "topic": "risk",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 17,
+                      "section": null,
+                      "quote": "The applicant must disclose if there is open litigation concerning the project; or, if there is known, and difficult to resolve, public controversy, or agency opposition to the project on environmental grounds.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-ed6bb110",
+                  "title": "Late, duplicate, or incomplete applications will not be reviewed",
+                  "category": "eligibility",
+                  "topic": "other",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "Applications determined to be late, duplicates of applications submitted for the same round of applications, or incomplete will not be reviewed under this funding opportunity.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "No information on timeliness, duplication, or completeness of the application is provided."
+                },
+                {
+                  "requirementId": "req-d253fe25",
+                  "title": "Mandatory Application Template",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 4,
+                      "section": null,
+                      "quote": "Changed the use of the application template from optional to mandatory.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-36ed3ae9",
+                  "title": "No Duplicate or Incomplete Applications",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "Applications determined to be late, duplicates of applications submitted for the same round of applications, or incomplete will not be reviewed under this funding opportunity.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-dbc9de81",
+                  "title": "Only on-time, valid electronic submissions eligible for evaluation",
+                  "category": "eligibility",
+                  "topic": "deadline",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 11,
+                      "section": null,
+                      "quote": "Only applicants who comply with all submission deadlines described in this notice and electronically submit valid, on-time applications through Grants.gov will be eligible for evaluation and possible selection for award.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "No information about submission method or timing is provided in the facts."
+                },
+                {
+                  "requirementId": "req-25160b5b",
+                  "title": "Previously Incurred Costs Not Counted Toward Match",
+                  "category": "funding",
+                  "topic": "non_federal_match",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [
+                    "nonFederalMatchUsd",
+                    "matchCommitted"
+                  ],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "DOT will not consider previously incurred costs or previously expended or encumbered funds toward the matching requirements for any project.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "The related facts have been stated, but this rule depends on documents (for example the sources of the funds) that a conversation cannot settle; it needs a document review."
+                },
+                {
+                  "requirementId": "req-bb9f9fc6",
+                  "title": "Required application package forms",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 9,
+                      "section": null,
+                      "quote": "The WCPP Application Template (see Section D.2) must be added as an attachment to item 15 of the SF-424.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-f1e4e6fd",
+                  "title": "State DOT Administration Requirement for Non-FLMA/Tribe Recipients",
+                  "category": "readiness",
+                  "topic": "applicant_capacity",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "If the grant recipient is any eligible entity other than an Indian Tribe or an FLMA, then, pursuant to 23 U.S.C. 171(f)(2)(A)(ii), the State DOT of the State in which the project is located must administer the grant. For these recipients, the State DOT must directly administer the project on behalf of the recipient or administer and oversee the project by serving as a pass-through entity for the recipient (23 U.S.C. 171(f)(2)(A)(ii)). These recipients may not request FHWA to administer the grant directly. FHWA cannot award a grant to these recipients if the State DOT does not agree to administer the grant.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-1ed549ad",
+                  "title": "State Highway Agency Consultation Documentation Required",
+                  "category": "eligibility",
+                  "topic": "application_content",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [
+                    "applicantType"
+                  ],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 5,
+                      "section": null,
+                      "quote": "If an application is submitted by an eligible entity other than a State DOT or an FLMA, the application shall include documentation that the State highway agency, or an equivalent of that agency, of the State in which the eligible entity is located, was consulted during the development of the application (23 U.S.C. 171(d)(2)). For Tribes, such consultation shall be required only for projects not located on Tribal lands. DOT will not review applications that fail to provide sufficient documentation of consultation, and such applications will not be eligible for funding.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "Facts show a county applicant, which is not a State DOT or FLMA, but no documentation of State highway agency consultation is mentioned."
+                },
+                {
+                  "requirementId": "req-29069f76",
+                  "title": "Application formatting requirements",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 9,
+                      "section": null,
+                      "quote": "Application files should be single-spaced, 12-point standard font (e.g., Times New Roman), with 1-inch margins. Files should be in PDF unless otherwise specified (e.g., Excel based forms and location files such as Shapefile or KML/KMZ).",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-9a9fab64",
+                  "title": "Demonstrate Availability of Matching Funds and Complete Funding Package",
+                  "category": "readiness",
+                  "topic": "budget",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 16,
+                      "section": null,
+                      "quote": "The Financial Completeness Assessment evaluates the availability of matching funds and\nwhether the applicant presented a complete funding package and will receive a rating of\nComplete (3), Partially Complete (2), or Incomplete (1), as defined in the table below.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-6bc9ea27",
+                  "title": "Demonstrate Commitment to Timely Project Delivery via Schedule Information",
+                  "category": "readiness",
+                  "topic": "schedule",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [
+                    "designStatus"
+                  ],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 16,
+                      "section": null,
+                      "quote": "C. The applicant demonstrates a\ncommitment for timely\nproject delivery as\ndemonstrated by the schedule\ninformation in the\napplication.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "llm",
+                  "explanation": "Design work has not yet started and no schedule information is provided to assess commitment to timely delivery."
+                },
+                {
+                  "requirementId": "req-a414771e",
+                  "title": "Demonstrate Technical and Staffing Resources to Deliver Project",
+                  "category": "readiness",
+                  "topic": "applicant_capacity",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 16,
+                      "section": null,
+                      "quote": "A. The applicant has the\ntechnical and staffing\nresources to deliver the\nproject.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-9b579a9a",
+                  "title": "Description of Applicant Role with Partners",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 5,
+                      "section": null,
+                      "quote": "Applicants are asked to describe their role with expected partners and other applicants in their applications.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-8f220b5d",
+                  "title": "Joint Application Lead Applicant and Roles Description",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 5,
+                      "section": null,
+                      "quote": "Multiple entities submitting a joint application should identify a lead applicant as the primary point of contact (POC) and recipient for purposes of financial administration of the project. Joint applications should include a description of the roles and responsibilities of each applicant and should be signed by each applicant.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-cccd8a76",
+                  "title": "Provide Verifiable Supporting Data and Documentation",
+                  "category": "application",
+                  "topic": "application_content",
+                  "mandatory": null,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 11,
+                      "section": null,
+                      "quote": "To the extent practicable, applicants should provide supporting data and documentation in a form\ndirectly verifiable by DOT.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "needs_review",
+                  "status": "unknown",
+                  "method": "none",
+                  "explanation": "Nothing stated so far shows whether this has been prepared. It belongs on the application checklist."
+                },
+                {
+                  "requirementId": "req-4a8ebf3e",
+                  "title": "Eligible Applicant Types",
+                  "category": "eligibility",
+                  "topic": "applicant_type",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [
+                    "applicantType"
+                  ],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 3,
+                      "section": null,
+                      "quote": "Eligible applicants under the WCPP are:\n State Department of Transportation (State DOT);\n Metropolitan planning organization (MPO);\n Units of local government2;\n A regional transportation authority;",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "supported",
+                  "method": "deterministic",
+                  "explanation": "A county applicant fits the eligible applicant \"unit of local government\"."
+                },
+                {
+                  "requirementId": "req-bc1c2785",
+                  "title": "Minimum 20 Percent Non-Federal Cost Share",
+                  "category": "funding",
+                  "topic": "non_federal_match",
+                  "mandatory": true,
+                  "gap": false,
+                  "provisional": true,
+                  "factsUsed": [
+                    "nonFederalMatchUsd"
+                  ],
+                  "missingFacts": [],
+                  "sources": [
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 4,
+                      "section": null,
+                      "quote": "WCPP requires a non-Federal cost share of 20 percent from all recipients unless an exception applies (see B.3, below). Applicants who do not provide the required non-Federal cost share will be classified as ineligible.",
+                      "authority": "controlling"
+                    },
+                    {
+                      "documentId": "sg-700e33fa-537c-4ce9-ad26-e8aaf6313c7d",
+                      "page": 6,
+                      "section": null,
+                      "quote": "WCPP requires a non-Federal cost share of 20 percent.",
+                      "authority": "controlling"
+                    }
+                  ],
+                  "requirementReviewStatus": "unreviewed",
+                  "status": "supported",
+                  "method": "deterministic",
+                  "explanation": "The non-federal match is 21.43% of the total, meeting the 20% minimum."
+                }
+              ],
+              "notApplicable": [],
+              "skippedCount": 3,
+              "questions": [],
+              "advisory": {
+                "label": "Preliminary assessment",
+                "headline": "Of 30 requirements considered: 2 conditions that look supported by what you stated, 28 not yet evaluated.",
+                "counts": {
+                  "assessed": 30,
+                  "supported": 2,
+                  "conflicts": 0,
+                  "gaps": 0,
+                  "needsSpecialistReview": 0,
+                  "unknown": 28,
+                  "notApplicable": 0
+                },
+                "keyFindings": [],
+                "nextSteps": [
+                  "Work through the application checklist: 15 application items have not been evidenced yet.",
+                  "Confirm the final requirements and any amendments with the program office before relying on this screening."
+                ],
+                "disclaimer": "Preliminary screening based only on what you have told us and on requirements extracted from the notice. It is not an official eligibility determination and does not predict an award. Confirm with the program office."
+              },
+              "requirements": {
+                "generatedAt": "2026-11-11T21:15:17.092Z",
+                "status": "complete",
+                "total": 33,
+                "needsReview": 7,
+                "verified": 0,
+                "model": "claude-sonnet-5"
+              },
+              "interpretation": {
+                "requirements": 7,
+                "modelCalls": 1,
+                "cacheHits": 0
+              },
+              "warnings": []
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "projectDescription": {
+    "text": "We are the county public works department in southwestern Montana, and our project is to construct a wildlife overpass along with about four miles of wildlife fencing on a two-lane rural highway where elk and mule deer are regularly struck by vehicles. The corridor connects two large blocks of national forest and is a known high-collision area for wildlife-vehicle crashes. We estimate the total project cost at $14 million, and we expect to request about $11 million in federal funds. We have completed a corridor study and secured a letter of support from the state wildlife agency. Design work on the project has not yet started.",
+    "source": "model"
+  },
+  "prepareReady": {
+    "message": "Ready to assess.",
+    "partial": false,
+    "requirements": 33
+  }
+}

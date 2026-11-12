@@ -14,6 +14,10 @@
   var ITEMS = [
     { label: 'Big Build presentation', href: '/big-build.html' },
     { label: 'Documentation', href: '/docs' },
+    // Demo mode entry points (see /js/demo-mode.js and docs/NOFO_DEMO.md).
+    { label: 'Open the app in demo mode', href: '/chat.html?demo=1' },
+    { label: 'Open the app live (demo mode off)', href: '/chat.html?demo=0' },
+    { label: 'Record a demo run', href: '/chat.html?demo=record' },
   ];
 
   var MENU_ID = 'fabMenu';
@@ -47,6 +51,28 @@
     menu.appendChild(li);
   });
 
+  // Demo-mode actions (see /js/demo-mode.js). These are buttons, not links, so they open nothing new.
+  function addAction(label, run) {
+    var li = document.createElement('li');
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'fab-link fab-action';
+    b.textContent = label;
+    b.addEventListener('click', run);
+    li.appendChild(b);
+    menu.appendChild(li);
+  }
+
+  var demo = window.DemoMode;
+  if (demo) {
+    if (demo.isRecording()) {
+      addAction('Download recording', function () { demo.download(); });
+    } else {
+      addAction(demo.isOn() ? 'Demo mode: On (turn off)' : 'Demo mode: Off (turn on)', function () { demo.toggle(); });
+      if (demo.isOn()) addAction('Restart demo', function () { demo.reset(); window.location.reload(); });
+    }
+  }
+
   function setOpen(open, returnFocus) {
     menu.hidden = !open;
     button.setAttribute('aria-expanded', String(open));
@@ -71,9 +97,9 @@
     if (!menu.hidden && event.relatedTarget && !root.contains(event.relatedTarget)) setOpen(false, false);
   });
 
-  // Choosing a link opens a new tab; close the menu so it is not left open behind it.
+  // Choosing a link opens a new tab (and an action does its job); close the menu so it is not left open.
   menu.addEventListener('click', function (event) {
-    if (event.target && event.target.closest && event.target.closest('a')) setOpen(false, false);
+    if (event.target && event.target.closest && event.target.closest('a, .fab-action')) setOpen(false, false);
   });
 
   root.appendChild(button);

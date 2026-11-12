@@ -1,0 +1,74 @@
+/* Demo mode (see /js/demo-mode.js): the badge, the finished progress panel, and the menu actions. */
+
+.demo-badge {
+  position: fixed;
+  top: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 70; /* above the trays (50) and the floating menu (60), below the source drawer overlay (1000) */
+  max-width: calc(100vw - 2rem);
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  background: var(--afs-purple-800, #460073);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.demo-badge-record {
+  background: #b3261e;
+}
+
+/* A finished progress panel: stays on screen, bar full, every step ticked. */
+.find-progress-complete .find-bar span {
+  left: 0;
+  width: 100%;
+  background: #1e7b34;
+  opacity: 1;
+  animation: none;
+}
+
+.find-progress-complete .find-spinner {
+  position: relative;
+  border-color: #1e7b34;
+  background: #1e7b34;
+  animation: none;
+}
+
+.find-progress-complete .find-spinner::after {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 0.95rem;
+  text-align: center;
+}
+
+.find-progress-complete .find-progress-head strong {
+  color: #1e7b34;
+}
+
+.find-prepare-complete {
+  margin-bottom: 0.75rem;
+}
+
+/* The demo actions in the floating menu are buttons, styled like its links. */
+.fab-action {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: none;
+  text-align: left;
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.fab-action:focus-visible {
+  outline: 3px solid var(--afs-purple, #a100ff);
+  outline-offset: 2px;
+}

@@ -116,6 +116,7 @@
       parts.time.textContent = '';
       startedAt = Date.now();
       parts.root.hidden = false;
+      parts.root.classList.remove('find-progress-complete');
       clearInterval(tick);
       tick = setInterval(function () {
         parts.time.textContent = D.formatElapsed((Date.now() - startedAt) / 1000);
@@ -126,6 +127,15 @@
       clearInterval(tick);
       tick = null;
       clearTimers();
+      var finished = steps.length > 0 && steps.every(function (s) { return s.status === 'done'; });
+      if (finished && window.DemoMode && window.DemoMode.isOn() && startedAt) {
+        // Demo mode: leave the finished panel on screen, every step ticked, until the next run clears it.
+        // (A run that failed or left a step unfinished is hidden as usual.)
+        parts.time.textContent = D.formatElapsed((Date.now() - startedAt) / 1000);
+        parts.title.textContent = 'Completed';
+        parts.root.classList.add('find-progress-complete');
+        return;
+      }
       parts.root.hidden = true;
     }
 
