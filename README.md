@@ -131,15 +131,16 @@ It needs `SAM_API_KEY` unless `DATA_SOURCE` is `mock` (five built-in sample gran
 
 ## Documentation
 
-The documents are in [`docs/`](docs/). The app serves them, with this README and [the development instructions](CLAUDE.md), as one list at `/docs`:
+The documents are in [`docs/`](docs/). The app serves them, with this README and the development instructions, as one list at `/docs`, presentation and demo material first and development material last:
 
-- **[Where the AI model is used in GrantFlow and how code checks it](docs/NOFO_AI_USAGE.md)**: every model step, what it is asked to do and what code verifies
-- **[Design, risks and change log](docs/NOFO_MVP_PLAN.md)**: the architecture plan and a record of every change
-- **[Running and presenting the demo](docs/NOFO_DEMO.md)**: setup, demo mode, the presenter window and a walkthrough
-- **[Fact sheets for the prepared funding opportunities](docs/NOFO_FACT_SHEETS.md)** and **[sample project descriptions for testing](docs/NOFO_TEST_PROJECTS.md)**
 - **[GrantFlow AI concept of operations](docs/BigBuild3_GrantFlow_ConOps.md)**: from government search to AI-guided consultation
 - **[Big Build demo video script](docs/GrantFlow_BigBuild_Live_App_Demo_Script.md)**: the timed show, do and say for the 2:50 walkthrough
+- **[Running and presenting the demo](docs/NOFO_DEMO.md)**: setup, demo mode, the presenter window and a walkthrough
 - **[Big Build 3.0 submission guide](docs/BIG_BUILD_SUBMISSION_GUIDELINES.md)**: tracks, deliverables and the deadline
+- **[Where the AI model is used in GrantFlow and how code checks it](docs/NOFO_AI_USAGE.md)**: every model step, what it is asked to do and what code verifies
+- **[Fact sheets for the prepared funding opportunities](docs/NOFO_FACT_SHEETS.md)** and **[sample project descriptions for testing](docs/NOFO_TEST_PROJECTS.md)**
+- **[Design, risks and change log](docs/NOFO_MVP_PLAN.md)**: the architecture plan and a record of every change
+- **[Development instructions](CLAUDE.md)**: the rules for working on the code
 
 ## Support
 

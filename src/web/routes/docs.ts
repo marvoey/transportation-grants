@@ -19,14 +19,30 @@ const PROJECT_ROOT = join(__dirname, '../../..');
 /** Refuse (and do not list) files larger than this. The largest document today is well under it. */
 const MAX_BYTES = 1024 * 1024;
 
-/** The only files read from the project root, shown first and in this order. */
+/** The only files read from the project root. */
 const ROOT_FILES: readonly string[] = ['README.md', 'CLAUDE.md'];
+
+/**
+ * The order of the list, by page name (the file name without ".md"). The readme and the presentation and script documents
+ * come first, in this order; any other document follows by name; the development documents are last, in this order.
+ */
+const FIRST_NAMES: readonly string[] = [
+  'README',
+  'BigBuild3_GrantFlow_ConOps',
+  'GrantFlow_BigBuild_Live_App_Demo_Script',
+  'NOFO_DEMO',
+  'BIG_BUILD_SUBMISSION_GUIDELINES',
+];
+const LAST_NAMES: readonly string[] = ['NOFO_MVP_PLAN', 'CLAUDE'];
 
 export interface DocsRouterDeps {
   /** Folder locations. Tests point these at a temp directory. */
   rootDir?: string;
   docsDir?: string;
   rootFiles?: readonly string[];
+  /** Page names listed first, and last, in this order. The rest are in between, by name. */
+  firstNames?: readonly string[];
+  lastNames?: readonly string[];
 }
 
 interface DocEntry {
@@ -125,17 +141,25 @@ export function createDocsRouter(deps: DocsRouterDeps = {}): Router {
   const rootDir = deps.rootDir ?? PROJECT_ROOT;
   const docsDir = deps.docsDir ?? join(PROJECT_ROOT, 'docs');
   const rootFiles = deps.rootFiles ?? ROOT_FILES;
+  const firstNames = deps.firstNames ?? FIRST_NAMES;
+  const lastNames = deps.lastNames ?? LAST_NAMES;
   const router = Router();
 
-  /** README.md and CLAUDE.md first (in that order), then docs/ by name. A name already taken is not listed twice. */
+  /** The documents in list order (see FIRST_NAMES and LAST_NAMES). A name already taken is not listed twice; the root file wins. */
   async function listAll(): Promise<DocEntry[]> {
     const [root, docs] = await Promise.all([
       listMarkdown(rootDir, '', (file) => rootFiles.includes(file)),
       listMarkdown(docsDir, 'docs', () => true),
     ]);
-    root.sort((a, b) => rootFiles.indexOf(`${a.name}.md`) - rootFiles.indexOf(`${b.name}.md`));
     const seen = new Set<string>();
-    return [...root, ...docs].filter((e) => (seen.has(e.name) ? false : (seen.add(e.name), true)));
+    const unique = [...root, ...docs].filter((e) => (seen.has(e.name) ? false : (seen.add(e.name), true)));
+    const rank = (name: string): number => {
+      const first = firstNames.indexOf(name);
+      if (first >= 0) return first;
+      const last = lastNames.indexOf(name);
+      return last >= 0 ? 2000 + last : 1000;
+    };
+    return unique.sort((a, b) => rank(a.name) - rank(b.name) || a.name.localeCompare(b.name));
   }
 
   router.get(

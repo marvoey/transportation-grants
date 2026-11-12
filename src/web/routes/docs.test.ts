@@ -48,7 +48,7 @@ const HOSTILE = `# Hostile
 ![tracking pixel](https://evil.example/p.png)
 `;
 
-async function start(options: { clash?: boolean } = {}) {
+async function start(options: { clash?: boolean; order?: { firstNames: string[]; lastNames: string[] } } = {}) {
   const base = await mkdtemp(join(tmpdir(), 'docs-route-'));
   cleanups.push(() => rm(base, { recursive: true, force: true }));
   await mkdir(join(base, 'docs'));
@@ -67,7 +67,7 @@ async function start(options: { clash?: boolean } = {}) {
   if (options.clash) await writeFile(join(base, 'docs', 'README.md'), '# A different readme');
 
   const app = express();
-  app.use('/docs', createDocsRouter({ rootDir: base, docsDir: join(base, 'docs') }));
+  app.use('/docs', createDocsRouter({ rootDir: base, docsDir: join(base, 'docs'), ...options.order }));
   app.use(errorHandler);
   const server: Server = await new Promise((resolve) => {
     const s = app.listen(0, '127.0.0.1', () => resolve(s));
@@ -94,14 +94,23 @@ describe('GET /docs (index)', () => {
     expect(html).not.toContain('<h3');
   });
 
-  it('shows README first, then CLAUDE, then the docs/ files by name', async () => {
-    const { get } = await start();
+  it('puts the first names first, the last names last and the rest by name in between', async () => {
+    const { get } = await start({ order: { firstNames: ['README', 'Other'], lastNames: ['Guide', 'CLAUDE'] } });
     const html = await (await get('/docs')).text();
     const at = (name: string) => html.indexOf(`href="/docs/${name}"`);
     expect(at('README')).toBeGreaterThan(-1);
-    expect(at('README')).toBeLessThan(at('CLAUDE'));
-    expect(at('CLAUDE')).toBeLessThan(at('Guide'));
-    expect(at('Guide')).toBeLessThan(at('Other'));
+    expect(at('README')).toBeLessThan(at('Other')); // first names, in the order given
+    expect(at('Other')).toBeLessThan(at('Hostile')); // then the rest
+    expect(at('Hostile')).toBeLessThan(at('Guide'));
+    expect(at('Guide')).toBeLessThan(at('CLAUDE')); // last names, in the order given
+  });
+
+  it('by default starts with README and the presentation documents and ends with the development documents', async () => {
+    const { get } = await start();
+    const html = await (await get('/docs')).text();
+    const names = [...html.matchAll(/href="\/docs\/([^"]+)"/g)].map((m) => m[1]);
+    expect(names[0]).toBe('README');
+    expect(names[names.length - 1]).toBe('CLAUDE');
   });
 
   it('leaves out other root files, non-markdown files, subfolders, symlinks and oversized files', async () => {
