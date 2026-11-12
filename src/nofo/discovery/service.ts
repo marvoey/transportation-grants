@@ -8,10 +8,12 @@ import type { OpportunitySearchSource } from '../simpler/source.js';
 import { primaryPlans, wideningPlan, type SearchPlan } from './filters.js';
 import { codeOnlyTerms, extractProfile, hasProjectSignal, keywordProfile, type TermTrace } from './profile.js';
 import { buildTrace } from './trace.js';
-import { describeScored, likelyCount, money, rankCandidates, selectResults, SHORTLIST_MIN } from './rank.js';
+import { writeFindReply } from './reply.js';
+import { describeScored, likelyCount, money, rankCandidates, RESULTS_SHOWN_FIRST, selectResults, SHORTLIST_MIN } from './rank.js';
 import {
   DISCOVERY_DISCLAIMER,
   DiscoverInputSchema,
+  MAX_USER_MESSAGES,
   PROJECT_TYPE_LABELS,
   type GuidedQuestion,
   type GuidedQuestionId,
@@ -84,19 +86,21 @@ export function describeProfile(profile: ProjectProfile): string | null {
 }
 
 /**
- * Question policy. The user wants to be guided, but never trapped:
+ * Question policy. The user wants to be guided until the questions are answered, but never trapped:
  * - Before searching, up to GUIDED_BATCH questions are asked about what is still missing from the profile (project
- *   type first, then applicant, stage, and the federal request). Each is a fixed template, and no search is made until
- *   the user answers or chooses to search now.
- * - Questions are only asked on the first GUIDED_ROUNDS messages. From the next message on there are none and a list is
- *   always returned.
- * - A question is never asked twice: the page sends back the ids it has already shown (`asked`), whether or not the
- *   answer could be read.
+ *   type first, then applicant and the federal request). Each is a fixed template, and no search is made until the
+ *   user answers or chooses to search now. A question is asked only if its answer changes the search or the ranking:
+ *   the project stage does not (it is shown but never filters or scores), and it only fits construction projects, so it
+ *   is read when the applicant says it but never asked for.
+ * - A question that is still unanswered is asked again on the next message, so up to three questions take at most two
+ *   rounds when each is answered. There is no round limit; the ends are the visible "Search now" button and the message
+ *   limit (MAX_USER_MESSAGES): at the last message a list is always returned.
+ * - `asked` holds the ids the applicant has been shown and chose to skip. The page sends none by default, so a question
+ *   repeats until it is answered; a caller can send ids to stop asking about them.
  * - "Search now" skips every question. If the project type is still unknown the list is the closest open programs, and
  *   the summary says so.
  */
 export const GUIDED_BATCH = 2;
-export const GUIDED_ROUNDS = 2;
 
 const QUESTION_TEXT: Record<GuidedQuestionId, string> = {
   projectType:
@@ -111,20 +115,20 @@ export function pendingQuestions(profile: ProjectProfile, asked: readonly Guided
   const missing: GuidedQuestionId[] = [];
   if (!hasProjectSignal(profile)) missing.push('projectType');
   if (!profile.applicantType) missing.push('applicant');
-  if (!profile.phase) missing.push('phase');
   if (!profile.federalAskUsd) missing.push('request');
   return missing.filter((id) => !asked.includes(id)).map((id) => ({ id, text: QUESTION_TEXT[id] }));
 }
 
 /** The questions to ask before searching, or none when the search should go ahead. */
 export function guidedQuestions(profile: ProjectProfile, messageCount: number, forced: boolean, asked: readonly GuidedQuestionId[] = []): GuidedQuestion[] {
-  if (forced || messageCount > GUIDED_ROUNDS) return [];
+  // At the message limit the applicant cannot answer another question, so a list is always returned.
+  if (forced || messageCount >= MAX_USER_MESSAGES) return [];
   return pendingQuestions(profile, asked).slice(0, GUIDED_BATCH);
 }
 
 /** Optional refinements shown with a list, only when the user skipped the questions with "Search now". */
 export function refinementQuestions(profile: ProjectProfile, messageCount: number, forced: boolean, asked: readonly GuidedQuestionId[] = []): GuidedQuestion[] {
-  if (!forced || messageCount > GUIDED_ROUNDS) return [];
+  if (!forced || messageCount >= MAX_USER_MESSAGES) return [];
   return pendingQuestions(profile, asked).slice(0, GUIDED_BATCH);
 }
 
@@ -260,7 +264,9 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
       searches: [],
       summary: guided.some((q) => q.id === 'projectType')
         ? 'I need to know what kind of project this is before I can look for matching opportunities.'
-        : 'A few details will make the list much more relevant. Answer what you can, or search now with what I have.',
+        : messages.length > 1
+          ? 'Thanks. I still need a little more to rank the list well. Answer what you can, or choose "Search now" to see the list with what I have.'
+          : 'A few details will make the list much more relevant. Answer what you can, or search now with what I have.',
       warnings,
       includeHistorical,
       disclaimer: DISCOVERY_DISCLAIMER,
@@ -376,19 +382,46 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
   });
   log({ kind: 'ok', text: `← explanation ready (written by ${explanation.source === 'model' ? 'the language model' : 'a template'})` });
 
+  // The conversational reply: the model writes it from the understood project, the first listings and the open question.
+  emit({ id: 'reply', status: 'running', message: deps.llm ? 'Asking the language model to write a reply about the list…' : 'Writing a reply about the list…' });
+  const questionsOpen = refinementQuestions(profile, messages.length, forced, asked);
+  const reply = await writeFindReply(
+    {
+      messages,
+      profile,
+      shown: shortlist.slice(0, RESULTS_SHOWN_FIRST),
+      examined,
+      listed: shortlist.length,
+      questions: questionsOpen,
+      latestMessage: messages[messages.length - 1],
+      previousReply: input.previousReply,
+      isFollowUp: messages.length > 1,
+    },
+    deps.llm
+  );
+  emit({
+    id: 'reply',
+    status: 'done',
+    message: reply.source === 'model' ? 'The language model wrote the reply and it passed the checks.' : 'The reply was written from a template (the language model was not used or its text did not pass the checks).',
+  });
+  log({ kind: 'ok', text: `← reply ready (written by ${reply.source === 'model' ? 'the language model' : `a template; model text not used: ${reply.fallbackReason ?? 'unknown'}`})` });
+
   let summary: string;
   const docsNote = noDocuments > 0 ? ` ${noDocuments} ${plural(noDocuments, 'has', 'have')} no notice document listed on Simpler.Grants.gov, so ${plural(noDocuments, 'it is', 'they are')} last.` : '';
   if (shortlist.length === 0) {
     summary = includeHistorical
       ? 'I found no listings for this search.'
-      : 'I found no open listings for this search. You can include closed and archived opportunities to see past programs.';
+      : 'I found no open listings for this search. Try describing the project in more detail, for example the kind of project and who is applying.';
   } else if (!ready) {
     summary = `I could not tell the project type from what you wrote, so these ${examined} listings are ordered by general fit only. Tell me more about the project to rank them for it.${docsNote}`;
   } else {
     const showing = shortlist.length < examined ? `the best ${shortlist.length}` : examined === 1 ? 'it' : 'all of them';
-    summary =
-      `I checked ${examined} ${plural(examined, 'listing', 'listings')} and am showing ${showing}, best fit to your project first. ` +
-      `${likely} ${plural(likely, 'matches', 'match')} your project's words; the rest are marked as weaker matches.${docsNote}`;
+    const rest = shortlist.length - RESULTS_SHOWN_FIRST;
+    const lead =
+      rest > 0
+        ? `I checked ${examined} ${plural(examined, 'listing', 'listings')}, best fit to your project first. The best ${RESULTS_SHOWN_FIRST} are shown below; the other ${rest} ${plural(rest, 'is', 'are')} one click away. `
+        : `I checked ${examined} ${plural(examined, 'listing', 'listings')} and am showing ${showing}, best fit to your project first. `;
+    summary = `${lead}${likely} ${plural(likely, 'matches', 'match')} your project's words; the rest are marked as weaker matches.${docsNote}`;
   }
 
   logger.info(`Discover: ${messages.length} message(s), ${all.length} search(es), ${examined} candidate(s), ${shortlist.length} listed`);
@@ -399,6 +432,7 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
     profile,
     questions: refinementQuestions(profile, messages.length, forced, asked),
     shortlist,
+    showFirst: RESULTS_SHOWN_FIRST,
     searches: describeSearches(all),
     summary,
     warnings,
@@ -418,6 +452,7 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
     scored: describeScored(ranked, new Set(shortlist.map((s) => s.opportunityId))),
     apiCalls: all.map((o) => describeApiCall(o, baseUrl)),
     explanation,
+    reply,
     ...(inspect ? { inspection: describeInspection(all) } : {}),
   };
 }

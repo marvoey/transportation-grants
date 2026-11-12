@@ -236,6 +236,31 @@
     };
   }
 
+  /**
+   * The listings shown at first and the ones behind the "Show the other N" button. `showFirst` comes from the server; when it
+   * is missing or not a sensible number everything is shown at once (no button).
+   */
+  function splitResults(items, showFirst) {
+    var list = Array.isArray(items) ? items : [];
+    var n = Number.isInteger(showFirst) && showFirst >= 1 ? showFirst : list.length;
+    return { first: list.slice(0, n), rest: list.slice(n) };
+  }
+
+  /** The downloaded-document figures of these listings added up (the same sums the server makes), or null when none has any. */
+  function totalsFor(items) {
+    var withDocs = (Array.isArray(items) ? items : []).filter(function (i) { return i && i.downloaded && Array.isArray(i.downloaded.documents); });
+    if (withDocs.length === 0) return null;
+    function sum(read) { return withDocs.reduce(function (n, i) { return n + (read(i.downloaded) || 0); }, 0); }
+    return {
+      listings: withDocs.length,
+      documents: sum(function (d) { return d.documents.length; }),
+      pages: sum(function (d) { return d.totalPages; }),
+      words: sum(function (d) { return d.totalWords; }),
+      requirements: sum(function (d) { return d.requirements && d.requirements.total; }),
+      toPrepare: sum(function (d) { return d.requirements && d.requirements.toPrepare; })
+    };
+  }
+
   /** The operator commands that load an opportunity for assessment. Empty for anything that is not a UUID. */
   function loadCommands(id) {
     if (!UUID.test(String(id))) return [];
@@ -260,6 +285,8 @@
     if (options && options.forceResults) body.forceResults = true;
     if (options && options.inspect) body.inspect = true;
     if (options && Array.isArray(options.asked) && options.asked.length) body.asked = options.asked.slice();
+    // The reply shown last turn, so a short follow-up ("yes") is answered in context. Capped to what the server accepts.
+    if (options && typeof options.previousReply === 'string' && options.previousReply.trim()) body.previousReply = options.previousReply.trim().slice(0, 2000);
     return body;
   }
 
@@ -410,6 +437,8 @@
     documentsView: documentsView,
     downloadedView: downloadedView,
     downloadedTotalsView: downloadedTotalsView,
+    splitResults: splitResults,
+    totalsFor: totalsFor,
     loadCommands: loadCommands,
     nextMessages: nextMessages,
     messagesLeft: messagesLeft,

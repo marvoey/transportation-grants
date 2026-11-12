@@ -18,10 +18,11 @@ import { PROJECT_TYPE_LABELS } from './schemas.js';
 import { DiscoveryError, discoverTurn } from './service.js';
 import { SearchCache } from './search.js';
 
-const USAGE = 'Usage: npm run nofo:find -- "<project description>" [--say "<follow-up>"]... [--historical] [--guided]';
+const USAGE = 'Usage: npm run nofo:find -- "<project description>" [--say "<follow-up>"]... [--previous-reply "<the reply shown last turn>"] [--historical] [--guided]';
 
-function parseArgs(argv: string[]): { messages: string[]; historical: boolean; guided: boolean; help: boolean } {
+function parseArgs(argv: string[]): { messages: string[]; historical: boolean; guided: boolean; help: boolean; previousReply?: string } {
   const messages: string[] = [];
+  let previousReply: string | undefined;
   let historical = false;
   let guided = false;
   let help = false;
@@ -30,12 +31,13 @@ function parseArgs(argv: string[]): { messages: string[]; historical: boolean; g
     if (a === '--historical') historical = true;
     else if (a === '--guided') guided = true;
     else if (a === '--help') help = true;
+    else if (a === '--previous-reply') previousReply = argv[++i];
     else if (a === '--say') {
       const next = argv[++i];
       if (next) messages.push(next);
     } else if (!a.startsWith('--')) messages.unshift(a);
   }
-  return { messages, historical, guided, help };
+  return { messages, historical, guided, help, previousReply };
 }
 
 const money = (n: number | null): string => (n === null ? 'n/a' : `$${n.toLocaleString('en-US')}`);
@@ -54,11 +56,16 @@ async function main(argv: string[]): Promise<number> {
         messages: args.messages.map((content) => ({ role: 'user', content })),
         includeHistorical: args.historical,
         forceResults: !args.guided,
+        ...(args.previousReply ? { previousReply: args.previousReply } : {}),
       },
       { source: createSearchSource(), llm, cache: new SearchCache() }
     );
 
     console.log(`PRELIMINARY. Stage: ${result.stage}${llm ? '' : '  (no model configured: keyword reader)'}`);
+    if (result.reply) {
+      console.log(`\nREPLY (written by ${result.reply.source === 'model' ? 'the language model, checked by code' : `a template; model text not used: ${result.reply.fallbackReason ?? 'unknown'}`})`);
+      for (const paragraph of result.reply.text.split('\n\n')) console.log(`  ${paragraph}`);
+    }
     console.log('\nUnderstood from your description:');
     const p = result.profile;
     console.log(`  project types : ${p.projectTypes.map((t) => `${PROJECT_TYPE_LABELS[t.value]} ("${t.quote}")`).join('; ') || '(none)'}`);

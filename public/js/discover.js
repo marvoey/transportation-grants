@@ -14,8 +14,10 @@
   var state = {
     messages: [], // the applicant's messages only: { role: 'user', content }
     stage: null, // 'ask' | 'results' | null
-    asked: [], // ids of the guided questions already shown, so none is asked twice
+    asked: [], // ids of guided questions the applicant chose to skip; none by default, so a question repeats until answered
     busy: false,
+    openQuestions: 0, // questions still open with the latest list (optional ones, after "Search now"); 0 once all are answered
+    lastReply: '', // the text of the reply shown last turn, sent back so a short follow-up ("yes") is answered in context
     inspection: null // the Simpler.Grants.gov requests and responses of the latest turn, when asked for
   };
   var els = {};
@@ -128,6 +130,59 @@
     els.thread.scrollTop = els.thread.scrollHeight;
   }
 
+  /**
+   * The conversational reply that introduces the list. Written by the language model from the understood project, the first
+   * listings and the open question and checked by code, or by a template; the list below it is written by code.
+   */
+  function addReply(reply, closest) {
+    if (!reply || typeof reply.text !== 'string' || !reply.text) return;
+    state.lastReply = reply.text;
+    var div = el('div', 'chat-message assistant find-reply');
+    reply.text.split('\n\n').forEach(function (paragraph) { append(div, el('p', null, paragraph)); });
+    append(div, el('p', 'nofo-meta', reply.source === 'model'
+      ? 'Written by the language model from the list below, and checked by code. A starting point, not advice.'
+      : 'Written from a template using the list below. A starting point, not advice.'));
+    // Buttons that jump to the parts of the page the reply talks about (only the ones that exist on this page).
+    var jumps = el('div', 'find-reply-actions');
+    if (document.getElementById('findUnderstood')) append(jumps, jumpButton('Go to what I understood', function () { return document.getElementById('findUnderstood'); }));
+    if (document.getElementById('findOpportunities')) append(jumps, jumpButton('Go to the opportunities, best fit first', function () { return document.getElementById('findOpportunities'); }));
+    if (closest && closest.opportunityId) append(jumps, closestButton(closest));
+    if (jumps.childNodes.length > 0) append(div, jumps);
+    append(els.thread, div);
+    els.thread.scrollTop = els.thread.scrollHeight;
+  }
+
+  /** Scrolls a part of the results into view and moves keyboard focus to it, so the jump works for everyone. */
+  function jumpTo(target) {
+    if (!target) return;
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    target.tabIndex = -1;
+    target.focus({ preventScroll: true });
+  }
+
+  /** A button under a reply that jumps to a part of the page. `find` returns the element when it is clicked. */
+  function jumpButton(label, find) {
+    var go = el('button', 'find-reply-action nofo-secondary', label);
+    go.type = 'button';
+    go.addEventListener('click', function () { jumpTo(find()); });
+    return go;
+  }
+
+  /**
+   * "Go to <closest listing>": takes the person to that listing's card in the list. (What its own button does, such as
+   * preparing it or assessing a project against it, is on the card.)
+   */
+  function closestButton(item) {
+    var title = String(item.title || 'this opportunity');
+    var short = title.length > 60 ? title.slice(0, 59).trim() + '\u2026' : title;
+    return jumpButton('Go to the closest listing: ' + short, function () {
+      var cards = els.results.querySelectorAll('[data-opportunity-id]');
+      for (var i = 0; i < cards.length; i++) if (cards[i].dataset.opportunityId === item.opportunityId) return cards[i];
+      return null;
+    });
+  }
+
   /** Brings the newest message (the questions) into view, with the input box right below it. */
   function showLatestMessage() {
     var last = els.thread.lastElementChild;
@@ -159,6 +214,13 @@
     els.input.rows = started ? 3 : 5; // once the conversation has begun, the box gives room back to the console and results
     els.send.textContent = !started ? 'Continue' : state.stage === 'ask' ? 'Send answers' : 'Update the list';
     els.now.hidden = state.stage !== 'ask';
+    // Once every question is answered and the list is shown there is nothing left to add, so the optional box and its
+    // "Update the list" button and the closed-and-archived checkbox go away. (After "Search now" the questions are still open, so they stay.) Start over remains.
+    var finished = started && state.stage === 'results' && state.openQuestions === 0;
+    els.input.hidden = finished;
+    els.send.hidden = finished;
+    // The "Include closed and archived" choice is part of the same optional update, so it goes too (its label is the checkbox's parent).
+    if (els.historical.parentNode) els.historical.parentNode.hidden = finished;
     els.limit.hidden = left > 0;
     if (!started) {
       els.input.placeholder = 'For example: We are a state DOT and want to replace a structurally deficient bridge on a rural route. The project costs about $40 million and we would request $25 million in federal funds. Design is complete.';
@@ -200,6 +262,9 @@
   function progressStart() {
     progressReset();
     progress.startedAt = Date.now();
+    // The progress shows in the conversation, right under the message that was just sent (the panel moves to the end of
+    // the thread each turn; replies are added after it once it is done).
+    els.thread.appendChild(els.progress);
     els.progress.hidden = false;
     els.progress.classList.remove('find-progress-complete');
     clearInterval(progress.tick);
@@ -304,7 +369,8 @@
           includeHistorical: els.historical.checked,
           inspect: developerShows('apicalls') && els.inspect.checked,
           forceResults: !!(options && options.forceResults),
-          asked: state.asked
+          asked: state.asked,
+          previousReply: state.lastReply
         }),
         enqueueStep,
         devConsole.push
@@ -313,9 +379,9 @@
       devConsole.end();
       progressStop();
       state.stage = data.stage;
+      state.openQuestions = (data.questions || []).length;
       announceQuestions(data.questions, data.profile);
       if (data.stage === 'ask') {
-        state.asked = state.asked.concat(data.questions.map(function (q) { return q.id; }));
         addQuestions(data.summary, data.questions);
         clear(els.results);
         showLatestMessage();
@@ -323,6 +389,7 @@
         // The summary is shown once, at the top of the results, not repeated in the thread.
         renderResults(data);
         addExplanation(data.explanation);
+        addReply(data.reply, D.splitResults(data.shortlist, data.showFirst).first[0]);
         showLatestMessage();
       }
     } catch (e) {
@@ -375,6 +442,8 @@
     state.messages = [];
     state.stage = null;
     state.asked = [];
+    state.lastReply = '';
+    state.openQuestions = 0;
     state.inspection = null;
     announceQuestions(null);
     devConsole.clear();
@@ -750,6 +819,7 @@
 
   function renderCard(item) {
     var card = el('article', 'card find-card');
+    card.dataset.opportunityId = String(item.opportunityId || '');
     var head = el('div', 'find-card-head');
     var heading = el('h3');
     var pageUrl = D.safeUrl(item.simplerUrl);
@@ -1068,24 +1138,59 @@
     var trace = renderTrace(data.trace);
     if (trace) append(els.results, trace);
     var facts = renderFacts(data.profile);
-    if (facts) append(els.results, facts);
+    if (facts) {
+      facts.id = 'findUnderstood';
+      append(els.results, facts);
+    }
 
     var scoredBox = renderScored(data.scored);
     if (scoredBox) append(els.results, scoredBox);
 
     var summaryCard = el('div', 'card');
+    summaryCard.id = 'findOpportunities';
     append(summaryCard, el('h3', null, data.shortlist.length ? 'Opportunities, best fit first' : 'No listings found'));
     append(summaryCard, el('p', null, data.summary));
-    var impact = D.downloadedTotalsView(data.downloaded, data.shortlist.length);
-    if (impact) append(summaryCard, renderImpact(impact));
+    // The strip adds up the documents of the listings that are on screen, and is redone when the rest are revealed.
+    var parts = D.splitResults(data.shortlist, data.showFirst);
+    var impactBox = el('div');
+    function showImpact(items) {
+      clear(impactBox);
+      var view = D.downloadedTotalsView(D.totalsFor(items), items.length);
+      if (view) append(impactBox, renderImpact(view));
+    }
+    showImpact(parts.first);
+    append(summaryCard, impactBox);
     if (data.shortlist.length === 0 && !data.includeHistorical) {
-      append(summaryCard, el('p', 'nofo-meta', 'Tick “Include closed and archived opportunities” above to see past programs.'));
+      // The checkbox is developer-only, so the plain hint does not point to it; a developer sees where to find it.
+      append(summaryCard, el('p', 'nofo-meta', 'No open listings matched. Try describing the project in more detail, for example the kind of project and who is applying.'));
+      append(summaryCard, el('p', 'nofo-meta dev-only dev-section-apicalls', 'Developer mode: tick “Include closed and archived opportunities” above to see past programs.'));
     }
     data.warnings.forEach(function (w) { append(summaryCard, el('p', 'nofo-warning', w)); });
     append(els.results, summaryCard);
 
     state.inspection = data.inspection || null;
-    data.shortlist.forEach(function (item) { append(els.results, renderCard(item)); });
+    parts.first.forEach(function (item) { append(els.results, renderCard(item)); });
+    if (parts.rest.length > 0) {
+      var more = el('div', 'find-more');
+      var moreButton = el('button', 'nofo-secondary', 'Show the other ' + parts.rest.length + ' listing' + (parts.rest.length === 1 ? '' : 's'));
+      moreButton.type = 'button';
+      moreButton.addEventListener('click', function () {
+        var firstNew = null;
+        parts.rest.forEach(function (item) {
+          var card = renderCard(item);
+          if (!firstNew) firstNew = card;
+          els.results.insertBefore(card, more);
+        });
+        els.results.removeChild(more);
+        showImpact(data.shortlist);
+        if (firstNew) {
+          firstNew.tabIndex = -1;
+          firstNew.focus();
+        }
+      });
+      append(more, moreButton);
+      append(els.results, more);
+    }
     if (state.inspection) append(els.results, renderInspection(state.inspection));
 
     if (data.questions.length > 0) {

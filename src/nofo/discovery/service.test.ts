@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import { logger } from '../../config/config.js';
 import { BUILD_ID, WCPP_ID, fakeSearchSource, fixtureSearchSource, makeCandidate, profileLlm } from '../__fixtures__/discovery.js';
-import { DiscoveryError, GUIDED_BATCH, GUIDED_ROUNDS, discoverTurn, guidedQuestions, pendingQuestions, refinementQuestions } from './service.js';
+import { DiscoveryError, GUIDED_BATCH, discoverTurn, guidedQuestions, pendingQuestions, refinementQuestions } from './service.js';
 import { SearchCache } from './search.js';
-import { EMPTY_PROFILE, GUIDED_QUESTION_IDS, type ConsoleLine } from './schemas.js';
+import { EMPTY_PROFILE, GUIDED_QUESTION_IDS, MAX_USER_MESSAGES, type ConsoleLine } from './schemas.js';
 
 /** Every guided question already shown: tests of the search itself use this so the search runs. */
 const ASKED = [...GUIDED_QUESTION_IDS];
@@ -40,9 +40,9 @@ describe('guided questions: ask before searching, then always end with a list', 
 
   it('does not ask for what the description already says', async () => {
     const result = await discoverTurn(fresh(BRIDGE_TEXT), { source: fixtureSearchSource(), llm: bridgeLlm(), now: NOW });
-    // Project type, applicant and the federal request are known: only the stage is left.
-    expect(result.stage).toBe('ask');
-    expect(result.questions.map((q) => q.id)).toEqual(['phase']);
+    // Project type, applicant and the federal request are known. The stage is not asked for: it changes nothing in the search.
+    expect(result.stage).toBe('results');
+    expect(result.questions).toEqual([]);
   });
 
   it('searches at once when nothing useful is missing', async () => {
@@ -68,7 +68,7 @@ describe('guided questions: ask before searching, then always end with a list', 
       { source, llm: null, now: NOW }
     );
     expect(second.stage).toBe('ask');
-    expect(second.questions.map((q) => q.id)).toEqual(['phase', 'request']);
+    expect(second.questions.map((q) => q.id)).toEqual(['request']);
     // Everything asked, still vague: a list, not a third round.
     const third = await discoverTurn({ messages: user('We need money for a project', 'It is a good one'), asked: ASKED }, { source, llm: null, now: NOW });
     expect(third.stage).toBe('results');
@@ -77,13 +77,28 @@ describe('guided questions: ask before searching, then always end with a list', 
     expect(third.summary).toMatch(/could not tell the project type/);
   });
 
-  it('asks nothing from the third message on, whatever is missing', async () => {
-    const result = await discoverTurn(fresh('We need money', 'for a project', 'a good one'), { source: fixtureSearchSource(), llm: null, now: NOW });
-    expect(GUIDED_ROUNDS).toBe(2);
-    expect(result.stage).toBe('results');
-    expect(result.questions).toEqual([]);
-    expect(guidedQuestions(EMPTY_PROFILE, 3, false)).toEqual([]);
-    expect(guidedQuestions(EMPTY_PROFILE, 6, false)).toEqual([]);
+  it('keeps asking, with no round limit, until the message limit, where a list is always returned', async () => {
+    // A third vague message is still asked about: nothing has been answered.
+    const third = await discoverTurn(fresh('We need money', 'for a project', 'a good one'), { source: fixtureSearchSource(), llm: null, now: NOW });
+    expect(third.stage).toBe('ask');
+    expect(third.questions.length).toBeGreaterThan(0);
+    expect(guidedQuestions(EMPTY_PROFILE, 3, false)).toHaveLength(GUIDED_BATCH);
+    expect(guidedQuestions(EMPTY_PROFILE, MAX_USER_MESSAGES - 1, false)).toHaveLength(GUIDED_BATCH);
+    // At the last message the applicant cannot answer another, so there is a list and no question.
+    const last = await discoverTurn(fresh(...Array.from({ length: MAX_USER_MESSAGES }, (_, i) => `vague message ${i}`)), { source: fixtureSearchSource(), llm: null, now: NOW });
+    expect(last.stage).toBe('results');
+    expect(last.questions).toEqual([]);
+    expect(guidedQuestions(EMPTY_PROFILE, MAX_USER_MESSAGES, false)).toEqual([]);
+  });
+
+  it('says it still needs more on a repeat round, and a question that was skipped is not asked again', async () => {
+    const source = fixtureSearchSource();
+    const again = await discoverTurn(fresh('We need money for a project', 'It is a good one'), { source, llm: null, now: NOW });
+    expect(again.stage).toBe('ask');
+    expect(again.summary).toMatch(/still need a little more/);
+    expect(again.questions.map((q) => q.id)).toEqual(['projectType', 'applicant']);
+    const skipped = await discoverTurn({ messages: user('We need money for a project', 'It is a good one'), asked: ['projectType', 'applicant'] }, { source, llm: null, now: NOW });
+    expect(skipped.questions.map((q) => q.id)).toEqual(['request']);
   });
 
   it('"Skip the questions and search" searches at once, and offers the unasked questions as optional refinements', async () => {
@@ -102,8 +117,9 @@ describe('guided questions: ask before searching, then always end with a list', 
   });
 
   it('question helpers: order, batch size and the optional refinements', () => {
-    expect(pendingQuestions(EMPTY_PROFILE).map((q) => q.id)).toEqual(['projectType', 'applicant', 'phase', 'request']);
-    expect(pendingQuestions(EMPTY_PROFILE, ['projectType', 'phase']).map((q) => q.id)).toEqual(['applicant', 'request']);
+    // The project stage is never asked: it does not change the search or the ranking.
+    expect(pendingQuestions(EMPTY_PROFILE).map((q) => q.id)).toEqual(['projectType', 'applicant', 'request']);
+    expect(pendingQuestions(EMPTY_PROFILE, ['projectType']).map((q) => q.id)).toEqual(['applicant', 'request']);
     expect(guidedQuestions(EMPTY_PROFILE, 1, false)).toHaveLength(GUIDED_BATCH);
     expect(guidedQuestions(EMPTY_PROFILE, 1, true)).toEqual([]);
     expect(refinementQuestions(EMPTY_PROFILE, 1, false)).toEqual([]);

@@ -121,12 +121,14 @@ export function scoreCandidate(candidate: SearchCandidate, options: RankOptions)
   // --- Text match: the main relevance signal -------------------------------------------------
   let termMatched = false;
   let specificMatched = false;
+  let specificInTitle = false;
   for (const term of profile.terms) {
     const generic = GENERIC_TERMS.has(term);
     if (termHits(term, title)) {
       add(generic ? 4 : 12, `“${term}” in the title`);
       termMatched = true;
       if (!generic) specificMatched = true;
+      if (!generic) specificInTitle = true;
       why.push(`"${term}" appears in the title`);
     } else if (body && termHits(term, body)) {
       add(generic ? 2 : 6, `“${term}” in the description`);
@@ -209,8 +211,9 @@ export function scoreCandidate(candidate: SearchCandidate, options: RankOptions)
   if (candidate.isCostSharing === true) watch.push('The listing says cost sharing or matching funds are required');
 
   const termsKnown = profile.terms.length > 0;
-  // A mode conflict needs a specific (non-generic) term match to stay "likely".
-  const match: Ranked['match'] = termsKnown && termMatched && (modeConflicts.length === 0 || specificMatched) ? 'likely' : 'weaker';
+  // A program for a different mode (rail, aviation, wildlife crossings...) stays "likely" only if a specific project word is in
+  // its TITLE; a word like "safety" in its description is not enough, because almost every program mentions it.
+  const match: Ranked['match'] = termsKnown && termMatched && (modeConflicts.length === 0 || specificInTitle) ? 'likely' : 'weaker';
   if (match === 'weaker' && termsKnown && transportTagged) why.push('No project keyword matched closely');
 
   return { candidate, score, match, historical, why, watch, family: familyKey(candidate.title), modeConflict: modeConflicts.length > 0, parts };
@@ -234,7 +237,9 @@ export function rankCandidates(candidates: SearchCandidate[], options: RankOptio
     )[0];
     return { ...best, otherEditions: group.length - 1 };
   });
-  return folded.sort((a, b) => b.score - a.score || (a.candidate.title ?? '').localeCompare(b.candidate.title ?? ''));
+  // A listing that matches the project's words always comes before one that does not; within each group, best score first.
+  const tier = (r: Ranked): number => (r.match === 'likely' ? 0 : 1);
+  return folded.sort((a, b) => tier(a) - tier(b) || b.score - a.score || (a.candidate.title ?? '').localeCompare(b.candidate.title ?? ''));
 }
 
 /** Count of candidates that matched a project term (used to decide whether to widen the search). */
@@ -249,6 +254,12 @@ export const SHORTLIST_MIN = 4;
  * each returned listing costs one request to check its documents.
  */
 export const RESULTS_MAX = 25;
+
+/**
+ * How many of the returned listings the page shows at first (the best fit, with documents first); the rest are one click
+ * away. A short list keeps the answer readable; nothing is thrown away.
+ */
+export const RESULTS_SHOWN_FIRST = 5;
 
 /**
  * Every scored listing, best fit first (the score is the app's own measure of fit to the project description), up to

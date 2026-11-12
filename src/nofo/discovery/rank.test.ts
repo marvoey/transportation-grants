@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BUILD_ID, WCPP_ID, historicalResult, makeCandidate, openResult } from '../__fixtures__/discovery.js';
-import { RESULTS_MAX, describeScored, familyKey, likelyCount, rankCandidates, scoreCandidate, selectResults } from './rank.js';
+import { RESULTS_MAX, RESULTS_SHOWN_FIRST, describeScored, familyKey, likelyCount, rankCandidates, scoreCandidate, selectResults } from './rank.js';
 import { EMPTY_PROFILE, type ProjectProfile } from './schemas.js';
 
 const NOW = new Date('2026-11-05T12:00:00Z');
@@ -184,10 +184,49 @@ describe('scored listings (the "all listings and their scores" box)', () => {
     const shortlist = selectResults(ranked);
     const scored = describeScored(ranked, new Set(shortlist.map((s) => s.opportunityId)));
     expect(scored).toHaveLength(ranked.length);
-    expect(scored.map((s) => s.score)).toEqual([...scored.map((s) => s.score)].sort((a, b) => b - a));
+    // Best first: matching listings, then the rest; by score within each group.
+    const order = (rows: typeof scored) => rows.map((s) => [s.match === 'likely' ? 0 : 1, -s.score]);
+    expect(order(scored)).toEqual([...order(scored)].sort((x, y) => x[0] - y[0] || x[1] - y[1]));
     expect(scored.filter((s) => s.shown).map((s) => s.opportunityId).sort()).toEqual(shortlist.map((s) => s.opportunityId).sort());
     for (const row of scored.filter((s) => !s.shown)) expect(row.note).toMatch(/^Not shown/);
     for (const row of scored.filter((s) => s.shown)) expect(row.note).toMatch(/^Shown/);
     for (const row of scored) expect(row.simplerUrl).toBe(`https://simpler.grants.gov/opportunity/${row.opportunityId}`);
+  });
+});
+
+describe('a program for a different mode is not a likely match on a generic word alone', () => {
+  const safety: ProjectProfile = { ...EMPTY_PROFILE, projectTypes: [{ value: 'safety', quote: 'fatal crashes' }], terms: ['fatal crashes', 'safety'] };
+  const rail = makeCandidate({ title: 'National Network Cooperative Agreement for Passenger Rail', description: 'Funds passenger rail operations and safety.', fundingCategories: ['transportation'] });
+  const crash = makeCandidate({ title: 'Crash Causal Factors Program', description: 'A study of fatal crashes.', fundingCategories: ['transportation'] });
+
+  it('marks the rail program weaker (its description only mentions safety) and the crash program likely', () => {
+    const railScored = scoreCandidate(rail, { profile: safety, now: NOW });
+    expect(railScored.modeConflict).toBe(true);
+    expect(railScored.match).toBe('weaker');
+    expect(scoreCandidate(crash, { profile: safety, now: NOW }).match).toBe('likely');
+  });
+
+  it('keeps a different-mode program likely when a specific project word is in its title', () => {
+    const profile: ProjectProfile = { ...EMPTY_PROFILE, projectTypes: [{ value: 'bridge', quote: 'bridge' }], terms: ['bridge'] };
+    const railBridge = makeCandidate({ title: 'Rail Bridge Replacement Program', fundingCategories: ['transportation'] });
+    expect(scoreCandidate(railBridge, { profile, now: NOW }).match).toBe('likely');
+  });
+});
+
+describe('how many listings are shown first', () => {
+  it('is five, the number a person can read at once', () => {
+    expect(RESULTS_SHOWN_FIRST).toBe(5);
+    expect(RESULTS_SHOWN_FIRST).toBeLessThan(RESULTS_MAX);
+  });
+});
+
+describe('listings that match the project come before weaker ones, whatever their score', () => {
+  it('puts a likely match with fewer points ahead of a weaker match with more', () => {
+    const profile: ProjectProfile = { ...EMPTY_PROFILE, projectTypes: [{ value: 'bridge', quote: 'bridge' }], applicantType: { value: 'state', quote: 'state' }, terms: ['bridge'] };
+    const weakerButHigh = makeCandidate({ opportunityId: 'w', title: 'General Transportation Program', fundingCategories: ['transportation'], status: 'posted', applicantTypes: ['state_governments'], awardCeiling: 50_000_000 });
+    const likelyButLow = makeCandidate({ opportunityId: 'l', title: 'Bridge Study', fundingCategories: [], status: 'forecasted', applicantTypes: [] });
+    const ranked = rankCandidates([weakerButHigh, likelyButLow], { profile, now: NOW });
+    expect(ranked.map((r) => [r.candidate.opportunityId, r.match])).toEqual([['l', 'likely'], ['w', 'weaker']]);
+    expect(ranked[0].score).toBeLessThan(ranked[1].score);
   });
 });

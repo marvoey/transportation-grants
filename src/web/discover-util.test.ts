@@ -369,3 +369,37 @@ describe('downloadedTotalsView', () => {
     expect(v.stats.map((s: any) => s.label)).toEqual(['document to read', 'PDF pages', 'words (approximate)']);
   });
 });
+
+describe('splitResults and totalsFor (the first listings, and the rest behind a button)', () => {
+  const items = Array.from({ length: 8 }, (_, i) => ({ opportunityId: `id-${i}` }));
+
+  it('splits at the number the server gives, keeping the order', () => {
+    const { first, rest } = D.splitResults(items, 5);
+    expect(first.map((i: any) => i.opportunityId)).toEqual(['id-0', 'id-1', 'id-2', 'id-3', 'id-4']);
+    expect(rest.map((i: any) => i.opportunityId)).toEqual(['id-5', 'id-6', 'id-7']);
+  });
+
+  it('shows everything at once (no button) when the number is missing, silly or larger than the list', () => {
+    for (const n of [undefined, null, 0, -1, 2.5, '5']) expect(D.splitResults(items, n).rest).toEqual([]);
+    expect(D.splitResults(items, 20).rest).toEqual([]);
+    expect(D.splitResults(items, 20).first).toHaveLength(8);
+    expect(D.splitResults(undefined, 5)).toEqual({ first: [], rest: [] });
+  });
+
+  it('adds up the downloaded documents of the listings it is given only', () => {
+    const doc = { documents: [{}, {}], totalPages: 40, totalWords: 9000, requirements: { total: 30, toPrepare: 8 } };
+    const got = D.totalsFor([{ downloaded: doc }, { downloaded: { ...doc, requirements: null } }, {}]);
+    expect(got).toEqual({ listings: 2, documents: 4, pages: 80, words: 18000, requirements: 30, toPrepare: 8 });
+    expect(D.totalsFor([{}, { opportunityId: 'x' }])).toBeNull();
+    expect(D.totalsFor(undefined)).toBeNull();
+  });
+});
+
+describe('buildRequest and the previous reply', () => {
+  it('sends the reply shown last turn, trimmed and capped, and nothing when there is none', () => {
+    const messages = [{ role: 'user', content: 'a' }];
+    expect(D.buildRequest(messages, { previousReply: '  Last reply.  ' }).previousReply).toBe('Last reply.');
+    expect(D.buildRequest(messages, { previousReply: 'x'.repeat(5000) }).previousReply).toHaveLength(2000);
+    for (const none of ['', '   ', undefined, null, 42]) expect(D.buildRequest(messages, { previousReply: none })).not.toHaveProperty('previousReply');
+  });
+});

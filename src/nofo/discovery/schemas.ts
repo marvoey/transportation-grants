@@ -98,10 +98,18 @@ export const DiscoverInputSchema = z
     includeHistorical: z.boolean().optional(),
     /** "Search now": never ask, search with what is known. */
     forceResults: z.boolean().optional(),
-    /** Which guided questions this conversation has already been shown, so none is asked twice. */
+    /**
+     * Guided questions the applicant has been shown and chose to skip; they are not asked again. The page sends none by
+     * default, so a question repeats until it is answered (or the applicant chooses "Search now").
+     */
     asked: z.array(z.enum(GUIDED_QUESTION_IDS)).max(GUIDED_QUESTION_IDS.length).optional(),
     /** Also return the exact Simpler.Grants.gov requests and responses, for inspection. */
     inspect: z.boolean().optional(),
+    /**
+     * The reply the app showed last turn, sent back by the page so a short follow-up ("yes") can be answered in context.
+     * Untrusted: it is only ever shown to the model as delimited context, never used as a source of numbers or facts.
+     */
+    previousReply: z.string().trim().min(1).max(2000).optional(),
   })
   .strict();
 export type DiscoverInput = z.infer<typeof DiscoverInputSchema>;
@@ -249,6 +257,8 @@ export interface DiscoverResult {
   questions: GuidedQuestion[];
   shortlist: ShortlistItem[];
   searches: FilterNote[];
+  /** How many of `shortlist` the page shows at first; the rest are behind a button. Absent: show them all. */
+  showFirst?: number;
   /** Plain-language summary of what was found, written by code. */
   summary: string;
   warnings: string[];
@@ -262,6 +272,12 @@ export interface DiscoverResult {
   apiCalls?: ApiCall[];
   /** A short plain-language explanation of the search (results stage only). */
   explanation?: { text: string; source: 'model' | 'code' };
+  /**
+   * The conversational reply that introduces the list (results stage only): written by the language model from the
+   * understood project, the first listings and the open question, and checked by code, or by a template. The list itself
+   * is written by code. `fallbackReason` says why model text was not used.
+   */
+  reply?: { text: string; source: 'model' | 'code'; mentions: string[]; fallbackReason?: string };
   /** Present only when the request asked to inspect the Simpler.Grants.gov traffic. */
   inspection?: SearchInspection[];
   /**
