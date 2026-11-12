@@ -19,18 +19,43 @@ const docsDescriptions = docsText
   .map((line) => line.slice(2).trim());
 
 describe('sample project descriptions (the data behind the slide-out tray)', () => {
-  it('has the twelve descriptions (six detailed, six short and vague), each with an id, a title and text, and unique ids', () => {
-    expect(projects).toHaveLength(12);
+  it('has twenty-six descriptions (ten detailed, six short and vague, ten stress tests), each with an id, a title and text, and unique ids', () => {
+    expect(projects).toHaveLength(26);
     for (const p of projects) {
       expect(p.id).toMatch(/^sample-\d+$/);
       expect(p.title.length).toBeGreaterThan(5);
       expect(p.text.length).toBeGreaterThan(30);
     }
+    expect(new Set(projects.map((p) => p.id)).size).toBe(projects.length);
     // The short ones really are short: a sentence or two, nothing like a full project brief.
     const short = projects.filter((p) => p.title.startsWith('Short: '));
     expect(short).toHaveLength(6);
     for (const p of short) expect(p.text.length).toBeLessThanOrEqual(200);
-    expect(new Set(projects.map((p) => p.id)).size).toBe(projects.length);
+    expect(projects.filter((p) => !p.title.startsWith('Short: ') && !p.title.startsWith('Stress test: '))).toHaveLength(10);
+  });
+
+  it('has two stress tests for each of five programs', () => {
+    // A stress-test title reads "Stress test: <Program>, <applicant and project>".
+    const byProgram = new Map<string, number>();
+    for (const p of projects.filter((x) => x.title.startsWith('Stress test: '))) {
+      const match = /^Stress test: ([^,]+), .+$/.exec(p.title);
+      expect(match, `title "${p.title}" should read "Stress test: <Program>, <who>"`).not.toBeNull();
+      byProgram.set(match![1], (byProgram.get(match![1]) ?? 0) + 1);
+    }
+    expect(byProgram.size).toBe(5);
+    for (const [program, count] of byProgram) expect(count, program).toBe(2);
+  });
+
+  it('has two detailed ones for each of five programs: one with one gap and one with two', () => {
+    // A detailed title reads "<Program>: <applicant and project> (1 gap)" or "... (2 gaps)".
+    const byProgram = new Map<string, string[]>();
+    for (const p of projects.filter((x) => !x.title.startsWith('Short: ') && !x.title.startsWith('Stress test: '))) {
+      const match = /^([^:]+): .+ \((\d) gaps?\)$/.exec(p.title);
+      expect(match, `title "${p.title}" should end with the number of gaps`).not.toBeNull();
+      byProgram.set(match![1], [...(byProgram.get(match![1]) ?? []), match![2]]);
+    }
+    expect(byProgram.size).toBe(5);
+    for (const [program, gaps] of byProgram) expect(gaps.sort(), program).toEqual(['1', '2']);
   });
 
   it('every description fits in one message (the search and assessment accept 4,000 characters)', () => {
