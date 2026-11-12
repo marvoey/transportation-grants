@@ -16,7 +16,7 @@
     { label: 'Documentation', href: '/docs' },
     // Demo mode entry points (see /js/demo-mode.js and docs/NOFO_DEMO.md).
     { label: 'Open the app in demo mode', href: '/?demo=1' },
-    { label: 'Open the app live (demo mode off)', href: '/chat.html?demo=0' },
+    { label: 'Open the app live (demo mode off)', href: '/?demo=0' },
     { label: 'Record a demo run', href: '/chat.html?demo=record' },
   ];
 
