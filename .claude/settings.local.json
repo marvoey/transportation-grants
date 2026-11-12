@@ -5,7 +5,10 @@
       "WebFetch(domain:catalog.data.gov)",
       "WebFetch(domain:www.grants.gov)",
       "Skill(claude-api)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(python3 -I -)",
+      "Bash(node scripts/build-demo-script.mjs)",
+      "Bash(python3 -c ' *)"
     ]
   }
 }
