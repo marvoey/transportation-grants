@@ -1,4 +1,4 @@
-# GrantFlow AI
+# GrantFlow AI concept of operations: from government search to AI-guided consultation
 
 **Big Build 3.0 | Concept of Operations**
 

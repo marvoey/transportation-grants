@@ -1,83 +1,55 @@
-# DOT Grant Decision Advisor — Development Instructions
+# GrantFlow — Development Instructions
 
-Detailed requirements live in `NOFO_MVP_CLAUDE_CODE_IMPLEMENTATION_GUIDE.md` (the guide).
-Read it before starting any milestone. If this file and the guide disagree, the guide wins.
-The audit, architecture, risks and per-milestone records are in `docs/NOFO_MVP_PLAN.md`.
+GrantFlow helps a state or local agency with a transportation project find federal funding worth
+a look, and understand what a specific funding notice (NOFO) means for them before they apply.
+The audit, architecture, risks and a record of every change are in `docs/NOFO_MVP_PLAN.md`; where a
+language model is used and how code checks it is in `docs/NOFO_AI_USAGE.md`; how to run and present
+the app is in `README.md` and `docs/NOFO_DEMO.md`. Keep the plan current when behavior changes.
 
 ## Project objective
-Extend the existing transportation-grants app with a **NOFO-driven applicant feasibility
-assessment**. The user is a state or local government agency with an existing transportation
-project and an already-selected federal funding opportunity. The MVP answers: what does the
-NOFO mean for us, what information is missing, and what should we investigate before applying?
+The user is a state or local government agency with a transportation project. GrantFlow answers:
+which opportunities are worth considering, what does the notice mean for us, what information is
+missing, and what should we investigate before applying? It has two connected features in one web app.
 
+- **Find grants.** The user describes the project and the app builds Simpler.Grants.gov search
+  filters and shows a short list (4-5) of opportunities to consider, the rest behind a button. It keeps
+  asking its questions (project type, applicant, federal request; two at a time) until they are
+  answered, always offers "Search now" to skip them, and always ends with a list at the message limit.
+  The user can then prepare one opportunity for assessment.
+- **Assess a project.** The user picks an opportunity whose documents have been prepared and describes
+  the project. Assess is a consultation in three stages, at most one per message: who you are and
+  whether the notice applies, whether the money works, whether you are ready by default, but the model
+  plans the stages for each grant (`npm run nofo:stages`, saved as stages.json, run automatically after
+  extraction; code checks it, forces everything about who may apply into the first stage, and falls back
+  to the three defaults) (at most 10 questions in a stage). After the last stage what is still open stays
+  unknown and can be answered from the Answers drawer. Each turn says what changed since the last message
+  (code, from the statuses the page sends back) and the results lead with "where you stand" (code), not a
+  requirement count. It offers "I don't know yet" to set questions aside.
 - Opportunities are identified by a **Simpler.Grants.gov opportunity UUID** (direct input, or an
   ID from a search result). The UUID is not the official opportunity number: keep them separate.
-- Milestone 6 adds a front door: the user describes the project and the app builds Simpler search
-  filters and shows a short list (4-5) of opportunities to consider. It keeps asking its questions
-  (project type, applicant, federal request; two at a time) until they are answered, always offers
-  "Search now" to skip them, and always ends with a list at the message limit. Assess is a consultation in
-  three stages, at most one per message: who you are and whether the notice applies, whether the money works,
-  whether you are ready by default, but the model plans the stages for each grant (`npm run nofo:stages`, saved as
-  stages.json, run automatically after extraction; code checks it, forces everything about who may apply into the
-  first stage, and falls back to the three defaults) (at most 10 questions in a stage); after the last stage what
-  is still open stays unknown and can be answered from the Answers drawer. Each turn says what changed since the last message (code, from the
-  statuses the page sends back) and the results lead with "where you stand" (code), not a requirement count. It
-  offers "I don't know yet" to set questions aside.
-- **No grant-specific code.** FY2026 BUILD is the primary test fixture and the demo case, and
-  Wildlife Crossings is the second integration test. Neither is a hardcoded dependency.
-- Demo: hypothetical Virginia DOT project vs. the real FY2026 BUILD documents (a historical
-  demonstration case, not a claim of open funding).
+- **No grant-specific code.** FY2026 BUILD and Wildlife Crossings are the integration-test grants.
+  No grant is a hardcoded dependency.
+- Demo: a fictional city police department with a $15 million request, found and assessed against the
+  real ITSE notice (see `docs/GrantFlow_BigBuild_Live_App_Demo_Script.md`). The original FY2026 BUILD
+  case (a hypothetical Virginia DOT project) is a historical demonstration, not a claim of open funding.
 - Deadline: **2026-11-13**. Optimize for a reliable demo, not a production platform.
 - Core evidence chain: advisory conclusion → assessment finding → structured requirement →
   original source document.
 
-## Technology constraints
-- Preserve TypeScript, Node.js, Express, MCP, the Anthropic SDK, Zod and Vitest.
-- Reuse the existing Anthropic client, route/error-handler patterns and `chat.html`.
-- Zod validates all structured LLM output and everything read from disk or an API.
-- Persist NOFO data as local files and JSON under `data/opportunities/<uuid>/`.
-- Do **not** add a frontend framework, LangChain/LangGraph, a Python backend, or a database
-  without explicit justification and approval.
-- The Simpler.Grants.gov client uses native `fetch`, not axios (manual redirects, no key sent
-  to other hosts). PDF/HTML parsing happens only in the ingestion path, never inside the web
-  server process. The web "prepare" route (Milestone 6) runs the ingest and extract CLIs as
-  child processes with a fixed argv and no shell.
-- New dependencies: check the repo first, choose maintained packages, pin exact versions, and
-  tell the user before adding them. Never override the user's npm credentials or registry
-  settings to get an install through; ask instead.
-- Do not rewrite or break unrelated existing functionality.
-
-## MVP scope
-1. A selected opportunity identified by a Simpler.Grants.gov UUID.
-2. Retrieve opportunity details and the official attachments the API lists; allow manually
-   curated supplemental sources (`supplemental.json`) added later.
-3. Ingest PDF, HTML and Word (.docx); register every other format honestly as unparsed.
-4. Extract structured, source-linked requirements.
-5. Compare requirements against project facts the user gives in conversation.
-6. Identify conflicts and missing information; ask targeted follow-up questions.
-7. Provide a preliminary, evidence-backed assessment with verifiable citations.
-8. (Milestone 6) From a project description, search Simpler.Grants.gov and present a short,
-   explained list of opportunities to consider, then let the user prepare one for assessment.
-
-## Out of scope
-- Grant triage or ranking by competitiveness; a general-purpose discovery platform. The Milestone 6
-  shortlist is a preliminary starting point, not a recommendation or an eligibility determination.
-- Application drafting, GIS analysis, benefit-cost calculations (only identify that a BCA is required)
-- Definitive eligibility determinations or award predictions
-- Complex autonomous multi-agent orchestration; production deployment architecture
-- OCR, arbitrary web crawling, spreadsheet/formula validation, a separate project-profile page
-- Ingestion refresh (`--refresh`) or arbitrary-URL ingestion from the web. The Milestone 6 prepare
-  route accepts only a UUID that appeared in a recent discover result, runs one job at a time, and
-  is capped per day.
-
-## Milestones (one at a time, in order)
-1. Repository audit and plan (done)
-2. Generic opportunity acquisition and ingestion (`npm run nofo:ingest -- <uuid>`)
-3. Requirements extraction (`npm run nofo:extract -- <uuid>`, `npm run nofo:eval -- <uuid>`; BUILD FAQs/checklists/amendments may be added as supplemental sources)
-4. Applicant assessment and follow-up questions (`assessTurn` in `src/nofo/service.ts`; `npm run nofo:assess -- <uuid> --say "..."`)
-5. Chat integration and browser demo
-6. Project-description-first "Find grants" flow (`npm run nofo:find -- "<description>"`,
-   `POST /api/nofo/discover`, `POST /api/nofo/prepare`). Filter rules: hard-filter only on
+## How it is built
+Entry points, in the order the data flows:
+1. Acquisition and ingestion: `npm run nofo:ingest -- <uuid>`. Fetch the opportunity and the official
+   attachments the API lists (and curated `supplemental.json` sources); ingest PDF, HTML and Word
+   (.docx); register every other format honestly as unparsed.
+2. Requirements extraction: `npm run nofo:extract -- <uuid>`, `npm run nofo:eval -- <uuid>`. Structured,
+   source-linked requirements (BUILD FAQs/checklists/amendments may be added as supplemental sources).
+3. Applicant assessment: `assessTurn` in `src/nofo/service.ts`; `npm run nofo:assess -- <uuid> --say "..."`.
+   Compare requirements against project facts the user gives in conversation, identify conflicts and
+   missing information, ask targeted follow-up questions, and give a preliminary, evidence-backed
+   assessment with verifiable citations.
+4. Browser front end on `chat.html` (Find grants and Assess tabs), the demo mode, and the presenter window.
+5. Find grants: `npm run nofo:find -- "<description>"`, `POST /api/nofo/discover`,
+   `POST /api/nofo/prepare`. Filter rules: hard-filter only on
    reliable fields (DOT agency, status, project-term query); applicant type, award size, cost
    sharing and funding category are scored in code, not filtered, because upstream metadata is
    often null or `other` (BUILD lists applicant type `other`). Ranking and the "why it may fit"
@@ -89,15 +61,42 @@ NOFO mean for us, what information is missing, and what should we investigate be
    code (no links, markup or eligibility claims; numbers only as given), labelled as model-written,
    and replaced by a code template if they fail the checks (`src/nofo/reply-check.ts`).
 
-Rules:
-- **Work on one milestone only, and only when the user asks for it.** Never start the next one.
+## Technology constraints
+- Preserve TypeScript, Node.js, Express, the Anthropic SDK, Zod and Vitest.
+- Reuse the existing Anthropic client, route/error-handler patterns and `chat.html`.
+- Zod validates all structured LLM output and everything read from disk or an API.
+- Persist opportunity data as local files and JSON under `data/opportunities/<uuid>/`.
+- Do **not** add a frontend framework, LangChain/LangGraph, a Python backend, or a database
+  without explicit justification and approval.
+- The Simpler.Grants.gov client uses native `fetch`, not axios (manual redirects, no key sent
+  to other hosts). PDF/HTML parsing happens only in the ingestion path, never inside the web
+  server process. The web "prepare" route runs the ingest and extract CLIs as
+  child processes with a fixed argv and no shell.
+- New dependencies: check the repo first, choose maintained packages, pin exact versions, and
+  tell the user before adding them. Never override the user's npm credentials or registry
+  settings to get an install through; ask instead.
+- The original MCP server and SAM.gov pages (`src/mcp`, `src/tools`, `src/clients`) are kept as they are.
+  Do not rewrite or break unrelated existing functionality.
+
+## Out of scope
+- Grant triage or ranking by competitiveness; a general-purpose discovery platform. The Find grants
+  shortlist is a preliminary starting point, not a recommendation or an eligibility determination.
+- Application drafting, GIS analysis, benefit-cost calculations (only identify that a BCA is required)
+- Definitive eligibility determinations or award predictions
+- Complex autonomous multi-agent orchestration; production deployment architecture
+- OCR, arbitrary web crawling, spreadsheet/formula validation, a separate project-profile page
+- Ingestion refresh (`--refresh`) or arbitrary-URL ingestion from the web. The prepare
+  route accepts only a UUID that appeared in a recent discover result, runs one job at a time, and
+  is capped per day.
+
+## Working rules
+- **Work on one thing at a time, and only what the user asks for.** Never start the next piece unasked.
 - Inspect existing code before proposing changes. Plan first for architectural choices.
-- Do not begin frontend changes until requirements extraction works reliably.
-- Run the TypeScript build and relevant tests at the end of each milestone, and report results
+- Run the TypeScript build and relevant tests at the end of a change, and report results
   exactly. Separate pre-existing failures from new ones, and say what was skipped or blocked.
 - Live checks that cannot run (missing key, blocked dependency) are reported as blocked, never as passed.
-- Commit only when the user asks, one commit per milestone.
-- End each milestone with a summary: changed files, test results, assumptions, limitations,
+- Commit only when the user asks, in logical commits.
+- End each piece of work with a summary: changed files, test results, assumptions, limitations,
   deferred items. Keep `docs/NOFO_MVP_PLAN.md` current.
 
 ## Evidence and safety rules

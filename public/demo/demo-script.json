@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "title": "GrantFlow AI — Big Build 3.0 Live-Application Demo Script",
+  "title": "Big Build demo video script: timed show, do and say for the 2:50 walkthrough",
   "meta": [
     "**Theme:** From searching government programs to consulting about a project",
     "**Tagline:** **Start with the project. Not the program.**",
@@ -36,15 +36,19 @@
       "sub": []
     },
     {
-      "text": "On the provided $15M screenshot, **11 listings** were checked; ITSE ranks first with a **$20M listed maximum** that covers the request; FY2027 Crash Causal Factors has a **$500K listed maximum**, below the request. If the live ranking differs, point to the actual visible results rather than claiming a fixed ordering.",
+      "text": "On the provided $15M screenshot, GrantFlow recognized **Safety**, **City or township government** (its inference from the description, not independently verified) and a **$15 million federal request**. **11 listings** were checked: five primary matches shown and six further listings behind the button. ITSE ranks first with a **$20M listed maximum** that covers the request, **at the listing level only**; FY2027 Crash Causal Factors has a **$500K listed maximum**, below the request. A listed maximum that covers the request is favorable, not a conflict; the material warning is the $500K. Neither listing proves program eligibility or award likelihood. If the live ranking differs, point to the actual visible results rather than claiming a fixed ordering.",
       "sub": []
     },
     {
-      "text": "Prepare a genuine **assessment of this same $15M scenario** against the selected ITSE notice in advance. The repository's bundled `public/demo/demo-run.json` currently records a different **$1.8M** request and must not be passed off as this run. If you cannot prepare and verify a matching assessment, use the alternate 1:42–2:11 narration below.",
+      "text": "Prepare a genuine **assessment of this same $15M scenario** against the selected ITSE notice in advance. The bundled `public/demo/demo-run.json` is now the recording of exactly this case (2026-11-12: a city police department, a $15 million request, two Find grants turns and four Assess turns against ITSE; `demo-run-itse-speeding.json` is a copy). The other `public/demo/demo-run-*.json` files are different cases (a different request, or another program) and must not be passed off as this run. To use one, copy it over `demo-run.json`. In demo mode the text you type is not interpreted, so type the exact messages above. If you cannot prepare and verify a matching assessment, use the alternate 1:43–2:12 narration below.",
       "sub": []
     },
     {
-      "text": "Test that **View source** opens a real official passage. If using the application's replay mode (`?demo=1`) or simulated preparation, keep its on-screen label visible and describe it truthfully as a recording or simulation. For the strongest video, capture one real run first, then edit out network delays.",
+      "text": "Test that **View source** opens a real official passage. If using the application's replay mode (`?demo=1`; `?demo=record` captures a run; `?demo_speed=2` replays faster) or simulated preparation (Settings tray), keep its on-screen label visible and describe it truthfully as a recording or **SIMULATED PREPARATION**: it does not download or parse anything at that moment. For the strongest video, capture one real run first, then edit out network delays.",
+      "sub": []
+    },
+    {
+      "text": "Open the **demo script window** from the floating menu (bottom-left) and keep it beside the app: it shows this script scene by scene and has Samples and Answers tabs whose Copy buttons type into the app's question box. The small round toggle at the bottom-right hides the drawer tabs for a clean screen. After editing this file, run `npm run demo:script` to rebuild what the window shows.",
       "sub": []
     }
   ],
@@ -130,7 +134,7 @@
         {
           "kind": "show",
           "label": "SHOW/DO",
-          "text": "In the actual results screen, briefly highlight the **documents downloaded/read** panel. In the supplied screenshot this shows **14 documents, 226 PDF pages, approximately 74,200 words, and 254 extracted requirements** across five prepared opportunities. Then show **Prepare this opportunity for assessment** on the ITSE card; if already prepared for your recording, use **Assess my project against this** and open the actual **Assess a project** tab."
+          "text": "In the actual results screen, briefly highlight the **documents downloaded/read** panel. In the supplied screenshot this shows **14 documents, 226 PDF pages, approximately 74,200 words, 254 extracted requirements and 53 additional documents/forms** across five prepared opportunities. Then show **Prepare this opportunity for assessment** on the ITSE card; if already prepared for your recording, use **Assess my project against this** and open the actual **Assess a project** tab."
         },
         {
           "kind": "say",

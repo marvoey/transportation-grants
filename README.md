@@ -1,293 +1,152 @@
-# DOT Grants MCP Server
+# GrantFlow: DOT Grant Decision Advisor — overview, setup and usage
 
-A Model Context Protocol (MCP) server that provides tools for U.S. Department of Transportation (DOT) grant applicants to search opportunities, check eligibility, and track deadlines.
+Start with the project, not the program. GrantFlow helps a state or local agency with a transportation project work out which federal funding opportunities are worth a look, and what a specific notice of funding opportunity (NOFO) means for them, before they apply.
 
-## Features
+It has two connected parts in one web app, plus the original MCP server:
 
-- **Search Grant Opportunities**: Find DOT grants by applicant type, funding amount, keywords, and deadlines
-- **Get Grant Details**: Retrieve comprehensive information about specific programs and opportunities
-- **Check Eligibility**: Determine if your organization qualifies for DOT grant programs
-- **Track Deadlines**: Monitor upcoming grant deadlines to stay on top of applications
+- **Find grants.** Describe the project in plain words. The app asks a few follow-up questions (project type, applicant, federal request), searches Simpler.Grants.gov for U.S. Department of Transportation opportunities, and shows a short list with the reasons each may fit and the things to watch out for.
+- **Assess a project.** Pick an opportunity whose documents have been prepared and describe the project. The app holds a short consultation in up to three stages (who you are and whether the notice applies, whether the money works, whether you are ready), compares what you said with the notice's requirements, shows what appears supported, what may conflict and what is still unknown, and links each finding to the original passage.
+- **MCP server and original pages.** The earlier tools for searching DOT grants, checking eligibility and tracking deadlines (SAM.gov data) are still there; see [the legacy section](#the-original-mcp-server-and-grant-pages).
 
-## Supported Applicant Types
+Everything it produces is **preliminary**. It is decision preparation, not an eligibility determination, a recommendation or an award prediction. Missing information is shown as *unknown*, never as a pass or a fail.
 
-- **State**: State governments and state agencies
-- **City**: Cities, municipalities, and townships
-- **County**: County governments
-- **Tribal**: Federally recognized tribal governments and Native American organizations
-- **MPO**: Metropolitan Planning Organizations and regional planning organizations
-- **Transit Agency**: Public transit systems and transportation authorities
+## How it works, in short
 
-## Prerequisites
+- Opportunities are identified by a **Simpler.Grants.gov opportunity UUID**. The official documents are downloaded and parsed once ("prepared"), the requirements are extracted with a source quote for each, and everything is stored as local files under `data/opportunities/<uuid>/`.
+- A language model is used to read and to word things, never to decide. Code checks every quote, number and document reference, and the findings, questions and advisory are written by code. Wherever the model writes text, code checks it and a template replaces it if it fails. The details, step by step, are in [where the AI model is used and how code checks it](docs/NOFO_AI_USAGE.md).
+- The evidence chain is: advisory conclusion → finding → structured requirement → original source document.
+- No grant is hard-coded. The FY2026 BUILD notice is the main test case and Wildlife Crossings the second; any prepared opportunity works the same way.
 
-- Node.js 18 or higher
-- SAM.gov API key (free)
+## Quick start
 
-## Installation
+**Prerequisites:** Node.js 20 or higher (recommended), and these keys in a local `.env` file (never commit it):
 
-### 1. Clone or Download
-
-```bash
-cd /path/to/webmcp
-```
-
-### 2. Install Dependencies
+| Key | Needed for |
+|---|---|
+| `SIMPLER_GRANTS_API_KEY` | Searching Simpler.Grants.gov and preparing an opportunity (get one at https://simpler.grants.gov/developers) |
+| `ANTHROPIC_API_KEY` | Extracting requirements, and the model-written parts of Find grants and Assess. Without it the pages still run with keyword reading and template text. |
+| `SAM_API_KEY` | Only the original SAM.gov pages and MCP server (see below) |
 
 ```bash
 npm install
-```
-
-### 3. Get SAM.gov API Key
-
-1. Visit [SAM.gov API](https://open.gsa.gov/api/get-opportunities-public-api/)
-2. Create a free account at SAM.gov if you don't have one
-3. Navigate to your profile settings
-4. Copy your API key from the API section
-
-### 4. Configure Environment
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` and add your SAM.gov API key:
-
-```bash
-SAM_API_KEY=your_actual_api_key_here
-```
-
-### 5. Build the Project
-
-```bash
+cp .env.example .env      # then edit .env and add your keys
 npm run build
+npm run start:web         # or: npm run dev:web (auto-reload)
 ```
 
-## Usage
+Open http://localhost:3000 (change the port with `WEB_PORT`). The Find grants and Assess tabs are on `/chat.html`; Assess is also `chat.html?mode=nofo`, and you can link straight to an opportunity with `chat.html?mode=nofo&opportunity=<uuid>`.
 
-### Running the Server
+### Preparing an opportunity
+
+In the app, choose **Prepare this opportunity** on a listing (it needs both the Simpler and Anthropic keys, runs one job at a time, and is capped per day by `PREPARE_DAILY_LIMIT`, default 5). Or prepare one from the command line:
 
 ```bash
-npm start
+npm run nofo:ingest  -- <uuid>              # download and parse the official documents (no model used)
+npm run nofo:extract -- <uuid> --passes 2   # extract requirements with quotes; also plans the assessment stages
+npm run nofo:stages  -- <uuid>              # (re)plan the stages for this grant only
+npm run nofo:eval    -- <uuid>              # compare the extraction with a reference set (no model used)
 ```
 
-Or for development with auto-reload:
+An opportunity appears in the Assess selector when its package exists and it has extracted requirements. `data/opportunities/` is a git-ignored cache; commit a small, stable demo package deliberately with `git add -f`. At request time the server only reads those files.
+
+Try the flows without the browser:
 
 ```bash
-npm run dev
+npm run nofo:find   -- "Our county wants a wildlife crossing where deer are hit"
+npm run nofo:assess -- <uuid> --say "We are a state DOT planning ..."
+npm run nofo:stats                                  # what has been prepared
 ```
 
-### NOFO applicant assessment (chat page, "Assess a project")
+## Demo mode and presenting
 
-Pick an already-ingested funding opportunity, describe a transportation project, and get a preliminary, source-cited read of what the notice means for you. Operator setup (`npm run nofo:ingest`, `npm run nofo:extract`), the demo script and known limitations are in [docs/NOFO_DEMO.md](docs/NOFO_DEMO.md); the design is in [docs/NOFO_MVP_PLAN.md](docs/NOFO_MVP_PLAN.md).
+- **Demo mode** replays a recorded run in the browser with no API calls, downloads or parsing: open `/chat.html?demo=1` (`?demo=0` turns it off, `?demo=record` captures a new recording). A badge always says the run is a recording, not live. "Simulate preparing" shows the preparation progress for opportunities whose documents are already downloaded.
+- The **floating menu** (bottom-left) opens the **demo script window**: a separate window with the timed script (SHOW/DO, SAY, DIRECTING NOTE), the sample projects and suggested answers, each with a Copy button that types into the app. A small toggle at the bottom-right hides the drawer tabs for a clean screen. After editing `docs/GrantFlow_BigBuild_Live_App_Demo_Script.md`, run `npm run demo:script` to rebuild what the window shows.
+- `/big-build-v2.html` is the Big Build presentation companion (framing and impact scenes; the video itself shows the real app); `/docs` shows the project's markdown documents in the browser.
 
-### MCP Tools
-
-The server exposes four MCP tools:
-
-#### 1. `search_dot_grants`
-
-Search for DOT grant opportunities with optional filters.
-
-**Parameters:**
-- `applicantType` (optional): `state`, `city`, `county`, `tribal`, `mpo`, or `transit_agency`
-- `minAmount` (optional): Minimum grant amount in dollars
-- `maxAmount` (optional): Maximum grant amount in dollars
-- `keywords` (optional): Keywords to search in titles and descriptions
-- `deadlineAfter` (optional): ISO date or MM/DD/YYYY
-- `deadlineBefore` (optional): ISO date or MM/DD/YYYY
-
-**Example:**
-```
-Search for transit agency grants over $1 million
-```
-
-#### 2. `get_grant_details`
-
-Get comprehensive details about a specific grant program or opportunity.
-
-**Parameters:**
-- `opportunityId` (optional): SAM.gov notice ID
-- `programNumber` (optional): CFDA code (e.g., "20.205")
-
-**Note:** Provide either `opportunityId` OR `programNumber`.
-
-**Example:**
-```
-Get details for program 20.205 (Highway Planning and Construction)
-```
-
-#### 3. `check_eligibility`
-
-Check if an applicant type is eligible for DOT programs.
-
-**Parameters:**
-- `applicantType` (required): `state`, `city`, `county`, `tribal`, `mpo`, or `transit_agency`
-- `opportunityId` (optional): Check specific opportunity
-- `programNumber` (optional): Check specific program (CFDA code)
-
-**Example:**
-```
-Check if tribal governments are eligible for DOT grants
-```
-
-#### 4. `track_upcoming_deadlines`
-
-List grants with upcoming deadlines, sorted by deadline (soonest first).
-
-**Parameters:**
-- `daysAhead` (optional): Number of days to look ahead (default: 30, max: 365)
-- `applicantType` (optional): Filter by applicant type
-
-**Example:**
-```
-Show grant deadlines in the next 60 days for MPOs
-```
-
-## Data Sources
-
-The server uses three official U.S. government APIs:
-
-1. **SAM.gov Opportunities API** - Active grant opportunities
-2. **SAM.gov Assistance Listings API** - Program details and eligibility (DOT code: 6900)
-3. **USASpending.gov API** - Historical awards data (DOT code: 069)
-
-## Caching
-
-The server implements intelligent caching to respect API rate limits:
-
-- **Assistance Listings**: 7-day cache (programs change infrequently)
-- **Opportunities**: 6-hour cache (updated frequently)
-- **Rate Limit Tracking**: 24-hour rolling window
-
-Cached data is stored in `.cache/` directory.
+See [the demo guide](docs/NOFO_DEMO.md) for the operator steps and known limitations.
 
 ## Configuration
 
-All configuration options are available via environment variables (see `.env.example`):
+Set in `.env` (see `.env.example` for all of them and their defaults):
 
-- `SAM_API_KEY` - **Required**: Your SAM.gov API key
-- `SAM_RATE_LIMIT_REQUESTS` - Max requests per day (default: 100)
-- `CACHE_DIR` - Cache directory location (default: `.cache`)
-- `LOG_LEVEL` - Logging verbosity: `debug`, `info`, `warn`, `error` (default: `info`)
+| Variable | Purpose |
+|---|---|
+| `WEB_PORT` | Port of the web server (default 3000) |
+| `ANTHROPIC_MODEL`, `ANTHROPIC_EXTRACTION_MODEL`, `ANTHROPIC_EXTRACTION_EFFORT` | Model and effort for every model step (the extraction variables take priority) |
+| `ANTHROPIC_BASE_URL` | Route model calls through a gateway instead of api.anthropic.com |
+| `SIMPLER_GRANTS_BASE_URL`, `SIMPLER_TIMEOUT_MS`, `SIMPLER_MAX_RETRIES` | Simpler.Grants.gov client |
+| `PREPARE_DAILY_LIMIT`, `PREPARE_INGEST_TIMEOUT_MS`, `PREPARE_EXTRACT_TIMEOUT_MS` | The web "prepare" button |
+| `NOFO_DATA_DIR`, `NOFO_MAX_DOWNLOAD_BYTES`, `NOFO_MAX_PACKAGE_BYTES` | Where prepared packages live and download caps |
+| `CORS_ORIGINS`, `CHAT_RATE_LIMIT_REQUESTS`, `LOG_LEVEL` | Web server behaviour |
 
-## Common DOT Grant Programs
+Applicants should not enter confidential information: the text of a conversation is sent to the model provider for each turn, though the server does not store it or log message text.
 
-- **20.205** - Highway Planning and Construction (Federal-Aid Highway Program)
-- **20.500** - Federal Transit Capital Investment Grants
-- **20.507** - Federal Transit Formula Grants
-- **20.106** - Airport Improvement Program
-- **20.600** - State and Community Highway Safety
-
-## Troubleshooting
-
-### API Key Errors
+## Project layout
 
 ```
-Error: SAM_API_KEY environment variable is required
+src/
+├── nofo/                 NOFO features
+│   ├── simpler/          Simpler.Grants.gov client (native fetch)
+│   ├── acquire/, ingest/ Download, file-type detection, PDF/HTML/Word parsing, coverage
+│   ├── extraction/       Requirements extraction and verification
+│   ├── discovery/        Find grants: profile, filters, ranking, reply
+│   ├── assessment/       Assess: facts, checks, questions, stages, replies
+│   ├── prepare/          The web "prepare" job manager
+│   ├── service.ts        assessTurn, the Assess turn
+│   └── reply-check.ts    Checks on model-written text
+├── web/                  Express server, routes (/api/nofo, /docs, ...) and front-end tests
+├── mcp/, tools/, clients/, cache/  The original MCP server and SAM.gov code
+└── config/, types/, utils/
+public/                   The front end (plain HTML, CSS and JavaScript, no framework)
+data/opportunities/       Prepared opportunity packages (git-ignored cache)
+data/fixtures/            Small stable test fixtures
+docs/                     Documentation
+scripts/                  Small build helpers
 ```
-
-**Solution:** Add your SAM.gov API key to `.env` file.
-
-### Rate Limit Exceeded
-
-```
-Rate limit exceeded: 100/100 requests used. Resets in X minutes.
-```
-
-**Solution:** Wait for the rate limit window to reset, or upgrade your SAM.gov account for higher limits.
-
-### Network Errors
-
-```
-Unable to connect to SAM.gov API
-```
-
-**Solution:** Check your internet connection and verify SAM.gov APIs are accessible.
 
 ## Development
 
-### Project Structure
-
-```
-webmcp/
-├── src/
-│   ├── index.ts              # Server entry point
-│   ├── server.ts             # MCP server setup
-│   ├── config/               # Configuration and constants
-│   ├── clients/              # API clients
-│   ├── cache/                # Caching layer
-│   ├── tools/                # MCP tool implementations
-│   ├── types/                # TypeScript types
-│   └── utils/                # Utilities (errors, validators)
-├── .env.example              # Environment template
-├── package.json
-├── tsconfig.json
-└── README.md
-```
-
-### Testing
-
-Run the server in development mode:
-
 ```bash
-npm run dev
-```
-
-Test with Claude Code or any MCP client that can invoke:
-- `search_dot_grants`
-- `get_grant_details`
-- `check_eligibility`
-- `track_upcoming_deadlines`
-
-### Linting and Formatting
-
-```bash
+npm run build         # TypeScript build
+npx tsc --noEmit -p . # type-check only
+npm test              # Vitest (watch mode); npm run test:run runs once
 npm run lint
 npm run format
 ```
 
-## License
+Tests use local fixtures with injected `fetch` and mocked model calls; they never touch the network. The conventions for contributors (and for Claude Code) are in [the development instructions](CLAUDE.md).
 
-MIT
+## The original MCP server and grant pages
 
-## Support
+The project began as a Model Context Protocol (MCP) server for U.S. DOT grant applicants, using SAM.gov, the Assistance Listings and USASpending.gov data. It is still included:
 
-For issues with:
-- **This server**: Open an issue in this repository
-- **SAM.gov APIs**: Visit [SAM.gov API support](https://open.gsa.gov/api/get-opportunities-public-api/)
-- **Grant programs**: Contact the DOT agency office listed in grant details
+```bash
+npm start             # the MCP server (after npm run build)
+npm run dev           # the MCP server with auto-reload
+```
+
+It exposes four tools: `search_dot_grants` (filters by applicant type, amount, keywords and deadlines), `get_grant_details` (by notice ID or CFDA program number), `check_eligibility` (for an applicant type) and `track_upcoming_deadlines`. The matching web pages use the same code. Applicant types are state, city, county, tribal, MPO and transit agency.
+
+It needs `SAM_API_KEY` unless `DATA_SOURCE` is `mock` (five built-in sample grants, no key) or `local` (a downloaded extract, `npm run update-grants`). Responses are cached under `.cache/` (programs for 7 days, opportunities for 6 hours) and SAM.gov calls are rate-limited (`SAM_RATE_LIMIT_REQUESTS`, default 100 per day). Common programs it knows include 20.205 (Federal-Aid Highway), 20.500 and 20.507 (transit), 20.106 (Airport Improvement) and 20.600 (State and Community Highway Safety).
 
 ## Documentation
 
-The project documents are in [`docs/`](docs/) and are also served in the web app at `/docs`.
+The documents are in [`docs/`](docs/). The app serves them, with this README and [the development instructions](CLAUDE.md), as one list at `/docs`:
 
-- **[NOFO_MVP_PLAN.md](docs/NOFO_MVP_PLAN.md)** - The audit, architecture, risks and a record of every change to the NOFO assessment work
-- **[NOFO_DEMO.md](docs/NOFO_DEMO.md)** - How to run the demo, including demo mode (a replayed recording)
-- **[NOFO_FACT_SHEETS.md](docs/NOFO_FACT_SHEETS.md)** and **[NOFO_TEST_PROJECTS.md](docs/NOFO_TEST_PROJECTS.md)** - The prepared grants and the sample projects used to test them
-- **[BigBuild3_GrantFlow_ConOps.md](docs/BigBuild3_GrantFlow_ConOps.md)** - The concept of operations for the consultation
-- **[GrantFlow_BigBuild_Live_App_Demo_Script.md](docs/GrantFlow_BigBuild_Live_App_Demo_Script.md)** - The timed demo script (shown in the presenter window)
+- **[Where the AI model is used in GrantFlow and how code checks it](docs/NOFO_AI_USAGE.md)**: every model step, what it is asked to do and what code verifies
+- **[Design, risks and change log](docs/NOFO_MVP_PLAN.md)**: the architecture plan and a record of every change
+- **[Running and presenting the demo](docs/NOFO_DEMO.md)**: setup, demo mode, the presenter window and a walkthrough
+- **[Fact sheets for the prepared funding opportunities](docs/NOFO_FACT_SHEETS.md)** and **[sample project descriptions for testing](docs/NOFO_TEST_PROJECTS.md)**
+- **[GrantFlow AI concept of operations](docs/BigBuild3_GrantFlow_ConOps.md)**: from government search to AI-guided consultation
+- **[Big Build demo video script](docs/GrantFlow_BigBuild_Live_App_Demo_Script.md)**: the timed show, do and say for the 2:50 walkthrough
+- **[Big Build 3.0 submission guide](docs/BIG_BUILD_SUBMISSION_GUIDELINES.md)**: tracks, deliverables and the deadline
 
-## Web Interface
+## Support
 
-In addition to the MCP server, this project includes a **web interface** for direct browser access:
+- **This project:** open an issue in this repository.
+- **Grant programs:** contact the agency office listed in the opportunity.
+- **SAM.gov APIs:** https://open.gsa.gov/api/get-opportunities-public-api/
 
-```bash
-npm run start:web
-# Visit http://localhost:3000
-```
+## License
 
-The web interface provides:
-- **Search Grants** - Find opportunities with filters
-- **Check Eligibility** - Verify qualification for programs
-- **Track Deadlines** - Monitor upcoming due dates  
-- **Grant Details** - Comprehensive program information
-
-See [NOFO_DEMO.md](docs/NOFO_DEMO.md) for how to run the demo.
-
-## Resources
-
-- [DOT Grants Portal](https://www.transportation.gov/grants)
-- [SAM.gov](https://sam.gov/)
-- [Grants.gov](https://www.grants.gov/)
-- [USASpending.gov](https://www.usaspending.gov/)
-- [Model Context Protocol](https://modelcontextprotocol.io/)
+MIT

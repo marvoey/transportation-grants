@@ -1,4 +1,4 @@
-# GrantFlow AI — Big Build 3.0 Live-Application Demo Script
+# Big Build demo video script: timed show, do and say for the 2:50 walkthrough
 
 **Theme:** From searching government programs to consulting about a project  
 **Tagline:** **Start with the project. Not the program.**  
@@ -14,9 +14,10 @@
    - **Project:** `Our police department wants money to try a new traffic safety enforcement program to cut speeding and drunk driving.`
    - **Answer to funding question:** `We would request $15 million in federal funds.`
 3. Confirm your live responses match the screenshot before narrating numerical values: the homepage may show a *saved count* from Simpler.Grants.gov. The provided screenshot shows **1,450 open or forecasted opportunities** and **839 listing state, county, or city governments as eligible applicants**, with a saved-count date. Never call these a current live count unless the screen confirms a live refresh.
-4. On the provided $15M screenshot, **11 listings** were checked; ITSE ranks first with a **$20M listed maximum** that covers the request; FY2027 Crash Causal Factors has a **$500K listed maximum**, below the request. If the live ranking differs, point to the actual visible results rather than claiming a fixed ordering.
-5. Prepare a genuine **assessment of this same $15M scenario** against the selected ITSE notice in advance. The repository's bundled `public/demo/demo-run.json` currently records a different **$1.8M** request and must not be passed off as this run. If you cannot prepare and verify a matching assessment, use the alternate 1:42–2:11 narration below.
-6. Test that **View source** opens a real official passage. If using the application's replay mode (`?demo=1`) or simulated preparation, keep its on-screen label visible and describe it truthfully as a recording or simulation. For the strongest video, capture one real run first, then edit out network delays.
+4. On the provided $15M screenshot, GrantFlow recognized **Safety**, **City or township government** (its inference from the description, not independently verified) and a **$15 million federal request**. **11 listings** were checked: five primary matches shown and six further listings behind the button. ITSE ranks first with a **$20M listed maximum** that covers the request, **at the listing level only**; FY2027 Crash Causal Factors has a **$500K listed maximum**, below the request. A listed maximum that covers the request is favorable, not a conflict; the material warning is the $500K. Neither listing proves program eligibility or award likelihood. If the live ranking differs, point to the actual visible results rather than claiming a fixed ordering.
+5. Prepare a genuine **assessment of this same $15M scenario** against the selected ITSE notice in advance. The bundled `public/demo/demo-run.json` is now the recording of exactly this case (2026-11-12: a city police department, a $15 million request, two Find grants turns and four Assess turns against ITSE; `demo-run-itse-speeding.json` is a copy). The other `public/demo/demo-run-*.json` files are different cases (a different request, or another program) and must not be passed off as this run. To use one, copy it over `demo-run.json`. In demo mode the text you type is not interpreted, so type the exact messages above. If you cannot prepare and verify a matching assessment, use the alternate 1:43–2:12 narration below.
+6. Test that **View source** opens a real official passage. If using the application's replay mode (`?demo=1`; `?demo=record` captures a run; `?demo_speed=2` replays faster) or simulated preparation (Settings tray), keep its on-screen label visible and describe it truthfully as a recording or **SIMULATED PREPARATION**: it does not download or parse anything at that moment. For the strongest video, capture one real run first, then edit out network delays.
+7. Open the **demo script window** from the floating menu (bottom-left) and keep it beside the app: it shows this script scene by scene and has Samples and Answers tabs whose Copy buttons type into the app's question box. The small round toggle at the bottom-right hides the drawer tabs for a clean screen. After editing this file, run `npm run demo:script` to rebuild what the window shows.
 
 ## Exact timed walkthrough — show / do / say
 
@@ -58,7 +59,7 @@
 
 ### 1:27–1:43 — Show the work behind the shortlist and move into assessment
 
-**SHOW/DO:** In the actual results screen, briefly highlight the **documents downloaded/read** panel. In the supplied screenshot this shows **14 documents, 226 PDF pages, approximately 74,200 words, and 254 extracted requirements** across five prepared opportunities. Then show **Prepare this opportunity for assessment** on the ITSE card; if already prepared for your recording, use **Assess my project against this** and open the actual **Assess a project** tab.
+**SHOW/DO:** In the actual results screen, briefly highlight the **documents downloaded/read** panel. In the supplied screenshot this shows **14 documents, 226 PDF pages, approximately 74,200 words, 254 extracted requirements and 53 additional documents/forms** across five prepared opportunities. Then show **Prepare this opportunity for assessment** on the ITSE card; if already prepared for your recording, use **Assess my project against this** and open the actual **Assess a project** tab.
 
 **SAY:**
 
@@ -109,6 +110,18 @@
 - If the homepage numbers change or the live search ranks opportunities differently, adjust spoken values to what is **actually visible**.
 - Do not mix $15M discovery with the repository's preexisting $1.8M assessment recording; they are materially different project cases.
 - Deliver a **2–3 minute MP4**, with no sensitive client/CUI data. Deadline: **Nov 13, 2026, 11:59 PM ET**.
+
+## Recording checklist
+
+- [ ] The first project message and the **$15M** answer match the exact text above.
+- [ ] Text is legible at 1080p: crop into the current card or section; never use a tall narrow screenshot as full-frame evidence.
+- [ ] The **$20M ITSE maximum** is described as a favorable listed maximum, not a conflict; the **$500K Crash Causal Factors maximum** is the warning.
+- [ ] A replayed run is labeled as a recording, never called live; simulated preparation is labeled simulated.
+- [ ] Never say that all extracted requirements are verified, that all source documents were captured, or that an award or eligibility has been determined.
+- [ ] The homepage statistics are a dated saved snapshot, and the document and requirement counts are **system counts, not a benchmark of accuracy or staff hours saved**.
+- [ ] Narration is 170 seconds or slightly under; the MP4 is 2–3 minutes with a talking head; nothing shown is personal, client or CUI data.
+
+**Presentation companion.** `public/big-build-v2.html` is a five-scene framing and impact page (each scene is mapped to a part of this script, with speaker notes on **S**). Use it only for transitions and the impact numbers; the primary demonstration is the real application.
 
 ## Judging criteria covered
 

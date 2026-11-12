@@ -1,4 +1,4 @@
-# Big Build 3.0 - Submission Guide
+# Big Build 3.0 submission guide: tracks, deliverables and deadline
 
 **Submissions close: November 13, 2026 at 11:59pm ET**
 

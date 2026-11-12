@@ -1,4 +1,4 @@
-# Fact sheets for the five open listings with downloaded notices
+# Fact sheets for the five prepared funding opportunities and their downloaded notices
 
 Written 2026-11-11 from the notice documents in `data/opportunities/`, to ground fictitious test projects. Each fact carries a **PDF page number** (`p.N`), the page numbering the app's **View source** uses; the number printed on a notice page can differ from it by one. **A person has not verified any of this.** It is my reading of the notices, and the app's extracted requirements (also unreviewed) were used only as pointers to where to look.
 
