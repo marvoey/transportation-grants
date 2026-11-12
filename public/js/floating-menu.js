@@ -12,7 +12,7 @@
   'use strict';
 
   var ITEMS = [
-    { label: 'Big Build presentation', href: '/big-build.html' },
+    { label: 'Big Build presentation companion', href: '/big-build-v2.html' },
     { label: 'Documentation', href: '/docs' },
     // Demo mode entry points (see /js/demo-mode.js and docs/NOFO_DEMO.md).
     { label: 'Open the app in demo mode', href: '/chat.html?demo=1' },
