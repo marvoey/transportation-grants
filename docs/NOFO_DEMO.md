@@ -57,6 +57,8 @@ A turn is only recorded if it finished with a result, so a failed attempt is ski
 - **View source** still works because it reads the local `data/opportunities/` files through the server (no external call). The server must be running, but it needs no network and no API keys. Anything else under `/api/nofo` is refused with "Demo mode has no recording for this request".
 - If `public/demo/demo-run.json` is missing or damaged, the screen says so. It never falls back to a live call.
 
+**Replies come in as if typed.** On Find grants and Assess (demo mode or live), a reply is no longer dropped on the page all at once: the conversation message types in over about 1.5 seconds and the panel under it (the opportunities or the findings) grows over the next 1.5 seconds, so the page scrolls and grows smoothly instead of jumping. It is 3 seconds at most however long the reply is, and it is skipped for reduced motion. The text itself is unchanged.
+
 **Simulated preparing.** In the Settings tray (on by default), "Prepare this opportunity" for an opportunity whose documents are already downloaded on this server (in demo mode, one the recording marks as prepared) shows a simulated progress and then the document overview. Nothing is downloaded or sent, and it is labelled as a simulation. Turn it off to run a real job. **Demo mode always simulates**, whatever the saved setting: the switch shows on and locked while demo mode is on, and your saved choice applies again when it is off. An opportunity that is not prepared still gets demo mode's scripted prepare.
 
 ## Presenting with the two presenter windows

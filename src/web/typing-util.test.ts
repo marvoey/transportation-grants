@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 const sandbox: Record<string, unknown> = {};
 sandbox.window = sandbox;
 vm.runInNewContext(readFileSync(join(process.cwd(), 'public/js/typing-util.js'), 'utf-8'), sandbox);
-const T = sandbox.TypingUtil as { schedule(text: string, random?: () => number): number[]; MAX_TOTAL_MS: number };
+const T = sandbox.TypingUtil as { schedule(text: string, random?: () => number, maxMs?: number): number[]; MAX_TOTAL_MS: number };
 
 /** A small seeded generator, so the tests are repeatable. */
 function seeded(seed: number) {
@@ -90,5 +90,14 @@ describe('typing in chat.html', () => {
   it('loads the pacing script before the drawer kit that uses it', () => {
     expect(html.indexOf('/js/typing-util.js')).toBeGreaterThan(-1);
     expect(html.indexOf('/js/typing-util.js')).toBeLessThan(html.indexOf('/js/drawer-kit.js'));
+  });
+
+  it('takes an optional shorter or longer limit, used by the reply reveal (reveal.js)', () => {
+    const long = sentence.repeat(40).slice(0, 2000);
+    const at = (maxMs: number) => T.schedule(long, seeded(2), maxMs).reduce((a, b) => a + b, 0);
+    expect(at(800)).toBeLessThanOrEqual(800 + 2000 * 0.005);
+    expect(at(3000)).toBeLessThanOrEqual(3000 + 2000 * 0.005);
+    // A nonsense limit falls back to the default.
+    expect(T.schedule(long, seeded(2), -5).reduce((a, b) => a + b, 0)).toBeLessThanOrEqual(1500 + 2000 * 0.005);
   });
 });

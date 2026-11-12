@@ -101,6 +101,7 @@
     append(div, el('p', 'nofo-meta', 'Answer in your own words, all in one message. Anything you skip is fine.'));
     append(els.thread, div);
     els.thread.scrollTop = els.thread.scrollHeight;
+    return div;
   }
 
   /**
@@ -120,7 +121,7 @@
 
   /** The plain-language explanation of the search, as an assistant message, with a line saying who wrote it. */
   function addExplanation(explanation) {
-    if (!explanation || typeof explanation.text !== 'string') return;
+    if (!explanation || typeof explanation.text !== 'string') return null;
     var div = el('div', 'chat-message assistant find-explanation dev-only dev-section-note');
     append(div, el('p', null, explanation.text));
     append(div, el('p', 'nofo-meta', explanation.source === 'model'
@@ -128,6 +129,7 @@
       : 'About this search. Written by the app from a template (the language model was not used for this one).'));
     append(els.thread, div);
     els.thread.scrollTop = els.thread.scrollHeight;
+    return div;
   }
 
   /**
@@ -135,7 +137,7 @@
    * listings and the open question and checked by code, or by a template; the list below it is written by code.
    */
   function addReply(reply, closest) {
-    if (!reply || typeof reply.text !== 'string' || !reply.text) return;
+    if (!reply || typeof reply.text !== 'string' || !reply.text) return null;
     state.lastReply = reply.text;
     var div = el('div', 'chat-message assistant find-reply');
     reply.text.split('\n\n').forEach(function (paragraph) { append(div, el('p', null, paragraph)); });
@@ -150,6 +152,18 @@
     if (jumps.childNodes.length > 0) append(div, jumps);
     append(els.thread, div);
     els.thread.scrollTop = els.thread.scrollHeight;
+    return div;
+  }
+
+  /**
+   * Brings a new answer in as if typed (reveal.js): the conversation message first, then the panel under it, 3 seconds at most
+   * in all, so the page grows smoothly instead of jumping. Called right after the elements are added.
+   */
+  function reveal(messages, panel) {
+    if (!window.Reveal) return;
+    var segments = [{ roots: messages.filter(Boolean), maxMs: window.Reveal.MESSAGE_MS }];
+    if (panel) segments.push({ roots: [panel], maxMs: window.Reveal.PANEL_MS });
+    window.Reveal.play(segments);
   }
 
   /** Scrolls a part of the results into view and moves keyboard focus to it, so the jump works for everyone. */
@@ -382,14 +396,16 @@
       state.openQuestions = (data.questions || []).length;
       announceQuestions(data.questions, data.profile);
       if (data.stage === 'ask') {
-        addQuestions(data.summary, data.questions);
+        var asking = addQuestions(data.summary, data.questions);
         clear(els.results);
+        reveal([asking], null);
         showLatestMessage();
       } else {
         // The summary is shown once, at the top of the results, not repeated in the thread.
         renderResults(data);
-        addExplanation(data.explanation);
-        addReply(data.reply, D.splitResults(data.shortlist, data.showFirst).first[0]);
+        var explained = addExplanation(data.explanation);
+        var replied = addReply(data.reply, D.splitResults(data.shortlist, data.showFirst).first[0]);
+        reveal([explained, replied], els.results);
         showLatestMessage();
       }
     } catch (e) {

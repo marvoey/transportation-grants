@@ -247,7 +247,9 @@
         var asking = questionsBlock(data.questions, data.questionRound);
         if (asking) reply.appendChild(asking);
         else if (lastRoundNote(data.questionRound)) reply.appendChild(lastRoundNote(data.questionRound));
-        addMessage('assistant', '', { node: reply });
+        var spokenMessage = addMessage('assistant', '', { node: reply });
+        // The message first, then the panel under it, as if typed (reveal.js): 3 seconds at most in all.
+        if (window.Reveal) window.Reveal.play([{ roots: [spokenMessage], maxMs: window.Reveal.MESSAGE_MS }, { roots: [els.results], maxMs: window.Reveal.PANEL_MS }]);
         state.messages.push({ role: 'assistant', content: U.assistantTurnText(spoken ? spoken.text : data.advisory.headline, data.questions) });
       } else {
         var updated = el('div');
@@ -255,7 +257,8 @@
         var stillAsking = questionsBlock(data.questions, data.questionRound);
         if (stillAsking) updated.appendChild(stillAsking);
         else if (lastRoundNote(data.questionRound)) updated.appendChild(lastRoundNote(data.questionRound));
-        addMessage('assistant', '', { node: updated });
+        var updatedMessage = addMessage('assistant', '', { node: updated });
+        if (window.Reveal) window.Reveal.play([{ roots: [updatedMessage], maxMs: window.Reveal.MESSAGE_MS }]);
       }
     } catch (e) {
       if (panel) panel.stop();
