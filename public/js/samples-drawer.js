@@ -34,10 +34,12 @@ var tray = null;
     var button = el('button', 'nofo-secondary find-small', 'Copy');
     button.type = 'button';
     button.setAttribute('aria-label', 'Copy the description: ' + project.title);
-    K.wireCopyButton(button, function () { return project.text; }, project.title, say, function () {
-      // Copying a description closes the tray, so the pasted text can be seen in the conversation.
-      if (tray) tray.setOpen(false, true);
-    });
+    // Copy puts the description straight into the question box (replacing what is there) and onto the clipboard, then
+    // closes the tray so the text can be seen and edited.
+    K.wireCopyButton(button, function () { return project.text; }, project.title, say, function (filled) {
+      // Focus stays in the question box when it was filled, rather than going back to the tab.
+      if (tray) tray.setOpen(false, !filled);
+    }, 'replace');
     item.appendChild(button);
     return item;
   }

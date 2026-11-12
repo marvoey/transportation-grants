@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/theme-afs.css">
   <link rel="stylesheet" href="/css/floating-menu.css">
+  <link rel="stylesheet" href="/css/demo-mode.css">
+  <link rel="stylesheet" href="/css/chip-modal.css">
 </head>
 <body>
   <header>
@@ -41,8 +43,8 @@
       <div class="card">
         <div class="collapsible" id="findIntro" data-collapsible><div class="collapsible-inner">
         <h2>Find Grants for Your Project</h2>
-        <p class="mb-2">Describe your transportation project in your own words. We will look through current U.S. Department of Transportation funding opportunities and show a short list worth a closer look, with the reasons and the things to watch out for.</p>
-        <div class="nofo-banner" role="note">
+        <p class="mb-2">Describe your transportation project in your own words. We will look through current U.S. Department of Transportation funding opportunities and list them with the best fit for your project first, with the reasons and the things to watch out for. Listings with no documents on Simpler.Grants.gov come last.</p>
+        <div class="nofo-banner" id="findNotice" role="note" hidden>
           <strong>Preliminary only.</strong> This list is a starting point, not an eligibility determination, a recommendation, or a prediction of success. Your description is sent to the Anthropic API to read the facts you state, and a few search words from it are sent to Simpler.Grants.gov. Nothing is saved on the server; the conversation stays in this browser tab.
         </div>
         </div></div>
@@ -188,18 +190,51 @@
     </div>
   </aside>
 
+  <!-- Slide-out tray of settings. Closed by default; Find grants only. Two switches: show the "Preliminary only"
+       notice at the top of Find grants (off by default), and simulate "Prepare this opportunity" for opportunities whose
+       documents are already downloaded (on by default). Using a switch closes the tray. -->
+  <aside id="settingsDrawer" class="tray tray--settings" aria-label="Settings" hidden>
+    <button type="button" id="settingsTab" class="tray-tab" aria-expanded="false" aria-controls="settingsPanel" title="Settings">
+      <span class="tray-tab-label">Settings</span>
+    </button>
+    <div id="settingsPanel" class="tray-panel" role="region" aria-labelledby="settingsTitle" aria-hidden="true">
+      <div class="tray-head">
+        <h2 id="settingsTitle">Settings</h2>
+        <button type="button" id="settingsClose" class="tray-close" aria-label="Close the settings panel">&times;</button>
+      </div>
+      <label class="settings-toggle">
+        <input type="checkbox" id="findNoticeToggle" role="switch">
+        <span><strong>Preliminary-use notice</strong> Show the &ldquo;Preliminary only&rdquo; box at the top of Find grants: what the list is and is not, and where your description is sent.</span>
+      </label>
+      <p class="nofo-meta">Hidden by default.</p>
+      <label class="settings-toggle">
+        <input type="checkbox" id="simulatePrepareToggle" role="switch">
+        <span><strong>Simulate preparing</strong> For an opportunity whose documents are already downloaded and read on this server, show the download, reading and requirement-extraction progress as if they were new, then offer &ldquo;Assess my project against this&rdquo;. For demonstrations: nothing is downloaded and the language model is not called.</span>
+      </label>
+      <p class="nofo-meta">On by default. Applies to the next search. Using a switch closes this panel. Your choices are remembered in this browser.</p>
+      <p id="settingsStatus" class="nofo-sr" role="status" aria-live="polite"></p>
+    </div>
+  </aside>
+
   <script src="/js/common.js"></script>
   <script src="/js/dev-mode.js"></script>
+  <script src="/js/demo-util.js"></script>
+  <script src="/js/demo-mode.js"></script>
   <script src="/js/discover-util.js"></script>
   <script src="/js/discover.js"></script>
   <script src="/js/progress-panel.js"></script>
+  <script src="/js/prepare-replay.js"></script>
   <script src="/js/dev-console.js"></script>
+  <script src="/js/typing-util.js"></script>
   <script src="/js/drawer-kit.js"></script>
   <script src="/js/sample-projects.js"></script>
   <script src="/js/samples-drawer.js"></script>
   <script src="/js/answer-suggestions.js"></script>
   <script src="/js/answers-drawer.js"></script>
   <script src="/js/dev-drawer.js"></script>
+  <script src="/js/app-settings.js"></script>
+  <script src="/js/settings-drawer.js"></script>
+  <script src="/js/chip-modal.js"></script>
   <script src="/js/nofo-util.js"></script>
   <script src="/js/site-nav.js"></script>
   <script src="/js/nofo.js"></script>

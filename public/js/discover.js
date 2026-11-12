@@ -201,6 +201,7 @@
     progressReset();
     progress.startedAt = Date.now();
     els.progress.hidden = false;
+    els.progress.classList.remove('find-progress-complete');
     clearInterval(progress.tick);
     progress.tick = setInterval(function () {
       els.progressTime.textContent = Math.round((Date.now() - progress.startedAt) / 1000) + 's';
@@ -211,6 +212,15 @@
     clearInterval(progress.tick);
     progress.tick = null;
     progressClearTimers();
+    var finished = progress.steps.length > 0 && progress.steps.every(function (s) { return s.status === 'done'; });
+    if (finished && window.DemoMode && window.DemoMode.isOn() && progress.startedAt) {
+      // Demo mode: leave the finished panel on screen, every step ticked, until the next run clears it.
+      // (A run that failed or left a step unfinished is hidden as usual.)
+      els.progressTime.textContent = Math.round((Date.now() - progress.startedAt) / 1000) + 's';
+      els.progressTitle.textContent = 'Completed';
+      els.progress.classList.add('find-progress-complete');
+      return;
+    }
     els.progress.hidden = true;
   }
 
@@ -390,6 +400,8 @@
       var li = el('li', 'nofo-chip');
       var text = el('div', 'nofo-chip-text');
       append(text, el('span', 'nofo-chip-label', f.label), el('strong', null, f.value), el('span', 'nofo-chip-quote', '“' + f.quote + '”'));
+      // A card whose text is cut short opens the full text in a modal (chip-modal.js).
+      if (window.ChipModal) window.ChipModal.attach(li, text, { label: f.label, value: f.value, quote: f.quote });
       append(li, text);
       append(ul, li);
     });
@@ -434,9 +446,32 @@
     return go;
   }
 
+  /** Demo mode: the finished Prepare progress (both steps ticked), kept on screen above the "Prepared" line. */
+  function showCompletedPrepare(box, state) {
+    var wrap = el('div', 'find-progress find-progress-complete find-prepare-complete');
+    var head = el('div', 'find-progress-head');
+    var spinner = el('span', 'find-spinner');
+    spinner.setAttribute('aria-hidden', 'true');
+    append(head, spinner, el('strong', null, 'Completed'));
+    var bar = el('div', 'find-bar');
+    bar.setAttribute('aria-hidden', 'true');
+    append(bar, el('span'));
+    var steps = el('ol', 'find-steps');
+    D.prepareSteps(Object.assign({}, state, { status: 'ready' })).forEach(function (step) {
+      var li = el('li', 'find-step find-step-' + step.status);
+      var icon = el('span', 'find-icon', step.status === 'done' ? '✓' : '');
+      icon.setAttribute('aria-hidden', 'true');
+      append(li, icon, el('span', 'find-step-text', step.label));
+      append(steps, li);
+    });
+    append(wrap, head, bar, steps);
+    append(box, wrap);
+  }
+
   function showReady(item, box, state) {
     item.readyToAssess = true;
     clear(box);
+    if (window.DemoMode && window.DemoMode.isOn() && state && state.startedAt) showCompletedPrepare(box, state);
     append(box, el('p', 'nofo-meta', 'Prepared: ' + (state && state.requirements ? state.requirements + ' requirements extracted from the official documents.' : 'the requirements were extracted from the official documents.')));
     if (state && state.partial) append(box, el('p', 'nofo-warning', state.message));
     append(box, window.NofoApp ? assessButton(item) : el('p', 'nofo-meta', 'Open the Assess tab to continue.'));
@@ -460,7 +495,7 @@
     }
   }
 
-  function showPrepareProgress(item, box, state, startedAt) {
+  function showPrepareProgress(item, box, state, startedAt, simulated) {
     clear(box);
     var head = el('div', 'find-progress-head');
     var spinner = el('span', 'find-spinner');
@@ -484,6 +519,8 @@
       append(steps, li);
     });
     append(box, head, bar, steps);
+    // Said on screen, so a replay is never mistaken for a live download.
+    if (simulated) append(box, el('p', 'nofo-meta', 'Simulated: this opportunity\'s documents are already downloaded and read on this server, so nothing is being downloaded and the language model is not being called. The documents and counts shown are the real ones.'));
   }
 
   /** Polls the server until the job finishes. Stops quietly if the card has been replaced by a new search. */
@@ -547,8 +584,65 @@
     }
   }
 
-  function renderAssessAction(item) {
+  /** Settings: "Simulate preparing" is on, this opportunity is already prepared, and demo mode (its own replay) is not. */
+  function replaysPrepare(item) {
+    return !!window.PrepareReplay && window.PrepareReplay.applies(item, {
+      enabled: !!window.AppSettings && window.AppSettings.simulatePrepare(),
+      demoModeOn: !!window.DemoMode && window.DemoMode.isOn()
+    }) && !!window.NofoApp;
+  }
+
+  /** Plays the simulated preparation step by step, then shows the real "Prepared" view. Stops if the card is replaced. */
+  function runReplay(item, box, overview) {
+    var steps = window.PrepareReplay.plan(item);
+    var startedAt = Date.now();
+    var ticker = null;
+    var timer = null;
+    function stop() {
+      clearInterval(ticker);
+      clearTimeout(timer);
+    }
+    function play(i) {
+      if (!document.body.contains(box)) { stop(); return; }
+      var step = steps[i];
+      if (step.state.status === 'ready') {
+        stop();
+        // The documents overview was held back while the simulation ran; it appears now that "reading" is done.
+        if (overview) overview.hidden = false;
+        showReady(item, box, Object.assign({ opportunityId: item.opportunityId, partial: false }, step.state));
+        return;
+      }
+      showPrepareProgress(item, box, Object.assign({ opportunityId: item.opportunityId }, step.state), startedAt, true);
+      timer = setTimeout(function () { play(i + 1); }, step.holdMs);
+    }
+    ticker = setInterval(function () {
+      if (!document.body.contains(box)) { stop(); return; }
+      var t = box.querySelector('[data-elapsed]');
+      if (t) t.textContent = D.formatElapsed((Date.now() - startedAt) / 1000);
+    }, 1000);
+    play(0);
+  }
+
+  /** The offer for an already-prepared opportunity while "Simulate preparing" is on in Settings. */
+  function showReplayOffer(item, box, overview) {
+    clear(box);
+    append(box, el('p', 'nofo-meta', 'This opportunity\'s documents are already downloaded and read on this server. "Simulate preparing" is on in Settings, so the button below replays the download and reading steps for a demonstration. Nothing is downloaded and the language model is not called.'));
+    var go = el('button', null, 'Prepare this opportunity for assessment');
+    go.type = 'button';
+    go.addEventListener('click', function () {
+      go.disabled = true;
+      runReplay(item, box, overview);
+    });
+    append(box, go);
+  }
+
+  /** `overview` is the card's documents box when the simulation is holding it back (see renderCard), else null. */
+  function renderAssessAction(item, overview) {
     var box = el('div', 'find-actions');
+    if (replaysPrepare(item)) {
+      showReplayOffer(item, box, overview);
+      return box;
+    }
     if (item.readyToAssess && window.NofoApp) {
       append(box, assessButton(item));
       return box;
@@ -556,6 +650,101 @@
     showPrepareOffer(item, box, '');
     // The card is not in the page yet; look for a running job once it is.
     setTimeout(function () { resumePrepare(item, box); }, 0);
+    return box;
+  }
+
+  /**
+   * The documents downloaded for this opportunity, as a table (title, type, role, pages, words) with a line on the
+   * requirements extracted from them: how much a specialist would have to read and check. Counts only. Every string is
+   * set with textContent.
+   */
+  function renderDownloaded(view) {
+    var box = el('div', 'find-reading');
+    append(box, el('p', 'nofo-reply-label', 'Documents to review'));
+    append(box, el('p', 'find-reading-headline', view.headline));
+    var wrap = el('div', 'find-doc-table-wrap');
+    var table = el('table', 'find-doc-table');
+    var head = el('tr');
+    ['Document', 'Type', 'Role', 'Pages', 'Words'].forEach(function (label, i) {
+      var th = el('th', i >= 3 ? 'find-num' : null, label);
+      th.scope = 'col';
+      append(head, th);
+    });
+    append(table, el('thead'), el('tbody'));
+    append(table.firstChild, head);
+    view.rows.forEach(function (row) {
+      var tr = el('tr');
+      append(tr, el('td', null, row.title + (row.unread ? ' (could not be read)' : '')), el('td', null, row.format), el('td', null, row.role), el('td', 'find-num', row.pages), el('td', 'find-num', row.words));
+      append(table.lastChild, tr);
+    });
+    append(wrap, table);
+    append(box, wrap);
+    if (view.requirements) append(box, el('p', 'find-reading-requirements', view.requirements));
+    append(box, el('p', 'nofo-meta', view.legend + (view.downloadedOn ? ' Downloaded ' + view.downloadedOn + '.' : '')));
+    return box;
+  }
+
+  /** The strip above the cards: the downloaded documents of the listings shown, added up. */
+  function renderImpact(view) {
+    var box = el('div', 'find-impact');
+    append(box, el('p', 'find-impact-title', view.title));
+    var list = el('ul', 'find-impact-stats');
+    view.stats.forEach(function (stat) {
+      var li = el('li');
+      append(li, el('span', 'find-impact-num', stat.value), el('span', 'find-impact-label', stat.label));
+      append(list, li);
+    });
+    append(box, list);
+    append(box, el('p', 'nofo-meta', view.note));
+    return box;
+  }
+
+  /**
+   * What Simpler.Grants.gov lists for this opportunity: a note for "none listed" (with the other pages to check), or the
+   * file names for "listed". Every string is text, and the links open in a new tab.
+   */
+  function renderDocuments(view) {
+    var box = el('div', 'find-docs find-docs-' + view.state);
+    if (view.blocksPrepare) {
+      var warning = el('p', 'nofo-warning');
+      append(warning, el('strong', null, view.headline + '. '), document.createTextNode(view.text));
+      append(box, warning);
+      if (view.files.length > 0) {
+        var listedFiles = el('details', 'nofo-collapsible');
+        append(listedFiles, el('summary', null, 'Documents listed on Simpler.Grants.gov (file names)'));
+        var fileList = el('ul', 'nofo-reply-list');
+        view.files.forEach(function (name) { append(fileList, el('li', null, name)); });
+        if (view.moreFiles > 0) append(fileList, el('li', null, '…and ' + view.moreFiles + ' more'));
+        append(listedFiles, fileList);
+        append(box, listedFiles);
+      }
+      if (view.links.length > 0) {
+        append(box, el('p', 'nofo-reply-label', 'Where else to look'));
+        var ul = el('ul', 'nofo-reply-list');
+        view.links.forEach(function (link) {
+          var li = el('li');
+          var a = el('a', null, link.label);
+          a.href = link.url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          append(li, a);
+          append(ul, li);
+        });
+        append(box, ul);
+      }
+      return box;
+    }
+    if (view.state === 'listed' && view.files.length > 0) {
+      var details = el('details', 'nofo-collapsible');
+      append(details, el('summary', null, view.headline + ' on Simpler.Grants.gov (file names)'));
+      var names = el('ul', 'nofo-reply-list');
+      view.files.forEach(function (name) { append(names, el('li', null, name)); });
+      if (view.moreFiles > 0) append(names, el('li', null, '…and ' + view.moreFiles + ' more'));
+      append(details, names);
+      append(box, details);
+      return box;
+    }
+    append(box, el('p', 'nofo-meta', view.headline + (view.text ? '. ' + view.text : '')));
     return box;
   }
 
@@ -592,8 +781,17 @@
     if (item.watchOuts.length > 0) {
       append(card, el('p', 'nofo-reply-label', 'Watch out for'), list('nofo-reply-list find-watch', item.watchOuts));
     }
+    // An already-prepared opportunity is assessable whatever Simpler lists, so the documents note is only for the rest.
+    var docs = item.readyToAssess ? null : D.documentsView(item);
+    var reading = D.downloadedView(item);
+    // The reading table already lists every file, with pages, so the list of names is not repeated.
+    if (reading && docs) {
+      if (docs.state === 'listed') docs = null;
+      else { docs.files = []; docs.moreFiles = 0; }
+    }
     var url = D.safeUrl(item.additionalInfoUrl);
-    if (url) {
+    // When there is nothing to prepare the note below names this page itself, so it is not repeated here.
+    if (url && !(docs && docs.blocksPrepare)) {
       var p = el('p', 'nofo-meta');
       var a = el('a', null, 'More information from the program');
       a.href = url;
@@ -611,7 +809,15 @@
       rawDetails.addEventListener('toggle', function () { if (rawDetails.open) block.fill(); });
       append(card, rawDetails);
     }
-    append(card, renderAssessAction(item));
+    // While "Simulate preparing" is on, the documents overview is hidden until the simulated reading finishes.
+    var overview = reading ? renderDownloaded(reading) : null;
+    if (overview) {
+      overview.hidden = replaysPrepare(item);
+      append(card, overview);
+    }
+    if (docs) append(card, renderDocuments(docs));
+    // Nothing to prepare without a notice document: say why instead of offering a job that can only fail.
+    if (!(docs && docs.blocksPrepare)) append(card, renderAssessAction(item, overview && overview.hidden ? overview : null));
     return card;
   }
 
@@ -868,10 +1074,12 @@
     if (scoredBox) append(els.results, scoredBox);
 
     var summaryCard = el('div', 'card');
-    append(summaryCard, el('h3', null, data.shortlist.length ? 'Opportunities worth a closer look' : 'No close matches found'));
+    append(summaryCard, el('h3', null, data.shortlist.length ? 'Opportunities, best fit first' : 'No listings found'));
     append(summaryCard, el('p', null, data.summary));
+    var impact = D.downloadedTotalsView(data.downloaded, data.shortlist.length);
+    if (impact) append(summaryCard, renderImpact(impact));
     if (data.shortlist.length === 0 && !data.includeHistorical) {
-      append(summaryCard, el('p', 'nofo-meta', 'Tick “Include closed and archived opportunities” above to see past programs, or add more detail about the project.'));
+      append(summaryCard, el('p', 'nofo-meta', 'Tick “Include closed and archived opportunities” above to see past programs.'));
     }
     data.warnings.forEach(function (w) { append(summaryCard, el('p', 'nofo-warning', w)); });
     append(els.results, summaryCard);

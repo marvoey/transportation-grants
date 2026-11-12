@@ -34,5 +34,12 @@ coverage/
 # Commit a demo/fixture package deliberately with `git add -f data/opportunities/<uuid>`
 # after checking its size and contents.
 data/opportunities/
+data/opportunities.back/
+data/opportunities.back.*/
+data/opportunities.live/
+
+# Raw, untrimmed Simpler.Grants.gov API captures. They can contain agency contact details, so they stay local.
+# Commit a reviewed, trimmed copy under data/fixtures/ instead.
+data/captures/
 *.tmp
 *.zip

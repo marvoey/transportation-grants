@@ -487,6 +487,9 @@ button.nofo-secondary:hover {
 .nofo-chips {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  /* Every card is the same height. Text that does not fit is cut with an ellipsis; chip-modal.js makes such a card open
+     the full text in a modal. */
+  grid-auto-rows: 8.5rem;
   gap: 0.75rem;
 }
 
@@ -494,6 +497,8 @@ button.nofo-secondary:hover {
   display: flex;
   justify-content: space-between;
   gap: 0.5rem;
+  height: 100%;
+  overflow: hidden;
   border: 1px solid #d5dde8;
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
@@ -507,9 +512,22 @@ button.nofo-secondary:hover {
   overflow-wrap: anywhere;
 }
 
+/* Label one line, value two, quote two; each is cut with an ellipsis. flex: none so the clamp, not flexbox, decides. */
+.nofo-chip-text > * {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: none;
+  line-height: 1.3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
 .nofo-chip-label {
   font-size: 0.8rem;
   color: #555;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
 }
 
 .nofo-chip-quote {
@@ -1143,6 +1161,112 @@ button.tray-close:hover {
 .tray--dev .tray-tab {
   top: calc(38% + 13rem);
   height: 3.75rem;
+}
+
+/* The Settings tab sits under the Dev tab */
+.tray--settings .tray-tab {
+  top: calc(38% + 17.25rem);
+  height: 4.75rem;
+}
+
+/* Documents to review: what a specialist would read for a listing whose documents are downloaded here */
+.find-reading {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  background: #f4f7fb;
+  border-left: 4px solid #003d7a;
+}
+
+.find-reading-headline {
+  font-weight: 600;
+  margin: 0.1rem 0 0.5rem;
+}
+
+.find-doc-table-wrap {
+  overflow-x: auto;
+}
+
+.find-doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.find-doc-table th,
+.find-doc-table td {
+  text-align: left;
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid #d8e0ea;
+  vertical-align: top;
+}
+
+.find-doc-table th {
+  font-weight: 600;
+  color: #003d7a;
+  white-space: nowrap;
+}
+
+.find-doc-table .find-num {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.find-reading-requirements {
+  margin: 0.6rem 0 0.3rem;
+}
+
+/* The strip above the cards: the downloaded documents of the listings shown, added up */
+.find-impact {
+  margin: 0.9rem 0 0;
+  padding: 0.9rem 1rem;
+  background: #f4f7fb;
+  border-left: 4px solid #003d7a;
+}
+
+.find-impact-title {
+  font-weight: 600;
+  margin: 0 0 0.6rem;
+}
+
+.find-impact-stats {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.6rem;
+  margin: 0 0 0.6rem;
+  padding: 0;
+}
+
+.find-impact-stats li {
+  display: flex;
+  flex-direction: column;
+}
+
+.find-impact-num {
+  font-size: 1.6rem;
+  line-height: 1.1;
+  font-weight: 600;
+  color: #003d7a;
+  font-variant-numeric: tabular-nums;
+}
+
+.find-impact-label {
+  font-size: 0.8125rem;
+  color: #555;
+}
+
+.settings-toggle {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  margin: 0.5rem 0 0.75rem;
+  line-height: 1.4;
+}
+
+.settings-toggle input {
+  margin-top: 0.2rem;
+  flex: none;
 }
 
 /* A small dot on the Dev tab says developer mode is on */

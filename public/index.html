@@ -25,13 +25,24 @@
 
   <main>
     <section class="home-hero" aria-labelledby="homeTitle">
-      <div class="container">
-        <h2 id="homeTitle">Know what a funding notice means for your project before you apply</h2>
-        <p class="home-lead"><span class="gf">Grant<span class="gf-flow">Flow</span></span> helps state and local transportation agencies find federal funding opportunities and understand what each notice requires of them, with every finding linked back to the official source.</p>
-        <div class="home-actions">
-          <a class="home-btn home-btn--primary" href="/chat.html">Find grants</a>
-          <a class="home-btn home-btn--secondary" href="/chat.html?mode=nofo">Assess a project</a>
+      <div class="container home-hero-grid">
+        <div class="home-hero-copy">
+          <p class="home-eyebrow">From search to consultation</p>
+          <h2 id="homeTitle"><span class="home-hero-line">Start with the project.</span> <span class="home-hero-line">Not the program.</span></h2>
+          <p class="home-lead"><span class="gf">Grant<span class="gf-flow">Flow</span></span> works like a consultation, not a search engine. Describe your transportation project in plain language, answer a few questions, and get guidance on which funding opportunities may fit and what each notice requires, with every finding linked back to the official source.</p>
+          <div class="home-actions">
+            <a class="home-btn home-btn--primary" href="/chat.html">Find grants</a>
+            <a class="home-btn home-btn--secondary" href="/chat.html?mode=nofo">Assess a project</a>
+          </div>
         </div>
+
+        <aside class="home-stats" id="homeStats" aria-labelledby="statsTitle" hidden>
+          <h3 id="statsTitle" class="home-stats-title">What a search asks you to navigate</h3>
+          <p class="home-stats-intro">A funding search starts with the program: guess keywords, set filters, sift the results, then read each notice that looks relevant. Today that means working through:</p>
+          <ul class="home-stat-grid" id="homeStatGrid"></ul>
+          <p class="home-stats-pivot">A consultation starts with your project instead, so you don't have to start here.</p>
+          <p class="home-stat-source" id="homeStatSource"></p>
+        </aside>
       </div>
     </section>
 
@@ -41,7 +52,7 @@
         <div class="card-grid">
           <div class="card">
             <h3>Find grants</h3>
-            <p>Describe your project in your own words and answer a few short questions. You get a short list of U.S. Department of Transportation opportunities from Simpler.Grants.gov, with the reasons each one may fit and what to watch out for.</p>
+            <p>Describe your project in your own words and answer a few short questions. You get funding opportunities from Simpler.Grants.gov, starting with U.S. Department of Transportation programs, ranked best fit first, with the reasons each one may fit and what to watch out for.</p>
             <a class="home-btn home-btn--primary" href="/chat.html">Find grants</a>
           </div>
 
@@ -74,6 +85,7 @@
 
   <script src="/js/common.js"></script>
   <script src="/js/site-nav.js"></script>
+  <script src="/js/home-stats.js"></script>
   <script src="/js/floating-menu.js"></script>
 </body>
 </html>

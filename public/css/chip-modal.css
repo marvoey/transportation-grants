@@ -1,0 +1,63 @@
+/* The modal that shows the full text of a cut-short fact card (chip-modal.js). */
+.chip-text-more {
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.chip-text-more:hover {
+  background: var(--afs-purple-50, #f7efff);
+}
+
+.chip-text-more:focus-visible {
+  outline: 3px solid var(--afs-purple, #a100ff);
+  outline-offset: 2px;
+}
+
+.chip-modal {
+  width: min(36rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 4rem);
+  overflow: auto;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--afs-line, #cac9c0);
+  border-radius: 8px;
+  background: var(--afs-white, #ffffff);
+  color: var(--afs-ink, #171716);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.chip-modal::backdrop {
+  background: rgba(23, 23, 22, 0.55);
+}
+
+.chip-modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.chip-modal-label {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--afs-ink-2, #454545);
+}
+
+.chip-modal-value {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.chip-modal-quote {
+  margin: 0;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--afs-ink-2, #454545);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}

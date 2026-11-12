@@ -234,3 +234,138 @@ describe('inspection helpers', () => {
     expect(D.buildRequest(messages, { inspect: false })).toEqual({ messages });
   });
 });
+
+describe('documentsView', () => {
+  const base = { simplerUrl: `https://simpler.grants.gov/opportunity/${UUID}`, additionalInfoUrl: 'https://agency.example.gov/notice' };
+
+  it('says nothing when the check was not run', () => {
+    expect(D.documentsView({ ...base })).toBeNull();
+    expect(D.documentsView({ ...base, documents: { status: 'surprise' } })).toBeNull();
+    expect(D.documentsView(null)).toBeNull();
+  });
+
+  it('words "none" as "none listed", not "none exist", and names the other pages to check', () => {
+    const view = D.documentsView({ ...base, documents: { status: 'none', count: 0, files: [] } });
+    expect(view.state).toBe('none');
+    expect(view.headline).toBe('No documents listed');
+    expect(view.text).toMatch(/does not mean none exist/);
+    expect(view.links.map((l: any) => l.url)).toEqual([base.simplerUrl, base.additionalInfoUrl]);
+    expect(view.links[1].label).toMatch(/another website/);
+  });
+
+  it('says plainly when the listing gives no other page, and never invents a link', () => {
+    const view = D.documentsView({ simplerUrl: base.simplerUrl, additionalInfoUrl: null, documents: { status: 'none', count: 0, files: [] } });
+    expect(view.links.map((l: any) => l.url)).toEqual([base.simplerUrl]);
+    expect(view.text).toMatch(/gives no other page/);
+  });
+
+  it('drops a link that is not a plain web address', () => {
+    const view = D.documentsView({ simplerUrl: null, additionalInfoUrl: 'javascript:alert(1)', documents: { status: 'none', count: 0, files: [] } });
+    expect(view.links).toEqual([]);
+  });
+
+  it('lists the file names, with a count, and notes how many more there are', () => {
+    const view = D.documentsView({ ...base, documents: { status: 'listed', count: 10, files: ['a.pdf', 'b.docx'] } });
+    expect(view).toMatchObject({ state: 'listed', headline: '10 documents listed', files: ['a.pdf', 'b.docx'], moreFiles: 8 });
+    expect(D.documentsView({ ...base, documents: { status: 'listed', count: 1, files: ['a.pdf'] } }).headline).toBe('1 document listed');
+  });
+
+  it('says plainly when documents are listed but none looks like the notice, and does not offer preparing', () => {
+    const files = ['State_Electronic_Crash_Data_Collection_Notice_of_Intent_2023_.pdf'];
+    const view = D.documentsView({ ...base, documents: { status: 'listed', count: 1, files, hasNotice: false } });
+    expect(view).toMatchObject({ state: 'no_notice', blocksPrepare: true, headline: 'No notice document listed', files, moreFiles: 0 });
+    expect(view.text).toMatch(/lists 1 document, but none looks like the notice of funding/);
+    expect(view.links.map((l: any) => l.url)).toEqual([base.simplerUrl, base.additionalInfoUrl]);
+  });
+
+  it('blocks preparing only when there is nothing to prepare', () => {
+    expect(D.documentsView({ ...base, documents: { status: 'none', count: 0, files: [] } }).blocksPrepare).toBe(true);
+    expect(D.documentsView({ ...base, documents: { status: 'listed', count: 2, files: ['a.pdf', 'b.pdf'], hasNotice: true } }).blocksPrepare).toBe(false);
+    // A server that did not say (an older answer) is not treated as "no notice".
+    expect(D.documentsView({ ...base, documents: { status: 'listed', count: 1, files: ['a.pdf'] } }).blocksPrepare).toBe(false);
+    expect(D.documentsView({ ...base, documents: { status: 'unknown', count: null, files: [] } }).blocksPrepare).toBe(false);
+  });
+
+  it('says it could not check, and still allows preparing', () => {
+    const view = D.documentsView({ ...base, documents: { status: 'unknown', count: null, files: [] } });
+    expect(view.state).toBe('unknown');
+    expect(view.headline).toMatch(/Could not check/);
+    expect(view.text).toMatch(/still try to prepare/);
+  });
+});
+
+describe('downloadedView', () => {
+  const pkg = {
+    documents: [
+      { title: 'The NOFO', format: 'PDF', role: 'notice', parsed: true, pages: 24, words: 7434 },
+      { title: 'Application template', format: 'Word', role: 'guidance', parsed: true, pages: null, words: 1292 },
+      { title: 'Broken file', format: 'PDF', role: 'other', parsed: false, pages: null, words: null },
+    ],
+    totalPages: 24,
+    totalWords: 8726,
+    downloadedOn: '2026-11-11',
+    requirements: { total: 33, byCategory: [{ category: 'eligibility', count: 6 }, { category: 'post_award', count: 2 }], mandatory: 30, toPrepare: 5, checkedByCode: 7, needsReview: 7, verified: 0 },
+  };
+
+  it('says nothing when no documents are downloaded', () => {
+    expect(D.downloadedView({})).toBeNull();
+    expect(D.downloadedView({ downloaded: { documents: [] } })).toBeNull();
+  });
+
+  it('gives a headline with the counts, and rounds the words rather than implying precision', () => {
+    const v = D.downloadedView({ downloaded: pkg });
+    expect(v.headline).toBe('3 documents · 24 PDF pages · about 8,700 words');
+    expect(D.downloadedView({ downloaded: { ...pkg, documents: [pkg.documents[0]], totalPages: 1, totalWords: 600 } }).headline).toBe('1 document · 1 PDF page · about 600 words');
+  });
+
+  it('has one row per document, with no page count for a Word document or an unread file', () => {
+    const v = D.downloadedView({ downloaded: pkg });
+    expect(v.rows.map((r: any) => [r.format, r.role, r.pages, r.words, r.unread])).toEqual([
+      ['PDF', 'Notice', '24', '7,434', false],
+      ['Word', 'Guidance', '—', '1,292', false],
+      ['PDF', 'Other', '—', '—', true],
+    ]);
+  });
+
+  it('describes the requirements as extracted and not yet verified, counting only', () => {
+    const text = D.downloadedView({ downloaded: pkg }).requirements;
+    expect(text).toContain('extracted 33 requirements: 6 eligibility, 2 post-award.');
+    expect(text).toContain('5 are documents or forms to prepare, and 7 can be checked automatically');
+    expect(text).toContain('None has been verified by a person yet.');
+    expect(text).not.toMatch(/\bhours?\b|\bdays?\b|\bsaves?\b/i);
+    expect(D.downloadedView({ downloaded: { ...pkg, requirements: { ...pkg.requirements, verified: 4 } } }).requirements).toContain('4 verified by a person.');
+  });
+
+  it('leaves the requirements line out when none were extracted', () => {
+    expect(D.downloadedView({ downloaded: { ...pkg, requirements: null } }).requirements).toBeNull();
+  });
+});
+
+describe('downloadedTotalsView', () => {
+  const totals = { listings: 5, documents: 14, pages: 226, words: 74153, requirements: 254, toPrepare: 53 };
+
+  it('says nothing when no listing has downloaded documents', () => {
+    expect(D.downloadedTotalsView(null, 11)).toBeNull();
+    expect(D.downloadedTotalsView({ ...totals, listings: 0 }, 11)).toBeNull();
+  });
+
+  it('adds up what a specialist would read and check, with approximate words', () => {
+    const v = D.downloadedTotalsView(totals, 11);
+    expect(v.title).toBe('5 of these 11 grants have documents downloaded and read');
+    expect(v.stats.map((s: any) => s.value + ' ' + s.label)).toEqual([
+      '14 documents to read',
+      '226 PDF pages',
+      '74,200 words (approximate)',
+      '254 requirements to check',
+      '53 documents and forms to prepare',
+    ]);
+    expect(v.note).toContain('none has been verified by a person yet');
+    expect(v.note).not.toMatch(/\bhours?\b|\bdays?\b|\bsaves?\b/i);
+  });
+
+  it('uses the singular for one listing, and omits stats that are zero', () => {
+    const v = D.downloadedTotalsView({ listings: 1, documents: 1, pages: 2, words: 650, requirements: 0, toPrepare: 0 }, 11);
+    expect(v.title).toBe('1 of these 11 grants has documents downloaded and read');
+    expect(v.stats.map((s: any) => s.label)).toEqual(['document to read', 'PDF pages', 'words (approximate)']);
+  });
+});

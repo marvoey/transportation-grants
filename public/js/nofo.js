@@ -407,9 +407,12 @@
         var fact = data.facts[key];
         var chip = el('li', 'nofo-chip');
         var text = el('div', 'nofo-chip-text');
+        var valueText = U.formatFactValue(key, fact.value);
         append(text, el('span', 'nofo-chip-label', U.factLabel(key)));
-        append(text, el('strong', null, U.formatFactValue(key, fact.value)));
+        append(text, el('strong', null, valueText));
         if (fact.quote) append(text, el('span', 'nofo-chip-quote', 'You said: “' + U.truncate(fact.quote, 160) + '”'));
+        // A card whose text is cut short opens the full text in a modal (chip-modal.js).
+        if (window.ChipModal) window.ChipModal.attach(chip, text, { label: U.factLabel(key), value: valueText, quote: fact.quote || '' });
         var remove = button('Remove', 'nofo-link-button', function () { removeFact(key); });
         remove.dataset.removeFact = key;
         remove.setAttribute('aria-label', 'Remove ' + U.factLabel(key));

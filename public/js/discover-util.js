@@ -102,6 +102,140 @@
     }
   }
 
+  /**
+   * What a result card says about documents, from the item's `documents` (set by the server: names only, nothing is
+   * downloaded). Returns null when the check was not run. "none" is worded as "none listed", never "none exist", and it
+   * names where else to look: only links the listing itself gives (its Simpler.Grants.gov page and the program's own page).
+   * "no_notice" is documents listed but none looking like the notice (no NOFO or amendment by file name, the same rule
+   * preparing uses), so preparing would stop. `blocksPrepare` is true for "none" and "no_notice": there is nothing to prepare.
+   * Returns { state: 'none' | 'no_notice' | 'listed' | 'unknown', blocksPrepare, headline, text, files, moreFiles, links }.
+   */
+  function documentsView(item) {
+    var d = item && item.documents;
+    if (!d || (d.status !== 'none' && d.status !== 'listed' && d.status !== 'unknown')) return null;
+    var links = [];
+    var pageUrl = safeUrl(item.simplerUrl);
+    var infoUrl = safeUrl(item.additionalInfoUrl);
+    if (pageUrl) links.push({ label: 'Opportunity page on Simpler.Grants.gov', url: pageUrl });
+    if (infoUrl) links.push({ label: 'The program\u2019s own page (another website)', url: infoUrl });
+    if (d.status === 'none') {
+      return {
+        state: 'none',
+        blocksPrepare: true,
+        headline: 'No documents listed',
+        text: 'Simpler.Grants.gov lists no documents for this opportunity, so it cannot be prepared or assessed here. That does not mean none exist: the notice may be on another page.' + (infoUrl ? '' : ' The listing gives no other page to check.'),
+        files: [],
+        moreFiles: 0,
+        links: links
+      };
+    }
+    if (d.status === 'listed') {
+      var files = Array.isArray(d.files) ? d.files.filter(function (f) { return typeof f === 'string'; }) : [];
+      var count = typeof d.count === 'number' ? d.count : files.length;
+      if (d.hasNotice === false) {
+        return {
+          state: 'no_notice',
+          blocksPrepare: true,
+          headline: 'No notice document listed',
+          text: 'Simpler.Grants.gov lists ' + count + ' document' + (count === 1 ? '' : 's') + ', but none looks like the notice of funding (a NOFO or an amendment), which preparing needs, so it cannot be assessed here. The notice may not be published yet, or it may be on another page.' + (infoUrl ? '' : ' The listing gives no other page to check.'),
+          files: files,
+          moreFiles: Math.max(0, count - files.length),
+          links: links
+        };
+      }
+      return {
+        state: 'listed',
+        blocksPrepare: false,
+        headline: count + ' document' + (count === 1 ? '' : 's') + ' listed',
+        text: '',
+        files: files,
+        moreFiles: Math.max(0, count - files.length),
+        links: []
+      };
+    }
+    return {
+      state: 'unknown',
+      blocksPrepare: false,
+      headline: 'Could not check which documents are listed',
+      text: 'You can still try to prepare it.',
+      files: [],
+      moreFiles: 0,
+      links: []
+    };
+  }
+
+  function count(n) {
+    return Number(n).toLocaleString('en-US');
+  }
+
+  /** Word counts are not exact (text extraction splits differently), so thousands are rounded to the nearest hundred. */
+  function approxWords(n) {
+    return count(n >= 1000 ? Math.round(n / 100) * 100 : n);
+  }
+
+  var ROLE_LABELS = { notice: 'Notice', guidance: 'Guidance', other: 'Other' };
+  var CATEGORY_LABELS = { eligibility: 'eligibility', funding: 'funding', application: 'application', readiness: 'readiness', evaluation: 'evaluation', post_award: 'post-award' };
+
+  /**
+   * What a card says about the documents downloaded for its opportunity, from item.downloaded (set by the server from
+   * local files): a headline, one row per document (type, role, pages, words) and a line on the requirements extracted
+   * from them. Every number is a count; nothing here estimates time. Null when nothing is downloaded.
+   * Pages exist for PDFs only; a Word document shows words and no pages rather than a guess.
+   */
+  function downloadedView(item) {
+    var d = item && item.downloaded;
+    if (!d || !Array.isArray(d.documents) || d.documents.length === 0) return null;
+    var n = d.documents.length;
+    var parts = [n + ' document' + (n === 1 ? '' : 's')];
+    if (d.totalPages > 0) parts.push(count(d.totalPages) + ' PDF page' + (d.totalPages === 1 ? '' : 's'));
+    if (d.totalWords > 0) parts.push('about ' + approxWords(d.totalWords) + ' words');
+    var rows = d.documents.map(function (doc) {
+      return {
+        title: String(doc.title || ''),
+        format: String(doc.format || 'Other'),
+        role: ROLE_LABELS[doc.role] || 'Other',
+        pages: typeof doc.pages === 'number' ? count(doc.pages) : '\u2014',
+        words: typeof doc.words === 'number' ? count(doc.words) : '\u2014',
+        unread: doc.parsed === false
+      };
+    });
+    var r = d.requirements;
+    var requirements = null;
+    if (r && r.total > 0) {
+      var cats = (r.byCategory || []).map(function (c) { return count(c.count) + ' ' + (CATEGORY_LABELS[c.category] || c.category); }).join(', ');
+      requirements = 'GrantFlow read these documents and extracted ' + count(r.total) + ' requirement' + (r.total === 1 ? '' : 's') + (cats ? ': ' + cats : '') + '. ' +
+        count(r.toPrepare) + ' ' + (r.toPrepare === 1 ? 'is a document or form' : 'are documents or forms') + ' to prepare, and ' + count(r.checkedByCode) + ' can be checked automatically against the facts you give. ' +
+        (r.verified > 0 ? count(r.verified) + ' verified by a person.' : 'None has been verified by a person yet.');
+    }
+    return {
+      headline: parts.join(' \u00b7 '),
+      rows: rows,
+      requirements: requirements,
+      downloadedOn: typeof d.downloadedOn === 'string' ? d.downloadedOn : null,
+      legend: 'Notice = the notice of funding or an amendment; Guidance = a template, FAQ, webinar or checklist. A Word document has no fixed page count.'
+    };
+  }
+
+  /**
+   * The strip above the cards: the downloaded documents of the listings shown, added up (the server sums them).
+   * `shown` is how many listings are on screen. Null when none of them has downloaded documents.
+   */
+  function downloadedTotalsView(totals, shown) {
+    if (!totals || !(totals.listings > 0)) return null;
+    var stats = [
+      { value: count(totals.documents), label: totals.documents === 1 ? 'document to read' : 'documents to read' },
+      { value: count(totals.pages), label: 'PDF pages' },
+      { value: approxWords(totals.words), label: 'words (approximate)' }
+    ];
+    if (totals.requirements > 0) stats.push({ value: count(totals.requirements), label: 'requirements to check' });
+    if (totals.toPrepare > 0) stats.push({ value: count(totals.toPrepare), label: totals.toPrepare === 1 ? 'document or form to prepare' : 'documents and forms to prepare' });
+    return {
+      title: totals.listings + ' of these ' + shown + ' grants ha' + (totals.listings === 1 ? 's' : 've') + ' documents downloaded and read',
+      stats: stats,
+      note: 'That is the reading and checking a specialist would do by hand for these grants. GrantFlow has already read the documents and extracted the requirements from each notice; none has been verified by a person yet.'
+    };
+  }
+
   /** The operator commands that load an opportunity for assessment. Empty for anything that is not a UUID. */
   function loadCommands(id) {
     if (!UUID.test(String(id))) return [];
@@ -273,6 +407,9 @@
     matchInfo: matchInfo,
     metaParts: metaParts,
     safeUrl: safeUrl,
+    documentsView: documentsView,
+    downloadedView: downloadedView,
+    downloadedTotalsView: downloadedTotalsView,
     loadCommands: loadCommands,
     nextMessages: nextMessages,
     messagesLeft: messagesLeft,

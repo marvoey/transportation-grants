@@ -300,6 +300,14 @@ header .brand-flow { color: var(--afs-purple); }
 .home-hero .gf { color: var(--afs-white); }
 .home-hero .gf-flow { color: var(--afs-purple-200); }
 
+/* Documents to review and the totals strip on Find grants */
+.find-reading,
+.find-impact { background: var(--afs-purple-50, #f7efff); border-left-color: var(--afs-purple); }
+.find-doc-table th,
+.find-doc-table td { border-bottom-color: var(--afs-line-soft); }
+.find-doc-table th,
+.find-impact-num { color: var(--afs-purple-800); }
+
 /* Dev tab: dot shows developer mode is on */
 .tray--dev .tray-tab[data-on="true"]::after { background: var(--afs-purple); }
 

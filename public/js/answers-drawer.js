@@ -35,15 +35,20 @@
   }
 
   /** Copying an answer closes the tray, so the pasted text can be seen and edited in the conversation. */
-  function closeTray() {
-    if (tray) tray.setOpen(false, true);
+  function closeTray(filled) {
+    // Focus stays in the question box when it was filled, rather than going back to the tab.
+    if (tray) tray.setOpen(false, !filled);
   }
 
-  function copyButton(text, label, ariaLabel) {
+  /**
+   * Copy puts the text straight into the question box and onto the clipboard. A reply to everything at once replaces what
+   * is in the box; an answer to one question is added after it, so several answers can be built up.
+   */
+  function copyButton(text, label, ariaLabel, fillMode) {
     var button = el('button', 'nofo-secondary find-small', label);
     button.type = 'button';
     button.setAttribute('aria-label', ariaLabel);
-    K.wireCopyButton(button, function () { return text; }, ariaLabel.replace(/^Copy /, ''), say, closeTray);
+    K.wireCopyButton(button, function () { return text; }, ariaLabel.replace(/^Copy /, ''), say, closeTray, fillMode);
     return button;
   }
 
@@ -51,7 +56,7 @@
     var card = el('article', 'answers-reply');
     card.appendChild(el('h3', null, reply.label));
     card.appendChild(el('p', 'samples-text', reply.text));
-    card.appendChild(copyButton(reply.text, 'Copy reply', 'Copy the ' + reply.label.toLowerCase()));
+    card.appendChild(copyButton(reply.text, 'Copy reply', 'Copy the ' + reply.label.toLowerCase(), 'replace'));
     return card;
   }
 
@@ -62,7 +67,7 @@
       var box = el('div', 'answers-variant');
       box.appendChild(el('span', 'answers-variant-label', variant.label));
       box.appendChild(el('p', 'samples-text', variant.text));
-      box.appendChild(copyButton(variant.text, 'Copy', 'Copy the suggested answer (' + variant.label.toLowerCase() + ') to: ' + item.question));
+      box.appendChild(copyButton(variant.text, 'Copy', 'Copy the suggested answer (' + variant.label.toLowerCase() + ') to: ' + item.question, 'append'));
       card.appendChild(box);
     });
     return card;
