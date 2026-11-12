@@ -25,6 +25,9 @@ export function createApp(): Application {
   const app = express();
   const config = getConfig();
 
+  // On Vercel the app sits behind its proxy: trust the first hop so the rate limiters see the caller's address.
+  if (process.env.VERCEL) app.set('trust proxy', 1);
+
   // Middleware
   app.use(cors({
     origin: process.env.CORS_ORIGINS?.split(',') || '*',
