@@ -1,5 +1,5 @@
 /**
- * The app page's side of the presenter window (/demo-script.html, opened from the floating menu). The window has Samples and
+ * The app page's side of the projects and answers window (/demo-projects.html, opened from the floating menu). The window has Projects and
  * Answers tabs, like the trays on this page. The samples are fixed text, but the answers depend on what the app last asked,
  * so this file keeps the latest questions of each tab ("assessresult" from Assess, "findquestions" from Find grants, the same
  * events the Answers tray listens to), plus which tab is open, and sends them to the presenter window over a same-origin

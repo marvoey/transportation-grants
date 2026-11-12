@@ -1,4 +1,4 @@
-# Running and presenting the demo: setup, demo mode, presenter window and walkthrough
+# Running and presenting the demo: setup, demo mode, presenter windows and walkthrough
 
 A state or local agency has a transportation project. **Find grants** takes a plain-language description, asks a few questions and shows a short list of federal opportunities worth a look, with the reasons and cautions. **Assess a project** takes an opportunity that has been prepared and holds a short consultation: *what does the notice mean for us, what is missing, and what should we look into before applying?* Every result is **preliminary**.
 
@@ -40,7 +40,7 @@ For a presentation you can replay a recorded run of the real screens. Find grant
 **Record once (needs the API keys, and a network).**
 
 1. Start the server (`npm run dev:web`) and open `http://localhost:3000/chat.html?demo=record`. A red badge says "Recording mode".
-2. Walk the demo path once with a **fictional project** (the Samples tray has them): describe the project, answer the clarifying question, get the shortlist, **Prepare** an opportunity, **Assess my project against this**, and answer the follow-up questions through all the stages. Do not use real client data: the recording keeps the project text and the results.
+2. Walk the demo path once with a **fictional project** (the Samples tray, or the Projects tab of the projects window, has them): describe the project, answer the clarifying question, get the shortlist, **Prepare** an opportunity, **Assess my project against this**, and answer the follow-up questions through all the stages. Do not use real client data: the recording keeps the project text and the results.
 3. Do not reload the page while recording (a reload keeps what was captured, but start-to-finish in one page is safest). Open the floating menu (☰), choose **Download recording**, and save the file as `public/demo/demo-run.json`. Commit it deliberately.
 
 A turn is only recorded if it finished with a result, so a failed attempt is skipped. Record the happy path in the order you will present it.
@@ -59,12 +59,12 @@ A turn is only recorded if it finished with a result, so a failed attempt is ski
 
 **Simulated preparing without demo mode.** In the Settings tray (on by default), "Prepare this opportunity" for an opportunity whose documents are already downloaded on this server shows a simulated progress and then the document overview. Nothing is downloaded or sent, and it is labelled as a simulation. Turn it off to run a real job.
 
-## Presenting with the demo script window
+## Presenting with the two presenter windows
 
-The floating menu has **Open the demo script window**, a separate window to keep beside the app:
+The floating menu opens two separate windows to keep beside the app (each is reused if it is already open; the second opens to the right of the first):
 
-- **Script** tab: the timed script scene by scene (SHOW/DO, SAY with a Copy button, DIRECTING NOTE, and the fallback branch). It is built from the live-app script by `npm run demo:script`, so edit the markdown, not the JSON.
-- **Samples** and **Answers** tabs: the same sample projects and suggested answers as the trays on the page. **Copy** types the text into the app's question box at a human pace (within 3 seconds) and copies it too. This needs the window to have been opened from the app's menu, with Find grants or Assess showing.
+- **Open the demo script window**: the timed script scene by scene (SHOW/DO, SAY with a Copy button, DIRECTING NOTE, and the fallback branch). It is built from the live-app script by `npm run demo:script`, so edit the markdown, not the JSON.
+- **Open the projects and answers window**, with two tabs: **Projects** (the sample project descriptions, filterable; the trays on the page call them Samples) and **Answers** (the suggested answers for what the app last asked, for the tab it has open). **Copy** types the text into the app's question box at a human pace (within 3 seconds) and copies it too. This needs the window to have been opened from the app's menu, with Find grants or Assess showing; the answers themselves arrive from any open app page.
 - A small round toggle at the bottom-right of the app page hides the trays' edge tabs for a clean screen.
 - The Settings tray also has switches for the "Preliminary only" notices.
 

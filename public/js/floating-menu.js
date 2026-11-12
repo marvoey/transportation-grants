@@ -73,10 +73,13 @@
     }
   }
 
-  // A separate window with the demo script and the messages to paste, to keep beside the app. Offered in every mode
-  // (demo on, off or recording) and on every page that has this menu.
+  // Two separate windows to keep beside the app: the demo script, and the sample projects with suggested answers. Offered in
+  // every mode (demo on, off or recording) and on every page that has this menu. Each reuses its window if it is open.
   addAction('Open the demo script window', function () {
     window.open('/demo-script.html', 'grantflowDemoScript', 'popup=yes,width=560,height=900,left=40,top=40');
+  });
+  addAction('Open the projects and answers window', function () {
+    window.open('/demo-projects.html', 'grantflowDemoProjects', 'popup=yes,width=560,height=900,left=640,top=40');
   });
 
   function setOpen(open, returnFocus) {

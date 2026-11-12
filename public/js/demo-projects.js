@@ -1,17 +1,23 @@
 /**
- * The Samples and Answers tabs of the presenter window (demo-script.html), the same content as the two trays on the app page.
- *  - Samples: the fixed project descriptions (sample-projects.js), filterable. Copy types one into the app's question box.
+ * The projects and answers window (demo-projects.html), the same content as the Samples and Answers trays on the app page.
+ *  - Projects (the trays call them Samples): the fixed project descriptions (sample-projects.js), filterable. Copy types one
+ *    into the app's question box.
  *  - Answers: made-up example answers for what the app last asked. The app page (presenter-link.js) sends its latest questions
  *    over a same-origin BroadcastChannel; they are turned into replies with answer-suggestions.js, the same builder the tray
  *    uses. Copy types the reply into the app's question box (replacing what is there) and copies it too.
- * Needs window.DemoScriptKit (demo-script.js). Every string is rendered with textContent.
+ * Needs window.PresenterKit (presenter-kit.js). Every string is rendered with textContent.
  */
 (function () {
   'use strict';
 
-  var kit = null;
+  var kit = window.PresenterKit;
   var S = window.AnswerSuggestions;
-  var projects = window.SampleProjects || [];
+  // The demo project goes first in this window: "Short: speeding and drunk driving" (sample-14). The rest keep their order.
+  var PINNED_FIRST = ['sample-14'];
+  var all = window.SampleProjects || [];
+  var projects = all.filter(function (p) { return PINNED_FIRST.indexOf(p.id) >= 0; })
+    .sort(function (a, b) { return PINNED_FIRST.indexOf(a.id) - PINNED_FIRST.indexOf(b.id); })
+    .concat(all.filter(function (p) { return PINNED_FIRST.indexOf(p.id) < 0; }));
   var latest = { find: null, nofo: null };
   var mode = null; // the tab the app has open: 'find', 'nofo' or something else
   var connected = false;
@@ -23,17 +29,17 @@
     while (node.firstChild) node.removeChild(node.firstChild);
   }
 
-  // ---------------------------------------------------------------- Samples
+  // ---------------------------------------------------------------- Projects
 
-  function renderSamples(filter) {
-    var box = document.getElementById('dsSamples');
+  function renderProjects(filter) {
+    var box = document.getElementById('dsProjects');
     clear(box);
     var needle = String(filter || '').trim().toLowerCase();
     var shown = projects.filter(function (p) {
       return !needle || (p.title + ' ' + (p.note || '') + ' ' + p.text).toLowerCase().indexOf(needle) >= 0;
     });
     if (shown.length === 0) {
-      box.appendChild(kit.el('p', 'ds-empty', projects.length === 0 ? 'No sample projects are available.' : 'No sample matches that search.'));
+      box.appendChild(kit.el('p', 'ds-empty', projects.length === 0 ? 'No projects are available.' : 'No project matches that search.'));
       return;
     }
     shown.forEach(function (p) {
@@ -116,7 +122,7 @@
 
   function markNews() {
     var dot = document.getElementById('dsNews');
-    if (dot && kit.activeTab() !== 'answers') dot.hidden = false;
+    if (dot && activeTab !== 'answers') dot.hidden = false;
   }
 
   // ---------------------------------------------------------------- Wiring
@@ -132,15 +138,46 @@
     if (changed) markNews();
   }
 
-  function init(sharedKit) {
-    kit = sharedKit;
-    var filter = document.getElementById('dsSampleFilter');
-    renderSamples('');
-    filter.addEventListener('input', function () { renderSamples(filter.value); });
-    renderAnswers();
-    document.addEventListener('dstabchange', function (event) {
-      if (event.detail && event.detail.tab === 'answers') document.getElementById('dsNews').hidden = true;
+  // ---------------------------------------------------------------- Tabs
+
+  var TABS = ['projects', 'answers'];
+  var activeTab = 'projects';
+
+  function showTab(name, focus) {
+    if (TABS.indexOf(name) < 0) return;
+    activeTab = name;
+    TABS.forEach(function (t) {
+      var cap = t.charAt(0).toUpperCase() + t.slice(1);
+      var tab = document.getElementById('dsTab' + cap);
+      var panel = document.getElementById('dsPanel' + cap);
+      var on = t === name;
+      tab.classList.toggle('ds-tab-active', on);
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      tab.tabIndex = on ? 0 : -1;
+      panel.hidden = !on;
+      if (on && focus) tab.focus();
     });
+    if (name === 'answers') document.getElementById('dsNews').hidden = true;
+    window.scrollTo(0, 0);
+  }
+
+  function wireTabs() {
+    Array.prototype.forEach.call(document.querySelectorAll('.ds-tab'), function (tab) {
+      tab.addEventListener('click', function () { showTab(tab.dataset.tab, false); });
+      tab.addEventListener('keydown', function (event) {
+        var i = TABS.indexOf(tab.dataset.tab);
+        if (event.key === 'ArrowRight') { event.preventDefault(); showTab(TABS[(i + 1) % TABS.length], true); }
+        else if (event.key === 'ArrowLeft') { event.preventDefault(); showTab(TABS[(i + TABS.length - 1) % TABS.length], true); }
+      });
+    });
+  }
+
+  function init() {
+    var filter = document.getElementById('dsProjectFilter');
+    wireTabs();
+    renderProjects('');
+    filter.addEventListener('input', function () { renderProjects(filter.value); });
+    renderAnswers();
     if (!S || typeof BroadcastChannel !== 'function') return;
     var channel = new BroadcastChannel('grantflow-presenter');
     channel.onmessage = function (event) {
@@ -149,5 +186,6 @@
     channel.postMessage({ type: 'hello' }); // ask the app page for what it has now
   }
 
-  window.DemoScriptTabs = { init: init };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();

@@ -60,7 +60,7 @@ npm run nofo:stats                                  # what has been prepared
 ## Demo mode and presenting
 
 - **Demo mode** replays a recorded run in the browser with no API calls, downloads or parsing: open `/chat.html?demo=1` (`?demo=0` turns it off, `?demo=record` captures a new recording). A small play icon at the bottom-right always says the run is a recording, not live. "Simulate preparing" shows the preparation progress for opportunities whose documents are already downloaded.
-- The **floating menu** (bottom-left) opens the **demo script window**: a separate window with the timed script (SHOW/DO, SAY, DIRECTING NOTE), the sample projects and suggested answers, each with a Copy button that types into the app. A small toggle at the bottom-right hides the drawer tabs for a clean screen. After editing `docs/GrantFlow_BigBuild_Live_App_Demo_Script.md`, run `npm run demo:script` to rebuild what the window shows.
+- The **floating menu** (bottom-left) opens two separate windows to keep beside the app: the **demo script window** (the timed script: SHOW/DO, SAY, DIRECTING NOTE) and the **projects and answers window** (sample projects and suggested answers, each with a Copy button that types into the app). A small toggle at the bottom-right hides the drawer tabs for a clean screen. After editing `docs/GrantFlow_BigBuild_Live_App_Demo_Script.md`, run `npm run demo:script` to rebuild what the window shows.
 - `/big-build-v2.html` is the Big Build presentation companion (framing and impact scenes; the video itself shows the real app); `/docs` shows the project's markdown documents in the browser.
 
 See [the demo guide](docs/NOFO_DEMO.md) for the operator steps and known limitations.
@@ -145,7 +145,7 @@ The documents are in [`docs/`](docs/). The app serves them, with this README and
 
 - **[GrantFlow AI concept of operations](docs/BigBuild3_GrantFlow_ConOps.md)**: from government search to AI-guided consultation
 - **[Big Build demo video script](docs/GrantFlow_BigBuild_Live_App_Demo_Script.md)**: the timed show, do and say for the 2:50 walkthrough
-- **[Running and presenting the demo](docs/NOFO_DEMO.md)**: setup, demo mode, the presenter window and a walkthrough
+- **[Running and presenting the demo](docs/NOFO_DEMO.md)**: setup, demo mode, the presenter windows and a walkthrough
 - **[Big Build 3.0 submission guide](docs/BIG_BUILD_SUBMISSION_GUIDELINES.md)**: tracks, deliverables and the deadline
 - **[Where the AI model is used in GrantFlow and how code checks it](docs/NOFO_AI_USAGE.md)**: every model step, what it is asked to do and what code verifies
 - **[Fact sheets for the prepared funding opportunities](docs/NOFO_FACT_SHEETS.md)** and **[sample project descriptions for testing](docs/NOFO_TEST_PROJECTS.md)**
