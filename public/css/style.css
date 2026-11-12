@@ -1418,6 +1418,36 @@ body.tray-open .tray:not(.is-open) .tray-tab {
   }
 }
 
+/* The small toggle that hides the trays' tabs (tray-toggle.js). Below the trays (50), so an open tray covers it. */
+.tray-toggle {
+  position: fixed;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 49;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 1px solid #c9d4e2;
+  border-radius: 50%;
+  background: #fff;
+  color: #5b7088;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.45;
+  transition: opacity 0.2s ease;
+}
+
+.tray-toggle:hover,
+.tray-toggle:focus-visible {
+  opacity: 1;
+}
+
+/* Tabs hidden: a closed tray shows nothing at the edge. An open tray keeps its tab, so it can still be closed. */
+body.hide-tray-tabs .tray:not(.is-open) .tray-tab {
+  display: none;
+}
+
 /* Introduction above the input box: collapses after the first message so the conversation has more room. */
 .collapsible {
   display: grid;
