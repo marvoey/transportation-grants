@@ -20,6 +20,7 @@ export interface SearchRequestBody {
     top_level_agency?: { one_of: string[] };
     opportunity_status?: { one_of: SearchStatus[] };
     funding_category?: { one_of: string[] };
+    applicant_type?: { one_of: string[] };
   };
   pagination: {
     /** A 1-based page number, not a row offset. */

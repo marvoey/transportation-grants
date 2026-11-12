@@ -1,13 +1,14 @@
 import { logger } from '../../config/config.js';
 import { safeConsole, type ConsoleFn } from '../progress.js';
 import { buildLines, describeApiCall, profileLines, requestLines, responseLines } from './console.js';
+import { cannotPrepare, checkDocuments, documentsLast, type AttachmentListSource, type DocumentsCache } from './documents.js';
 import { explainSearch } from './explain.js';
 import type { LlmFn } from '../llm.js';
 import type { OpportunitySearchSource } from '../simpler/source.js';
 import { primaryPlans, wideningPlan, type SearchPlan } from './filters.js';
 import { codeOnlyTerms, extractProfile, hasProjectSignal, keywordProfile, type TermTrace } from './profile.js';
 import { buildTrace } from './trace.js';
-import { describeScored, likelyCount, money, rankCandidates, selectShortlist, SHORTLIST_MIN } from './rank.js';
+import { describeScored, likelyCount, money, rankCandidates, selectResults, SHORTLIST_MIN } from './rank.js';
 import {
   DISCOVERY_DISCLAIMER,
   DiscoverInputSchema,
@@ -51,6 +52,12 @@ export interface DiscoverDeps {
   onConsole?: ConsoleFn;
   /** Shown in the console as the address the request goes to. */
   apiBaseUrl?: string;
+  /**
+   * When given, the shortlisted opportunities are checked for listed documents (the attachment list only; nothing is
+   * downloaded). Without it the check is skipped and the cards say nothing about documents.
+   */
+  documents?: AttachmentListSource;
+  documentsCache?: DocumentsCache;
 }
 
 const DEFAULT_API_BASE_URL = 'https://api.simpler.grants.gov';
@@ -302,17 +309,50 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
     }
   }
 
-  const shortlist = selectShortlist(ranked);
+  // Every scored listing, best fit first (up to a cap). The order is adjusted below once documents are known.
+  let shortlist = selectResults(ranked);
   const examined = uniqueCount();
   log({ kind: 'cmd', text: `$ rank ${examined} unique listings   # project words, applicant type, award size, timing` });
   shortlist.forEach((item, i) => log({ kind: 'note', text: `  ${i + 1}. ${item.title}  [${item.match}${item.historical ? ', historical' : ''}]` }));
-  if (shortlist.length === 0) log({ kind: 'note', text: '  (nothing looked like a match)' });
+  if (shortlist.length === 0) log({ kind: 'note', text: '  (no listings to show)' });
   const likely = shortlist.filter((s) => s.match === 'likely').length;
   emit({
     id: 'rank',
     status: 'done',
-    message: shortlist.length > 0 ? `Scored ${examined} listings and chose ${shortlist.length} to show.` : `Scored ${examined} listings; none looked like a match.`,
+    message: shortlist.length === 0 ? `Scored ${examined} listings; none to show.` : `Scored ${examined} ${plural(examined, 'listing', 'listings')}${shortlist.length < examined ? `; showing the best ${shortlist.length}` : ''}.`,
   });
+
+  // Which listings have documents to read. Code only: it reads attachment lists and downloads nothing. Listings that list
+  // none go last, so the ones that can be prepared and assessed come first.
+  let noDocuments = 0;
+  if (deps.documents && shortlist.length > 0) {
+    const ids = shortlist.map((s) => s.opportunityId);
+    emit({ id: 'documents', status: 'running', message: `Checking which of the ${ids.length} ${plural(ids.length, 'listing has', 'listings have')} documents on Simpler.Grants.gov…` });
+    log({ kind: 'cmd', text: `$ GET /v1/opportunities/<id>  x${ids.length}   # which documents each opportunity lists (names and sizes only; nothing is downloaded)` });
+    const checked = await checkDocuments(deps.documents, ids, deps.documentsCache);
+    let withNotice = 0;
+    let none = 0;
+    let noNotice = 0;
+    let unknown = 0;
+    for (const item of shortlist) {
+      const info = checked.byId.get(item.opportunityId);
+      if (!info) continue;
+      item.documents = info;
+      if (info.status === 'unknown') unknown += 1;
+      else if (!cannotPrepare(info)) withNotice += 1;
+      else if (info.status === 'none') none += 1;
+      else noNotice += 1;
+    }
+    noDocuments = none + noNotice;
+    shortlist = documentsLast(shortlist);
+    if (unknown > 0) warnings.push(`Could not check which documents are listed for ${unknown} ${plural(unknown, 'opportunity', 'opportunities')}.`);
+    emit({
+      id: 'documents',
+      status: 'done',
+      message: `${withNotice} of ${ids.length} ${plural(ids.length, 'listing lists', 'listings list')} a notice document${noDocuments > 0 ? `; ${noDocuments} ${plural(noDocuments, 'does not', 'do not')} and ${plural(noDocuments, 'goes', 'go')} last` : ''}${unknown > 0 ? `; ${unknown} could not be checked` : ''}.`,
+    });
+    log({ kind: unknown > 0 ? 'warn' : 'ok', text: `← documents: ${withNotice} with a notice document, ${none} none listed, ${noNotice} listed but none looks like the notice, ${unknown} unknown${checked.cached > 0 ? ` (${checked.cached} reused from a recent check)` : ''}` });
+  }
 
   // The plain-language explanation: the model describes the search from the description, the requests and the outcome.
   emit({ id: 'explain', status: 'running', message: deps.llm ? 'Asking the language model to explain the search in plain language…' : 'Writing a plain-language explanation of the search…' });
@@ -337,18 +377,18 @@ export async function discoverTurn(rawInput: unknown, deps: DiscoverDeps): Promi
   log({ kind: 'ok', text: `← explanation ready (written by ${explanation.source === 'model' ? 'the language model' : 'a template'})` });
 
   let summary: string;
+  const docsNote = noDocuments > 0 ? ` ${noDocuments} ${plural(noDocuments, 'has', 'have')} no notice document listed on Simpler.Grants.gov, so ${plural(noDocuments, 'it is', 'they are')} last.` : '';
   if (shortlist.length === 0) {
     summary = includeHistorical
-      ? `I checked ${examined} listings and none looked like a match for this project.`
-      : `I checked ${examined} open listings and none looked like a match for this project. You can include closed and archived opportunities to see past programs.`;
+      ? 'I found no listings for this search.'
+      : 'I found no open listings for this search. You can include closed and archived opportunities to see past programs.';
   } else if (!ready) {
-    summary = `I could not tell the project type from what you wrote, so these are the closest open transportation programs I found (${examined} listings checked). Tell me more about the project to narrow them.`;
+    summary = `I could not tell the project type from what you wrote, so these ${examined} listings are ordered by general fit only. Tell me more about the project to rank them for it.${docsNote}`;
   } else {
-    const weaker = shortlist.length - likely;
+    const showing = shortlist.length < examined ? `the best ${shortlist.length}` : examined === 1 ? 'it' : 'all of them';
     summary =
-      `I checked ${examined} ${plural(examined, 'listing', 'listings')}. ` +
-      `${likely} ${plural(likely, 'matches', 'match')} your project's words` +
-      (weaker > 0 ? `; ${weaker} ${plural(weaker, 'is', 'are')} the closest other transportation ${plural(weaker, 'program', 'programs')}, marked as weaker matches.` : '.');
+      `I checked ${examined} ${plural(examined, 'listing', 'listings')} and am showing ${showing}, best fit to your project first. ` +
+      `${likely} ${plural(likely, 'matches', 'match')} your project's words; the rest are marked as weaker matches.${docsNote}`;
   }
 
   logger.info(`Discover: ${messages.length} message(s), ${all.length} search(es), ${examined} candidate(s), ${shortlist.length} listed`);

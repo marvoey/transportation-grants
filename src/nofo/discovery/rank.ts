@@ -211,7 +211,7 @@ export function scoreCandidate(candidate: SearchCandidate, options: RankOptions)
   const termsKnown = profile.terms.length > 0;
   // A mode conflict needs a specific (non-generic) term match to stay "likely".
   const match: Ranked['match'] = termsKnown && termMatched && (modeConflicts.length === 0 || specificMatched) ? 'likely' : 'weaker';
-  if (match === 'weaker' && termsKnown && transportTagged) why.push('No project keyword matched closely; shown because it is a transportation program');
+  if (match === 'weaker' && termsKnown && transportTagged) why.push('No project keyword matched closely');
 
   return { candidate, score, match, historical, why, watch, family: familyKey(candidate.title), modeConflict: modeConflicts.length > 0, parts };
 }
@@ -240,25 +240,23 @@ export function rankCandidates(candidates: SearchCandidate[], options: RankOptio
 /** Count of candidates that matched a project term (used to decide whether to widen the search). */
 export const likelyCount = (ranked: Ranked[]): number => ranked.filter((r) => r.match === 'likely').length;
 
-export const SHORTLIST_MAX = 5;
+/** Widening beyond DOT is considered when fewer listings than this matched the applicant's project words. */
 export const SHORTLIST_MIN = 4;
 
 /**
- * Up to five entries: every likely match first, then (only to reach four) the closest transportation
- * programs, marked "weaker". Candidates that neither matched a term nor look like transportation
- * programs are left out entirely rather than padding the list.
+ * The most listings returned on one screen. The open U.S. DOT list is about a dozen, so in practice everything is
+ * returned; this only bounds a very large result (for example with closed and archived opportunities included), because
+ * each returned listing costs one request to check its documents.
  */
-export function selectShortlist(ranked: Array<Ranked & { otherEditions: number }>): ShortlistItem[] {
-  const likely = ranked.filter((r) => r.match === 'likely');
-  const weaker = ranked.filter(
-    (r) =>
-      r.match === 'weaker' &&
-      !r.modeConflict &&
-      r.candidate.fundingCategories.some((c) => c === 'transportation' || c === 'infrastructure_investment_and_jobs_act')
-  );
-  const picked = likely.slice(0, SHORTLIST_MAX);
-  if (picked.length < SHORTLIST_MIN) picked.push(...weaker.slice(0, SHORTLIST_MIN - picked.length));
-  return picked.map(toItem);
+export const RESULTS_MAX = 25;
+
+/**
+ * Every scored listing, best fit first (the score is the app's own measure of fit to the project description), up to
+ * RESULTS_MAX. Nothing is left out for being a weaker match: it is marked "weaker" and carries its own watch-outs, for
+ * example a program for a different mode than the project.
+ */
+export function selectResults(ranked: Array<Ranked & { otherEditions: number }>, max: number = RESULTS_MAX): ShortlistItem[] {
+  return ranked.slice(0, max).map(toItem);
 }
 
 function toItem(r: Ranked & { otherEditions: number }): ShortlistItem {
@@ -294,14 +292,8 @@ const SCORED_MAX = 200;
 export function describeScored(ranked: Array<Ranked & { otherEditions: number }>, shownIds: ReadonlySet<string>): ScoredListing[] {
   return ranked.slice(0, SCORED_MAX).map((r) => {
     const c = r.candidate;
-    const transport = c.fundingCategories.some((x) => x === 'transportation' || x === 'infrastructure_investment_and_jobs_act');
     const shown = shownIds.has(c.opportunityId);
-    let note: string;
-    if (shown) note = r.match === 'likely' ? 'Shown' : 'Shown as a weaker match to reach four';
-    else if (r.match === 'likely') note = 'A likely match, but outside the best five';
-    else if (r.modeConflict) note = 'Left out: a different mode than your project';
-    else if (!transport) note = 'Left out: no project word matched and it is not tagged as a transportation program';
-    else note = 'Left out: enough likely matches were found';
+    const note = shown ? (r.match === 'likely' ? 'Shown' : 'Shown as a weaker match') : `Not shown: outside the best ${RESULTS_MAX}`;
     return {
       opportunityId: c.opportunityId,
       opportunityNumber: c.opportunityNumber,

@@ -6,7 +6,8 @@
  *
  * Run `npm run nofo:ingest -- <uuid>` first. Exit codes: 0 complete; 2 hard
  * failure; 3 written but PARTIAL (at least one batch failed, so the documents
- * are not fully covered).
+ * are not fully covered); 4 no parsed controlling document (NOFO or amendment)
+ * in the package, so there is nothing to extract from.
  */
 import { GrantServerError } from '../../types/index.js';
 import { LlmError } from '../llm.js';
@@ -68,6 +69,7 @@ async function main(argv: string[]): Promise<number> {
       error instanceof PackageCorruptError
     ) {
       console.error(`Error: ${error.message}`);
+      if (error instanceof ExtractionError && error.code === 'no_controlling_document') return 4;
     } else {
       console.error('Error: unexpected failure during extraction.');
     }

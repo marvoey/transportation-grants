@@ -140,7 +140,7 @@ export function buildTrace(input: TraceInput): BuildTrace {
     actor: 'code',
     title: 'Code sent the requests and scored the answers',
     detail:
-      'The server adds the API key itself; the language model never sees the key or the responses. Each listing returned is scored by points for your words, applicant type, timing and award size, and the best are shown. After that, the model is used twice more, and neither use changes a parameter: to write the plain-language explanation of the search, and, if you choose to assess a grant, to draft the project description.',
+      'The server adds the API key itself; the language model never sees the key or the responses. Each listing returned is scored by points for your words, applicant type, timing and award size, and every listing is shown, best fit first (up to a limit on very large results). A listing that lists no documents on Simpler.Grants.gov goes last, however well it fits. After that, the model is used twice more, and neither use changes a parameter: to write the plain-language explanation of the search, and, if you choose to assess a grant, to draft the project description.',
   });
 
   // Where every parameter came from.

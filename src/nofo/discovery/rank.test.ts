@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BUILD_ID, WCPP_ID, historicalResult, makeCandidate, openResult } from '../__fixtures__/discovery.js';
-import { describeScored, familyKey, likelyCount, rankCandidates, scoreCandidate, selectShortlist } from './rank.js';
+import { RESULTS_MAX, describeScored, familyKey, likelyCount, rankCandidates, scoreCandidate, selectResults } from './rank.js';
 import { EMPTY_PROFILE, type ProjectProfile } from './schemas.js';
 
 const NOW = new Date('2026-11-05T12:00:00Z');
@@ -13,19 +13,23 @@ const bridge: ProjectProfile = {
 };
 
 const shortlistFor = (profile: ProjectProfile, candidates = [...openResult().candidates, ...historicalResult().candidates]) =>
-  selectShortlist(rankCandidates(candidates, { profile, now: NOW }));
+  selectResults(rankCandidates(candidates, { profile, now: NOW }));
 
 describe('ranking against real DOT listings', () => {
-  it('puts bridge programs and the general infrastructure program first for a bridge project, and drops other modes', () => {
-    const list = shortlistFor(bridge);
+  it('puts bridge programs and the general infrastructure program ahead of programs for other modes, which stay in the list', () => {
+    const candidates = [...openResult().candidates, ...historicalResult().candidates];
+    const ranked = rankCandidates(candidates, { profile: bridge, now: NOW });
+    const list = selectResults(ranked);
     const titles = list.map((s) => s.title);
-    expect(list.length).toBeGreaterThanOrEqual(3);
-    expect(list.length).toBeLessThanOrEqual(5);
+    expect(list).toHaveLength(Math.min(ranked.length, RESULTS_MAX));
     expect(list.map((s) => s.opportunityId)).toContain(BUILD_ID);
     expect(titles.some((t) => /Highway Bridge/i.test(t))).toBe(true);
-    for (const title of titles) expect(title).not.toMatch(/Contract Tower|Port Infrastructure|Rail Infrastructure and Safety/i);
     const bridgeIndex = titles.findIndex((t) => /Highway Bridge/i.test(t));
     expect(bridgeIndex).toBeLessThan(list.findIndex((s) => s.opportunityId === BUILD_ID));
+    // A program for another mode is not dropped, but it ranks below the program that matches the project.
+    titles.forEach((title, index) => {
+      if (/Contract Tower|Port Infrastructure|Rail Infrastructure and Safety/i.test(title)) expect(index).toBeGreaterThan(bridgeIndex);
+    });
   });
 
   it('folds earlier editions of one program into a single entry', () => {
@@ -48,10 +52,16 @@ describe('ranking against real DOT listings', () => {
     expect(list[0].whyItMayFit.join(' ')).toMatch(/county governments/);
   });
 
-  it('does not pad the list with programs for another mode', () => {
+  it('keeps programs for another mode in the list, ranked after the match and marked with a watch-out', () => {
     const wildlife: ProjectProfile = { ...EMPTY_PROFILE, projectTypes: [{ value: 'wildlife_connectivity', quote: 'wildlife' }], terms: ['wildlife crossing'] };
-    for (const item of shortlistFor(wildlife, openResult().candidates)) {
-      expect(item.watchOuts.join(' ')).not.toMatch(/not what you described/);
+    const ranked = rankCandidates(openResult().candidates, { profile: wildlife, now: NOW });
+    const list = selectResults(ranked);
+    const conflicted = ranked.filter((r) => r.modeConflict);
+    expect(conflicted.length).toBeGreaterThan(0);
+    for (const r of conflicted) {
+      const index = list.findIndex((s) => s.opportunityId === r.candidate.opportunityId);
+      expect(index).toBeGreaterThan(0);
+      expect(list[index].watchOuts.join(' ')).toMatch(/not what you described/);
     }
   });
 });
@@ -100,13 +110,24 @@ describe('soft signals (scored, never filtered)', () => {
   });
 });
 
-describe('selectShortlist', () => {
-  it('returns at most five, ordered best first', () => {
-    const many = Array.from({ length: 9 }, (_, i) =>
-      makeCandidate({ opportunityId: `4444444${i}-4444-4444-8444-444444444444`, title: `Bridge Program ${String.fromCharCode(65 + i)}`, opportunityNumber: `B-${i}` })
+describe('selectResults', () => {
+  const bridges = (count: number) =>
+    Array.from({ length: count }, (_, i) =>
+      makeCandidate({ opportunityId: `${String(i).padStart(8, '4')}-4444-4444-8444-444444444444`, title: `Bridge Program ${String.fromCharCode(65 + i)}`, opportunityNumber: `B-${i}` })
     );
-    const list = selectShortlist(rankCandidates(many, { profile: bridge, now: NOW }));
-    expect(list).toHaveLength(5);
+
+  it('returns every scored listing, best first, not just a handful', () => {
+    const ranked = rankCandidates(bridges(9), { profile: bridge, now: NOW });
+    const list = selectResults(ranked);
+    expect(list).toHaveLength(9);
+    expect(list.map((s) => s.opportunityId)).toEqual(ranked.map((r) => r.candidate.opportunityId));
+  });
+
+  it('stops at the cap on a very large result, keeping the best', () => {
+    const ranked = rankCandidates(bridges(RESULTS_MAX + 5), { profile: bridge, now: NOW });
+    const list = selectResults(ranked);
+    expect(list).toHaveLength(RESULTS_MAX);
+    expect(list.map((s) => s.opportunityId)).toEqual(ranked.slice(0, RESULTS_MAX).map((r) => r.candidate.opportunityId));
   });
 
   it('marks everything "weaker" when no search terms are known, and says nothing about matching words', () => {
@@ -122,9 +143,11 @@ describe('selectShortlist', () => {
     expect(ranked).toHaveLength(1);
   });
 
-  it('returns an empty list rather than padding with unrelated programs', () => {
+  it('does not drop an unrelated program: it is returned, marked weaker', () => {
     const unrelated = makeCandidate({ title: 'Consumer Recall Program', fundingCategories: ['consumer_protection'] });
-    expect(selectShortlist(rankCandidates([unrelated], { profile: bridge, now: NOW }))).toEqual([]);
+    const list = selectResults(rankCandidates([unrelated], { profile: bridge, now: NOW }));
+    expect(list).toHaveLength(1);
+    expect(list[0].match).toBe('weaker');
   });
 });
 
@@ -156,14 +179,15 @@ describe('scored listings (the "all listings and their scores" box)', () => {
     for (const r of ranked) expect(r.parts.reduce((sum, p) => sum + p.points, 0)).toBe(r.score);
   });
 
-  it('lists every scored listing best first, marks the ones in the shortlist, and says why the others were left out', () => {
+  it('lists every scored listing best first, marks the ones shown, and says why any others were not', () => {
     const ranked = rankCandidates(openResult().candidates, { profile: bridge, now: NOW });
-    const shortlist = selectShortlist(ranked);
+    const shortlist = selectResults(ranked);
     const scored = describeScored(ranked, new Set(shortlist.map((s) => s.opportunityId)));
     expect(scored).toHaveLength(ranked.length);
     expect(scored.map((s) => s.score)).toEqual([...scored.map((s) => s.score)].sort((a, b) => b - a));
     expect(scored.filter((s) => s.shown).map((s) => s.opportunityId).sort()).toEqual(shortlist.map((s) => s.opportunityId).sort());
-    for (const row of scored.filter((s) => !s.shown)) expect(row.note).toMatch(/^(Left out|A likely match)/);
+    for (const row of scored.filter((s) => !s.shown)) expect(row.note).toMatch(/^Not shown/);
+    for (const row of scored.filter((s) => s.shown)) expect(row.note).toMatch(/^Shown/);
     for (const row of scored) expect(row.simplerUrl).toBe(`https://simpler.grants.gov/opportunity/${row.opportunityId}`);
   });
 });

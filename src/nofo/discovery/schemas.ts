@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import type { DocumentsInfo } from './documents.js';
+import type { DownloadedPackage, DownloadedTotals } from './downloaded.js';
 
 /**
  * Project profile for grant discovery. Deliberately small: only what can change a search or a ranking.
@@ -129,6 +131,16 @@ export interface ShortlistItem {
   /** The opportunity's page on Simpler.Grants.gov (built from its ID, never from listing text). */
   simplerUrl: string | null;
   /**
+   * Which documents Simpler.Grants.gov lists for this opportunity (names only; nothing is downloaded). "none" means none
+   * are listed, not that none exist. Absent when the check was not run.
+   */
+  documents?: DocumentsInfo;
+  /**
+   * Filled in by the web route (not the service), for an opportunity whose documents are downloaded here: the documents
+   * with their type, pages and words, and how many requirements were extracted. Absent when nothing is downloaded.
+   */
+  downloaded?: DownloadedPackage;
+  /**
    * Filled in by the web route (not the service): true when this server already holds extracted
    * requirements for the opportunity, so it can be opened in the Assess tab.
    */
@@ -252,6 +264,11 @@ export interface DiscoverResult {
   explanation?: { text: string; source: 'model' | 'code' };
   /** Present only when the request asked to inspect the Simpler.Grants.gov traffic. */
   inspection?: SearchInspection[];
+  /**
+   * Filled in by the web route (not the service): the downloaded documents of the listings shown, added up. Absent when
+   * none of them has downloaded documents.
+   */
+  downloaded?: DownloadedTotals;
 }
 
 export const DISCOVERY_DISCLAIMER =

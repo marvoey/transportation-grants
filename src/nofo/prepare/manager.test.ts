@@ -209,6 +209,21 @@ describe('failures are reported plainly and do not wedge the manager', () => {
     expect(h.calls).toEqual([['ingest', A]]);
   });
 
+  it('explains plainly, not with the developer message, when extraction finds no notice (exit 4)', async () => {
+    const h = await harness({
+      run: async (step) =>
+        step === 'ingest'
+          ? ok
+          : { exitCode: 4, timedOut: false, errorLine: 'No parsed controlling document in the package for X (coverage: partial). Re-run ingestion, or classify a document as controlling in supplemental.json.' },
+    });
+    await h.manager.start(A);
+    const state = await settled(h.manager, A);
+    expect(state.status).toBe('failed');
+    expect(state.failedStep).toBe('extract');
+    expect(state.error).toMatch(/do not include its notice of funding/);
+    expect(state.error).not.toMatch(/supplemental\.json|coverage|controlling document/);
+  });
+
   it('uses a generic message, never process output, when a step fails without an error line', async () => {
     const h = await harness({
       run: async (step) => (step === 'ingest' ? ok : { exitCode: 2, timedOut: false, errorLine: null }),

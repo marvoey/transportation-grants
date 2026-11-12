@@ -218,7 +218,7 @@ describe('output contract', () => {
     const result = await discoverTurn({ asked: ASKED, messages: user(BRIDGE_TEXT) }, { source: fixtureSearchSource(), llm: bridgeLlm(), now: NOW });
     expect(result.preliminary).toBe(true);
     expect(result.disclaimer).toMatch(/not an eligibility determination/);
-    expect(result.summary).toMatch(/^I checked \d+ listings?\./);
+    expect(result.summary).toMatch(/^I checked \d+ listings? and am showing /);
   });
 
   it('rejects invalid input', async () => {

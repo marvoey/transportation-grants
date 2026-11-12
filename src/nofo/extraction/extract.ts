@@ -18,7 +18,11 @@ import {
 } from './schemas.js';
 
 export class ExtractionError extends Error {
-  constructor(message: string) {
+  constructor(
+    message: string,
+    /** 'no_controlling_document': no parsed NOFO or amendment to extract from (the CLI exits 4 for this). */
+    public readonly code?: 'no_controlling_document'
+  ) {
     super(message);
     this.name = 'ExtractionError';
   }
@@ -92,7 +96,8 @@ export async function extractRequirements(opportunityId: string, options: Extrac
   if (documents.length === 0) {
     throw new ExtractionError(
       `No parsed ${options.includeGuidance ? 'controlling or guidance' : 'controlling'} document in the package for ${id} ` +
-        `(coverage: ${manifest.coverage.status}). Re-run ingestion, or classify a document as controlling in supplemental.json.`
+        `(coverage: ${manifest.coverage.status}). Re-run ingestion, or classify a document as controlling in supplemental.json.`,
+      'no_controlling_document'
     );
   }
 

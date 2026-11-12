@@ -87,6 +87,36 @@ describe('POST /discover', () => {
     expect(byId[WCPP_ID]).toBe(false);
   });
 
+  it('describes the downloaded documents of a listed opportunity, and adds them up, from local files only', async () => {
+    const { base, store } = await start({
+      llm: wildlifeLlm(),
+      searchSource: fakeSearchSource(() => ({
+        candidates: [makeCandidate({ opportunityId: OPP_A, title: 'Wildlife Crossing Program' }), makeCandidate({ opportunityId: WCPP_ID, title: 'Another Wildlife Crossing Program' })],
+        totalRecords: 2,
+        skipped: 0,
+      })),
+    });
+    await store.writeOpportunity(OPP_A, makeOpportunity({ title: 'Prepared' }));
+    await writePackage(store, [{ doc: pdfDoc(DOC_ID, PAGE_TEXTS), manifest: { title: 'The notice', fileName: 'notice.pdf', processing: { status: 'parsed', processorId: 'test', processorVersion: '1', pages: PAGE_TEXTS.length } } }]);
+    await store.writeRequirements(OPP_A, reqFile(RULEBOOK));
+
+    const { body } = await post(`${base}/discover`, say(WILDLIFE));
+    const byId = new Map<string, any>(body.data.shortlist.map((s: any) => [s.opportunityId, s]));
+    const withDocs = byId.get(OPP_A).downloaded;
+    expect(withDocs.documents).toMatchObject([{ title: 'The notice', format: 'PDF', role: 'notice', pages: PAGE_TEXTS.length }]);
+    expect(withDocs.totalPages).toBe(PAGE_TEXTS.length);
+    expect(withDocs.requirements.total).toBe(RULEBOOK.length);
+    expect(byId.get(WCPP_ID).downloaded).toBeUndefined();
+    expect(body.data.downloaded).toMatchObject({ listings: 1, documents: 1, pages: PAGE_TEXTS.length, requirements: RULEBOOK.length });
+  });
+
+  it('leaves the downloaded figures out when no listed opportunity has documents here', async () => {
+    const { base } = await start({ searchSource: fixtureSearchSource(), llm: wildlifeLlm() });
+    const { body } = await post(`${base}/discover`, say(WILDLIFE));
+    expect(body.data.downloaded).toBeUndefined();
+    for (const item of body.data.shortlist) expect(item.downloaded).toBeUndefined();
+  });
+
   it('asks guided questions, and runs no search, for a first message that leaves things out', async () => {
     const source = fixtureSearchSource();
     const { base } = await start({ searchSource: source, isModelConfigured: () => false });
@@ -292,5 +322,45 @@ describe('POST /project-description', () => {
     await post(`${base}/project-description`, sayFresh('Confidential bridge at 123 Secret Street'));
     const logged = spies.flatMap((s) => s.mock.calls.map((c) => c.map(String).join(' '))).join('\n');
     expect(logged).not.toMatch(/Secret Street|Confidential/);
+  });
+});
+
+describe('POST /discover: documents on the shortlist', () => {
+  const attachment = (fileName: string) => ({ attachmentId: 'a1', fileName, description: null, mimeType: 'application/pdf', sizeBytes: 10, downloadPath: 'https://files.example.test/a1.pdf', createdAt: null, updatedAt: null });
+
+  it('says which shortlisted listings list documents, with names only', async () => {
+    const lookups: string[] = [];
+    const searchSource = Object.assign(fixtureSearchSource(), {
+      async getAttachments(id: string) {
+        lookups.push(id);
+        return id === WCPP_ID ? [attachment('Final_NOFO.pdf')] : [];
+      },
+    });
+    const { base } = await start({ searchSource, llm: wildlifeLlm() });
+    const { status, body } = await post(`${base}/discover`, say(WILDLIFE));
+    expect(status).toBe(200);
+    const byId = new Map<string, any>(body.data.shortlist.map((s: any) => [s.opportunityId, s]));
+    expect(byId.get(WCPP_ID).documents).toEqual({ status: 'listed', count: 1, files: ['Final_NOFO.pdf'], hasNotice: true });
+    const others = body.data.shortlist.filter((s: any) => s.opportunityId !== WCPP_ID);
+    expect(others.length).toBeGreaterThan(0);
+    for (const item of others) expect(item.documents.status).toBe('none');
+    expect(lookups.sort()).toEqual(body.data.shortlist.map((s: any) => s.opportunityId).sort());
+    expect(JSON.stringify(body)).not.toMatch(/files\.example\.test/); // no download links
+  });
+
+  it('shows the check as a progress step in the stream', async () => {
+    const searchSource = Object.assign(fixtureSearchSource(), { getAttachments: async () => [] });
+    const { base } = await start({ searchSource, llm: wildlifeLlm() });
+    const response = await fetch(`${base}/discover?stream=1`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(say(WILDLIFE)) });
+    const lines = (await response.text()).split('\n').filter(Boolean).map((l) => JSON.parse(l));
+    const steps = lines.filter((l) => l.type === 'progress' && l.id === 'documents').map((l) => l.status);
+    expect(steps).toEqual(['running', 'done']);
+    expect(lines[lines.length - 1].type).toBe('result');
+  });
+
+  it('leaves documents out when the source cannot list attachments', async () => {
+    const { base } = await start({ searchSource: fixtureSearchSource(), llm: wildlifeLlm() });
+    const { body } = await post(`${base}/discover`, say(WILDLIFE));
+    for (const item of body.data.shortlist) expect(item.documents).toBeUndefined();
   });
 });

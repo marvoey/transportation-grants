@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import rateLimit from 'express-rate-limit';
@@ -7,6 +8,9 @@ import { assessTurn, AssessmentError } from '../../nofo/service.js';
 import { FactsError } from '../../nofo/assessment/facts.js';
 import { createInterpretCache, type InterpretCache } from '../../nofo/assessment/interpret.js';
 import { createDiscoveryLlm, createSearchSource, isSearchConfigured } from '../../nofo/discovery/default-source.js';
+import { DocumentsCache, type AttachmentListSource } from '../../nofo/discovery/documents.js';
+import { describeDownloaded, downloadedTotals } from '../../nofo/discovery/downloaded.js';
+import { HomeStatsService } from '../../nofo/stats.js';
 import { SearchCache } from '../../nofo/discovery/search.js';
 import { DiscoverInputSchema, UserMessagesSchema } from '../../nofo/discovery/schemas.js';
 import { describeProject } from '../../nofo/discovery/describe.js';
@@ -44,6 +48,8 @@ export interface NofoRouterDeps {
    * SIMPLER_GRANTS_API_KEY on first use (the key never leaves the server).
    */
   searchSource?: OpportunitySearchSource;
+  /** The home page numbers. Default: counted from Simpler.Grants.gov (cached), with a saved snapshot as the fallback. */
+  homeStats?: HomeStatsService;
   /** Whether grant search can run. Default: a Simpler key is configured. Tests override it. */
   isSearchConfigured?: () => boolean;
   /**
@@ -152,6 +158,21 @@ export function createNofoRouter(deps: NofoRouterDeps = {}): Router {
   const searchCache = new SearchCache();
   let defaultSource: OpportunitySearchSource | undefined;
   const searchSource = (): OpportunitySearchSource => deps.searchSource ?? (defaultSource ??= createSearchSource());
+  // The same source can list an opportunity's attachments (names only). A source that cannot (a test fake) skips the check.
+  const documentsCache = new DocumentsCache();
+  const documentSource = (): AttachmentListSource | undefined => {
+    const source = searchSource() as Partial<AttachmentListSource>;
+    return typeof source.getAttachments === 'function' ? (source as AttachmentListSource) : undefined;
+  };
+
+  // The numbers on the home page: answered at once from the last count or a saved snapshot, refreshed in the background.
+  const homeStats =
+    deps.homeStats ??
+    new HomeStatsService({
+      source: searchSource,
+      configured: () => (deps.searchSource ? true : (deps.isSearchConfigured ?? isSearchConfigured)()),
+      snapshotPath: resolve(process.cwd(), 'data/fixtures/simpler-stats-snapshot.json'),
+    });
 
   const prepareLimit = deps.limits?.preparePerWindow ?? 6;
   const recent = deps.recent ?? new RecentOpportunities();
@@ -174,6 +195,18 @@ export function createNofoRouter(deps: NofoRouterDeps = {}): Router {
   const discoverLimiter = limiter(discoverLimit, windowMs, 'Too many searches. Please try again later.');
   // Assessment spends model calls, so it is limited like chat.
   const assessLimiter = limiter(assessLimit, windowMs, 'Too many assessment requests. Please try again later.');
+
+  // The numbers on the home page. Always answers at once; the counts themselves are refreshed in the background.
+  router.get(
+    '/stats',
+    readLimiter,
+    asyncHandler(async (_req: Request, res: Response) => {
+      res.set('Cache-Control', NO_STORE);
+      const view = await homeStats.get();
+      if (!view) throw new GrantServerError('API_ERROR', 'The funding statistics are not available right now.', true);
+      res.json(successResponse(view));
+    })
+  );
 
   router.get(
     '/opportunities',
@@ -242,12 +275,20 @@ export function createNofoRouter(deps: NofoRouterDeps = {}): Router {
       const llm = deps.llm ?? (modelConfigured() ? createDiscoveryLlm() : null);
 
       const run = async (onProgress?: (event: ProgressEvent) => void, onConsole?: ConsoleFn) => {
-        const result = await discoverTurn(req.body, { source: searchSource(), llm, cache: searchCache, onProgress, onConsole, apiBaseUrl: getConfig().simpler.baseUrl }).catch((e) => { throw translate(e); });
+        const result = await discoverTurn(req.body, { source: searchSource(), llm, cache: searchCache, documents: documentSource(), documentsCache, onProgress, onConsole, apiBaseUrl: getConfig().simpler.baseUrl }).catch((e) => { throw translate(e); });
         // Which listed opportunities can be opened in the Assess tab right now (extracted requirements exist here).
         const ready = new Set(
           (await listOpportunities(store()).catch(() => [])).filter((o) => o.requirements.ready).map((o) => o.opportunityId)
         );
         for (const item of result.shortlist) item.readyToAssess = ready.has(item.opportunityId);
+        // What a specialist would have to read for the listings whose documents are downloaded here (local files only).
+        const downloaded = await Promise.all(result.shortlist.map((item) => describeDownloaded(store(), item.opportunityId).catch(() => null)));
+        result.shortlist.forEach((item, i) => {
+          const pkg = downloaded[i];
+          if (pkg) item.downloaded = pkg;
+        });
+        const totals = downloadedTotals(result.shortlist);
+        if (totals) result.downloaded = totals;
         // Only what was just shown can later be prepared.
         recent.remember(result.shortlist.map((item) => item.opportunityId));
         return result;

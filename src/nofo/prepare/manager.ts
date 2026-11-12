@@ -59,6 +59,8 @@ const MESSAGES = {
   idle: 'Not prepared yet.',
   generic: 'Preparing this opportunity failed. An operator can check the server log or run the commands by hand.',
   noDocuments: 'No document for this opportunity could be read, so it cannot be assessed.',
+  noNotice:
+    'The documents listed for this opportunity do not include its notice of funding (a NOFO or an amendment), so there are no requirements to extract and it cannot be assessed here. The notice may not be published yet, or it may be on another page.',
   timeout: 'Preparing this opportunity took too long and was stopped. Try again, or ask an operator to run the commands by hand.',
 } as const;
 
@@ -183,6 +185,8 @@ export class PrepareManager {
       job.message = MESSAGES.extracting;
       const extract = await this.deps.run('extract', id);
       if (extract.timedOut) return this.fail(job, 'extract', null, MESSAGES.timeout);
+      // Exit 4 means the package has no parsed notice (NOFO or amendment): say so plainly, not with the developer message.
+      if (extract.exitCode === 4) return this.fail(job, 'extract', null, MESSAGES.noNotice);
       // Exit 3 means "written but partial": the requirements exist, so it is judged from what is on disk below.
       if (extract.exitCode !== 0 && extract.exitCode !== 3) return this.fail(job, 'extract', extract, MESSAGES.generic);
 
