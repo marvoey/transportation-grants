@@ -44,7 +44,7 @@ export function createApp(): Application {
   app.use(express.static(publicPath));
   logger.info(`Serving static files from ${publicPath}`);
 
-  // Project documentation (doc/ and docs/ markdown files), read-only.
+  // Project documentation (README.md, CLAUDE.md and the markdown files in docs/), read-only.
   app.use('/docs', createDocsRouter());
 
   // API Routes

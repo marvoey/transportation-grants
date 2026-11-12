@@ -2,16 +2,12 @@ import { posix } from 'path';
 import { Marked, type Tokens } from 'marked';
 
 /**
- * Markdown -> HTML for the /docs pages.
+ * Markdown -> HTML for the /docs pages (README.md, CLAUDE.md and the files in docs/).
  *
  * The documents are project files, but they are still treated as untrusted text: raw HTML is shown as
  * text, only a short list of link schemes survives, and images are never loaded. Everything the renderer
  * emits is either escaped here or produced by marked's own escaping (code, code spans, plain text).
  */
-
-export type DocFolder = 'doc' | 'docs';
-
-export const DOC_FOLDERS: readonly DocFolder[] = ['doc', 'docs'];
 
 export function escapeHtml(value: string): string {
   return value
@@ -40,10 +36,10 @@ function schemeOf(href: string): string | null {
 }
 
 export interface RenderContext {
-  /** The folder of the document being rendered; relative links resolve against it. */
-  folder: DocFolder;
-  /** "folder/name" for every document that can be opened, so links only point at pages that exist. */
-  known: ReadonlySet<string>;
+  /** The folder of the document being rendered, relative to the project root ("" for README.md, "docs" for docs/*.md); relative links resolve against it. */
+  dir: string;
+  /** Every document that can be opened: its path from the project root ("docs/A.md") mapped to its page name ("A"), so links only point at pages that exist. */
+  known: ReadonlyMap<string, string>;
 }
 
 /** What to do with one link target. `null` means "show the link text only". */
@@ -69,13 +65,9 @@ export function resolveLink(rawHref: string, ctx: RenderContext): LinkTarget {
   const hash = hashAt === -1 ? '' : href.slice(hashAt);
   if (!path || path.includes('?') || !path.toLowerCase().endsWith('.md')) return null;
 
-  const resolved = posix.normalize(posix.join(ctx.folder, path));
-  const parts = resolved.split('/');
-  if (parts.length !== 2) return null;
-  const [folder, file] = parts;
-  const name = file.slice(0, -3);
-  if (!ctx.known.has(`${folder}/${name}`)) return null;
-  return { href: `/docs/${folder}/${encodeURIComponent(name)}${hash}`, external: false };
+  const name = ctx.known.get(posix.normalize(posix.join(ctx.dir || '.', path)));
+  if (!name) return null;
+  return { href: `/docs/${encodeURIComponent(name)}${hash}`, external: false };
 }
 
 /** The text of the first top-level heading, or null. */

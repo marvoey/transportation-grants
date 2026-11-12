@@ -17,7 +17,7 @@ afterEach(async () => {
 
 const GUIDE = `# Guide to <uuid> things
 
-Intro with a [link to the other doc](../docs/Other.md#part-two) and an [outside link](https://example.com/x).
+Intro with a [link to the other doc](Other.md#part-two), a [link to the readme](../README.md) and an [outside link](https://example.com/x).
 
 ## Table
 
@@ -34,7 +34,7 @@ const OTHER = `# Other
 
 ## Part two
 
-Back to [the guide](../doc/Guide.md) and a [missing doc](Nope.md).
+Back to [the guide](Guide.md), [the project rules](../CLAUDE.md) and a [missing doc](Nope.md) and a [file outside](../secret.md).
 `;
 
 const HOSTILE = `# Hostile
@@ -48,23 +48,26 @@ const HOSTILE = `# Hostile
 ![tracking pixel](https://evil.example/p.png)
 `;
 
-async function start() {
+async function start(options: { clash?: boolean } = {}) {
   const base = await mkdtemp(join(tmpdir(), 'docs-route-'));
   cleanups.push(() => rm(base, { recursive: true, force: true }));
-  await mkdir(join(base, 'doc'));
   await mkdir(join(base, 'docs'));
   await mkdir(join(base, 'docs', 'sub'));
-  await writeFile(join(base, 'doc', 'Guide.md'), GUIDE);
-  await writeFile(join(base, 'doc', 'Hostile.md'), HOSTILE);
-  await writeFile(join(base, 'doc', 'notes.txt'), 'not markdown');
+  await writeFile(join(base, 'README.md'), '# The readme\n\nSee [the guide](docs/Guide.md) and [the rules](CLAUDE.md).\n');
+  await writeFile(join(base, 'CLAUDE.md'), '# Project rules');
+  await writeFile(join(base, 'CHANGELOG.md'), '# Not on the list'); // a root file that is not README or CLAUDE
+  await writeFile(join(base, 'docs', 'Guide.md'), GUIDE);
+  await writeFile(join(base, 'docs', 'Hostile.md'), HOSTILE);
+  await writeFile(join(base, 'docs', 'notes.txt'), 'not markdown');
   await writeFile(join(base, 'docs', 'Other.md'), OTHER);
   await writeFile(join(base, 'docs', 'sub', 'Nested.md'), '# Nested');
   await writeFile(join(base, 'secret.md'), '# Outside the roots');
   await symlink(join(base, 'secret.md'), join(base, 'docs', 'Linked.md'));
   await writeFile(join(base, 'docs', 'Huge.md'), '# Huge\n' + 'x'.repeat(1024 * 1024 + 1));
+  if (options.clash) await writeFile(join(base, 'docs', 'README.md'), '# A different readme');
 
   const app = express();
-  app.use('/docs', createDocsRouter({ roots: { doc: join(base, 'doc'), docs: join(base, 'docs') } }));
+  app.use('/docs', createDocsRouter({ rootDir: base, docsDir: join(base, 'docs') }));
   app.use(errorHandler);
   const server: Server = await new Promise((resolve) => {
     const s = app.listen(0, '127.0.0.1', () => resolve(s));
@@ -75,31 +78,49 @@ async function start() {
 }
 
 describe('GET /docs (index)', () => {
-  it('lists the .md files of both folders, titled by their first heading', async () => {
+  it('lists README, CLAUDE and the docs/ files as one flat list, titled by their first heading', async () => {
     const { get } = await start();
     const res = await get('/docs');
     const html = await res.text();
     expect(res.status).toBe(200);
-    expect(html).toContain('href="/docs/doc/Guide"');
+    expect(html).toContain('href="/docs/README"');
+    expect(html).toContain('The readme');
+    expect(html).toContain('href="/docs/CLAUDE"');
+    expect(html).toContain('href="/docs/Guide"');
     expect(html).toContain('Guide to &lt;uuid&gt; things'); // title is escaped, not interpreted
-    expect(html).toContain('href="/docs/docs/Other"');
-    expect(html).toContain('Guide.md');
+    expect(html).toContain('href="/docs/Other"');
+    expect(html).toContain('docs/Guide.md'); // the file path is shown beside the title
+    expect(html).not.toContain('docs-doc'); // no separate sections or folder headings
+    expect(html).not.toContain('<h3');
   });
 
-  it('shows the docs/ folder before the doc/ folder', async () => {
+  it('shows README first, then CLAUDE, then the docs/ files by name', async () => {
     const { get } = await start();
     const html = await (await get('/docs')).text();
-    expect(html.indexOf('id="docs-docs"')).toBeGreaterThan(-1);
-    expect(html.indexOf('id="docs-docs"')).toBeLessThan(html.indexOf('id="docs-doc"'));
+    const at = (name: string) => html.indexOf(`href="/docs/${name}"`);
+    expect(at('README')).toBeGreaterThan(-1);
+    expect(at('README')).toBeLessThan(at('CLAUDE'));
+    expect(at('CLAUDE')).toBeLessThan(at('Guide'));
+    expect(at('Guide')).toBeLessThan(at('Other'));
   });
 
-  it('leaves out non-markdown files, subfolders, symlinks and oversized files', async () => {
+  it('leaves out other root files, non-markdown files, subfolders, symlinks and oversized files', async () => {
     const { get } = await start();
     const html = await (await get('/docs')).text();
+    expect(html).not.toContain('CHANGELOG');
     expect(html).not.toContain('notes');
     expect(html).not.toContain('Nested');
     expect(html).not.toContain('Linked');
     expect(html).not.toContain('Huge');
+  });
+
+  it('lists a name only once: the root README wins over docs/README.md', async () => {
+    const { get } = await start({ clash: true });
+    const html = await (await get('/docs')).text();
+    expect(html.match(/href="\/docs\/README"/g)).toHaveLength(1);
+    const page = await (await get('/docs/README')).text();
+    expect(page).toContain('The readme');
+    expect(page).not.toContain('A different readme');
   });
 
   it('is styled like the site and sends restrictive headers', async () => {
@@ -114,10 +135,10 @@ describe('GET /docs (index)', () => {
   });
 });
 
-describe('GET /docs/:folder/:name', () => {
+describe('GET /docs/:name', () => {
   it('renders headings (with ids), tables (in a scroll box) and code blocks', async () => {
     const { get } = await start();
-    const res = await get('/docs/doc/Guide');
+    const res = await get('/docs/Guide');
     const html = await res.text();
     expect(res.status).toBe(200);
     expect(html).toContain('<h2 id="table">Table</h2>');
@@ -130,26 +151,34 @@ describe('GET /docs/:folder/:name', () => {
 
   it('shows placeholders like <uuid> as text', async () => {
     const { get } = await start();
-    const html = await (await get('/docs/doc/Guide')).text();
+    const html = await (await get('/docs/Guide')).text();
     expect(html).toContain('Guide to &lt;uuid&gt; things');
     expect(html).not.toContain('<uuid>');
   });
 
   it('rewrites links between documents and opens outside links in a new tab', async () => {
     const { get } = await start();
-    const guide = await (await get('/docs/doc/Guide')).text();
-    expect(guide).toContain('<a href="/docs/docs/Other#part-two">link to the other doc</a>');
+    const guide = await (await get('/docs/Guide')).text();
+    expect(guide).toContain('<a href="/docs/Other#part-two">link to the other doc</a>');
+    expect(guide).toContain('<a href="/docs/README">link to the readme</a>'); // ../README.md from docs/
     expect(guide).toContain('<a href="https://example.com/x" target="_blank" rel="noopener noreferrer">outside link</a>');
 
-    const other = await (await get('/docs/docs/Other')).text();
-    expect(other).toContain('<a href="/docs/doc/Guide">the guide</a>'); // ../doc/Guide.md from docs/
+    const other = await (await get('/docs/Other')).text();
+    expect(other).toContain('<a href="/docs/Guide">the guide</a>');
+    expect(other).toContain('<a href="/docs/CLAUDE">the project rules</a>');
     expect(other).not.toContain('Nope.md'); // a link to a document that does not exist is shown as text only
     expect(other).toContain('missing doc');
+    expect(other).not.toContain('secret.md'); // a link out of the project's documents is shown as text only
+    expect(other).toContain('file outside');
+
+    const readme = await (await get('/docs/README')).text();
+    expect(readme).toContain('<a href="/docs/Guide">the guide</a>'); // docs/Guide.md from the project root
+    expect(readme).toContain('<a href="/docs/CLAUDE">the rules</a>');
   });
 
   it('produces no executable markup from hostile content', async () => {
     const { get } = await start();
-    const html = await (await get('/docs/doc/Hostile')).text();
+    const html = await (await get('/docs/Hostile')).text();
     const article = /<article[\s\S]*<\/article>/.exec(html)?.[0] ?? '';
     expect(article).not.toMatch(/<script/i);
     expect(article).not.toMatch(/<img/i);
@@ -165,20 +194,22 @@ describe('GET /docs/:folder/:name', () => {
   it('returns 404 for anything that is not a listed document', async () => {
     const { get } = await start();
     const paths = [
-      '/docs/doc/..%2Fsecret', // encoded slash
-      '/docs/doc/..%2F..%2Fsecret',
-      '/docs/doc/%2e%2e/secret',
-      '/docs/doc/../secret',
-      '/docs/doc/secret',
-      '/docs/..%2Fdocs/Other',
-      '/docs/other/Guide', // unknown folder
-      '/docs/doc/Missing',
-      '/docs/doc/notes', // a .txt file
-      '/docs/doc/notes.txt',
-      '/docs/doc/Guide.md', // the extension is not part of the name
-      '/docs/docs/sub/Nested',
-      '/docs/docs/Linked', // symlink out of the folder
-      '/docs/docs/Huge', // over the size cap
+      '/docs/..%2Fsecret', // encoded slash
+      '/docs/..%2F..%2Fsecret',
+      '/docs/%2e%2e/secret',
+      '/docs/../secret',
+      '/docs/secret', // a root file that is not on the list
+      '/docs/CHANGELOG', // a root .md file that is not README or CLAUDE
+      '/docs/Missing',
+      '/docs/notes', // a .txt file
+      '/docs/notes.txt',
+      '/docs/Guide.md', // the extension is not part of the name
+      '/docs/Nested', // in a subfolder
+      '/docs/sub/Nested',
+      '/docs/docs/Guide', // the old two-level address no longer exists
+      '/docs/doc/Guide',
+      '/docs/Linked', // symlink out of the folder
+      '/docs/Huge', // over the size cap
     ];
     for (const path of paths) {
       const res = await get(path);
@@ -190,7 +221,8 @@ describe('GET /docs/:folder/:name', () => {
 });
 
 describe('link handling', () => {
-  const ctx = { folder: 'doc' as const, known: new Set(['doc/A', 'docs/B']) };
+  const known = new Map([['README.md', 'README'], ['CLAUDE.md', 'CLAUDE'], ['docs/A.md', 'A'], ['docs/B.md', 'B']]);
+  const ctx = { dir: 'docs', known };
 
   it('allows http, https, mailto, same-page and same-site links only', () => {
     expect(resolveLink('https://example.com', ctx)).toEqual({ href: 'https://example.com', external: true });
@@ -200,17 +232,18 @@ describe('link handling', () => {
   });
 
   it('drops dangerous or unresolvable links', () => {
-    for (const href of ['javascript:alert(1)', 'JAVASCRIPT:alert(1)', ' java\nscript:alert(1)', 'data:text/html,x', 'vbscript:x', 'file:///etc/passwd', '//evil.example/x', '', 'src/web/api-server.ts', 'Missing.md', '../../secret.md', '../docs/sub/Nested.md', 'A.md?x=1']) {
+    for (const href of ['javascript:alert(1)', 'JAVASCRIPT:alert(1)', ' java\nscript:alert(1)', 'data:text/html,x', 'vbscript:x', 'file:///etc/passwd', '//evil.example/x', '', 'src/web/api-server.ts', 'Missing.md', '../../secret.md', '../CHANGELOG.md', 'sub/Nested.md', 'A.md?x=1']) {
       expect(resolveLink(href, ctx), href).toBeNull();
     }
   });
 
-  it('resolves .md links across the two folders and keeps the anchor', () => {
-    expect(resolveLink('A.md', ctx)?.href).toBe('/docs/doc/A');
-    expect(resolveLink('./A.md#top', ctx)?.href).toBe('/docs/doc/A#top');
-    expect(resolveLink('../docs/B.md', ctx)?.href).toBe('/docs/docs/B');
-    expect(resolveLink('../docs/B.md', { ...ctx, folder: 'docs' })?.href).toBe('/docs/docs/B'); // from docs/ it still lands on docs/B
-    expect(resolveLink('../doc/B.md', { ...ctx, folder: 'docs' })).toBeNull(); // doc/B does not exist
+  it('resolves .md links between the root files and docs/ and keeps the anchor', () => {
+    expect(resolveLink('A.md', ctx)?.href).toBe('/docs/A');
+    expect(resolveLink('./A.md#top', ctx)?.href).toBe('/docs/A#top');
+    expect(resolveLink('../README.md', ctx)?.href).toBe('/docs/README'); // from docs/ up to the root
+    expect(resolveLink('docs/B.md', { dir: '', known })?.href).toBe('/docs/B'); // from the root down into docs/
+    expect(resolveLink('CLAUDE.md', { dir: '', known })?.href).toBe('/docs/CLAUDE');
+    expect(resolveLink('README.md', ctx)).toBeNull(); // docs/README.md does not exist
   });
 
   it('gives repeated headings distinct ids', () => {

@@ -3,13 +3,14 @@ import { readFile, readdir, stat } from 'fs/promises';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { asyncHandler } from '../middleware/error-handler.js';
-import { DOC_FOLDERS, escapeHtml, firstHeading, renderMarkdown, type DocFolder } from '../docs/render.js';
+import { escapeHtml, firstHeading, renderMarkdown } from '../docs/render.js';
 
 /**
- * Read-only viewer for the project's markdown files (doc/ and docs/), styled like the rest of the site.
+ * Read-only viewer for the project's markdown files: README.md and CLAUDE.md at the project root, and the .md files in
+ * docs/, shown as one flat list and styled like the rest of the site.
  *
- * No request value is ever used to build a file path: the folder is looked up in a fixed table, and the
- * document name is looked up in the list of .md files actually found in that folder. Anything else is a 404.
+ * No request value is ever used to build a file path: the document name is looked up in the list of files actually
+ * found (the two root files, and the .md files directly inside docs/). Anything else is a 404.
  */
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -18,41 +19,42 @@ const PROJECT_ROOT = join(__dirname, '../../..');
 /** Refuse (and do not list) files larger than this. The largest document today is well under it. */
 const MAX_BYTES = 1024 * 1024;
 
-/** The order the folders are shown on the index page: docs/ first. */
-const INDEX_ORDER: readonly DocFolder[] = ['docs', 'doc'];
-
-export type DocRoots = Record<DocFolder, string>;
+/** The only files read from the project root, shown first and in this order. */
+const ROOT_FILES: readonly string[] = ['README.md', 'CLAUDE.md'];
 
 export interface DocsRouterDeps {
   /** Folder locations. Tests point these at a temp directory. */
-  roots?: DocRoots;
+  rootDir?: string;
+  docsDir?: string;
+  rootFiles?: readonly string[];
 }
 
 interface DocEntry {
-  folder: DocFolder;
-  name: string; // file name without ".md"
+  /** The page name: the file name without ".md". Unique across the list. */
+  name: string;
+  /** The path from the project root, as shown ("README.md", "docs/NOFO_DEMO.md"), also used to resolve links. */
+  relPath: string;
+  /** The folder of the file from the project root ("" or "docs"). */
+  dir: string;
   path: string;
 }
 
-function defaultRoots(): DocRoots {
-  return { doc: join(PROJECT_ROOT, 'doc'), docs: join(PROJECT_ROOT, 'docs') };
-}
-
-async function listFolder(folder: DocFolder, root: string): Promise<DocEntry[]> {
+/** The .md files directly inside `dir` that pass `accept` (regular files only, under the size cap), sorted by name. */
+async function listMarkdown(dir: string, relDir: string, accept: (fileName: string) => boolean): Promise<DocEntry[]> {
   let entries;
   try {
-    entries = await readdir(root, { withFileTypes: true });
+    entries = await readdir(dir, { withFileTypes: true });
   } catch {
     return []; // a missing folder is just an empty list
   }
   const found: DocEntry[] = [];
   for (const entry of entries) {
     // isFile() is false for symlinks and directories, so neither can be served.
-    if (!entry.isFile() || !entry.name.toLowerCase().endsWith('.md')) continue;
-    const path = join(root, entry.name);
+    if (!entry.isFile() || !entry.name.toLowerCase().endsWith('.md') || !accept(entry.name)) continue;
+    const path = join(dir, entry.name);
     const info = await stat(path);
     if (info.size > MAX_BYTES) continue;
-    found.push({ folder, name: entry.name.slice(0, -3), path });
+    found.push({ name: entry.name.slice(0, -3), relPath: relDir ? `${relDir}/${entry.name}` : entry.name, dir: relDir, path });
   }
   return found.sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -120,57 +122,54 @@ function notFound(res: Response): void {
 }
 
 export function createDocsRouter(deps: DocsRouterDeps = {}): Router {
-  const roots = deps.roots ?? defaultRoots();
+  const rootDir = deps.rootDir ?? PROJECT_ROOT;
+  const docsDir = deps.docsDir ?? join(PROJECT_ROOT, 'docs');
+  const rootFiles = deps.rootFiles ?? ROOT_FILES;
   const router = Router();
 
-  async function listAll(): Promise<Record<DocFolder, DocEntry[]>> {
-    const [doc, docs] = await Promise.all(DOC_FOLDERS.map((f) => listFolder(f, roots[f])));
-    return { doc, docs };
+  /** README.md and CLAUDE.md first (in that order), then docs/ by name. A name already taken is not listed twice. */
+  async function listAll(): Promise<DocEntry[]> {
+    const [root, docs] = await Promise.all([
+      listMarkdown(rootDir, '', (file) => rootFiles.includes(file)),
+      listMarkdown(docsDir, 'docs', () => true),
+    ]);
+    root.sort((a, b) => rootFiles.indexOf(`${a.name}.md`) - rootFiles.indexOf(`${b.name}.md`));
+    const seen = new Set<string>();
+    return [...root, ...docs].filter((e) => (seen.has(e.name) ? false : (seen.add(e.name), true)));
   }
 
   router.get(
     '/',
     asyncHandler(async (_req: Request, res: Response) => {
-      const all = await listAll();
-      const sections: string[] = [];
-      for (const folder of INDEX_ORDER) {
-        const items: string[] = [];
-        for (const entry of all[folder]) {
-          const title = firstHeading(await readFile(entry.path, 'utf-8')) ?? entry.name;
-          items.push(
-            `<li><a href="/docs/${folder}/${encodeURIComponent(entry.name)}">${escapeHtml(title)}</a> <span class="docs-file">${escapeHtml(entry.name)}.md</span></li>`,
-          );
-        }
-        sections.push(
-          `<section aria-labelledby="docs-${folder}">\n        <h3 id="docs-${folder}"><code>${folder}/</code></h3>\n        ${
-            items.length ? `<ul class="docs-list">\n          ${items.join('\n          ')}\n        </ul>` : '<p>No documents found.</p>'
-          }\n      </section>`,
+      const items: string[] = [];
+      for (const entry of await listAll()) {
+        const title = firstHeading(await readFile(entry.path, 'utf-8')) ?? entry.name;
+        items.push(
+          `<li><a href="/docs/${encodeURIComponent(entry.name)}">${escapeHtml(title)}</a> <span class="docs-file">${escapeHtml(entry.relPath)}</span></li>`,
         );
       }
-      send(res, 200, page('Documentation', `<h2>Documentation</h2>\n      ${sections.join('\n      ')}`));
+      const list = items.length ? `<ul class="docs-list">\n        ${items.join('\n        ')}\n      </ul>` : '<p>No documents found.</p>';
+      send(res, 200, page('Documentation', `<h2>Documentation</h2>\n      ${list}`));
     }),
   );
 
   router.get(
-    '/:folder/:name',
+    '/:name',
     asyncHandler(async (req: Request, res: Response) => {
-      const folder = DOC_FOLDERS.find((f) => f === req.params.folder);
-      if (!folder) return notFound(res);
-
       const all = await listAll();
-      const entry = all[folder].find((e) => e.name === req.params.name);
+      const entry = all.find((e) => e.name === req.params.name);
       if (!entry) return notFound(res);
 
-      const known = new Set(DOC_FOLDERS.flatMap((f) => all[f].map((e) => `${f}/${e.name}`)));
+      const known = new Map(all.map((e) => [e.relPath, e.name] as const));
       const markdown = await readFile(entry.path, 'utf-8');
       const title = firstHeading(markdown) ?? entry.name;
-      const body = renderMarkdown(markdown, { folder, known });
+      const body = renderMarkdown(markdown, { dir: entry.dir, known });
       send(
         res,
         200,
         page(
           title,
-          `<p class="docs-crumbs"><a href="/docs">Documentation</a> / <code>${folder}/${escapeHtml(entry.name)}.md</code></p>\n      <article class="docs-article">\n${body}\n      </article>`,
+          `<p class="docs-crumbs"><a href="/docs">Documentation</a> / <code>${escapeHtml(entry.relPath)}</code></p>\n      <article class="docs-article">\n${body}\n      </article>`,
         ),
       );
     }),
