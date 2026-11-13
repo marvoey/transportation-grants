@@ -8,11 +8,12 @@
 *{box-sizing:border-box}body{margin:0;background:var(--paper);font:15px/1.5 Inter,'Segoe UI',Arial,sans-serif;color:var(--ink)}.container{max-width:1248px;margin:auto;padding:24px}.cue{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:18px;box-shadow:0 6px 24px #3920460d}.cue-heading{background:#f7f1fb;border-bottom:1px solid var(--line);padding:17px 22px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}.cue-heading h2{margin:0;font-size:21px;letter-spacing:-.02em}.cue-heading .range{display:block;color:#784592;font-weight:900;font-variant-numeric:tabular-nums}.content{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}.cell{padding:19px 21px;border-bottom:1px solid var(--line)}.cell:nth-child(odd){border-right:1px solid var(--line)}.step-title{font-size:11px;font-weight:900;letter-spacing:.15em;color:#71269b;text-transform:uppercase;margin-bottom:8px}.cell p{margin:0;font-size:15px}.say{background:#fcf8ff}.say blockquote{margin:0;font-size:17px;line-height:1.55;font-weight:600;color:#2b1740}.cue-footer{padding:9px 21px;color:var(--muted);font-size:12px;background:#fff}.tag{display:inline-block;border:1px solid #d4b4e7;border-radius:99px;padding:4px 9px;font-size:12px;color:#742a9a}@media(max-width:710px){.content{grid-template-columns:1fr}.cell:nth-child(odd){border-right:0}.cue-heading h2{font-size:18px}.say blockquote{font-size:16px}}@media print{.container{max-width:none;padding:8px 14px}.cue{break-inside:avoid;box-shadow:none;margin-bottom:9px}.cue-heading{padding:8px 12px}.cue-heading h2{font-size:15px}.cell{padding:8px 12px}.cell p,.say blockquote{font-size:11px}.step-title{font-size:9px}.cue-footer{padding:5px 12px}}
 .bar{position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 16px;background:#fff;border-bottom:3px solid var(--purple)}.clock{font-size:28px;font-weight:800;line-height:1.2;color:var(--deep);font-variant-numeric:tabular-nums;min-width:4.2ch}.bar[data-state="running"] .clock{color:#146c56}.bar-buttons{display:flex;flex-wrap:wrap;gap:6px}.btn{font:inherit;font-weight:700;padding:7px 12px;border:1px solid #cbb7d8;border-radius:9px;background:#fff;color:var(--deep);cursor:pointer}.btn.primary{background:var(--deep);color:#fff;border-color:var(--deep)}.btn:disabled{opacity:.4;cursor:default}.btn:focus-visible{outline:3px solid var(--purple);outline-offset:2px}.btn[hidden]{display:none}.bar-status{flex:1 1 100%;font-size:12px;color:var(--muted)}.cue.current{outline:3px solid var(--purple);outline-offset:-1px}@media print{.bar{display:none}.cue.current{outline:0}}
 .container{max-width:860px}.content{grid-template-columns:1fr}.cell:nth-child(odd){border-right:0}.say blockquote{font-size:24px;line-height:1.6}.fade{position:fixed;left:0;right:0;top:var(--bar,0);height:calc(var(--band,0px) - var(--bar,0px));background:linear-gradient(to bottom,rgba(251,249,253,.75),rgba(251,249,253,0));pointer-events:none;z-index:8}.ahead{position:fixed;left:0;right:0;top:var(--focus,100%);bottom:0;pointer-events:none;z-index:8;background:rgba(251,249,253,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-mask-image:linear-gradient(to bottom,transparent,#000 70px);mask-image:linear-gradient(to bottom,transparent,#000 70px)}.zone{position:fixed;left:0;top:var(--band,0);height:calc(var(--focus,0px) - var(--band,0px));width:5px;background:var(--purple);opacity:.45;pointer-events:none;z-index:9}.band{position:fixed;left:0;right:0;top:var(--band,0);height:0;border-top:2px solid var(--purple);pointer-events:none;z-index:9}.band-mark{position:absolute;left:4px;top:-12px;color:var(--purple);font-size:18px;line-height:1}.band-label{position:absolute;right:8px;top:-17px;white-space:nowrap;padding:1px 7px;border-radius:99px;background:var(--purple);color:#fff;font-size:10px;font-weight:800;letter-spacing:.12em}@media(max-width:710px){.say blockquote{font-size:21px}}@media print{.fade,.ahead,.zone,.band,#padTop,#padBottom{display:none}.container{max-width:none}.say blockquote{font-size:11px}}
+.btn.tele{margin-left:auto}.btn.tele[aria-pressed="true"]{background:#f1e4fb;border-color:var(--purple)}body.no-tele .fade,body.no-tele .ahead,body.no-tele .zone,body.no-tele .band{display:none}
 </style>
 </head><body>
 <div class="bar" id="bar" data-state="ready" role="group" aria-label="Timer">
 <span class="clock" id="clock" role="timer" aria-live="off">0:00</span>
-<span class="bar-buttons"><button type="button" class="btn primary" id="tStart">Start</button><button type="button" class="btn" id="tPause" disabled>Pause</button><button type="button" class="btn" id="tStop" disabled>Stop</button><button type="button" class="btn" id="tReset" disabled>Reset</button><button type="button" class="btn follow" id="tFollow" hidden>Resume auto-scroll</button></span>
+<span class="bar-buttons"><button type="button" class="btn primary" id="tStart">Start</button><button type="button" class="btn" id="tPause" disabled>Pause</button><button type="button" class="btn" id="tStop" disabled>Stop</button><button type="button" class="btn" id="tReset" disabled>Reset</button><button type="button" class="btn follow" id="tFollow" hidden>Resume auto-scroll</button><button type="button" class="btn tele" id="tTele" aria-pressed="true">Teleprompter: On</button></span>
 <span class="bar-status" id="tStatus">Ready: Start scrolls the cues by their timing</span>
 </div>
 <div class="fade" id="fade" aria-hidden="true"></div><div class="band" id="band" aria-hidden="true"><span class="band-mark">▶</span><span class="band-label">START READING NOW</span></div><div class="ahead" id="ahead" aria-hidden="true"></div><div class="zone" id="zone" aria-hidden="true"></div>
@@ -36,12 +37,13 @@ document.getElementById('cues').innerHTML=cues.map((c,i)=>`<article class="cue" 
 (function(){
 const $=id=>document.getElementById(id);
 const bar=$('bar'),clock=$('clock'),status=$('tStatus');
-const b={start:$('tStart'),pause:$('tPause'),stop:$('tStop'),reset:$('tReset'),follow:$('tFollow')};
+const b={start:$('tStart'),pause:$('tPause'),stop:$('tStop'),reset:$('tReset'),follow:$('tFollow'),tele:$('tTele')};
 const cueEls=[...document.querySelectorAll('article.cue')];
 const toSec=t=>{const p=t.trim().split(':').map(Number);return p[0]*60+p[1]};
 // Each cue starts at the start of its time range, e.g. "0:16–0:35" starts at 16 s and runs until the next cue starts.
 const spans=cues.map(c=>{const r=c.time.split(/[–-]/);return{start:toSec(r[0]),end:toSec(r[1])}});
 const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
+let tele=true;try{tele=localStorage.getItem('grantflowTeleprompter')!=='off'}catch(e){}
 let state='ready',counted=0,startedAt=0,raf=0,follow=true,lastY=0,lastText='',tops=[],barH=0,current=-1;
 // Time is the milliseconds already counted plus the clock time since the last start, so a throttled window never drifts.
 const elapsed=()=>counted+(state==='running'?Math.max(0,Date.now()-startedAt):0);
@@ -51,14 +53,14 @@ function fmt(ms){const t=Math.floor(ms/1000),h=Math.floor(t/3600),m=Math.floor(t
 // just above it. A spacer above the first cue (only when needed) and one below the last let the first and last cues reach the line.
 let bandY=0;
 function measure(){
-barH=bar.offsetHeight;bandY=barH+Math.round((window.innerHeight-barH)*0.25);
+barH=bar.offsetHeight;bandY=tele?barH+Math.round((window.innerHeight-barH)*0.25):barH+12; // off: each cue's top sits just under the bar
 const root=document.documentElement.style;root.setProperty('--bar',barH+'px');root.setProperty('--band',bandY+'px');root.setProperty('--focus',(bandY+Math.round((window.innerHeight-bandY)*0.65))+'px');
-$('padBottom').style.height=Math.max(0,window.innerHeight-bandY)+'px';
-const sayEls=cueEls.map(e=>e.querySelector('.say')||e);
+$('padBottom').style.height=tele?Math.max(0,window.innerHeight-bandY)+'px':'0px';
+const sayEls=cueEls.map(e=>tele?(e.querySelector('.say')||e):e);
 const place=()=>sayEls.map(e=>Math.max(0,e.getBoundingClientRect().top+window.scrollY-bandY));
 $('padTop').style.height='0px';
 const need=bandY-(sayEls[0].getBoundingClientRect().top+window.scrollY);
-if(need>0)$('padTop').style.height=Math.ceil(need)+'px';
+if(tele&&need>0)$('padTop').style.height=Math.ceil(need)+'px';
 tops=place();
 // Before Start (and after Reset) the first SAY block waits on the line.
 if(state==='ready')window.scrollTo(0,tops[0]||0)}
@@ -98,9 +100,16 @@ b.pause.addEventListener('click',()=>halt('paused'));
 b.stop.addEventListener('click',()=>halt('stopped'));
 b.reset.addEventListener('click',reset);
 b.follow.addEventListener('click',()=>{follow=true;render()});
+// The teleprompter button turns the reading line, the fade and the blur on or off. Off, the timer and auto-scroll still work, with
+// each cue's top just under the bar. The choice is remembered in this browser.
+function applyTele(){
+document.body.classList.toggle('no-tele',!tele);b.tele.setAttribute('aria-pressed',tele?'true':'false');b.tele.textContent='Teleprompter: '+(tele?'On':'Off');
+measure();
+if(state!=='ready'&&follow){const y=targetY(elapsed()/1000);lastY=y;window.scrollTo(0,y)}}
+b.tele.addEventListener('click',()=>{tele=!tele;try{localStorage.setItem('grantflowTeleprompter',tele?'on':'off')}catch(e){}applyTele()});
 // Scrolling by hand (wheel, touch, keys, scrollbar) while it runs turns auto-scroll off until "Resume auto-scroll" or the next Start.
 window.addEventListener('scroll',()=>{if(state==='running'&&follow&&Math.abs(window.scrollY-lastY)>4){follow=false;render()}},{passive:true});
 window.addEventListener('resize',measure);window.addEventListener('load',measure);
-measure();render();
+applyTele();render();
 })();
 </script></body></html>
