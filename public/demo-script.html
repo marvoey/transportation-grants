@@ -1,39 +1,106 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex">
-  <link rel="icon" href="/favicon.ico?v=2" sizes="any">
-  <title>GrantFlow demo script</title>
-  <link rel="stylesheet" href="/css/demo-script.css">
-</head>
-<body>
-  <header class="ds-head">
-    <h1 id="dsTitle">Demo script</h1>
-    <p class="ds-sub">Script window. Keep it beside the app; it is not part of the recording.</p>
-  </header>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrantFlow AI | Live Demo Cue Canvas</title>
+<style>
+:root{--purple:#a100ff;--ink:#201329;--deep:#30004f;--muted:#65596c;--paper:#fbf9fd;--line:#e7deeb}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);font:15px/1.5 Inter,'Segoe UI',Arial,sans-serif;color:var(--ink)}.container{max-width:1248px;margin:auto;padding:24px}.cue{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:18px;box-shadow:0 6px 24px #3920460d}.cue-heading{background:#f7f1fb;border-bottom:1px solid var(--line);padding:17px 22px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}.cue-heading h2{margin:0;font-size:21px;letter-spacing:-.02em}.cue-heading .range{display:block;color:#784592;font-weight:900;font-variant-numeric:tabular-nums}.content{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}.cell{padding:19px 21px;border-bottom:1px solid var(--line)}.cell:nth-child(odd){border-right:1px solid var(--line)}.step-title{font-size:11px;font-weight:900;letter-spacing:.15em;color:#71269b;text-transform:uppercase;margin-bottom:8px}.cell p{margin:0;font-size:15px}.say{background:#fcf8ff}.say blockquote{margin:0;font-size:17px;line-height:1.55;font-weight:600;color:#2b1740}.cue-footer{padding:9px 21px;color:var(--muted);font-size:12px;background:#fff}.tag{display:inline-block;border:1px solid #d4b4e7;border-radius:99px;padding:4px 9px;font-size:12px;color:#742a9a}@media(max-width:710px){.content{grid-template-columns:1fr}.cell:nth-child(odd){border-right:0}.cue-heading h2{font-size:18px}.say blockquote{font-size:16px}}@media print{.container{max-width:none;padding:8px 14px}.cue{break-inside:avoid;box-shadow:none;margin-bottom:9px}.cue-heading{padding:8px 12px}.cue-heading h2{font-size:15px}.cell{padding:8px 12px}.cell p,.say blockquote{font-size:11px}.step-title{font-size:9px}.cue-footer{padding:5px 12px}}
+.bar{position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 16px;background:#fff;border-bottom:3px solid var(--purple)}.clock{font-size:28px;font-weight:800;line-height:1.2;color:var(--deep);font-variant-numeric:tabular-nums;min-width:4.2ch}.bar[data-state="running"] .clock{color:#146c56}.bar-buttons{display:flex;flex-wrap:wrap;gap:6px}.btn{font:inherit;font-weight:700;padding:7px 12px;border:1px solid #cbb7d8;border-radius:9px;background:#fff;color:var(--deep);cursor:pointer}.btn.primary{background:var(--deep);color:#fff;border-color:var(--deep)}.btn:disabled{opacity:.4;cursor:default}.btn:focus-visible{outline:3px solid var(--purple);outline-offset:2px}.btn[hidden]{display:none}.bar-status{flex:1 1 100%;font-size:12px;color:var(--muted)}.cue.current{outline:3px solid var(--purple);outline-offset:-1px}@media print{.bar{display:none}.cue.current{outline:0}}
+.container{max-width:860px}.content{grid-template-columns:1fr}.cell:nth-child(odd){border-right:0}.say blockquote{font-size:24px;line-height:1.6}.fade{position:fixed;left:0;right:0;top:var(--bar,0);height:calc(var(--band,0px) - var(--bar,0px));background:linear-gradient(to bottom,rgba(251,249,253,.75),rgba(251,249,253,0));pointer-events:none;z-index:8}.ahead{position:fixed;left:0;right:0;top:var(--focus,100%);bottom:0;pointer-events:none;z-index:8;background:rgba(251,249,253,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-mask-image:linear-gradient(to bottom,transparent,#000 70px);mask-image:linear-gradient(to bottom,transparent,#000 70px)}.zone{position:fixed;left:0;top:var(--band,0);height:calc(var(--focus,0px) - var(--band,0px));width:5px;background:var(--purple);opacity:.45;pointer-events:none;z-index:9}.band{position:fixed;left:0;right:0;top:var(--band,0);height:0;border-top:2px solid var(--purple);pointer-events:none;z-index:9}.band-mark{position:absolute;left:4px;top:-12px;color:var(--purple);font-size:18px;line-height:1}.band-label{position:absolute;right:8px;top:-17px;white-space:nowrap;padding:1px 7px;border-radius:99px;background:var(--purple);color:#fff;font-size:10px;font-weight:800;letter-spacing:.12em}@media(max-width:710px){.say blockquote{font-size:21px}}@media print{.fade,.ahead,.zone,.band,#padTop,#padBottom{display:none}.container{max-width:none}.say blockquote{font-size:11px}}
+</style>
+</head><body>
+<div class="bar" id="bar" data-state="ready" role="group" aria-label="Timer">
+<span class="clock" id="clock" role="timer" aria-live="off">0:00</span>
+<span class="bar-buttons"><button type="button" class="btn primary" id="tStart">Start</button><button type="button" class="btn" id="tPause" disabled>Pause</button><button type="button" class="btn" id="tStop" disabled>Stop</button><button type="button" class="btn" id="tReset" disabled>Reset</button><button type="button" class="btn follow" id="tFollow" hidden>Resume auto-scroll</button></span>
+<span class="bar-status" id="tStatus">Ready: Start scrolls the cues by their timing</span>
+</div>
+<div class="fade" id="fade" aria-hidden="true"></div><div class="band" id="band" aria-hidden="true"><span class="band-mark">▶</span><span class="band-label">START READING NOW</span></div><div class="ahead" id="ahead" aria-hidden="true"></div><div class="zone" id="zone" aria-hidden="true"></div>
+<main class="container" id="main"><div id="padTop" aria-hidden="true"></div><section id="cues" aria-label="Demo cues"></section><div id="padBottom" aria-hidden="true"></div></main>
+<script>
+const cues=[
+{time:'0:00–0:16',title:'Problem + project-first promise',do:'Begin on the GrantFlow homepage. Point to the 1,451 opportunities. Move directly toward Find grants.',wait:'The homepage opportunity counts and “Start with the project. Not the program.” headline are visible.',say:'Government staff start with a project, but funding systems make them start with a search. As you can see on our homepage, there are more than fourteen hundred open or forecasted opportunities. GrantFlow reverses that: start with the project, not the program.',next:'Click Find grants while delivering the last sentence.',shot:'GrantFlow01 · Homepage'},
+{time:'0:16–0:35',title:'Describe the project; AI consults',do:'Show/send the first purple message: traffic-safety enforcement program to reduce speeding and drunk driving.',wait:'The gray AI response asks for applicant type and federal funding request. It may appear within 3 sec, with up to 2 sec of reveal.',say:'I simply describe a new traffic-safety enforcement program. Instead of making me choose filters, GrantFlow asks what will actually affect the match: who is applying, and the amount of federal funding.',next:'Enter the second purple response: state DOT applicant, $15 million requested.',shot:'GrantFlow02 · First purple message and gray consultation'},
+{time:'0:35–0:52',title:'Ground the search in the applicant’s words',do:'Submit the state DOT / $15M response; bring “What I understood from your description” into view.',wait:'The application shows project type, applicant and requested federal funding, grounded in the applicant’s answers.',say:'Those answers become project facts—safety, a state-government applicant, and a fifteen-million-dollar request. Notice that we can inspect what the system understood before trusting its search.',next:'Scroll to “Opportunities, best fit first.”',shot:'GrantFlow02 · What I understood'},
+{time:'0:52–1:10',title:'Explained shortlist, not a results dump',do:'Show the “11 listings” summary and the ITSE result. Briefly reveal the $500K ceiling warning on the Crash Causal Factors listing.',wait:'ITSE matching reasons and the lower-ceiling caution are both available on screen as you move.',say:'It checks eleven listings and explains the results. ITSE is relevant and its twenty-million-dollar ceiling covers our request. Another program tops out at five hundred thousand, so GrantFlow immediately flags that mismatch.',next:'Return focus to the ITSE card and its document-preparation details.',shot:'GrantFlow02 / GrantFlow10 · Opportunities and cautions'},
+{time:'1:10–1:29',title:'Show the real reading burden',do:'Reveal ITSE’s prepared documents and their totals. If using “Prepare this opportunity,” show the clearly labeled fast replay of previously prepared materials.',wait:'ITSE lists 4 official documents, 84 PDF pages, ~18,700 words, and 44 extracted requirements; “Assess my project against this” is available.',say:'But a promising listing is just the beginning. This one has four documents, eighty-four pages, nearly nineteen thousand words. GrantFlow has processed those files and extracted forty-four requirements for project-specific assessment.',next:'Click “Assess my project against this.”',shot:'GrantFlow03 · Prepared ITSE documents'},
+{time:'1:29–1:46',title:'Assessment carries the project forward',do:'Show the carried-forward project description and “What I am using from your words.” Point out the initial “Where you stand” summary.',wait:'Initial assessment appears: 2 look workable; 41 cannot yet be checked, with the notice-driven questions visible.',say:'The project carries forward. GrantFlow checks its actual facts against the notice, keeps what it cannot establish marked unknown, and asks the next questions based on the requirements.',next:'Answer and submit the eligibility questions.',shot:'GrantFlow04 · Initial consultation and status'},
+{time:'1:46–2:05',title:'Watch assessment update as answers arrive',do:'Submit prepared replies across eligibility, funding, readiness; show 6 workable and, if convenient, briefly 9 workable.',wait:'After each response, the “Where you stand” figures and answered questions update. No more than 3 seconds per response plus up to 2 seconds of reveal.',say:'Watch the consultation evolve. First it checks whether the applicant qualifies, then whether the funding works, and finally what the application needs. Every answer changes the assessment; it does not invent answers to missing questions.',next:'Reach the final assessment and stop on “Where you stand.”',shot:'GrantFlow05 / 06 / 07 · Assessment progression'},
+{time:'2:05–2:23',title:'Prioritize the decisions and the unknowns',do:'Hold briefly on final counters. Scroll to “Findings to look at first,” particularly priority concerns with links to source evidence.',wait:'Final on-screen status: 24 look workable, 4 need attention, 15 cannot yet be evaluated.',say:'Now twenty-four conditions look workable, four need attention, and fifteen are still unresolved. The system brings critical findings to the top instead of burying them in a long notice.',next:'Find a relevant “View source” link and click it.',shot:'GrantFlow07 · Final status and priority findings'},
+{time:'2:23–2:38',title:'Evidence, not an unsupported AI claim',do:'Click “View source” from a priority finding. Display the in-app highlighted passage and official PDF link; open the original PDF only if time permits.',wait:'The source drawer shows the exact passage, section/page reference and official-document link.',say:'Crucially, this isn’t a black box. One click shows the exact passage behind a finding, with a link to the official PDF. The applicant can verify what the AI is using.',next:'Leave the source drawer or finding visible; no more navigation needed.',shot:'GrantFlow08 / 09 · Passage and original PDF'},
+{time:'2:38–2:49',title:'Close on two-sided mission impact',do:'Keep the app visible, ideally a priority finding and source. Stop navigating and give the closing lines.',wait:'The evidence is on screen. No new AI response or interaction is required.',say:'Our scenario model suggests roughly seventy percent less preliminary assessment effort. Better-informed applications could also reduce clarification work for federal reviewers. Productivity on both sides. Start with the project, not the program.',next:'End the recording before 3:00.',shot:'Final GrantFlow evidence view'}
+];
+const esc=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+document.getElementById('cues').innerHTML=cues.map((c,i)=>`<article class="cue" id="cue-${i}" aria-labelledby="title-${i}"><div class="cue-heading"><div><span class="range">${esc(c.time)}</span><h2 id="title-${i}">${i+1}. ${esc(c.title)}</h2></div><span class="tag">${esc(c.shot)}</span></div><div class="content"><div class="cell"><div class="step-title">01 · DO</div><p>${esc(c.do)}</p></div><div class="cell"><div class="step-title">02 · WAIT FOR</div><p>${esc(c.wait)}</p></div><div class="cell say"><div class="step-title">03 · SAY</div><blockquote>“${esc(c.say)}”</blockquote></div><div class="cell"><div class="step-title">04 · CONTINUE</div><p>${esc(c.next)}</p></div></div><div class="cue-footer">Talk while the screen updates. The timestamp is a checkpoint; the on-screen cue determines when you start the line.</div></article>`).join('');
 
-  <main class="ds-main">
-    <details class="ds-card ds-setup">
-      <summary>Before recording</summary>
-      <ol id="dsSetup"></ol>
-    </details>
-
-    <nav class="ds-nav" aria-label="Scenes">
-      <button type="button" id="dsPrev" class="ds-btn">&larr; Back</button>
-      <span id="dsPosition" class="ds-position" aria-live="polite"></span>
-      <button type="button" id="dsNext" class="ds-btn ds-btn-primary">Next &rarr;</button>
-    </nav>
-    <div id="dsChips" class="ds-chips" aria-label="Jump to a scene"></div>
-
-    <article id="dsScene" class="ds-card ds-scene" aria-live="polite"></article>
-    <p id="dsError" class="ds-error" role="alert" hidden></p>
-  </main>
-
-  <p id="dsCopyStatus" class="ds-toast" role="status" aria-live="polite"></p>
-
-  <script src="/js/presenter-kit.js"></script>
-  <script src="/js/demo-script.js"></script>
-</body>
-</html>
+(function(){
+const $=id=>document.getElementById(id);
+const bar=$('bar'),clock=$('clock'),status=$('tStatus');
+const b={start:$('tStart'),pause:$('tPause'),stop:$('tStop'),reset:$('tReset'),follow:$('tFollow')};
+const cueEls=[...document.querySelectorAll('article.cue')];
+const toSec=t=>{const p=t.trim().split(':').map(Number);return p[0]*60+p[1]};
+// Each cue starts at the start of its time range, e.g. "0:16–0:35" starts at 16 s and runs until the next cue starts.
+const spans=cues.map(c=>{const r=c.time.split(/[–-]/);return{start:toSec(r[0]),end:toSec(r[1])}});
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
+let state='ready',counted=0,startedAt=0,raf=0,follow=true,lastY=0,lastText='',tops=[],barH=0,current=-1;
+// Time is the milliseconds already counted plus the clock time since the last start, so a throttled window never drifts.
+const elapsed=()=>counted+(state==='running'?Math.max(0,Date.now()-startedAt):0);
+function fmt(ms){const t=Math.floor(ms/1000),h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60,ss=(s<10?'0':'')+s;return h>0?h+':'+(m<10?'0':'')+m+':'+ss:m+':'+ss}
+// The reading line sits about a quarter of the way down the area under the bar. A cue's "position" is the scroll that puts the top of
+// its SAY block (the words to read) on the line, so reading starts at the line when the cue's time starts; the DO and WAIT FOR rows are
+// just above it. A spacer above the first cue (only when needed) and one below the last let the first and last cues reach the line.
+let bandY=0;
+function measure(){
+barH=bar.offsetHeight;bandY=barH+Math.round((window.innerHeight-barH)*0.25);
+const root=document.documentElement.style;root.setProperty('--bar',barH+'px');root.setProperty('--band',bandY+'px');root.setProperty('--focus',(bandY+Math.round((window.innerHeight-bandY)*0.65))+'px');
+$('padBottom').style.height=Math.max(0,window.innerHeight-bandY)+'px';
+const sayEls=cueEls.map(e=>e.querySelector('.say')||e);
+const place=()=>sayEls.map(e=>Math.max(0,e.getBoundingClientRect().top+window.scrollY-bandY));
+$('padTop').style.height='0px';
+const need=bandY-(sayEls[0].getBoundingClientRect().top+window.scrollY);
+if(need>0)$('padTop').style.height=Math.ceil(need)+'px';
+tops=place();
+// Before Start (and after Reset) the first SAY block waits on the line.
+if(state==='ready')window.scrollTo(0,tops[0]||0)}
+function indexAt(sec){let i=0;spans.forEach((s,k)=>{if(sec>=s.start)i=k});return i}
+// Scroll position at a time: the current cue's top slides toward the next cue's top as the cue's time passes (the last cue slides to the page end).
+function targetY(sec){
+const maxY=Math.max(0,document.documentElement.scrollHeight-window.innerHeight),i=indexAt(sec),last=i>=tops.length-1;
+const from=tops[i],to=last?maxY:tops[i+1];
+if(reduce.matches)return Math.min(from,maxY);
+const end=last?spans[i].end:spans[i+1].start,len=end-spans[i].start;
+const p=len>0?Math.min(1,Math.max(0,(sec-spans[i].start)/len)):0;
+const y=from+(to-from)*p;return Number.isFinite(y)?Math.min(maxY,Math.max(0,y)):0}
+function mark(i){if(i===current)return;current=i;cueEls.forEach((e,k)=>e.classList.toggle('current',k===i))}
+function render(){
+bar.dataset.state=state;
+b.start.disabled=state==='running';b.pause.disabled=state!=='running';b.stop.disabled=state!=='running'&&state!=='paused';b.reset.disabled=state==='ready';
+b.follow.hidden=follow||(state!=='running');
+const msg={ready:'Ready: Start scrolls the cues by their timing',running:'',paused:'Paused: Start continues',stopped:'Stopped: Start begins again from 0:00'}[state];
+status.textContent=state==='running'?(follow?'Cue '+(current+1)+' of '+cues.length+' · '+cues[current].time:'Auto-scroll is off because you scrolled'):msg+(state!=='ready'&&current>=0?' · cue '+(current+1)+' of '+cues.length:'')}
+function frame(){
+const ms=elapsed(),text=fmt(ms);if(text!==lastText){clock.textContent=text;lastText=text}
+const sec=ms/1000;mark(indexAt(sec));
+if(follow&&state==='running'){const y=targetY(sec);lastY=y;window.scrollTo(0,y)}
+if(state==='running'){render();raf=requestAnimationFrame(frame)}}
+function start(){
+if(state==='running')return;
+if(state!=='paused')counted=0;
+follow=true;measure();startedAt=Date.now();state='running';
+cancelAnimationFrame(raf);frame()}
+function halt(next){if(state!=='running'&&state!=='paused')return;counted=elapsed();state=next;cancelAnimationFrame(raf);frame();render()}
+function reset(){
+if(state==='ready')return;
+cancelAnimationFrame(raf);counted=0;state='ready';follow=true;current=-1;lastText='0:00';clock.textContent='0:00';
+cueEls.forEach(e=>e.classList.remove('current'));lastY=0;measure();render()}
+b.start.addEventListener('click',start);
+b.pause.addEventListener('click',()=>halt('paused'));
+b.stop.addEventListener('click',()=>halt('stopped'));
+b.reset.addEventListener('click',reset);
+b.follow.addEventListener('click',()=>{follow=true;render()});
+// Scrolling by hand (wheel, touch, keys, scrollbar) while it runs turns auto-scroll off until "Resume auto-scroll" or the next Start.
+window.addEventListener('scroll',()=>{if(state==='running'&&follow&&Math.abs(window.scrollY-lastY)>4){follow=false;render()}},{passive:true});
+window.addEventListener('resize',measure);window.addEventListener('load',measure);
+measure();render();
+})();
+</script></body></html>
