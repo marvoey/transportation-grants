@@ -12,7 +12,12 @@ body { margin: 0; font-family: Inter, Arial, Helvetica, sans-serif; color: var(-
 .ds-hint { margin: -0.2rem 0 0.5rem; font-size: 0.8rem; color: var(--ds-muted); }
 .ds-toast { position: sticky; bottom: 0; margin: 0; padding: 0.4rem 1rem; min-height: 0; font-size: 0.8rem; color: #146c56; font-weight: 700; background: #eaf8f4; border-top: 1px solid #bfe3d6; }
 .ds-toast:empty { display: none; }
-.ds-tabs { display: flex; gap: 0.25rem; padding: 0.5rem 1rem 0; background: var(--ds-bg); position: sticky; top: 0; z-index: 5; border-bottom: 1px solid var(--ds-line); }
+.ds-top { position: sticky; top: 0; z-index: 5; background: var(--ds-bg); }
+.ds-timer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.4rem 0.8rem; padding: 0.5rem 1rem; background: #fff; border-bottom: 1px solid var(--ds-line); }
+.ds-clock { font-size: 1.7rem; font-weight: 800; line-height: 1.2; color: var(--ds-plum); font-variant-numeric: tabular-nums; }
+.ds-timer[data-state="running"] .ds-clock { color: #146c56; }
+.ds-timer-buttons { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.ds-tabs { display: flex; gap: 0.25rem; padding: 0.5rem 1rem 0; background: var(--ds-bg); border-bottom: 1px solid var(--ds-line); }
 .ds-tab { font: inherit; font-size: 0.9rem; font-weight: 800; padding: 0.45rem 0.9rem; border: 1px solid var(--ds-line); border-bottom: 0; border-radius: 8px 8px 0 0; background: #fff; color: var(--ds-muted); cursor: pointer; position: relative; }
 .ds-tab-active { background: var(--ds-plum); border-color: var(--ds-plum); color: #fff; }
 .ds-tab:focus-visible { outline: 3px solid var(--ds-purple); outline-offset: 2px; }

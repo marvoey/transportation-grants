@@ -14,9 +14,20 @@
     <p class="ds-sub">Keep this window beside the app. Copy types the text into the app's question box; it is not part of the recording.</p>
   </header>
 
-  <div class="ds-tabs" role="tablist" aria-label="Projects and answers">
-    <button type="button" role="tab" id="dsTabProjects" class="ds-tab ds-tab-active" aria-selected="true" aria-controls="dsPanelProjects" data-tab="projects">Projects</button>
-    <button type="button" role="tab" id="dsTabAnswers" class="ds-tab" aria-selected="false" aria-controls="dsPanelAnswers" tabindex="-1" data-tab="answers">Answers<span id="dsNews" class="ds-news" hidden aria-label="new suggestions"></span></button>
+  <div class="ds-top">
+    <section id="dsTimer" class="ds-timer" data-state="ready" aria-label="Timer">
+      <span id="dsClock" class="ds-clock" role="timer" aria-live="off">0:00</span>
+      <span class="ds-timer-buttons">
+        <button type="button" id="dsTimerStart" class="ds-btn ds-btn-primary">Start</button>
+        <button type="button" id="dsTimerStop" class="ds-btn" disabled>Stop</button>
+        <button type="button" id="dsTimerContinue" class="ds-btn" disabled>Continue</button>
+        <button type="button" id="dsTimerReset" class="ds-btn" disabled>Reset</button>
+      </span>
+    </section>
+    <div class="ds-tabs" role="tablist" aria-label="Projects and answers">
+      <button type="button" role="tab" id="dsTabProjects" class="ds-tab ds-tab-active" aria-selected="true" aria-controls="dsPanelProjects" data-tab="projects">Projects</button>
+      <button type="button" role="tab" id="dsTabAnswers" class="ds-tab" aria-selected="false" aria-controls="dsPanelAnswers" tabindex="-1" data-tab="answers">Answers<span id="dsNews" class="ds-news" hidden aria-label="new suggestions"></span></button>
+    </div>
   </div>
 
   <main class="ds-main">
@@ -45,5 +56,6 @@
   <script src="/js/answer-suggestions.js"></script>
   <script src="/js/presenter-kit.js"></script>
   <script src="/js/demo-projects.js"></script>
+  <script src="/js/demo-timer.js"></script>
 </body>
 </html>

@@ -67,6 +67,7 @@ The floating menu opens two separate windows to keep beside the app (each is reu
 
 - **Open the demo script window**: the timed script scene by scene (SHOW/DO, SAY with a Copy button, DIRECTING NOTE, and the fallback branch). It is built from the live-app script by `npm run demo:script`, so edit the markdown, not the JSON.
 - **Open the projects and answers window**, with two tabs: **Projects** (the sample project descriptions, filterable; the trays on the page call them Samples) and **Answers** (the suggested answers for what the app last asked, for the tab it has open). **Copy** types the text into the app's question box at a human pace (within 3 seconds) and copies it too. This needs the window to have been opened from the app's menu, with Find grants or Assess showing; the answers themselves arrive from any open app page.
+  The window also has a **timer** at the top (Start, Stop, Continue, Reset; it counts up and is not saved if the window is reloaded).
 - A small round toggle at the bottom-right of the app page hides the trays' edge tabs for a clean screen.
 - The Settings tray also has switches for the "Preliminary only" notices.
 
