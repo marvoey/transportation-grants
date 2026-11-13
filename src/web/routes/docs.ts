@@ -109,6 +109,7 @@ ${body}
     </div>
   </main>
   <script src="/js/floating-menu.js"></script>
+  <script src="/js/admin-nav.js"></script>
 </body>
 </html>
 `;
@@ -120,9 +121,10 @@ function send(res: Response, status: number, html: string): void {
     .set({
       'Content-Type': 'text/html; charset=utf-8',
       'X-Content-Type-Options': 'nosniff',
-      // Static assets from this site only: nothing a document says can load or run anything else.
+      // Static assets from this site only: nothing a document says can load or run anything else. connect-src lets the
+      // nav's admin-nav.js ask this site (and only this site) whether you are logged in.
       'Content-Security-Policy':
-        "default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+        "default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
     })
     .send(html);
 }

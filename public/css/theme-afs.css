@@ -261,10 +261,44 @@ nav a[aria-current="page"] {
 header .brand-link { color: inherit; text-decoration: none; }
 header .brand-link:hover { color: var(--afs-purple-800); }
 
+/* ---- Keep the nav clear of the floating menu button ------------------------- */
+/* The floating menu button (floating-menu.css) is fixed 1rem from the window's top-right corner and 3rem wide, so it covers
+   whatever is at the right end of the nav when the window is narrower than the page container (1200px) plus its margin. The
+   header container's right padding grows by exactly the amount that is missing, and stays at the usual 20px on wide screens. */
+header .container {
+  padding-right: max(20px, calc(4.5rem - max(0px, (100vw - 1200px) / 2)));
+}
+
+/* ---- Main navigation: admin login link / log out button (admin-nav.js) ------ */
+/* The links above are inline, so their padding takes no room in the layout; a button is always inline-block, so the same
+   padding would push it lower than its neighbours. The negative block margin cancels the button's vertical padding, which
+   puts its text on the same line as the links' text, and the underline is an inset shadow so it adds no height either. */
+nav .nav-admin-button {
+  background: none;
+  border: 0;
+  border-radius: var(--afs-radius);
+  box-shadow: inset 0 -2px 0 transparent;
+  color: var(--afs-ink);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 500;
+  letter-spacing: normal;
+  margin: -0.3rem 0;
+  padding: 0.3rem 1rem;
+  vertical-align: baseline;
+}
+nav .nav-admin-button:hover {
+  background: var(--afs-purple-50);
+  color: var(--afs-purple-800);
+  box-shadow: inset 0 -2px 0 var(--afs-purple);
+}
+nav .nav-admin-button:disabled { color: #767676; cursor: default; background: none; box-shadow: none; }
+
 @media (max-width: 600px) {
   header .container { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   nav ul { flex-wrap: wrap; gap: 0.25rem 1rem; }
   nav a { padding: 0.5rem 0.25rem; }
+  nav .nav-admin-button { padding: 0.3rem 0.25rem; }
 }
 
 /* ---- Header logo: Accenture logo + product name -------------------------- */
