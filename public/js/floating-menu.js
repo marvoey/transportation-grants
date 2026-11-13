@@ -118,10 +118,13 @@
     }
   }
 
-  // Two separate windows to keep beside the app: the demo script, and the sample projects with suggested answers. Offered in
+  // Separate windows to keep beside the app: the demo script, the click-through, and the sample projects with suggested answers. Offered in
   // every mode (demo on, off or recording) and on every page that has this menu. Each reuses its window if it is open.
   addAction('Open the demo script window', 'script', function () {
     window.open('/demo-script.html', 'grantflowDemoScript', 'popup=yes,width=560,height=900,left=40,top=40');
+  });
+  addAction('Open the click-through window', 'script', function () {
+    window.open('/demo-click-through.html', 'grantflowDemoClickThrough', 'popup=yes,width=560,height=900,left=340,top=60');
   });
   addAction('Open the projects and answers window', 'projects', function () {
     window.open('/demo-projects.html', 'grantflowDemoProjects', 'popup=yes,width=560,height=900,left=640,top=40');

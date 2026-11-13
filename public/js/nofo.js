@@ -103,6 +103,11 @@
   // Conversation
   // ---------------------------------------------------------------------------
 
+  /** True while a presenter's window asks the page to hold still (see DrawerKit.setHoldScroll). */
+  function holdsScroll() {
+    return !!(window.DrawerKit && window.DrawerKit.holdScroll && window.DrawerKit.holdScroll());
+  }
+
   function addMessage(role, content, extra) {
     var div = el('div', 'chat-message ' + role);
     if (extra && extra.pending) div.dataset.pending = 'true';
@@ -111,7 +116,7 @@
     els.messages.appendChild(div);
     els.messages.scrollTop = els.messages.scrollHeight;
     // The conversation grows with the page, so bring the start of a new reply into view.
-    if (role === 'assistant' && !(extra && extra.pending) && div.scrollIntoView) {
+    if (role === 'assistant' && !(extra && extra.pending) && div.scrollIntoView && !holdsScroll()) {
       var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       div.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
     }
@@ -268,7 +273,7 @@
       if (panel) panel.stop();
       if (pending && pending.parentNode) pending.remove();
       setBusy(false);
-      if (!els.input.disabled) els.input.focus();
+      if (!els.input.disabled) els.input.focus(holdsScroll() ? { preventScroll: true } : undefined);
     }
   }
 

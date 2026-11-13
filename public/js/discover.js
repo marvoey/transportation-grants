@@ -200,7 +200,7 @@
   /** Brings the newest message (the questions) into view, with the input box right below it. */
   function showLatestMessage() {
     var last = els.thread.lastElementChild;
-    if (!last) return;
+    if (!last || holdsScroll()) return;
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     setTimeout(function () { last.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); }, 60);
   }
@@ -362,8 +362,14 @@
     Object.keys(held).forEach(function (id) { showStep(held[id]); });
   }
 
+  /** True while a presenter's window asks the page to hold still (see DrawerKit.setHoldScroll). */
+  function holdsScroll() {
+    return !!(window.DrawerKit && window.DrawerKit.holdScroll && window.DrawerKit.holdScroll());
+  }
+
   /** Brings the progress panel (and the console under it) into view, so a turn can be followed without scrolling. */
   function scrollToProgress() {
+    if (holdsScroll()) return;
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     setTimeout(function () { els.progress.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); }, 60);
   }

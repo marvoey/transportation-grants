@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>GrantFlow AI | Demo Click-Through</title>
+<style>
+:root{--purple:#a100ff;--ink:#201329;--deep:#30004f;--muted:#65596c;--paper:#fbf9fd;--line:#e7deeb}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);font:15px/1.5 Inter,'Segoe UI',Arial,sans-serif;color:var(--ink)}
+.container{max-width:860px;margin:auto;padding:24px}
+.scene{margin:26px 0 10px;font-size:13px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#71269b}.scene:first-child{margin-top:0}
+.step{position:relative;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:12px}
+.step-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}.step-label{font-size:11px;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:#71269b}.step-at{font-size:12px;font-weight:800;color:#784592;font-variant-numeric:tabular-nums}.step-head .ds-copy{margin-left:auto}
+.step p{margin:0;font-size:17px}.step blockquote{margin:0;font-size:24px;line-height:1.6;font-weight:600;color:#2b1740}
+.step-do{border-left:5px solid #2563a8}.step-do .step-label{color:#2563a8}
+.step-say{background:#fcf8ff;border-left:5px solid var(--purple);padding:18px 20px}
+.step-copy{background:#fff8e8;border-left:5px solid #b7791f}.step-copy .step-label{color:#844705}.step-copy p{font-size:15px;white-space:pre-wrap}
+.step-wait{background:#f3f1f6;border-left:5px solid #9a90a6;padding:8px 18px}.step-wait .step-label{color:var(--muted)}.step-wait p{font-size:15px;color:var(--muted)}.step-wait .step-head{margin:0}
+.step.current{outline:3px solid var(--purple);outline-offset:-1px}
+.bar{position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 16px;background:#fff;border-bottom:3px solid var(--purple)}.clock{font-size:28px;font-weight:800;line-height:1.2;color:var(--deep);font-variant-numeric:tabular-nums;min-width:4.2ch}.bar[data-state="running"] .clock{color:#146c56}.bar-buttons{display:flex;flex-wrap:wrap;gap:6px;flex:1}.btn{font:inherit;font-weight:700;padding:7px 12px;border:1px solid #cbb7d8;border-radius:9px;background:#fff;color:var(--deep);cursor:pointer}.btn.primary{background:var(--deep);color:#fff;border-color:var(--deep)}.btn:disabled{opacity:.4;cursor:default}.btn:focus-visible,.ds-btn:focus-visible{outline:3px solid var(--purple);outline-offset:2px}.btn[hidden]{display:none}.bar-status{flex:1 1 100%;font-size:12px;color:var(--muted)}
+.btn.others{margin-left:auto}.btn.others[aria-pressed="true"]{background:#f1e4fb;border-color:var(--purple)}
+body:not(.show-others) .step:not(.step-copy),body:not(.show-others) .scene:not(.has-copy){display:none}
+.ds-btn{font:inherit;font-size:13px;font-weight:700;padding:5px 11px;border-radius:8px;border:1px solid #cbbdd8;background:#fff;color:var(--deep);cursor:pointer}.ds-btn:hover{background:#f6efff}
+.ds-toast{position:fixed;left:0;right:0;bottom:0;z-index:20;margin:0;padding:.4rem 1rem;font-size:.8rem;color:#146c56;font-weight:700;background:#eaf8f4;border-top:1px solid #bfe3d6}.ds-toast:empty{display:none}
+.fade{position:fixed;left:0;right:0;top:var(--bar,0);height:calc(var(--band,0px) - var(--bar,0px));background:linear-gradient(to bottom,rgba(251,249,253,.75),rgba(251,249,253,0));pointer-events:none;z-index:8}
+.ahead{position:fixed;left:0;right:0;top:var(--focus,100%);bottom:0;pointer-events:none;z-index:8;background:rgba(251,249,253,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-mask-image:linear-gradient(to bottom,transparent,#000 70px);mask-image:linear-gradient(to bottom,transparent,#000 70px)}
+.zone{position:fixed;left:0;top:var(--band,0);height:calc(var(--focus,0px) - var(--band,0px));width:5px;background:var(--purple);opacity:.45;pointer-events:none;z-index:9}
+.band{position:fixed;left:0;right:0;top:var(--band,0);height:0;border-top:2px solid var(--purple);pointer-events:none;z-index:9}.band-mark{position:absolute;left:4px;top:-12px;color:var(--purple);font-size:18px;line-height:1}.band-label{position:absolute;right:8px;top:-17px;white-space:nowrap;padding:1px 7px;border-radius:99px;background:var(--purple);color:#fff;font-size:10px;font-weight:800;letter-spacing:.12em}
+@media(max-width:710px){.step blockquote{font-size:21px}}
+@media print{.bar,.fade,.ahead,.zone,.band,#padTop,#padBottom,.ds-toast,.ds-copy{display:none}.container{max-width:none;padding:8px 14px}.step{break-inside:avoid}.step.current{outline:0}.step blockquote{font-size:12px}.step p{font-size:12px}}
+</style>
+</head><body>
+<div class="fade" id="fade" aria-hidden="true"></div><div class="band" id="band" aria-hidden="true"><span class="band-mark">▶</span><span class="band-label">START READING NOW</span></div><div class="ahead" id="ahead" aria-hidden="true"></div><div class="zone" id="zone" aria-hidden="true"></div>
+<div class="bar" id="bar" data-state="ready" role="group" aria-label="Timer">
+<span class="clock" id="clock" role="timer" aria-live="off">0:00</span>
+<span class="bar-buttons"><button type="button" class="btn primary" id="tStart">Start</button><button type="button" class="btn" id="tPause" disabled>Pause</button><button type="button" class="btn" id="tStop" disabled>Stop</button><button type="button" class="btn" id="tReset" disabled>Reset</button><button type="button" class="btn follow" id="tFollow" hidden>Resume auto-scroll</button><button type="button" class="btn others" id="tOthers" aria-pressed="false">Other cards: Hidden</button></span>
+<span class="bar-status" id="tStatus"></span>
+</div>
+<main class="container" id="main"><div id="padTop" aria-hidden="true"></div><section id="steps" aria-label="Demo click-through"></section><div id="padBottom" aria-hidden="true"></div></main>
+<p id="dsCopyStatus" class="ds-toast" role="status" aria-live="polite"></p>
+<script src="/js/presenter-kit.js"></script>
+<script>
+// The demo, click by click (written from docs/SCRIPT_CLICK_THROUGH.md). Each scene is a heading and a list of steps:
+//   do   something to click, scroll or show      say   the words to say      copy  a message to paste into the app (with a Copy button)
+//   wait something to wait for (not used now: the waits for the app's responses are folded into the step before as `plus` seconds)
+// The paste cues and the click-send cues that follow a COPY are left out, because Copy types the message and clicks Send itself.
+// Only stray quote marks were fixed; the wording is the document's.
+const scenes=[
+{title:'Open the homepage',steps:[
+{t:'do',text:'Open the homepage'},
+{t:'say',text:'Government staff start with a project, but funding systems make them start with a search. As you can see on our homepage, there are more than fourteen hundred open or forecasted opportunities. GrantFlow reverses that: start with the project, not the program.'}]},
+{title:'Describe the project',steps:[
+{t:'do',text:'Click on the Find Grants'},
+{t:'say',text:'I simply describe a new traffic-safety enforcement program. Instead of making me choose filters'},
+{t:'copy',plus:3,text:'Our police department wants money to try a new traffic safety enforcement program to cut speeding and drunk driving.'},
+{t:'say',text:'GrantFlow asks what will actually affect the match: who is applying, and the amount of federal funding.'}]},
+{title:'Answer its questions',steps:[
+{t:'copy',plus:3,text:'We are a state department of transportation. We would request $15 million in federal funds.'},
+{t:'say',text:'Those answers become project facts—safety, a state-government applicant, and a fifteen-million-dollar request.'},
+{t:'do',text:'Scroll down to the "What I understood from your description" section'},
+{t:'say',text:'Notice that we can inspect what the system understood before trusting its search.'}]},
+{title:'Read the listings',steps:[
+{t:'do',text:'Show the “11 listings” summary and the ITSE result.'},
+{t:'say',text:'It checks eleven listings and explains the results.'},
+{t:'do',text:'Show the ITSE listing which will be right under the summary.'},
+{t:'say',text:'ITSE is relevant and its twenty-million-dollar ceiling covers our request.'},
+{t:'do',text:'Briefly reveal the $500K ceiling warning on the Crash Causal Factors listing by scrolling down a bit.'},
+{t:'say',text:'Another program tops out at five hundred thousand, so GrantFlow immediately flags that mismatch.'},
+{t:'do',text:'Go back to the first listing which is ITSE.'}]},
+{title:'Prepare the opportunity',steps:[
+{t:'say',text:'But a promising listing is just the beginning.'},
+{t:'do',text:'Click the prepare button.',sec:5},
+{t:'say',text:'This one has four documents, eighty-four pages, nearly nineteen thousand words. GrantFlow has processed those files and extracted forty-four requirements for project-specific assessment.'}]},
+{title:'Assess the project',steps:[
+{t:'do',text:'Click “Assess my project against this.”'},
+{t:'say',plus:4,text:'The project carries forward.'},
+{t:'do',text:'Scroll down to the assessment'},
+{t:'say',text:'An initial assessment has been done.'},
+{t:'say',text:'GrantFlow checks its actual facts against the notice, keeps what it cannot establish marked unknown, and asks the next questions based on the requirements. Right now it is asking whether the project will qualify to see what it can assess'},
+{t:'copy',text:'Quick answers on all four: yes, this is the only ITSE application we\'re putting in this fiscal year, we\'re concentrating our resources on the statewide enforcement push rather than spreading across multiple submissions. Our SAM registration is current and renewed through next spring, and we\'ve got a staff member tasked with keeping it active for the whole award period. We\'ll absolutely provide conflict of interest disclosures up front, including for the two officers helping coordinate the regional task force, plus anything else the review team asks for. And yes, this is also the only application we\'re submitting for this particular phase.'},
+{t:'say',text:'The assessments have changed based on what was provided'},
+{t:'say',text:'and comes back with some questions about funding which was inferred from the documents'},
+{t:'copy',text:'For "Does your project avoid using grant funds to purchase steel, iron, or manufactured products not produced in the United States": yes, we do. For "Does your project avoid entering into sub-awards or contracts with entities that use covered technology": yes, we do. For "Describe the detailed breakdown of your proposed costs and in-kind costs by year, including how each cost was calculated and justified as fair and reasonable.": we have this in place and will describe it in our application. For "Does your project avoid using grant funds for any activity intended to lobby Congress or a State legislative body": yes, we do. For "If your agency intends to use non-federal funds to augment the project, describe the amount and percent of federal and non-federal funding shown in your budget plan.": we have this in place and will describe it in our application.'},
+{t:'say',text:'then questions to see if you have all documents'},
+{t:'copy',text:'Our applicant background section lays out the DOT\'s eligibility as a state agency, documents past performance on three prior NHTSA enforcement grants, and names our Traffic Safety Program Manager, Linda Choi, as the point of contact and liaison. We\'re planning a 24-month period of performance to stand up and run the enforcement program with the police department partner. Organizational capacity is shown through our existing highway safety office staff, prior grant management history, and established partnership with the PD\'s enforcement unit. The project plan includes a full work breakdown structure, a month-by-month schedule with milestones for training, patrol rollout, and data checkpoints, a staffing plan, quality control reviews each quarter, and a risk mitigation strategy for staffing turnover. Yes, we already have systems in place for 2 C.F.R. Part 170 reporting, and our application meets the phase deadlines, formatting and cover page/COI rules, Grants.gov electronic submission, budget and cost formatting rules, and the evaluation, page limit, and performance metrics requirements.'},
+{t:'say',text:'as you just saw every answer changes the assessment; it does not invent answers to missing questions.'}]},
+{title:'Where you stand, and the findings',steps:[
+{t:'do',text:'Show the assessment'},
+{t:'say',text:'Now twenty-four conditions look workable, four need attention, and fifteen are still unresolved.'},
+{t:'do',text:'Scroll to the findings'},
+{t:'say',text:'The system brings critical findings to the top instead of burying them in a long notice.'},
+{t:'say',text:'Crucially, this isn’t a black box. One click shows the exact passage behind a finding'}]},
+{title:'Evidence',steps:[
+{t:'do',text:'Click on a View Source'},
+{t:'say',text:'with a link to the official PDF. The applicant can verify what the AI is using.'},
+{t:'say',text:'This is Evidence, not unsupported AI claims'}]},
+{title:'Closing time',steps:[
+{t:'say',text:'What you just saw is how GrantFlow can drastically reduce preliminary assessment effort. Better-informed applications could also reduce clarification work for federal reviewers. Productivity on both sides. Start with the project, not the program.'}]}
+];
+
+// Estimated lengths, in seconds. The document has no timings of its own except the waits it states; change these to match a real run.
+const TIMING={wordsPerSecond:2.5,minSay:2,copy:4,doDefault:3};
+const LABEL={do:'DO',say:'SAY',copy:'COPY',wait:'WAIT'};
+// Copy types the message into the app and, this many milliseconds later, clicks the app's Send button (the person does not have to).
+const SEND_AFTER_MS=3000;
+// Copy fills the app's question box without scrolling the app page to it (the page stays where you left it).
+if(window.PresenterKit)window.PresenterKit.setKeepAppScroll(true);
+function seconds(s){
+if(typeof s.sec==='number')return s.sec;
+const plus=s.plus||0;
+if(s.t==='say')return Math.max(TIMING.minSay,s.text.trim().split(/\s+/).length/TIMING.wordsPerSecond)+plus;
+if(s.t==='copy')return TIMING.copy+plus;
+return TIMING.doDefault+plus}
+
+const steps=[];let clockSec=0;
+scenes.forEach(sc=>sc.steps.forEach(s=>{s.start=clockSec;s.end=clockSec+seconds(s);clockSec=s.end;steps.push(s)}));
+const totalSec=clockSec;
+
+function fmtSec(t){t=Math.floor(t);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60,ss=(s<10?'0':'')+s;return h>0?h+':'+(m<10?'0':'')+m+':'+ss:m+':'+ss}
+function node(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
+
+// Everything is built with textContent, never as HTML.
+const root=document.getElementById('steps'),stepEls=[];
+scenes.forEach(sc=>{
+root.appendChild(node('h2','scene'+(sc.steps.some(x=>x.t==='copy')?' has-copy':''),sc.title));
+sc.steps.forEach(s=>{
+const el=node('article','step step-'+s.t),head=node('div','step-head');
+head.appendChild(node('span','step-label',LABEL[s.t]));
+head.appendChild(node('span','step-at',fmtSec(s.start)));
+if(s.t==='copy'&&window.PresenterKit)head.appendChild(window.PresenterKit.copyButton(s.text,'the message to paste',true,'Copy',SEND_AFTER_MS));
+el.appendChild(head);
+if(s.t==='say')el.appendChild(node('blockquote',null,'“'+s.text+'”'));
+else if(s.t==='wait')el.appendChild(node('p',null,s.text+' ('+Math.round(s.end-s.start)+' sec)'));
+else el.appendChild(node('p',null,s.text));
+root.appendChild(el);stepEls.push(el)})});
+
+(function(){
+const $=id=>document.getElementById(id);
+const bar=$('bar'),clock=$('clock'),status=$('tStatus');
+const b={start:$('tStart'),pause:$('tPause'),stop:$('tStop'),reset:$('tReset'),follow:$('tFollow'),others:$('tOthers')};
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
+// Only the COPY cards show, unless "Other cards" is on. `view` lists the steps (by index) that are on screen; the timing still runs over
+// all of the steps, so a hidden step's time is spent sliding from the card before it to the card after it.
+let showOthers=false;
+let view=[];
+function setView(){view=steps.map((s,i)=>i).filter(i=>showOthers||steps[i].t==='copy')}
+setView();
+let state='ready',counted=0,startedAt=0,raf=0,follow=true,lastY=0,lastText='',tops=[],barH=0,current=-1,bandY=0;
+// Time is the milliseconds already counted plus the clock time since the last start, so a throttled window never drifts.
+const elapsed=()=>counted+(state==='running'?Math.max(0,Date.now()-startedAt):0);
+// The reading line sits about a quarter of the way down the area under the bar. A card's "position" is the scroll that puts its top on the
+// line. A spacer above the first card (only when needed) and one below the last let the first and last cards reach the line.
+function measure(){
+barH=bar.offsetHeight;bandY=barH+Math.round((window.innerHeight-barH)*0.25);
+const rs=document.documentElement.style;rs.setProperty('--bar',barH+'px');rs.setProperty('--band',bandY+'px');rs.setProperty('--focus',(bandY+Math.round((window.innerHeight-bandY)*0.65))+'px');
+$('padBottom').style.height=Math.max(0,window.innerHeight-bandY)+'px';
+$('padTop').style.height='0px';
+const need=bandY-(stepEls[view[0]].getBoundingClientRect().top+window.scrollY);
+if(need>0)$('padTop').style.height=Math.ceil(need)+'px';
+tops=view.map(i=>Math.max(0,stepEls[i].getBoundingClientRect().top+window.scrollY-bandY));
+if(state==='ready')window.scrollTo(0,tops[0]||0)}
+// The position (in `view`) of the card on screen at a time: the last one whose step has started (the first one before that).
+function indexAt(sec){let k=0;view.forEach((gi,n)=>{if(sec>=steps[gi].start)k=n});return k}
+// Scroll position at a time: the current card's top slides toward the next card's top as time passes (the last one slides to the page end).
+function targetY(sec){
+const maxY=Math.max(0,document.documentElement.scrollHeight-window.innerHeight),k=indexAt(sec),last=k>=tops.length-1;
+const from=tops[k],to=last?maxY:tops[k+1];
+if(reduce.matches)return Math.min(from,maxY);
+const start=steps[view[k]].start,end=last?totalSec:steps[view[k+1]].start,len=end-start;
+const p=len>0?Math.min(1,Math.max(0,(sec-start)/len)):0;
+const y=from+(to-from)*p;return Number.isFinite(y)?Math.min(maxY,Math.max(0,y)):0}
+function mark(k){const gi=view[k];if(gi===current)return;current=gi;stepEls.forEach((e,j)=>e.classList.toggle('current',j===gi))}
+function render(){
+bar.dataset.state=state;
+b.start.disabled=state==='running';b.pause.disabled=state!=='running';b.stop.disabled=state!=='running'&&state!=='paused';b.reset.disabled=state==='ready';
+b.follow.hidden=follow||(state!=='running');
+const n=view.indexOf(current)+1,where=n>0?'card '+n+' of '+view.length:'';
+const msg={ready:'Ready · estimated total '+fmtSec(totalSec)+' · Start scrolls the cards by their estimated timing',paused:'Paused: Start continues · '+where,stopped:'Stopped: Start begins again from 0:00 · '+where}[state];
+status.textContent=state==='running'?(follow?'Card '+(n||1)+' of '+view.length+' · estimated total '+fmtSec(totalSec):'Auto-scroll is off because you scrolled'):msg}
+function frame(){
+const ms=elapsed(),text=fmtSec(ms/1000);if(text!==lastText){clock.textContent=text;lastText=text}
+const sec=ms/1000;mark(indexAt(sec));
+if(follow&&state==='running'){const y=targetY(sec);lastY=y;window.scrollTo(0,y)}
+if(state==='running'){render();raf=requestAnimationFrame(frame)}}
+function start(){
+if(state==='running')return;
+if(state!=='paused')counted=0;
+follow=true;measure();startedAt=Date.now();state='running';
+cancelAnimationFrame(raf);frame()}
+function halt(next){if(state!=='running'&&state!=='paused')return;counted=elapsed();state=next;cancelAnimationFrame(raf);frame();render()}
+function reset(){
+if(state==='ready')return;
+cancelAnimationFrame(raf);counted=0;state='ready';follow=true;current=-1;lastText='0:00';clock.textContent='0:00';
+stepEls.forEach(e=>e.classList.remove('current'));lastY=0;render();measure()}
+b.start.addEventListener('click',start);
+b.pause.addEventListener('click',()=>halt('paused'));
+b.stop.addEventListener('click',()=>halt('stopped'));
+b.reset.addEventListener('click',reset);
+b.follow.addEventListener('click',()=>{follow=true;render()});
+// The "Other cards" button shows or hides the DO and SAY cards. The timer keeps running either way; the scroll is re-aimed at once.
+b.others.addEventListener('click',()=>{
+showOthers=!showOthers;setView();
+document.body.classList.toggle('show-others',showOthers);b.others.setAttribute('aria-pressed',showOthers?'true':'false');b.others.textContent='Other cards: '+(showOthers?'Shown':'Hidden');
+current=-1;render();measure();
+if(state!=='ready'){mark(indexAt(elapsed()/1000));if(follow){const y=targetY(elapsed()/1000);lastY=y;window.scrollTo(0,y)}}
+render()});
+// Clicking Copy on a COPY card moves on to the next card on screen: its top goes to the reading line. While the timer runs (or is paused)
+// the clock moves to that step's start time too, so the auto-scroll carries on from there instead of pulling the page back.
+function goToNext(gi){
+const k=view.indexOf(gi)+1;if(k<=0||k>=view.length)return;
+const j=view[k];
+if(state==='running'){counted=steps[j].start*1000;startedAt=Date.now();follow=true;frame();return}
+const y=targetY(steps[j].start);
+if(state==='paused'){counted=steps[j].start*1000;follow=true;lastText='';frame();render()}
+lastY=y;window.scrollTo(0,y)}
+stepEls.forEach((el,i)=>{const copyBtn=el.querySelector('.ds-copy');if(copyBtn)copyBtn.addEventListener('click',()=>goToNext(i))});
+// Scrolling by hand (wheel, touch, keys, scrollbar) while it runs turns auto-scroll off until "Resume auto-scroll" or the next Start.
+window.addEventListener('scroll',()=>{if(state==='running'&&follow&&Math.abs(window.scrollY-lastY)>4){follow=false;render()}},{passive:true});
+window.addEventListener('resize',measure);window.addEventListener('load',measure);
+measure();render();
+})();
+</script></body></html>

@@ -5,7 +5,9 @@
  *   var tray = DrawerKit.create({ drawer, tab, panel, close });
  *   tray.setAvailable(false);   // hide it (and close it)
  *   DrawerKit.copyText(text).then(...);
- *   DrawerKit.fillQuestion(text, 'replace' | 'append')   // types text into the question box of the open tab
+ *   DrawerKit.fillQuestion(text, 'replace' | 'append', { preventScroll: true })   // types text into the question box of the open tab (the options are optional)
+ *   DrawerKit.setHoldScroll(true | false) / holdScroll()   // stop the page scrolling itself during a turn (used by the click-through window)
+ *   DrawerKit.sendQuestion()                              // clicks the open tab's Send button (when the box has text)
  *
  * A tray is closed by default. The tab toggles it; copying from it closes it; the × button and Escape close it; only one tray is open at a time;
  * a closed tray cannot be reached by keyboard.
@@ -59,7 +61,7 @@
    * there is no box to fill (another tab, or the box is switched off while a request runs), in which case the clipboard copy
    * is all that happens.
    */
-  function fillQuestion(text, mode) {
+  function fillQuestion(text, mode, options) {
     var ids = { find: 'findInput', nofo: 'nofoInput' };
     var box = document.getElementById(ids[document.body.dataset.chatMode || 'find']);
     if (!box || box.disabled || box.offsetParent === null) return false;
@@ -86,7 +88,8 @@
       box.dispatchEvent(new Event('input', { bubbles: true }));
     }
     var job = { box: box, timer: null, wasReadOnly: box.readOnly, finish: done };
-    box.focus();
+    // options.preventScroll: the presenter's windows fill the box from outside, so the page must not jump to the box to show it.
+    if (options && options.preventScroll) box.focus({ preventScroll: true }); else box.focus();
     if (!delays) {
       box.value = base + text;
       done();
@@ -127,6 +130,27 @@
     })();
     return true;
   }
+
+  /**
+   * Clicks the Send button (Find grants or Send) of the tab that is open, as if the person had, once the question box has text in it.
+   * The presenter's click-through window uses it after Copy. Returns true when the button was clicked; false when there is nothing to
+   * send or the button is not available (another tab, the box is empty, a request is still running).
+   */
+  function sendQuestion() {
+    var ids = { find: 'findInput', nofo: 'nofoInput' };
+    var box = document.getElementById(ids[document.body.dataset.chatMode || 'find']);
+    var button = box && box.form ? box.form.querySelector('button[type="submit"]') : null;
+    if (!box || !button || box.disabled || button.disabled || box.offsetParent === null || !box.value.trim()) return false;
+    finishTyping(); // never send a half-typed message
+    button.click();
+    return true;
+  }
+
+  // While a presenter's window (the click-through) is open it asks the app page to hold still: the page then does not scroll itself
+  // when a turn starts, when the questions or a reply appear, or to the question box afterwards, so it stays where the presenter left it.
+  var holding = false;
+  function setHoldScroll(on) { holding = !!on; }
+  function holdScroll() { return holding; }
 
   /** Shows `text` on a button for a moment, then puts its own label back. */
   function flash(button, text) {
@@ -216,5 +240,5 @@
     return { setOpen: setOpen, isOpen: isOpen, setAvailable: setAvailable };
   }
 
-  window.DrawerKit = { create: create, copyText: copyText, flash: flash, wireCopyButton: wireCopyButton, fillQuestion: fillQuestion, finishTyping: finishTyping };
+  window.DrawerKit = { create: create, copyText: copyText, flash: flash, wireCopyButton: wireCopyButton, fillQuestion: fillQuestion, sendQuestion: sendQuestion, setHoldScroll: setHoldScroll, holdScroll: holdScroll, finishTyping: finishTyping };
 })();
