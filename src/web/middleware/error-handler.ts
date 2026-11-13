@@ -55,6 +55,17 @@ export function errorHandler(
   res: Response,
   next: NextFunction
 ): void {
+  // A body the JSON parser rejected carries the raw body on the error object (`err.body`), which can hold a password or the
+  // applicant's own words. Log only the kind of failure, never the error object.
+  if (err?.type === 'entity.parse.failed' || err?.type === 'entity.too.large') {
+    logger.warn(`Rejected request body on ${req.method} ${req.path}: ${err.type}`);
+    const tooLarge = err.type === 'entity.too.large';
+    res.status(tooLarge ? 413 : 400).json(
+      errorResponse(tooLarge ? 'The request is too large.' : 'The request body is not valid JSON.', 'VALIDATION_ERROR', false)
+    );
+    return;
+  }
+
   logger.error(`API error on ${req.method} ${req.path}:`, err);
 
   // Handle GrantServerError

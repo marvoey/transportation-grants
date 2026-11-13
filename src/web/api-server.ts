@@ -14,6 +14,7 @@ import deadlinesRouter from './routes/deadlines.js';
 import chatRouter from './routes/chat.js';
 import { createNofoRouter } from './routes/nofo.js';
 import { createDocsRouter } from './routes/docs.js';
+import { createAdminRouter } from './routes/admin.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -70,6 +71,9 @@ export function createApp(): Application {
     },
   });
   app.use('/api/chat', chatRateLimiter, chatRouter);
+
+  // Admin login, logout and session check (password in ADMIN_PASSWORD). Nothing is gated by it yet.
+  app.use('/api/admin', createAdminRouter());
 
   // NOFO applicant assessment: reads locally ingested packages; has its own rate limits.
   app.use('/api/nofo', createNofoRouter());
